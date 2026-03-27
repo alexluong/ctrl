@@ -1,29 +1,43 @@
 # Ideas & Notes
 
-## Interface — how to interact with ctrl without a terminal
+## Direction: OpenClaw as foundation
 
-Discord bot was the original idea, but worth exploring:
-- **Discord bot** — always available on phone, natural chat interface
-- **Telegram bot** — lighter weight, good API
-- **SMS / iMessage** — zero-app friction but limited richness
-- **Scheduled agents** — some things don't need interaction at all, just run on cron
-- **Web dashboard** — for viewing state, not necessarily for input
+After researching Claude Code Channels, OpenClaw, and building from scratch —
+going with **OpenClaw** as the agent layer. It solves interface, memory, and
+session routing. ctrl becomes the OpenClaw workspace, not a codebase.
 
-Open question: maybe multiple? e.g. cron for routine stuff + Discord for on-demand
+### Why OpenClaw over alternatives
+- **Claude Code Channels**: raw pipe into one session, no per-thread isolation, no persistent memory, requires machine running
+- **Building from scratch**: ~2 months minimum for bare-bones, reimplements solved problems
+- **OpenClaw**: multi-platform gateway, SQLite+vector memory, skill system, session isolation, open source
 
-## Architecture
+### What ctrl becomes
+Not an app. An OpenClaw workspace:
+- `SOUL.md` — agent identity and boundaries
+- `skills/` — domain-specific instructions (invoicing, RE, bookkeeping, etc.)
+- `data/` — structured data (SQLite, CSV)
+- `docs/` — ideas, decisions, notes
+- Git tracks everything — skill changes, data, history
 
-- Monorepo — each domain is a directory, no separate repos
-- `arr` (plex-manager) is shell scripts + docker compose, lightweight to migrate in
+### Interface plan
+- **Primary**: Slack (thread-level sessions confirmed)
+- **Also exploring**: Discord (channel-level sessions confirmed, thread isolation unclear)
+- **Scheduled tasks**: OpenClaw cron for routine work
+- **Data viewing**: export to CSV/Sheets when needed, SQLite as source of truth
 
-## Knowledge management
+## Domains (as OpenClaw skills)
 
-Claude owns all docs/files. User interacts via conversation only.
-Plain markdown in `docs/` — no Obsidian, SQLite, or MCP needed. Claude has native
-file access and grep, which is sufficient for this scale.
+Each domain = a `skills/<domain>/SKILL.md`:
+- `invoicing` — generation & delivery
+- `re-analysis` — real estate analysis
+- `bookkeeping` — RE + other business
+- `finance` — personal budgeting, tracking
+- `media` — plex/arr stack (migrating from `hub/alexluong/arr`)
+- `career` — resume, job search
 
 ## Open questions
 
-- What language/framework for the bot/interface?
+- Discord thread-level session isolation — does it work like Slack threads? Need to test.
 - How much of `arr` to bring in vs keep as-is on the VM?
-- Hosting strategy for the interface layer?
+- Hosting: where does OpenClaw run? Mac mini? Always-on server?
+- Data strategy: what lives in SQLite vs flat files vs external (Google Sheets)?
