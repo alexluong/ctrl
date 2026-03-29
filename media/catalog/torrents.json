@@ -1,0 +1,48 @@
+{
+  "version": "1.0",
+  "last_updated": "2025-12-24",
+  "trackers": {
+    "dc": {
+      "name": "DigitalCore",
+      "torrent_path": "/Volumes/Blue4/pt/dc"
+    }
+  },
+  "torrents": [
+    { "file": "Breaking Bad (2008) Season 1 S01 (1080p BluRay x265 HEVC 10bit AAC 5.1 Silence).torrent", "tracker": "dc", "status": "not_downloaded" },
+    { "file": "Breaking Bad (2008) Season 2 S02 (1080p BluRay x265 HEVC 10bit AAC 5.1 Silence).torrent", "tracker": "dc", "status": "not_downloaded" },
+    { "file": "Breaking Bad (2008) Season 3 S03 (1080p BluRay x265 HEVC 10bit AAC 5.1 Silence).torrent", "tracker": "dc", "status": "not_downloaded" },
+    { "file": "Breaking Bad (2008) Season 4 S04 (1080p BluRay x265 HEVC 10bit AAC 5.1 Silence).torrent", "tracker": "dc", "status": "not_downloaded" },
+    { "file": "Breaking Bad (2008) Season 5 S05 (1080p BluRay x265 HEVC 10bit AAC 5.1 Silence).torrent", "tracker": "dc", "status": "not_downloaded" },
+    { "file": "Casablanca.1943.1080p.AMZN.WEB-DL.DDP2.0.H.264-GPRS.torrent", "tracker": "dc", "status": "downloaded", "seeding": true },
+    { "file": "Deadpool.and.Wolverine.2024.1080p.WEB.H264-HugeJackedMan.torrent", "tracker": "dc", "status": "downloaded", "seeding": true },
+    { "file": "How.the.Grinch.Stole.Christmas.2000.BluRay.1080p.DD.5.1.x264-BHDStudio.torrent", "tracker": "dc", "status": "downloaded", "seeding": true },
+    { "file": "Life.of.Pi.2012.1080p.BluRay.DD.5.1.X265-Ralphy.torrent", "tracker": "dc", "status": "downloaded", "seeding": true },
+    { "file": "Now.You.See.Me.Now.You.Dont.2025.1080p.AMZN.WEB-DL.DDP5.1.Atmos.H.264-BYNDR.torrent", "tracker": "dc", "status": "downloaded", "seeding": true },
+    { "file": "Office.Space.1999.BluRay.1080p.DDP.5.1.x264-hallowed.torrent", "tracker": "dc", "status": "downloaded", "seeding": true },
+    { "file": "Phineas.and.Ferb.Across.the.2nd.Dimension.2011.1080p.BluRay.x264-REGRET.torrent", "tracker": "dc", "status": "downloaded", "seeding": true },
+    { "file": "Phineas.and.Ferb.Mission.Marvel.2013.1080p.DSNP.WEB-DL.DDP5.1.H.264-BLOOM.torrent", "tracker": "dc", "status": "downloaded", "seeding": true },
+    { "file": "Phineas.and.Ferb.S01.1080p.WEB-DL.AAC.2.0.h264-Pikanet128.torrent", "tracker": "dc", "status": "downloaded", "seeding": true },
+    { "file": "Phineas.and.Ferb.S02.1080p.WEB-DL.AAC2.0.H264-BTN.torrent", "tracker": "dc", "status": "downloaded", "seeding": true },
+    { "file": "Phineas.and.Ferb.S03.1080p.WEB-DL.AAC2.0.H.264-CtrlHD.torrent", "tracker": "dc", "status": "downloaded", "seeding": true },
+    { "file": "RoboCop.1987.1080p.BluRay.x264-OFT.torrent", "tracker": "dc", "status": "downloaded", "seeding": true },
+    { "file": "RoboCop.2.1990.1080p.BluRay.x264-OFT.torrent", "tracker": "dc", "status": "downloaded", "seeding": true },
+    { "file": "RoboCop.3.1993.1080p.BluRay.x264-OFT.torrent", "tracker": "dc", "status": "downloaded", "seeding": true },
+    { "file": "Spider-Man.3.2007.Remastered.1080p.BluRay.x264-OFT.torrent", "tracker": "dc", "status": "downloaded", "seeding": true },
+    { "file": "Taken.2.2012.Extended.1080p.BluRay.x264-OFT.torrent", "tracker": "dc", "status": "downloaded", "seeding": true },
+    { "file": "Taken.3.2014.Extended.1080p.BluRay.x264-OFT.torrent", "tracker": "dc", "status": "downloaded", "seeding": true },
+    { "file": "Taxi.Driver.1976.1080p.BluRay.x264-OFT.torrent", "tracker": "dc", "status": "downloaded", "seeding": true },
+    { "file": "Terminator.2.Judgment.Day.1991.Extended.1080p.BluRay.x264-OFT.torrent", "tracker": "dc", "status": "downloaded", "seeding": true },
+    { "file": "Terminator.3.Rise.of.the.Machines.2003.1080p.BluRay.x264-OFT.torrent", "tracker": "dc", "status": "downloaded", "seeding": true },
+    { "file": "The.Bourne.Supremacy.2004.1080p.BluRay.x264-OFT.torrent", "tracker": "dc", "status": "downloaded", "seeding": true },
+    { "file": "The.Grey.2011.REMASTERED.1080p.BluRay.x264-GAZER.torrent", "tracker": "dc", "status": "downloaded", "seeding": true },
+    { "file": "The.Naked.Gun.2025.1080p.BluRay.x264-OFT.torrent", "tracker": "dc", "status": "downloaded", "seeding": true },
+    { "file": "The.Silence.of.the.Lambs.1991.1080p.HMAX.WEB-DL.DDP2.0.H.264-BLOOM.torrent", "tracker": "dc", "status": "downloaded", "seeding": true },
+    { "file": "TRON.Legacy.2010.IMAX.BluRay.1080p.DDP.5.1.x264-hallowed.torrent", "tracker": "dc", "status": "downloaded", "seeding": true }
+  ],
+  "wishlist": [
+    { "title": "The Big Bang Theory S01-S12", "release": "The.Big.Bang.Theory.S01-S12.1080p.BluRay.10bit.x265.HEVC.DDP5.1-PHOCiS", "tracker": "dc", "size_gb": 93, "notes": "Replace current incomplete collection" },
+    { "title": "Phineas and Ferb S04", "release": null, "tracker": "dc", "notes": "Need to find on DC" },
+    { "title": "Friends S02E04", "release": null, "tracker": "dc", "notes": "Single episode needed" },
+    { "title": "Friends S09E24", "release": null, "tracker": "dc", "notes": "Single episode needed" }
+  ]
+}

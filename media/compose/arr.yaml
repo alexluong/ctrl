@@ -1,0 +1,71 @@
+services:
+  flaresolverr:
+    image: ghcr.io/flaresolverr/flaresolverr:latest
+    container_name: flaresolverr
+    network_mode: "container:gluetun"
+    environment:
+      - TZ=${TZ}
+    restart: unless-stopped
+
+  prowlarr:
+    image: linuxserver/prowlarr:latest
+    container_name: prowlarr
+    network_mode: "container:gluetun"
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - ${DATA_PATH}/prowlarr:/config
+    restart: unless-stopped
+
+  radarr:
+    image: linuxserver/radarr:latest
+    container_name: radarr
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - ${DATA_PATH}/radarr:/config
+      - /Volumes/Blue4/arr/downloads:/Blue4/downloads
+      - /Volumes/Blue4/arr/media/movies:/Blue4/movies
+      - /Volumes/Red4/arr/downloads:/Red4/downloads
+      - /Volumes/Red4/arr/media/movies:/Red4/movies
+    ports:
+      - 7878:7878
+    restart: unless-stopped
+
+  sonarr:
+    image: linuxserver/sonarr:latest
+    container_name: sonarr
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - ${DATA_PATH}/sonarr:/config
+      - /Volumes/Blue4/arr/downloads:/Blue4/downloads
+      - /Volumes/Blue4/arr/media/tv:/Blue4/tv
+      - /Volumes/Red4/arr/downloads:/Red4/downloads
+      - /Volumes/Red4/arr/media/tv:/Red4/tv
+    ports:
+      - 8989:8989
+    restart: unless-stopped
+
+  bazarr:
+    image: linuxserver/bazarr:latest
+    container_name: bazarr
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - ${DATA_PATH}/bazarr:/config
+      - /Volumes/Blue4/arr/media/movies:/Blue4/movies
+      - /Volumes/Blue4/arr/media/tv:/Blue4/tv
+      - /Volumes/Red4/arr/media/movies:/Red4/movies
+      - /Volumes/Red4/arr/media/tv:/Red4/tv
+    ports:
+      - 6767:6767
+    restart: unless-stopped

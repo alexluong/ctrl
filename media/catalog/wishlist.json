@@ -1,0 +1,142 @@
+{
+  "tv": [
+    {
+      "title": "A Series of Unfortunate Events",
+      "year": 2017,
+      "seasons": 3,
+      "network": "Netflix"
+    },
+    {
+      "title": "Person of Interest",
+      "year": 2011,
+      "seasons": 5,
+      "notes": "DC only has ~300GB option"
+    },
+    {
+      "title": "House MD",
+      "year": 2004,
+      "seasons": 8,
+      "notes": "Too large"
+    },
+    {
+      "title": "Burn Notice",
+      "year": 2007,
+      "seasons": 7,
+      "notes": "Too large"
+    },
+    {
+      "title": "Mr. Inbetween",
+      "year": 2018,
+      "seasons": 3
+    },
+    {
+      "title": "Patriot",
+      "year": 2015,
+      "seasons": 2,
+      "notes": "Amazon"
+    },
+    {
+      "title": "Fargo",
+      "year": 2014,
+      "seasons": 5
+    },
+    {
+      "title": "Better Call Saul",
+      "year": 2015,
+      "seasons": 6
+    },
+    {
+      "title": "Beef",
+      "year": 2023,
+      "seasons": 1
+    },
+    {
+      "title": "Atlanta",
+      "year": 2016,
+      "seasons": 4
+    },
+    {
+      "title": "Chernobyl",
+      "year": 2019,
+      "seasons": 1
+    },
+    {
+      "title": "Band of Brothers",
+      "year": 2001,
+      "seasons": 1
+    },
+    {
+      "title": "The Night Of",
+      "year": 2016,
+      "seasons": 1
+    },
+    {
+      "title": "Mare of Easttown",
+      "year": 2021,
+      "seasons": 1
+    },
+    {
+      "title": "Shogun",
+      "year": 2024,
+      "seasons": 1
+    },
+    {
+      "title": "True Detective",
+      "year": 2014,
+      "seasons": 4
+    },
+    {
+      "title": "Ozark",
+      "year": 2017,
+      "seasons": 4
+    },
+    {
+      "title": "Mindhunter",
+      "year": 2017,
+      "seasons": 2
+    },
+    {
+      "title": "Invincible",
+      "year": 2021,
+      "seasons": 2
+    },
+    {
+      "title": "The Simpsons",
+      "year": 1989,
+      "seasons": 10,
+      "notes": "Only S1-S10 (golden era)"
+    },
+    {
+      "title": "The Curse",
+      "year": 2023,
+      "seasons": 1
+    },
+    {
+      "title": "Peep Show",
+      "year": 2003,
+      "seasons": 9
+    },
+    {
+      "title": "Succession",
+      "year": 2018,
+      "seasons": 4
+    },
+    {
+      "title": "Modern Family",
+      "year": 2009,
+      "seasons": 11
+    }
+  ],
+  "movies": [
+    {
+      "title": "Interstellar",
+      "year": 2014,
+      "notes": "Want 4K UHD/HDR"
+    },
+    {
+      "title": "No Country for Old Men",
+      "year": 2007,
+      "notes": "Want 4K UHD/HDR"
+    }
+  ]
+}

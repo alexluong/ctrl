@@ -1,0 +1,15 @@
+services:
+  jellyfin:
+    image: linuxserver/jellyfin:latest
+    container_name: jellyfin
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - ${DATA_PATH}/jellyfin:/config
+      - /Volumes/Blue4/arr:/Blue4
+      - /Volumes/Red4/arr:/Red4
+    ports:
+      - 8096:8096
+    restart: unless-stopped

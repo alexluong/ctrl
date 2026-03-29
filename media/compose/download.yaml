@@ -1,0 +1,55 @@
+services:
+  gluetun:
+    image: qmcgaw/gluetun:latest
+    container_name: gluetun
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    environment:
+      - VPN_SERVICE_PROVIDER=${VPN_SERVICE_PROVIDER}
+      - OPENVPN_USER=${OPENVPN_USER}
+      - OPENVPN_PASSWORD=${OPENVPN_PASSWORD}
+      - SERVER_REGIONS=${SERVER_REGIONS}
+      - VPN_PORT_FORWARDING=${VPN_PORT_FORWARDING}
+      - TZ=${TZ}
+    volumes:
+      - ${DATA_PATH}/gluetun:/gluetun # optional: caches server list
+    ports:
+      # qBittorrent WebUI
+      - 8080:8080
+      # Prowlarr (routed through VPN)
+      - 9696:9696
+    restart: unless-stopped
+
+  qbittorrent:
+    image: linuxserver/qbittorrent:latest
+    container_name: qbittorrent
+    network_mode: "service:gluetun"
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - ${DATA_PATH}/qbittorrent:/config
+      - /Volumes/Blue4/arr/downloads:/Blue4/downloads
+      - /Volumes/Red4/arr/downloads:/Red4/downloads
+    depends_on:
+      - gluetun
+    restart: unless-stopped
+
+  seedboxapi:
+    image: myanonamouse/seedboxapi
+    container_name: seedboxapi
+    profiles:
+      - mam
+    user: ${PUID}:${PGID}
+    network_mode: "service:gluetun"
+    environment:
+      - mam_id=${MAM_ID}
+      - interval=60
+    volumes:
+      - ${DATA_PATH}/seedboxapi:/config
+    depends_on:
+      - gluetun
+    restart: unless-stopped
