@@ -163,6 +163,47 @@ The `seedboxapi` container registers the VPN IP with MAM as a dynamic seedbox. I
 7. Restart: `DOCKER_CONTEXT=colima-arr docker-compose -f compose/download.yaml --env-file .env up -d seedboxapi`
 8. Verify: `docker --context colima-arr logs seedboxapi --tail 5` — should show `"Success":true`
 
+## DigitalCore (DC)
+
+Primary source for movies and TV. API key stored in `.env` as `DC_API_KEY`.
+
+### API usage
+
+```bash
+# Search
+curl -s -H "X-API-KEY: $DC_API_KEY" \
+  "https://digitalcore.club/api/v1/torrents?searchText=QUERY&limit=20"
+
+# Download .torrent file
+curl -s -H "X-API-KEY: $DC_API_KEY" \
+  "https://digitalcore.club/api/v1/torrents/download/TORRENT_ID" \
+  -o ~/Documents/pt/red4/filename.torrent
+```
+
+Response fields: `id`, `name`, `size`, `seeders`, `leechers`, `category`, `added`, `frileech`, `language`.
+
+### Selecting releases
+
+**Library preferences** (derived from existing 600-item catalog):
+
+1. **Codec priority**: AV1 > x265 > x264. We prefer efficient encodes — quality-per-GB matters more than maximum bitrate.
+2. **Resolution**: 1080p is the default. 4K only for showcase titles (epic visuals, HDR/DV content).
+3. **Audio**: Opus or DD+ is fine for most content. Atmos/TrueHD/DTS-HD for 4K showcase titles.
+4. **Source**: BluRay preferred, WEB-DL when BluRay unavailable.
+5. **Groups**: KIMJI (AV1+Opus, dominant in library), LAMA, OFT, dAV1nci are trusted. FLUX, NTb for WEB-DL.
+6. **Packs**: Prefer complete season/series packs over individual episodes when available.
+7. **Size guidance**: For a full TV series, an x265 or AV1 encode is preferred over a raw H.264 WEB-DL that's 2-3x larger. A sitcom doesn't need 1.4 GB/episode.
+
+**Storage**: Blue4 is nearly full (97%). **Default new downloads to Red4** (`~/Documents/pt/red4/`).
+
+### Download workflow
+
+1. Search DC API for the title
+2. Pick release based on preferences above
+3. Download `.torrent` to `~/Documents/pt/red4/` (or `blue4/` if space permits)
+4. qBittorrent picks it up via watch folder or manual add
+5. After download completes, run catalog pipeline to track and link
+
 ## Catalog scripts
 
 The `catalog.py` script in `catalog/scripts/` automates the tracking pipeline:
