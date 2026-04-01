@@ -1,5 +1,24 @@
 # RE Notes
 
+## File Organization
+
+- **Git (this repo)**: structured data — pipeline CSV, markdown notes, logs. Things Claude reads/writes/diffs.
+- **iCloud (`~/Documents/REI/`)**: binary documents — PDFs, media, statements. Things that need storage, not diffing.
+
+iCloud structure:
+```
+REI/
+  properties/
+    <address>/
+      media/          # walkthrough videos, photos
+      documents/      # property-specific docs
+      insurance/
+      others/
+  others/             # pre-approvals, proof of funds, misc docs
+  documents/          # PM agreements
+  statements/         # monthly PM statements (zipped by month)
+```
+
 ## Market Context (Detroit, March 2026)
 
 - Citywide violent crime dropping significantly through 2025-2026
@@ -13,6 +32,21 @@
 ## Brokerage Fee Note
 
 FRT (Mike's brokerage) has a $4,000 minimum fee. Seller pays 3% commission, but on cheaper properties (e.g. $78K × 3% = $2,340) the buyer side may need to cover the gap to reach the $4K min. Factor this into offers.
+
+## Agent Exclusivity — Important
+
+Signed exclusive buyer agency with Mike Helfant / KW Paint Creek on 03/31/2026, expires 09/30/2026. Covers **all Michigan real property**. Commission: $495 + 3%.
+
+Have a separate primary agent. This could be a conflict if primary agent brings deals. In practice, enforcement is rare unless the relationship sours — but technically Mike/KW could claim commission on any MI purchase through 09/30.
+
+Options if this becomes an issue:
+- Ask Mike to amend the scope to specific properties only
+- Wait until 10/01/2026 for non-Mike deals
+- Or just route everything through Mike until expiry
+
+## Dual Agency on Dixie
+
+Mike is dual agent on Dixie (KW Paint Creek represents both buyer and seller). Seller is Leveredge Michigan Holding LLC. Be aware: Mike is incentivized to close, not necessarily to get lowest price. Use inspection findings as leverage independently.
 
 ## Strategy Observations
 

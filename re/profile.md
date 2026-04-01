@@ -43,5 +43,14 @@ Foreign national, based in Vietnam.
 
 ## Contacts
 
-- **Mike Helfant** — agent, met 2026-03-28. Owns 2 properties in Redford. Owes: resource list + lender referral.
+### Agents
+- **David Rabior** — original agent. Sold us 4300 Haverhill. Introduced us to Grant & Main PM and Rene (lender). Still on his list but nothing active. Recently had an off-market deal fall through — $83K Fitzgerald, section 8 rented at $1,350. We were committed, David was managing seller, then deal went away (likely sold to another buyer). Relationship is fine but shifted focus to Mike.
+- **Mike Helfant** — new/active agent. KW Paint Creek. Joe Hammel is broker. Met 2026-03-28. Owns 2 properties in Redford. Dual agent on Dixie deal. mike@firerealtyteam.com, 314-239-7713.
+  - **Exclusive Buyer Agency** signed 03/31/2026, expires 09/30/2026. Covers ALL Michigan properties. Commission: $495 + 3%.
+
+### Lenders
+- **Rene Perozeni** — NEXA Lending (Axen Mortgage). NMLS# 2328044. (440) 821-2170. rperozeni@axenmortgage.com. Pre-qual letter: up to $160K, conventional 30yr, expires 06/29/2026.
 - **Kris Natschke** — lender (referred by Mike)
+
+### Other
+- **Collie MI Properties LLC** — purchasing entity, Anh Luong authorized signatory
