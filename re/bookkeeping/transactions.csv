@@ -1,0 +1,466 @@
+date,property,description,amount,type,category,source,notes
+2024-05-16,,Wise bank details acquisition,-31.00,expense,banking_fee,wise,Account setup
+2024-05-24,,Owner Contribution - initial funding,90000.00,owner_contribution,funding,wise,From personal account (fee: $6.11)
+2024-05-24,,Wise fee - initial funding,-6.11,expense,wire_fee,wise,
+2024-06-12,oakfield,Closing costs - Regions Title Agency,-67558.26,expense,acquisition,wise,20259 Oakfield purchase
+2024-06-12,,Wise fee,-1.13,expense,wire_fee,wise,
+2024-06-15,,VU Investments,-550.00,expense,acquisition,wise,
+2024-06-15,,Wise fee,-1.13,expense,wire_fee,wise,
+2024-06-26,oakfield,Insurance - Breckenridge,-996.08,expense,insurance,wise,Property insurance
+2024-07-02,,Tradewinds - onboarding,-600.00,expense,pm_fees,wise,Paid to TWDG
+2024-07-03,,Jlewspecs LLC - inspection,-545.00,expense,inspection,wise,Property inspection
+2024-07-03,,Wise fee,-1.13,expense,wire_fee,wise,
+2024-07-04,oakfield,Detroit Water,-37.01,expense,utilities,wise,
+2024-07-04,haverhill,EMD - Leading Edge Title,-850.00,expense,acquisition,wise,4300 Haverhill earnest money
+2024-07-04,,Wise fee,-1.13,expense,wire_fee,wise,
+2024-07-05,,Owner Contribution,10000.00,owner_contribution,funding,wise,From personal
+2024-07-06,,Owner Contribution,55000.00,owner_contribution,funding,wise,LLC contribution (fee: $6.11)
+2024-07-06,,Wise fee,-6.11,expense,wire_fee,wise,
+2024-07-12,haverhill,Closing costs - Leading Edge Title,-68022.47,expense,acquisition,wise,4300 Haverhill purchase
+2024-07-12,,Wise fee,-1.13,expense,wire_fee,wise,
+2024-07-12,haverhill,Closing costs - Leading Edge Title (adjustment),-1600.00,expense,acquisition,wise,4300 Haverhill
+2024-07-12,,Wise fee,-1.13,expense,wire_fee,wise,
+2024-07-15,haverhill,Insurance - REInsurePro,-136.51,expense,insurance,wise,Monthly premium
+2024-07-17,,Owner Contribution,15000.00,owner_contribution,funding,wise,
+2024-08-08,oakfield,Detroit Water,-35.25,expense,utilities,wise,
+2024-08-14,haverhill,Insurance - REInsurePro,-93.51,expense,insurance,wise,Monthly premium
+2024-09-11,,Owner Contribution,5000.00,owner_contribution,funding,wise,
+2024-09-12,oakfield,Detroit Water,-36.38,expense,utilities,wise,
+2024-09-16,haverhill,Insurance - REInsurePro,-93.51,expense,insurance,wise,Monthly premium
+2024-10-10,oakfield,Detroit Water,-36.38,expense,utilities,wise,
+2024-10-16,haverhill,Insurance - REInsurePro,-93.51,expense,insurance,wise,Monthly premium
+2024-11-08,oakfield,Detroit Water,-36.38,expense,utilities,wise,
+2024-11-14,haverhill,Insurance - REInsurePro,-93.51,expense,insurance,wise,Monthly premium
+2024-11-23,,Owner Contribution,10000.00,owner_contribution,funding,wise,
+2024-12-03,,Owner Contribution,5000.00,owner_contribution,funding,wise,
+2024-12-11,oakfield,Detroit Water,-70.64,expense,utilities,wise,
+2024-12-16,haverhill,Insurance - REInsurePro,-93.51,expense,insurance,wise,Monthly premium
+2024-12-27,,Property Tax - D01 DET TREASURY,-213.03,expense,property_tax,wise,
+2024-12-27,,Property Tax - D01 DET TREASURY,-947.19,expense,property_tax,wise,
+2024-12-30,,Owner Contribution,9000.00,owner_contribution,funding,wise,
+2024-07-03,oakfield,Onboarding Fees,-100.00,expense,pm_fees,tradewinds_pm,
+2024-07-03,oakfield,Owner Contribution - on-boarding / reserves / lock changes,600.00,owner_contribution,funding,tradewinds_pm,TWDG Inv 3016
+2024-07-10,oakfield,Tenant turn repairs - project 1 of 2,-9402.50,expense,turnover_repairs,tradewinds_pm,#13853-1
+2024-07-10,haverhill,Onboarding Fees,-100.00,expense,pm_fees,tradewinds_pm,
+2024-07-11,oakfield,HVAC - drain/remove HWT and furnace to storage,-265.00,expense,hvac,tradewinds_pm,#13854-1
+2024-07-11,oakfield,Owner Contribution - funds for repairs,9402.50,owner_contribution,funding,tradewinds_pm,TWDG Inv 3022
+2024-07-11,oakfield,Owner Contribution - COC process,1010.00,owner_contribution,funding,tradewinds_pm,TWDG Inv 3024
+2024-07-13,haverhill,Door knocking,-50.00,expense,pm_staff,tradewinds_pm,
+2024-07-15,haverhill,Owner Contribution - on-boarding and reserves,400.00,owner_contribution,funding,tradewinds_pm,TWDG Inv 3028
+2024-07-15,haverhill,Owner Contribution - COC process,1010.00,owner_contribution,funding,tradewinds_pm,TWDG Inv 3033
+2024-07-17,haverhill,Building inspection for COC,-180.00,expense,inspection,tradewinds_pm,
+2024-07-18,oakfield,Storage Fee - HWT and furnace July 2024,-50.00,expense,storage,tradewinds_pm,
+2024-07-19,oakfield,Grass cutting - 07/15,-82.50,expense,landscaping,tradewinds_pm,
+2024-07-19,oakfield,Tenant turn repairs - project 2,-10000.00,expense,turnover_repairs,tradewinds_pm,#13853-2
+2024-07-24,oakfield,Security check,-45.00,expense,pm_staff,tradewinds_pm,
+2024-07-25,oakfield,Owner Contribution - repairs payment 1,12000.00,owner_contribution,funding,tradewinds_pm,TWDG Inv 3065
+2024-07-25,oakfield,Owner Contribution - repairs,952.50,owner_contribution,funding,tradewinds_pm,TWDG Inv 3064
+2024-07-25,oakfield,Owner Contribution - repairs,2500.00,owner_contribution,funding,tradewinds_pm,TWDG Inv 3063
+2024-07-29,oakfield,Owner Contribution - repairs,5342.50,owner_contribution,funding,tradewinds_pm,TWDG Inv 3065
+2024-07-30,oakfield,Grass cutting - 07/29,-50.00,expense,landscaping,tradewinds_pm,
+2024-08-01,haverhill,Rent - August 2024,1300.00,revenue,rent,tradewinds_pm,Asia Marshall
+2024-08-05,oakfield,Tenant turn repairs - owner approved,-7342.50,expense,turnover_repairs,tradewinds_pm,#13853-2
+2024-08-06,haverhill,Building inspection admin fee,-45.00,expense,inspection,tradewinds_pm,
+2024-08-13,oakfield,Grass cutting - 08/10,-50.00,expense,landscaping,tradewinds_pm,
+2024-08-13,oakfield,Staff time - DTE gas turn-on,-157.50,expense,pm_staff,tradewinds_pm,
+2024-08-13,oakfield,Key/Lock replacement - post tenant move-out,-474.00,expense,locks,tradewinds_pm,#14020-1
+2024-08-15,oakfield,Key/Lock replacement - broken lock,-77.00,expense,locks,tradewinds_pm,#14096-1
+2024-08-19,oakfield,Owner Contribution - repairs,781.00,owner_contribution,funding,tradewinds_pm,TWDG Inv 3104
+2024-08-20,oakfield,Landscaping - fence line clean up,-952.50,expense,landscaping,tradewinds_pm,#13852-2
+2024-08-27,oakfield,Plumbing - replace bathroom stack,-980.00,expense,plumbing,tradewinds_pm,#13853-3
+2024-08-28,oakfield,Utilities - gas/electric,-19.17,expense,utilities,tradewinds_pm,07/12-07/24
+2024-08-31,oakfield,Staff time - canceled city inspection,-27.00,expense,pm_staff,tradewinds_pm,
+2024-08-31,haverhill,Staff time - post inspection notice,-60.20,expense,pm_staff,tradewinds_pm,
+2024-08-31,haverhill,Management fee - 08/2024,-130.00,expense,management_fee,tradewinds_pm,
+2024-09-03,oakfield,Storage Fee - furnace August 2024,-25.00,expense,storage,tradewinds_pm,
+2024-09-04,haverhill,Rent - September 2024,1300.00,revenue,rent,tradewinds_pm,Asia Marshall
+2024-09-10,oakfield,Grass cutting - 08/21,-50.00,expense,landscaping,tradewinds_pm,
+2024-09-10,oakfield,Grass cutting - 09/04,-50.00,expense,landscaping,tradewinds_pm,
+2024-09-16,haverhill,Owner Contribution - COO repairs,3840.00,owner_contribution,funding,tradewinds_pm,TWDG Inv 3156
+2024-09-17,oakfield,Staff time - city building inspection,-52.80,expense,pm_staff,tradewinds_pm,
+2024-09-17,haverhill,Staff time - city building inspection,-63.85,expense,pm_staff,tradewinds_pm,
+2024-09-18,oakfield,Storage Fee - furnace September 2024,-25.00,expense,storage,tradewinds_pm,
+2024-09-20,oakfield,Utilities - gas/electric,-34.34,expense,utilities,tradewinds_pm,07/24-08/12
+2024-09-25,oakfield,Grass cutting - 09/20,-50.00,expense,landscaping,tradewinds_pm,
+2024-09-26,oakfield,Trash out - garage collapsed,-1832.50,expense,trash_removal,tradewinds_pm,#13852-4
+2024-09-30,oakfield,Staff time - gas leak inspection,-45.00,expense,pm_staff,tradewinds_pm,
+2024-09-30,haverhill,Management fee - 09/2024,-130.00,expense,management_fee,tradewinds_pm,
+2024-09-30,haverhill,Transfer to Oakfield,-960.81,transfer,internal,tradewinds_pm,
+2024-09-30,oakfield,Transfer from Haverhill,960.81,transfer,internal,tradewinds_pm,
+2024-10-03,haverhill,Rent - October 2024,1300.00,revenue,rent,tradewinds_pm,Asia Marshall
+2024-10-09,oakfield,Utilities - gas/electric,-25.06,expense,utilities,tradewinds_pm,08/23-09/20
+2024-10-09,oakfield,Grass cutting - 10/06,-50.00,expense,landscaping,tradewinds_pm,
+2024-10-14,haverhill,COO Repairs - work stopped at transfer,-3394.50,expense,turnover_repairs,tradewinds_pm,#14248-1
+2024-10-24,oakfield,Grass cutting - 10/21,-50.00,expense,landscaping,tradewinds_pm,
+2024-10-25,oakfield,Storage Fee - HWT/furnace October 2024,-50.00,expense,storage,tradewinds_pm,
+2024-10-27,haverhill,Lead inspection / risk assessment,-430.00,expense,inspection,tradewinds_pm,#13979-1
+2024-10-31,haverhill,Fee for breaking management agreement,-130.00,expense,pm_fees,tradewinds_pm,
+2024-10-31,haverhill,Management fee - 10/2024,-130.00,expense,management_fee,tradewinds_pm,
+2024-11-07,oakfield,Grass cutting - 11/04,-50.00,expense,landscaping,tradewinds_pm,
+2024-11-30,oakfield,House cancellation fee,-250.00,expense,pm_fees,tradewinds_pm,
+2024-11-30,oakfield,Leasing fee - termination provision (discounted),-200.00,expense,pm_fees,tradewinds_pm,
+2024-11-30,oakfield,Staff time - termination provision,-220.00,expense,pm_staff,tradewinds_pm,
+2024-11-30,haverhill,House cancellation fee,-250.00,expense,pm_fees,tradewinds_pm,
+2024-11-30,haverhill,Staff time - termination provision,-150.00,expense,pm_staff,tradewinds_pm,
+2024-12-02,haverhill,Owner Contribution,1414.50,owner_contribution,funding,grantmain_pm,
+2024-12-03,haverhill,Owner Contribution,10000.00,owner_contribution,funding,grantmain_pm,
+2024-12-04,haverhill,Turnover markup - Aztech Painting,-1952.50,expense,turnover_markup,grantmain_pm,10% markup
+2024-12-04,haverhill,Turnover - trash out / paint / electrical / plumbing,-7810.00,expense,turnover_repairs,grantmain_pm,Aztech Estimate#2096
+2024-12-11,oakfield,Electricity,-13.65,expense,utilities,grantmain_pm,
+2024-12-11,oakfield,Gas,-18.14,expense,utilities,grantmain_pm,
+2024-12-12,haverhill,Turnover - continuation of Aztech work,-11715.00,expense,turnover_repairs,grantmain_pm,Aztech Estimate#2096
+2024-12-17,haverhill,Maintenance materials - gloves/lockbox,-113.00,expense,maintenance_materials,grantmain_pm,HD Amex 2297
+2024-12-19,haverhill,Turnover - cleaning,-250.00,expense,turnover_repairs,grantmain_pm,A&V INV987
+2024-12-19,haverhill,Turnover markup - A&V cleaning,-25.00,expense,turnover_markup,grantmain_pm,10% markup
+2024-12-19,haverhill,Turnover - carpeting,-2400.00,expense,turnover_repairs,grantmain_pm,Dennis Lyons
+2024-12-19,haverhill,Turnover markup - carpeting,-240.00,expense,turnover_markup,grantmain_pm,10% markup
+2024-12-30,oakfield,Owner Contribution,771.30,owner_contribution,funding,grantmain_pm,
+2024-12-31,oakfield,HVAC - pick up water heater/furnace panels,-135.20,expense,hvac,grantmain_pm,WO#40018-2
+2024-12-31,oakfield,HVAC - pick up furnace and store,-118.30,expense,hvac,grantmain_pm,WO#40018-1
+2024-12-31,oakfield,Management Fee - 12/2024,-100.00,expense,management_fee,grantmain_pm,
+2024-12-31,oakfield,Set up Fee,-100.00,expense,pm_fees,grantmain_pm,
+2024-12-31,haverhill,Turnover - winterize home,-212.55,expense,turnover_repairs,grantmain_pm,WO#39896-3
+2024-12-31,haverhill,Turnover - lock change,-141.05,expense,turnover_repairs,grantmain_pm,WO#39896-1
+2024-12-31,haverhill,Management Fee - 12/2024,-100.00,expense,management_fee,grantmain_pm,
+2024-12-31,haverhill,Set up Fee,-100.00,expense,pm_fees,grantmain_pm,
+2025-01-01,haverhill,Electricity,-23.00,expense,utilities,grantmain_pm,
+2025-01-06,oakfield,Rent - prepaid,500.00,revenue,rent,grantmain_pm,ECP
+2025-01-08,oakfield,Electricity,-14.89,expense,utilities,grantmain_pm,
+2025-01-08,oakfield,Gas,-15.23,expense,utilities,grantmain_pm,
+2025-01-08,haverhill,Water,-94.67,expense,utilities,grantmain_pm,
+2025-01-13,haverhill,Owner Contribution,14968.00,owner_contribution,funding,grantmain_pm,
+2025-01-16,oakfield,Rent - prepaid,700.00,revenue,rent,grantmain_pm,ECP
+2025-01-17,oakfield,HVAC - furnace installation,-750.00,expense,hvac,grantmain_pm,Harrison Duncan INV0559
+2025-01-20,oakfield,Maintenance materials markup,-15.82,expense,maintenance_materials,grantmain_pm,10% on HD $158
+2025-01-20,oakfield,Maintenance materials markup,-1.21,expense,maintenance_materials,grantmain_pm,10% on HD $12
+2025-01-20,oakfield,Maintenance materials markup,-6.26,expense,maintenance_materials,grantmain_pm,10% on HD $63
+2025-01-20,haverhill,Turnover - property management photos,-195.00,expense,turnover_repairs,grantmain_pm,Window Still INV1680478
+2025-01-20,haverhill,Turnover markup - Window Still,-19.50,expense,turnover_markup,grantmain_pm,10% markup
+2025-01-21,oakfield,Construction mgmt fee - furnace,-150.00,expense,construction_markup,grantmain_pm,10% on Harrison Duncan
+2025-01-23,oakfield,HVAC - furnace installation,-750.00,expense,hvac,grantmain_pm,Harrison Duncan INV0559
+2025-01-23,oakfield,Appliances - gas stove and fridge,-747.30,expense,appliances,grantmain_pm,Jay's Appliances INV12259
+2025-01-24,oakfield,Construction mgmt fee - appliances,-74.73,expense,construction_markup,grantmain_pm,10% on Jay's
+2025-01-31,oakfield,Electricity,-20.12,expense,utilities,grantmain_pm,
+2025-01-31,oakfield,Gas,-15.95,expense,utilities,grantmain_pm,
+2025-01-31,oakfield,Lease-up Fee,-1200.00,expense,leasing_fee,grantmain_pm,
+2025-01-31,oakfield,Management Fee - 01/2025,-120.00,expense,management_fee,grantmain_pm,
+2025-01-31,haverhill,Management Fee - 01/2025,-100.00,expense,management_fee,grantmain_pm,
+2025-01-08,oakfield,Detroit Water,-44.95,expense,utilities,wise,
+2025-01-13,,Owner Contribution,5000.00,owner_contribution,funding,wise,
+2025-01-14,haverhill,Insurance - REInsurePro,-93.51,expense,insurance,wise,Monthly premium
+2025-01-14,oakfield,Insurance - Breckenridge,-842.33,expense,insurance,wise,Annual renewal
+2025-01-17,,Tradewinds trust balance returned,3360.58,transfer,pm_closeout,wise,Final settlement from TWDG
+2025-02-11,oakfield,Detroit Water,-36.38,expense,utilities,wise,
+2025-02-14,haverhill,Insurance - REInsurePro,-93.51,expense,insurance,wise,Monthly premium
+2025-02-10,haverhill,License/Filing - Deed pull,-4.14,expense,legal,grantmain_pm,
+2025-02-10,haverhill,License/Filing - Deed pull,-6.21,expense,legal,grantmain_pm,
+2025-02-14,oakfield,Maintenance materials - utility heater/batteries/key blank,-158.17,expense,maintenance_materials,grantmain_pm,HD Amex 1539
+2025-02-14,oakfield,Maintenance materials - gate valve,-12.06,expense,maintenance_materials,grantmain_pm,HD Amex 1539
+2025-02-14,oakfield,Maintenance materials - fittings,-62.64,expense,maintenance_materials,grantmain_pm,HD Amex 1539
+2025-02-21,oakfield,Maintenance materials markup,-6.99,expense,maintenance_materials,grantmain_pm,10% on HD $69.92
+2025-02-22,oakfield,Insurance - move in liability,10.50,revenue,insurance_passthrough,grantmain_pm,
+2025-02-22,oakfield,Admin Fee - move in,3.00,revenue,insurance_passthrough,grantmain_pm,
+2025-02-22,oakfield,Insurance - Feb 2025,10.50,revenue,insurance_passthrough,grantmain_pm,
+2025-02-22,oakfield,Admin Fee - Feb 2025,3.00,revenue,insurance_passthrough,grantmain_pm,
+2025-02-22,oakfield,Rent - February 2025,619.35,revenue,rent,grantmain_pm,
+2025-02-22,oakfield,Appliances - February 2025,25.00,revenue,appliance_fee,grantmain_pm,
+2025-02-22,oakfield,Water,53.51,revenue,utility_passthrough,grantmain_pm,
+2025-02-22,oakfield,Admin fee - utility payment,50.00,revenue,utility_passthrough,grantmain_pm,
+2025-02-22,oakfield,Prepaid insurance,10.50,revenue,insurance_passthrough,grantmain_pm,
+2025-02-22,oakfield,Prepaid admin fee,3.00,revenue,insurance_passthrough,grantmain_pm,
+2025-02-22,oakfield,Prepaid rent,611.64,revenue,rent,grantmain_pm,
+2025-02-24,oakfield,Water - chargeback,-53.51,expense,utilities,grantmain_pm,
+2025-02-24,haverhill,Water,-30.99,expense,utilities,grantmain_pm,
+2025-02-26,haverhill,Electricity,-31.46,expense,utilities,grantmain_pm,
+2025-02-26,haverhill,Gas,-15.95,expense,utilities,grantmain_pm,
+2025-02-26,haverhill,Electricity,-23.34,expense,utilities,grantmain_pm,
+2025-02-28,oakfield,Interior repair - install mechanicals move in,-500.00,expense,maintenance,grantmain_pm,WO#41818-1
+2025-02-28,oakfield,Interior repair - window siding falling out,-53.95,expense,maintenance,grantmain_pm,WO#42225-1
+2025-02-28,oakfield,Management Fee - 02/2025,-123.10,expense,management_fee,grantmain_pm,
+2025-02-28,oakfield,Insurance Services - 02/2025,-31.50,expense,insurance,grantmain_pm,
+2025-02-28,oakfield,Admin Fee - 02/2025,-59.00,expense,admin_fee,grantmain_pm,
+2025-02-28,haverhill,Management Fee - 02/2025,-100.00,expense,management_fee,grantmain_pm,
+2025-03-14,haverhill,Insurance - REInsurePro,-93.51,expense,insurance,wise,Monthly premium
+2025-03-06,haverhill,Water,-32.54,expense,utilities,grantmain_pm,
+2025-03-06,haverhill,Snow removal,-35.00,expense,landscaping,grantmain_pm,JHSB INV000089
+2025-03-07,haverhill,Construction mgmt fee - snow removal,-3.50,expense,construction_markup,grantmain_pm,10%
+2025-03-25,oakfield,Owner Contribution,3533.08,owner_contribution,funding,grantmain_pm,
+2025-03-25,oakfield,Water - chargeback,-79.21,expense,utilities,grantmain_pm,
+2025-03-28,oakfield,Rent - March 2025,588.36,revenue,rent,grantmain_pm,
+2025-03-28,oakfield,Appliances - March 2025,25.00,revenue,appliance_fee,grantmain_pm,
+2025-03-28,oakfield,Water,79.21,revenue,utility_passthrough,grantmain_pm,
+2025-03-28,oakfield,Prepaid insurance,7.43,revenue,insurance_passthrough,grantmain_pm,
+2025-03-31,oakfield,Drywall - ceiling falling in and leaking,-117.00,expense,maintenance,grantmain_pm,WO#42224-1
+2025-03-31,oakfield,Interior repair - window broken/hot water,-186.08,expense,maintenance,grantmain_pm,WO#42122-1
+2025-03-31,oakfield,Management Fee - 03/2025,-100.00,expense,management_fee,grantmain_pm,
+2025-03-31,oakfield,Insurance Services - 03/2025,-7.43,expense,insurance,grantmain_pm,
+2025-03-31,haverhill,Management Fee - 03/2025,-100.00,expense,management_fee,grantmain_pm,
+2025-04-15,haverhill,Insurance - REInsurePro,-93.51,expense,insurance,wise,Monthly premium
+2025-04-15,,Owner Contribution,5000.00,owner_contribution,funding,wise,
+2025-04-01,haverhill,Electricity,-14.25,expense,utilities,grantmain_pm,
+2025-04-01,haverhill,Gas,-15.95,expense,utilities,grantmain_pm,
+2025-04-07,oakfield,Construction mgmt fee - LJ Plumbing,-12.50,expense,construction_markup,grantmain_pm,10%
+2025-04-08,oakfield,Construction mgmt fee - PRS Demo,-40.00,expense,construction_markup,grantmain_pm,10%
+2025-04-10,oakfield,Plumbing - attempt to cable mainline,-125.00,expense,plumbing,grantmain_pm,LJ Plumbing INV529
+2025-04-10,oakfield,Plumbing - snaked drain and basement pump out,-400.00,expense,plumbing,grantmain_pm,PRS Demo INV103
+2025-04-11,oakfield,Maintenance materials - window/door/caulk,-69.92,expense,maintenance_materials,grantmain_pm,HD Amex 1638
+2025-04-15,oakfield,Maintenance materials markup,-9.68,expense,maintenance_materials,grantmain_pm,10% on HD $96.75
+2025-04-15,haverhill,Owner Contribution,536.00,owner_contribution,funding,grantmain_pm,
+2025-04-16,oakfield,Construction mgmt fee - Mr. Wiggles,-17.50,expense,construction_markup,grantmain_pm,10%
+2025-04-17,oakfield,Plumbing - snake bathroom,-175.00,expense,plumbing,grantmain_pm,Mr. Wiggles INV1180
+2025-04-18,oakfield,Construction mgmt fee - LeVasseur 03/31,-11.00,expense,construction_markup,grantmain_pm,10%
+2025-04-23,haverhill,Turnover markup - Mendy Margolis,-20.00,expense,turnover_markup,grantmain_pm,10%
+2025-04-24,haverhill,Turnover - clean up backyard,-200.00,expense,turnover_repairs,grantmain_pm,Mendy INV3369
+2025-04-29,oakfield,Insurance - April 2025,3.07,revenue,insurance_passthrough,grantmain_pm,
+2025-04-29,oakfield,Admin Fee - April 2025,3.00,revenue,insurance_passthrough,grantmain_pm,
+2025-04-29,oakfield,Rent - April 2025,793.93,revenue,rent,grantmain_pm,
+2025-04-29,haverhill,Water,-63.53,expense,utilities,grantmain_pm,
+2025-04-29,haverhill,Turnover markup HD,-7.97,expense,turnover_markup,grantmain_pm,10% on HD $79.74
+2025-04-30,oakfield,Management Fee - 04/2025,-100.00,expense,management_fee,grantmain_pm,
+2025-04-30,oakfield,Insurance Services - 04/2025,-3.07,expense,insurance,grantmain_pm,
+2025-04-30,oakfield,Admin Fee - 04/2025,-3.00,expense,admin_fee,grantmain_pm,
+2025-04-30,haverhill,Electricity,-14.96,expense,utilities,grantmain_pm,
+2025-04-30,haverhill,Gas,-35.62,expense,utilities,grantmain_pm,
+2025-04-30,haverhill,Management Fee - 04/2025,-100.00,expense,management_fee,grantmain_pm,
+2025-05-14,haverhill,Insurance - REInsurePro,-93.51,expense,insurance,wise,Monthly premium
+2025-05-01,haverhill,Turnover markup HD $14.61,-1.46,expense,turnover_markup,grantmain_pm,10%
+2025-05-02,oakfield,Water - chargeback,-87.77,expense,utilities,grantmain_pm,
+2025-05-07,haverhill,Turnover markup HD $88.25,-8.83,expense,turnover_markup,grantmain_pm,10%
+2025-05-08,oakfield,Legal - process server,-82.50,expense,legal,grantmain_pm,
+2025-05-09,oakfield,Construction mgmt fee - LeVasseur 04/30,-8.25,expense,construction_markup,grantmain_pm,10%
+2025-05-13,oakfield,Maintenance materials markup,-1.43,expense,maintenance_materials,grantmain_pm,10% on HD $14.25
+2025-05-13,oakfield,Construction mgmt fee - JHSB 05/12,-178.50,expense,construction_markup,grantmain_pm,10%
+2025-05-13,oakfield,Roofing - tree branch/shingles repair,-892.50,expense,maintenance,grantmain_pm,JHSB Housing
+2025-05-15,oakfield,Plumbing - snaking main + 3 floor drains,-401.00,expense,plumbing,grantmain_pm,Special Delivery INV45316-2-1
+2025-05-15,oakfield,Construction mgmt fee - plumber,-40.10,expense,construction_markup,grantmain_pm,10%
+2025-05-16,oakfield,Legal - summons/complaint,-110.00,expense,legal,grantmain_pm,
+2025-05-16,oakfield,Maintenance materials - faucet/supplies,-96.75,expense,maintenance_materials,grantmain_pm,HD Amex 1257
+2025-05-22,haverhill,HVAC service fee,-125.00,expense,hvac,grantmain_pm,TMCMG
+2025-05-22,haverhill,Construction mgmt fee - TMCMG,-12.50,expense,construction_markup,grantmain_pm,10%
+2025-05-23,oakfield,Inspection fees,-195.00,expense,inspection,grantmain_pm,Detroit Inspection Group
+2025-05-28,haverhill,Electricity,-8.69,expense,utilities,grantmain_pm,
+2025-05-28,haverhill,Gas,-13.28,expense,utilities,grantmain_pm,
+2025-05-28,haverhill,Construction mgmt fee - Mendy Margolis,-3.50,expense,construction_markup,grantmain_pm,10%
+2025-05-29,haverhill,Plumbing - drain cleaning kitchen stack,-500.00,expense,plumbing,grantmain_pm,Special Delivery INV46024-1-25
+2025-05-29,haverhill,Construction mgmt fee - plumber,-50.00,expense,construction_markup,grantmain_pm,10%
+2025-05-29,haverhill,Landscaping - lawn cutting,-35.00,expense,landscaping,grantmain_pm,Mendy INV3412
+2025-05-31,oakfield,Plumbing - sink in kitchen,-112.45,expense,plumbing,grantmain_pm,WO#44680-1
+2025-05-31,oakfield,Plumbing - bathroom,-130.00,expense,plumbing,grantmain_pm,WO#44681-1
+2025-05-31,oakfield,Management Fee - 05/2025,-100.00,expense,management_fee,grantmain_pm,
+2025-05-31,haverhill,Interior repair - unwinterize for S8,-404.30,expense,maintenance,grantmain_pm,WO#44196-1
+2025-05-31,haverhill,HVAC - remove mechanicals,-328.25,expense,hvac,grantmain_pm,WO#44390-1
+2025-05-31,haverhill,Management Fee - 05/2025,-100.00,expense,management_fee,grantmain_pm,
+2025-05-31,haverhill,Lease-up Fee,-1300.00,expense,leasing_fee,grantmain_pm,
+2025-06-17,haverhill,Insurance - REInsurePro,-93.51,expense,insurance,wise,Monthly premium
+2025-06-04,haverhill,Construction mgmt fee - John Electric,-45.00,expense,construction_markup,grantmain_pm,10%
+2025-06-05,haverhill,Electrical - troubleshoot stove/panel,-450.00,expense,electrical,grantmain_pm,John Electric INV5575
+2025-06-12,haverhill,Rent - move in charge,20.00,revenue,rent,grantmain_pm,
+2025-06-12,haverhill,Plumbing - snaked main drain,-450.00,expense,plumbing,grantmain_pm,24/7 Devoted INV1227
+2025-06-12,haverhill,Construction mgmt fee - plumber,-45.00,expense,construction_markup,grantmain_pm,10%
+2025-06-12,haverhill,Exterior repair - gutter,-175.00,expense,maintenance,grantmain_pm,JHSB INV000180
+2025-06-12,haverhill,Construction mgmt fee - JHSB,-17.50,expense,construction_markup,grantmain_pm,10%
+2025-06-13,oakfield,Construction mgmt fee - LeVasseur 05/31,-26.25,expense,construction_markup,grantmain_pm,10%
+2025-06-13,oakfield,Legal - court hearing,-262.50,expense,legal,grantmain_pm,LeVasseur Dyer
+2025-06-17,oakfield,Maintenance materials,-14.25,expense,maintenance_materials,grantmain_pm,HD Amex 2438
+2025-06-17,haverhill,Turnover materials - weatherstripping/paint/primer,-79.74,expense,turnover_repairs,grantmain_pm,HD Amex 2297
+2025-06-17,haverhill,Turnover materials - toilet fill valve,-14.61,expense,turnover_repairs,grantmain_pm,HD Amex 2297
+2025-06-17,haverhill,Turnover materials - towel/cartridge/wall plate,-88.25,expense,turnover_repairs,grantmain_pm,HD Amex 2297
+2025-06-17,haverhill,Maintenance materials,-9.35,expense,maintenance_materials,grantmain_pm,HD
+2025-06-17,haverhill,Maintenance materials,-29.40,expense,maintenance_materials,grantmain_pm,HD
+2025-06-17,haverhill,Maintenance materials - Great Lakes Ace,-50.85,expense,maintenance_materials,grantmain_pm,
+2025-06-17,haverhill,Maintenance materials markup,-5.09,expense,maintenance_materials,grantmain_pm,10% pending charges
+2025-06-17,haverhill,Maintenance materials markup,-0.94,expense,maintenance_materials,grantmain_pm,10% pending charges
+2025-06-17,haverhill,Maintenance materials markup,-2.94,expense,maintenance_materials,grantmain_pm,10% pending charges
+2025-06-18,oakfield,Rent - April 2025,406.07,revenue,rent,grantmain_pm,
+2025-06-18,oakfield,Appliances - April 2025,25.00,revenue,appliance_fee,grantmain_pm,
+2025-06-18,oakfield,Insurance - May 2025,10.50,revenue,insurance_passthrough,grantmain_pm,
+2025-06-18,oakfield,Admin Fee - May 2025,3.00,revenue,insurance_passthrough,grantmain_pm,
+2025-06-18,oakfield,Rent - May 2025 (partial),105.43,revenue,rent,grantmain_pm,
+2025-06-20,oakfield,Water - chargeback,-101.13,expense,utilities,grantmain_pm,
+2025-06-23,oakfield,Maintenance materials markup,-5.48,expense,maintenance_materials,grantmain_pm,10% on HD $54.78
+2025-06-23,oakfield,Maintenance materials markup,-28.65,expense,maintenance_materials,grantmain_pm,10% on HD $286.49
+2025-06-27,oakfield,Rent - May 2025,700.00,revenue,rent,grantmain_pm,
+2025-06-27,haverhill,Rent - move in charge,80.00,revenue,rent,grantmain_pm,
+2025-06-30,oakfield,Plumbing service call/mileage,-62.56,expense,plumbing,grantmain_pm,WO#45316-1
+2025-06-30,oakfield,Plumbing - 4inch cap on floor drain,-99.45,expense,plumbing,grantmain_pm,WO#45316-3
+2025-06-30,oakfield,Management Fee - 06/2025,-121.15,expense,management_fee,grantmain_pm,
+2025-06-30,oakfield,Insurance Services - 06/2025,-10.50,expense,insurance,grantmain_pm,
+2025-06-30,oakfield,Admin Fee - 06/2025,-3.00,expense,admin_fee,grantmain_pm,
+2025-06-30,haverhill,HVAC - S8 move in install mechanicals,-500.00,expense,hvac,grantmain_pm,WO#45208-1
+2025-06-30,haverhill,Service call - windows,-299.99,expense,maintenance,grantmain_pm,WO#45471-1
+2025-06-30,haverhill,Electrical - thermostat/heat/AC,-119.84,expense,electrical,grantmain_pm,WO#45521-1
+2025-06-30,haverhill,Management Fee - 06/2025,-100.00,expense,management_fee,grantmain_pm,
+2025-07-23,,Wise to Mercury transfer,-1000.00,transfer,internal,wise,To Mercury xx3810
+2025-07-31,oakfield,Insurance - OSC INS SVCS,-850.40,expense,insurance,wise,
+2025-07-02,oakfield,Rent - May 2025 (partial),300.00,revenue,rent,grantmain_pm,
+2025-07-11,haverhill,Rent - move in charge,45.00,revenue,rent,grantmain_pm,
+2025-07-15,oakfield,Maintenance materials - clips/frame kit,-54.78,expense,maintenance_materials,grantmain_pm,HD Amex 3717
+2025-07-15,oakfield,Maintenance materials - plate/detector/gloves,-286.49,expense,maintenance_materials,grantmain_pm,HD Amex 1745
+2025-07-15,oakfield,Construction mgmt fee - LeVasseur 06/30,-8.50,expense,construction_markup,grantmain_pm,10%
+2025-07-31,oakfield,City inspection repairs - exterior,-500.00,expense,maintenance,grantmain_pm,WO#43317-1
+2025-07-31,oakfield,Management Fee - 07/2025,-100.00,expense,management_fee,grantmain_pm,
+2025-07-31,haverhill,Interior repair - shower head/plugs,-144.30,expense,maintenance,grantmain_pm,WO#46000-1
+2025-07-31,haverhill,Exterior repair - foundation cracks/water leak,-57.20,expense,maintenance,grantmain_pm,WO#46319-2
+2025-07-31,haverhill,Management Fee - 07/2025,-100.00,expense,management_fee,grantmain_pm,
+2025-08-13,haverhill,Insurance - REInsurePro,-173.02,expense,insurance,wise,Monthly premium (double month)
+2025-08-06,haverhill,Construction mgmt fee - John Electric,-25.00,expense,construction_markup,grantmain_pm,10%
+2025-08-06,haverhill,Insurance - move in liability,10.50,revenue,insurance_passthrough,grantmain_pm,
+2025-08-06,haverhill,Admin Fee - move in,3.00,revenue,insurance_passthrough,grantmain_pm,
+2025-08-06,haverhill,Insurance - Jun 2025,10.50,revenue,insurance_passthrough,grantmain_pm,
+2025-08-06,haverhill,Admin Fee - Jun 2025,3.00,revenue,insurance_passthrough,grantmain_pm,
+2025-08-06,haverhill,Insurance - Jul 2025,10.50,revenue,insurance_passthrough,grantmain_pm,
+2025-08-06,haverhill,Admin Fee - Jul 2025,2.50,revenue,insurance_passthrough,grantmain_pm,
+2025-08-07,haverhill,Electrical - power outage troubleshoot,-250.00,expense,electrical,grantmain_pm,John Electric INV5615
+2025-08-11,oakfield,Construction mgmt fee - waste disposal,-42.50,expense,construction_markup,grantmain_pm,10% on All Street INV2261
+2025-08-13,haverhill,Registration - CofC fee,-76.00,expense,legal,grantmain_pm,City of Detroit
+2025-08-18,oakfield,Rent - May 2025 (partial),94.57,revenue,rent,grantmain_pm,
+2025-08-18,oakfield,Appliances - May 2025,25.00,revenue,appliance_fee,grantmain_pm,
+2025-08-18,oakfield,Water,87.77,revenue,utility_passthrough,grantmain_pm,
+2025-08-18,oakfield,Admin fee - utility,50.00,revenue,utility_passthrough,grantmain_pm,
+2025-08-18,oakfield,Insurance - Jun 2025,10.50,revenue,insurance_passthrough,grantmain_pm,
+2025-08-18,oakfield,Admin Fee - Jun 2025,3.00,revenue,insurance_passthrough,grantmain_pm,
+2025-08-18,oakfield,Rent - June 2025,1200.00,revenue,rent,grantmain_pm,
+2025-08-18,oakfield,Appliances - June 2025,25.00,revenue,appliance_fee,grantmain_pm,
+2025-08-18,oakfield,Water,101.13,revenue,utility_passthrough,grantmain_pm,
+2025-08-18,oakfield,Admin fee - utility,50.00,revenue,utility_passthrough,grantmain_pm,
+2025-08-18,oakfield,Insurance - Jul 2025,10.50,revenue,insurance_passthrough,grantmain_pm,
+2025-08-18,oakfield,Admin Fee - Jul 2025,3.00,revenue,insurance_passthrough,grantmain_pm,
+2025-08-18,oakfield,Rent - July 2025 (partial),139.53,revenue,rent,grantmain_pm,
+2025-08-18,oakfield,Appliances - July 2025,25.00,revenue,appliance_fee,grantmain_pm,
+2025-08-19,oakfield,Rent - July 2025,900.00,revenue,rent,grantmain_pm,
+2025-08-19,oakfield,Rent - July 2025 (partial),160.47,revenue,rent,grantmain_pm,
+2025-08-19,oakfield,Appliances - July 2025,25.00,revenue,appliance_fee,grantmain_pm,
+2025-08-19,oakfield,Water,44.95,revenue,utility_passthrough,grantmain_pm,
+2025-08-19,oakfield,Insurance - Aug 2025,10.50,revenue,insurance_passthrough,grantmain_pm,
+2025-08-19,oakfield,Admin Fee - Aug 2025,3.00,revenue,insurance_passthrough,grantmain_pm,
+2025-08-19,oakfield,Rent - August 2025,1200.00,revenue,rent,grantmain_pm,
+2025-08-19,oakfield,Appliances - August 2025,25.00,revenue,appliance_fee,grantmain_pm,
+2025-08-20,oakfield,Maintenance materials markup,-8.29,expense,maintenance_materials,grantmain_pm,10% on HD $82.89
+2025-08-29,haverhill,Subsidized Rent - Jun 2025,1300.00,revenue,rent,grantmain_pm,S8 DHC
+2025-08-29,haverhill,Admin Fee - Jul 2025,0.50,revenue,insurance_passthrough,grantmain_pm,
+2025-08-29,haverhill,Subsidized Rent - Jul 2025,1300.00,revenue,rent,grantmain_pm,S8 DHC
+2025-08-29,haverhill,Insurance - Aug 2025,10.50,revenue,insurance_passthrough,grantmain_pm,
+2025-08-29,haverhill,Admin Fee - Aug 2025,3.00,revenue,insurance_passthrough,grantmain_pm,
+2025-08-29,haverhill,Subsidized Rent - Aug 2025,1300.00,revenue,rent,grantmain_pm,S8 DHC
+2025-08-29,haverhill,Subsidized Rent - move in prorated,903.39,revenue,rent,grantmain_pm,
+2025-08-31,oakfield,Management Fee - 08/2025,-369.46,expense,management_fee,grantmain_pm,
+2025-08-31,oakfield,Admin Fee - 08/2025,-109.00,expense,admin_fee,grantmain_pm,
+2025-08-31,oakfield,Insurance Services - 08/2025,-31.50,expense,insurance,grantmain_pm,
+2025-08-31,haverhill,Lock/Key - tenant locked out,-24.70,expense,locks,grantmain_pm,WO#47383-1
+2025-08-31,haverhill,Management Fee - 08/2025,-480.34,expense,management_fee,grantmain_pm,
+2025-08-31,haverhill,Insurance Services - 08/2025,-42.00,expense,insurance,grantmain_pm,
+2025-08-31,haverhill,Admin Fee - 08/2025,-12.00,expense,admin_fee,grantmain_pm,
+2025-07-24,,Wise (US) - Checking xx4991,1000.00,transfer,wise_inbound,mercury,
+2025-07-30,,Corporate Filings LLC,-200.00,expense,legal_filing,mercury,
+2025-09-14,,Owner Contribution,6000.00,owner_contribution,funding,wise,
+2025-09-16,haverhill,Insurance - REInsurePro,-86.51,expense,insurance,wise,Monthly premium
+2025-10-02,,Wise to Mercury transfer,-1000.00,transfer,internal,wise,To Mercury xx3810
+2025-09-10,haverhill,Subsidized Rent - September 2025,1300.00,revenue,rent,grantmain_pm,S8 DHC
+2025-09-11,oakfield,Plumbing - snaked main 90ft,-500.00,expense,plumbing,grantmain_pm,24/7 Devoted Services INV1244
+2025-09-11,oakfield,Construction mgmt fee - plumbing,-50.00,expense,construction_markup,grantmain_pm,10%
+2025-09-17,oakfield,Maintenance materials,-82.89,expense,maintenance_materials,grantmain_pm,HD Amex 3535
+2025-09-17,oakfield,Trash & recycling - 30yd dumpster,-425.00,expense,trash_removal,grantmain_pm,All Street INV2261
+2025-09-29,oakfield,Insurance - liability to landlord,10.50,revenue,insurance_passthrough,grantmain_pm,Sep 2025
+2025-09-29,oakfield,Admin fee - insurance,3.00,revenue,insurance_passthrough,grantmain_pm,Sep 2025
+2025-09-29,oakfield,Rent - September 2025,864.58,revenue,rent,grantmain_pm,
+2025-09-30,oakfield,HVAC/service call - eviction lock change,-189.36,expense,hvac,grantmain_pm,WO#48268-1
+2025-09-30,oakfield,Management Fee - 09/2025,-100.00,expense,management_fee,grantmain_pm,
+2025-09-30,oakfield,Insurance Services - 09/2025,-10.50,expense,insurance,grantmain_pm,
+2025-09-30,oakfield,Admin Fee - 09/2025,-3.00,expense,admin_fee,grantmain_pm,
+2025-09-30,haverhill,Management Fee - 09/2025,-130.00,expense,management_fee,grantmain_pm,
+2025-10-01,,Otm Tax Advisors,-800.00,expense,accounting,mercury,
+2025-10-03,oakfield,Maintenance materials markup,-7.12,expense,maintenance_materials,grantmain_pm,10% on HD $71
+2025-10-03,,Wise (US) - Checking xx4991,1000.00,transfer,wise_inbound,mercury,
+2025-10-15,haverhill,Insurance - REInsurePro,-86.51,expense,insurance,wise,Monthly premium
+2025-10-06,haverhill,Subsidized Rent - October 2025,1300.00,revenue,rent,grantmain_pm,S8 DHC
+2025-10-07,oakfield,Owner Contribution - Inspection SOW,1795.60,owner_contribution,funding,grantmain_pm,
+2025-10-14,,Otm Tax Advisors,-275.00,expense,accounting,mercury,
+2025-10-15,oakfield,Water - chargeback,-144.84,expense,utilities,grantmain_pm,
+2025-10-15,haverhill,Maintenance materials markup,-6.06,expense,maintenance_materials,grantmain_pm,10% on HD $60
+2025-10-16,oakfield,Construction mgmt fee - TMCMG,-50.00,expense,construction_markup,grantmain_pm,10%
+2025-10-16,oakfield,HVAC - replaced gas valve on furnace,-500.00,expense,hvac,grantmain_pm,TMCMG
+2025-10-23,oakfield,Drywall repair,-892.50,expense,maintenance,grantmain_pm,JHSB Housing
+2025-10-24,oakfield,Construction mgmt fee - JHSB,-322.50,expense,construction_markup,grantmain_pm,10%
+2025-10-24,oakfield,Exterior - aluminum trim / gutter / roof,-1612.50,expense,maintenance,grantmain_pm,JHSB Housing
+2025-10-29,oakfield,Rent - September 2025 (partial),335.42,revenue,rent,grantmain_pm,
+2025-10-29,oakfield,Appliances - September 2025,25.00,revenue,appliance_fee,grantmain_pm,
+2025-10-29,oakfield,Insurance - Oct 2025 liability,10.50,revenue,insurance_passthrough,grantmain_pm,
+2025-10-29,oakfield,Admin Fee - Oct 2025,3.00,revenue,insurance_passthrough,grantmain_pm,
+2025-10-29,oakfield,Rent - October 2025,526.08,revenue,rent,grantmain_pm,
+2025-10-31,oakfield,Management Fee - 10/2025,-100.00,expense,management_fee,grantmain_pm,
+2025-10-31,oakfield,Insurance Services - 10/2025,-10.50,expense,insurance,grantmain_pm,
+2025-10-31,oakfield,Admin Fee - 10/2025,-3.00,expense,admin_fee,grantmain_pm,
+2025-10-31,haverhill,Management Fee - 10/2025,-130.00,expense,management_fee,grantmain_pm,
+2025-11-14,haverhill,Insurance - REInsurePro,-86.51,expense,insurance,wise,Monthly premium
+2025-11-02,,Interest payment,1.60,revenue,interest,wise,
+2025-11-04,oakfield,Legal - violation ticket,-305.00,expense,legal,grantmain_pm,Linebarger Goggan
+2025-11-04,oakfield,Construction mgmt fee - legal,-30.50,expense,construction_markup,grantmain_pm,10%
+2025-11-05,oakfield,Maintenance materials markup,-13.43,expense,maintenance_materials,grantmain_pm,10% on HD $134
+2025-11-06,haverhill,Subsidized Rent - S8 Portion,955.00,revenue,rent,grantmain_pm,S8 DHC
+2025-11-06,haverhill,Insurance - Sep 2025,10.50,revenue,insurance_passthrough,grantmain_pm,
+2025-11-06,haverhill,Admin Fee - Sep 2025,3.00,revenue,insurance_passthrough,grantmain_pm,
+2025-11-06,haverhill,Insurance - Oct 2025,10.50,revenue,insurance_passthrough,grantmain_pm,
+2025-11-06,haverhill,Admin Fee - Oct 2025,3.00,revenue,insurance_passthrough,grantmain_pm,
+2025-11-06,haverhill,Insurance - Nov 2025,10.50,revenue,insurance_passthrough,grantmain_pm,
+2025-11-06,haverhill,Admin Fee - Nov 2025,3.00,revenue,insurance_passthrough,grantmain_pm,
+2025-11-06,haverhill,Rent - Nov 2025 tenant portion,235.11,revenue,rent,grantmain_pm,
+2025-11-06,haverhill,Prepaid Rent,69.39,revenue,rent,grantmain_pm,
+2025-11-18,oakfield,Maintenance materials - screw/sealant/molding,-71.21,expense,maintenance_materials,grantmain_pm,HD Amex 3717
+2025-11-18,oakfield,Construction mgmt fee - plumber,-50.00,expense,construction_markup,grantmain_pm,10% on Plumber's Next Door
+2025-11-18,haverhill,Maintenance materials,-60.60,expense,maintenance_materials,grantmain_pm,HD Amex 1257
+2025-11-19,oakfield,Water - chargeback,-260.45,expense,utilities,grantmain_pm,
+2025-11-20,oakfield,Plumbing - snaking main and bathroom stack,-500.00,expense,plumbing,grantmain_pm,Special Delivery LLC
+2025-11-30,oakfield,Rent - October 2025,500.00,revenue,rent,grantmain_pm,ECP
+2025-11-30,oakfield,Management Fee - 11/2025,-100.00,expense,management_fee,grantmain_pm,
+2025-11-30,oakfield,Doors repair,-208.00,expense,maintenance,grantmain_pm,WO#49910-1
+2025-11-30,haverhill,Management Fee - 11/2025,-125.95,expense,management_fee,grantmain_pm,
+2025-11-30,haverhill,Insurance Services - 11/2025,-31.50,expense,insurance,grantmain_pm,
+2025-11-30,haverhill,Admin Fee - 11/2025,-9.00,expense,admin_fee,grantmain_pm,
+2025-11-30,haverhill,Exterior repairs - door knob/tile/caulk/weatherstrip,-347.75,expense,maintenance,grantmain_pm,WO#49398-1
+2025-11-30,,Corporate Filings LLC,-125.00,expense,legal_filing,mercury,
+2025-12-01,,Interest payment,15.46,revenue,interest,wise,
+2025-12-16,haverhill,Insurance - REInsurePro,-86.51,expense,insurance,wise,Monthly premium
+2025-12-26,,Owner Contribution,15000.00,owner_contribution,funding,wise,
+2025-12-08,haverhill,Subsidized Rent - S8 Portion,955.00,revenue,rent,grantmain_pm,S8 DHC
+2025-12-12,haverhill,Rent - Nov 2025 tenant portion,109.89,revenue,rent,grantmain_pm,
+2025-12-12,haverhill,Insurance - Dec 2025,10.50,revenue,insurance_passthrough,grantmain_pm,
+2025-12-12,haverhill,Admin Fee - Dec 2025,3.00,revenue,insurance_passthrough,grantmain_pm,
+2025-12-12,haverhill,Rent - Dec 2025 tenant portion,145.00,revenue,rent,grantmain_pm,
+2025-12-16,oakfield,Maintenance materials - smoke detector/door knob,-134.25,expense,maintenance_materials,grantmain_pm,HD Amex 3717
+2025-12-22,oakfield,Owner Contribution - final draw for SOW,1700.00,owner_contribution,funding,grantmain_pm,
+2025-12-26,oakfield,Owner Contribution - summer and winter tax,3000.00,owner_contribution,funding,grantmain_pm,
+2025-12-26,oakfield,Property Taxes - Winter 2025,-259.21,expense,property_tax,grantmain_pm,
+2025-12-26,oakfield,Property Taxes - Summer 2025,-2519.27,expense,property_tax,grantmain_pm,
+2025-12-26,haverhill,Owner Contribution - summer and winter tax,3000.00,owner_contribution,funding,grantmain_pm,
+2025-12-26,haverhill,Property Taxes - Winter 2025,-278.33,expense,property_tax,grantmain_pm,
+2025-12-26,haverhill,Property Taxes - Summer 2025,-2683.76,expense,property_tax,grantmain_pm,
+2025-12-29,oakfield,Rent - October 2025,173.92,revenue,rent,grantmain_pm,
+2025-12-29,oakfield,Appliances - October 2025,25.00,revenue,appliance_fee,grantmain_pm,
+2025-12-29,oakfield,Water charges,-1.08,expense,utilities,grantmain_pm,
+2025-12-31,oakfield,Management Fee - 12/2025,-100.00,expense,management_fee,grantmain_pm,
+2025-12-31,haverhill,Doors repair - bathroom door knob,-37.05,expense,maintenance,grantmain_pm,WO#50557-1
+2025-12-31,haverhill,Doors/service call - broken house door,-72.29,expense,maintenance,grantmain_pm,WO#51281-1
+2025-12-31,haverhill,Management Fee - 12/2025,-120.99,expense,management_fee,grantmain_pm,
+2025-12-31,haverhill,Insurance Services - 12/2025,-10.50,expense,insurance,grantmain_pm,
+2025-12-31,haverhill,Admin Fee - 12/2025,-3.00,expense,admin_fee,grantmain_pm,
+2026-01-08,oakfield,Trash & recycling - dumpster (from Oct work),-375.00,expense,trash_removal,grantmain_pm,Roc Dumpster WO#49730-1
+2026-01-08,oakfield,Exterior repairs - aluminum trim (from Oct work),-1237.50,expense,maintenance,grantmain_pm,Roc Dumpster WO#49730-1
+2026-01-08,haverhill,Subsidized Rent - S8 Portion,955.00,revenue,rent,grantmain_pm,S8 DHC
+2026-01-08,haverhill,Rent - Dec 2025 tenant portion,190.00,revenue,rent,grantmain_pm,
+2026-01-21,oakfield,Water - chargeback,-146.01,expense,utilities,grantmain_pm,
+2026-01-22,haverhill,Rent - Dec 2025 tenant portion,10.00,revenue,rent,grantmain_pm,
+2026-01-22,haverhill,Rent - Jan 2026 tenant portion,160.00,revenue,rent,grantmain_pm,
+2026-01-28,oakfield,Maintenance materials markup,-0.14,expense,maintenance_materials,grantmain_pm,10% on HD $1.42
+2026-01-31,oakfield,Management Fee - 01/2026,-100.00,expense,management_fee,grantmain_pm,
+2026-01-31,haverhill,Management Fee - 01/2026,-131.50,expense,management_fee,grantmain_pm,
+2026-02-05,haverhill,Rent - Jan 2026 tenant portion,12.00,revenue,rent,grantmain_pm,
+2026-02-05,haverhill,Rent - Feb 2026 tenant portion,166.00,revenue,rent,grantmain_pm,
+2026-02-05,haverhill,Rent - Feb 2026 tenant portion,179.00,revenue,rent,grantmain_pm,
+2026-02-09,haverhill,Subsidized Rent - S8 Portion,955.00,revenue,rent,grantmain_pm,S8 DHC
+2026-02-19,oakfield,Legal - eviction attorney,-310.00,expense,legal,grantmain_pm,LeVasseur Dyer & Associates
+2026-02-23,oakfield,Construction mgmt fee - legal,-31.00,expense,construction_markup,grantmain_pm,10%
+2026-02-28,oakfield,Management Fee - 02/2026,-100.00,expense,management_fee,grantmain_pm,
+2026-02-28,haverhill,Management Fee - 02/2026,-131.20,expense,management_fee,grantmain_pm,
+2026-02-28,,Corporate Filings LLC,-15.00,expense,legal_filing,mercury,
+2026-02-28,,Corporate Filings LLC,-15.00,expense,legal_filing,mercury,
+2026-03-10,,Relay Financial,-570.00,transfer,relay_outbound,mercury,

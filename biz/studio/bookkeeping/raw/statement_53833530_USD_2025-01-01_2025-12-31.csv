@@ -1,0 +1,32 @@
+"TransferWise ID",Date,"Date Time",Amount,Currency,Description,"Payment Reference","Running Balance","Exchange From","Exchange To","Exchange Rate","Payer Name","Payee Name","Payee Account Number",Merchant,"Card Last Four Digits","Card Holder Full Name",Attachment,Note,"Total fees","Exchange To Amount","Transaction Type","Transaction Details Type"
+TRANSFER-1894917637,30-12-2025,"30-12-2025 15:36:45.954",10000.00,USD,"Received money from Deel, Inc. with reference Hookdeck T","Hookdeck T",10742.01,,,,"Deel, Inc.",,,,,,,,0.00,,CREDIT,DEPOSIT
+TRANSFER-1889664094,26-12-2025,"26-12-2025 23:05:40.567",-20000.00,USD,"Sent money to Anh Luong",,742.01,,,,,"Anh Luong",21780078,,,,,,0.00,,DEBIT,TRANSFER
+TRANSFER-1851895485,03-12-2025,"03-12-2025 23:15:55.688",-5000.00,USD,"Sent money to Anh Luong",,20742.01,,,,,"Anh Luong",21780078,,,,,,0.00,,DEBIT,TRANSFER
+"BALANCE_INTEREST-6902ce17-d286-4660-030e-290e1a1ba04c",01-12-2025,"01-12-2025 21:26:39.779",40.42,USD,"Interest payment",,25742.01,,,,,,,,,,,,0.00,,CREDIT,BALANCE_INTEREST
+TRANSFER-1847291982,01-12-2025,"01-12-2025 20:16:09.630",10000.00,USD,"Received money from Deel, Inc. with reference Hookdeck T","Hookdeck T",25701.59,,,,"Deel, Inc.",,,,,,,,0.00,,CREDIT,DEPOSIT
+"BALANCE_INTEREST-6684360c-5010-49e4-0fbc-69b2524fb56a",02-11-2025,"02-11-2025 10:00:48.340",1.13,USD,"Interest payment",,15701.59,,,,,,,,,,,,0.00,,CREDIT,BALANCE_INTEREST
+TRANSFER-1797015405,01-11-2025,"01-11-2025 00:00:42.205",15328.13,USD,"Received money from Deel, Inc. with reference Hookdeck T","Hookdeck T",15700.46,,,,"Deel, Inc.",,,,,,,,0.00,,CREDIT,DEPOSIT
+"BALANCE_INTEREST-641ad6e1-bb0c-47fe-9e02-8fbbbdd89fd6",01-10-2025,"01-10-2025 20:18:45.020",2.94,USD,"Interest payment",,372.33,,,,,,,,,,,,0.00,,CREDIT,BALANCE_INTEREST
+TRANSFER-1721190021,14-09-2025,"14-09-2025 09:50:45.474",-5000.00,USD,"Sent money to Anh Luong",,369.39,,,,,"Anh Luong",21780078,,,,,,0.00,,DEBIT,TRANSFER
+TRANSFER-1721189456,14-09-2025,"14-09-2025 09:49:39.681",3776.04,USD,"Received money from Deel, Inc. with reference Hookdeck T","Hookdeck T",5369.39,,,,"Deel, Inc.",,,,,,,,0.00,,CREDIT,DEPOSIT
+"BALANCE_INTEREST-619c431e-a9b3-46ed-fe05-e278b0f5d831",02-09-2025,"02-09-2025 01:12:59.383",14.12,USD,"Interest payment",,1593.35,,,,,,,,,,,,0.00,,CREDIT,BALANCE_INTEREST
+TRANSFER-1677473102,16-08-2025,"16-08-2025 23:54:07.929",-5000.00,USD,"Sent money to Anh Luong",,1579.23,,,,,"Anh Luong",21780078,,,,,,0.00,,DEBIT,TRANSFER
+"BALANCE_INTEREST-5f1da67b-9a27-4b93-d8db-74f46c6977c9",01-08-2025,"01-08-2025 20:11:47.302",21.44,USD,"Interest payment",,6579.23,,,,,,,,,,,,0.00,,CREDIT,BALANCE_INTEREST
+"BALANCE_INTEREST-5cb3b310-eee2-44f6-7cdf-039a2ea5a1d3",01-07-2025,"01-07-2025 20:08:17.237",20.41,USD,"Interest payment",,6557.79,,,,,,,,,,,,0.00,,CREDIT,BALANCE_INTEREST
+"BALANCE_INTEREST-5a351f0e-4b1e-4bed-35a8-98fe2f769c5c",01-06-2025,"01-06-2025 20:10:07.665",11.16,USD,"Interest payment",,6537.38,,,,,,,,,,,,0.00,,CREDIT,BALANCE_INTEREST
+TRANSFER-1563000777,31-05-2025,"31-05-2025 20:53:50.091",2582.29,USD,"Received money from Deel, Inc. with reference Hookdeck T","Hookdeck T",6526.22,,,,"Deel, Inc.",,,,,,,,0.00,,CREDIT,DEPOSIT
+TRANSFER-1536588482,12-05-2025,"12-05-2025 23:58:40.082",-5000.00,USD,"Sent money to Anh Luong","Sent via Wise",3943.93,,,,,"Anh Luong",21780078,,,,,,0.00,,DEBIT,TRANSFER
+TRANSFER-1536486039,12-05-2025,"12-05-2025 22:44:01.362",6375.00,USD,"Received money from Deel, Inc. with reference Hookdeck T","Hookdeck T",8943.93,,,,"Deel, Inc.",,,,,,,,0.00,,CREDIT,DEPOSIT
+"BALANCE_INTEREST-57cb2385-5253-430d-7a94-4234f5a3e87b",01-05-2025,"01-05-2025 20:09:48.991",5.10,USD,"Interest payment",,2568.93,,,,,,,,,,,,0.00,,CREDIT,BALANCE_INTEREST
+TRANSFER-1498648687,15-04-2025,"15-04-2025 13:56:13.388",-5000.00,USD,"Sent money to Anh Luong","Sent via Wise",2563.83,,,,,"Anh Luong",21780078,,,,,,0.00,,DEBIT,TRANSFER
+TRANSFER-1498643841,15-04-2025,"15-04-2025 13:52:58.288",7078.13,USD,"Received money from Deel, Inc. with reference Hookdeck T","Hookdeck T",7563.83,,,,"Deel, Inc.",,,,,,,,0.00,,CREDIT,DEPOSIT
+TRANSFER-1494975203,12-04-2025,"12-04-2025 10:54:05.566",-200.00,USD,"Sent money to Tony Jhang",,485.70,,,,,"Tony Jhang",20247349,,,,,,0.00,,DEBIT,TRANSFER
+"BALANCE_INTEREST-554d6303-d8f6-4f3a-a72b-3dbd82801756",01-04-2025,"01-04-2025 20:08:35.717",22.34,USD,"Interest payment",,685.70,,,,,,,,,,,,0.00,,CREDIT,BALANCE_INTEREST
+TRANSFER-1467678091,24-03-2025,"24-03-2025 23:33:55.134",-10000.00,USD,"Sent money to Collie Studio LLC (fee: 1.13 USD)",,663.36,,,,,"Collie Studio LLC","9*******95",,,,,,1.13,,DEBIT,TRANSFER
+FEE-TRANSFER-1467678091,24-03-2025,"24-03-2025 23:33:55.133",-1.13,USD,"Wise Charges for: TRANSFER-1467678091",,10663.36,,,,,Wise,,,,,,,0,,DEBIT,TRANSFER
+TRANSFER-1442944273,05-03-2025,"05-03-2025 23:46:00.131",7755.21,USD,"Received money from Deel, Inc. with reference Hookdeck T","Hookdeck T",10664.49,,,,"Deel, Inc.",,,,,,,,0.00,,CREDIT,DEPOSIT
+"BALANCE_INTEREST-530c9f37-1595-4d80-4d69-738ac7faa5a6",01-03-2025,"01-03-2025 21:11:21.166",7.78,USD,"Interest payment",,2909.28,,,,,,,,,,,,0.00,,CREDIT,BALANCE_INTEREST
+TRANSFER-1401486893,03-02-2025,"03-02-2025 22:19:25.569",-5000.00,USD,"Sent money to Anh Luong",,2901.50,,,,,"Anh Luong",21780078,,,,,,0.00,,DEBIT,TRANSFER
+TRANSFER-1401468367,03-02-2025,"03-02-2025 22:08:18.401",7505.21,USD,"Received money from Deel, Inc. with reference Hookdeck T","Hookdeck T",7901.50,,,,"Deel, Inc.",,,,,,,,0.00,,CREDIT,DEPOSIT
+"BALANCE_INTEREST-508e10b9-591e-47a9-fe5f-5b2e21e35a63",02-02-2025,"02-02-2025 00:10:29.279",1.29,USD,"Interest payment",,396.29,,,,,,,,,,,,0.00,,CREDIT,BALANCE_INTEREST
+"BALANCE_INTEREST-4e0f726d-1839-404d-8cc8-80ab6eb3a3dd",01-01-2025,"01-01-2025 21:08:33.387",1.71,USD,"Interest payment",,395.00,,,,,,,,,,,,0.00,,CREDIT,BALANCE_INTEREST

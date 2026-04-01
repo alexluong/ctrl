@@ -1,0 +1,508 @@
+Date (UTC),Description,Amount,Status,Source Account,Bank Description,Reference,Note,Last Four Digits,Name On Card,Mercury Category,Category,GL Code,Timestamp,Original Currency,Check Number,Tags,Cardholder Email,Tracking ID
+04-01-2026,Google Workspace,-10.80,Failed,Mercury Checking xx7792,GOOGLE*WORKSPACE ALEXL,,,3770,Anh Luong,Software,,,04-01-2026 14:06:20,USD,,,alex@alexluong.com,
+04-01-2026,Vultr,-7.20,Failed,Mercury Checking xx7792,VULTR BY CONSTANT,,,3770,Anh Luong,Software,,,04-01-2026 13:59:35,USD,,,alex@alexluong.com,
+04-01-2026,Google Workspace,-10.80,Failed,Mercury Checking xx7792,GOOGLE *Workspace_alex,,,3770,Anh Luong,Software,,,04-01-2026 13:11:17,USD,,,alex@alexluong.com,
+04-01-2026,Google Workspace,-10.80,Failed,Mercury Checking xx7792,Google Workspace_alexl,,,3770,Anh Luong,Software,,,04-01-2026 13:06:11,USD,,,alex@alexluong.com,
+03-31-2026,Collie Studio LLC,-140.12,Cancelled,Welcome to Column N.A. (Mercury Checking xx2193),Send Money transaction initiated on Mercury,Account closure,,,,,,,03-31-2026 16:01:04,,,,,1001
+03-31-2026,Mercury Checking xx7792,140.12,Sent,Welcome to Column N.A. (Mercury Checking xx2193),Transfer between your Mercury accounts,,Transfer to consolidate accounts,,,,,,03-31-2026 15:59:51,,,,,
+03-31-2026,Welcome to Column N.A. (Mercury Checking xx2193),-140.12,Sent,Mercury Checking xx7792,Transfer between your Mercury accounts,,Transfer to consolidate accounts,,,,,,03-31-2026 15:59:51,,,,,
+03-29-2026,Cloudflare,-41.66,Failed,Mercury Checking xx7792,CLOUDFLARE,,,3770,Anh Luong,Software,,,03-29-2026 04:09:04,USD,,,alex@alexluong.com,
+03-11-2026,Anthropic,-100.00,Sent,Mercury Checking xx7792,CLAUDE.AI SUBSCRIPTION,,,3770,Anh Luong,Software,Software & Subscriptions,,03-11-2026 12:06:13,USD,,,alex@alexluong.com,
+03-05-2026,Cloudflare,-5.00,Sent,Mercury Checking xx7792,CLOUDFLARE,,,3770,Anh Luong,Software,Software & Subscriptions,,03-05-2026 13:29:13,USD,,,alex@alexluong.com,
+03-05-2026,Vultr,-7.20,Sent,Mercury Checking xx7792,VULTR BY CONSTANT,,,3770,Anh Luong,Software,Software & Subscriptions,,03-05-2026 07:59:12,USD,,,alex@alexluong.com,
+03-04-2026,Wise US Inc.,-75006.11,Sent,Mercury Checking xx7792,Send Money transaction initiated on Mercury,From Collie Studio LLC via mercury.com,,,,,,,03-04-2026 18:06:01,,,,,20260304MMQFMP2U009646
+03-04-2026,Google Workspace,-10.80,Sent,Mercury Checking xx7792,Google Workspace_alexl,,,3770,Anh Luong,Software,Software & Subscriptions,,03-04-2026 02:16:05,USD,,,alex@alexluong.com,
+03-03-2026,"WISE US, INC.",75269.23,Sent,Mercury Checking xx7792,,Other; /BNF/OUR REFJPM260303-013424 RTN YRFED IMAD0227MMQFMP2U007617 DTD 02 /27/2026 FOR USD75269.23 AS SENDE R NOT RECOGNIZED 1759938406; Return of wire_3AGBhp3jRtO4Lhy3tzDDvRIfynH,,,,,Revenue,,03-03-2026 18:40:44,,,,,20260303MMQFMP2L023891
+03-03-2026,Google Workspace,-10.80,Failed,Mercury Checking xx7792,GOOGLE *Workspace_alex,,,3770,Anh Luong,Software,,,03-03-2026 13:44:22,USD,,,alex@alexluong.com,
+03-03-2026,Google Workspace,-10.80,Failed,Mercury Checking xx7792,GOOGLE *Workspace_alex,,,3770,Anh Luong,Software,,,03-03-2026 07:43:55,USD,,,alex@alexluong.com,
+03-03-2026,Google Workspace,-10.80,Failed,Mercury Checking xx7792,GOOGLE *Workspace_alex,,,3770,Anh Luong,Software,,,03-03-2026 01:14:37,USD,,,alex@alexluong.com,
+03-02-2026,Google Workspace,-10.80,Failed,Mercury Checking xx7792,GOOGLE *Workspace_alex,,,3770,Anh Luong,Software,,,03-02-2026 19:14:35,USD,,,alex@alexluong.com,
+03-02-2026,Google Workspace,-10.80,Failed,Mercury Checking xx7792,Google Workspace_alexl,,,3770,Anh Luong,Software,,,03-02-2026 13:14:04,USD,,,alex@alexluong.com,
+03-02-2026,Google Workspace,-10.80,Failed,Mercury Checking xx7792,GOOGLE*WORKSPACE ALEXL,,,3770,Anh Luong,Software,,,03-02-2026 13:12:34,USD,,,alex@alexluong.com,
+03-02-2026,Google Workspace,-10.80,Failed,Mercury Checking xx7792,Google Workspace_alexl,,,3770,Anh Luong,Software,,,03-02-2026 07:12:29,USD,,,alex@alexluong.com,
+03-02-2026,Google Workspace,-10.80,Failed,Mercury Checking xx7792,Google Workspace_alexl,,,3770,Anh Luong,Software,,,03-02-2026 01:12:06,USD,,,alex@alexluong.com,
+03-01-2026,Google Workspace,-10.80,Failed,Mercury Checking xx7792,Google Workspace_alexl,,,3770,Anh Luong,Software,,,03-01-2026 19:11:58,USD,,,alex@alexluong.com,
+03-01-2026,Google Workspace,-10.80,Failed,Mercury Checking xx7792,GOOGLE *Workspace_alex,,,3770,Anh Luong,Software,,,03-01-2026 16:08:38,USD,,,alex@alexluong.com,
+03-01-2026,Vultr,-7.20,Failed,Mercury Checking xx7792,VULTR BY CONSTANT,,,3770,Anh Luong,Software,,,03-01-2026 15:15:37,USD,,,alex@alexluong.com,
+03-01-2026,Google Workspace,-10.80,Failed,Mercury Checking xx7792,GOOGLE *Workspace_alex,,,3770,Anh Luong,Software,,,03-01-2026 14:08:34,USD,,,alex@alexluong.com,
+03-01-2026,Google Workspace,-10.80,Failed,Mercury Checking xx7792,GOOGLE *Workspace_alex,,,3770,Anh Luong,Software,,,03-01-2026 13:12:36,USD,,,alex@alexluong.com,
+03-01-2026,Google Workspace,-10.80,Failed,Mercury Checking xx7792,Google Workspace_alexl,,,3770,Anh Luong,Software,,,03-01-2026 13:07:01,USD,,,alex@alexluong.com,
+03-01-2026,Cloudflare,-5.00,Failed,Mercury Checking xx7792,CLOUDFLARE,,,3770,Anh Luong,Software,,,03-01-2026 10:55:33,USD,,,alex@alexluong.com,
+02-27-2026,Wise US Inc.,-75269.23,Sent,Mercury Checking xx7792,Send Money transaction initiated on Mercury,From Collie Studio LLC via mercury.com,,,,,,,02-27-2026 16:19:52,,,,,20260227MMQFMP2U007617
+02-26-2026,ENABLE TECH LLC,6000.00,Sent,Mercury Checking xx7792,,FEB 2026 SAL,,,,,Revenue,,02-26-2026 13:58:57,,,,,20260226B1Q8154C523696
+02-18-2026,ENABLE TECH LLC,17000.00,Sent,Mercury Checking xx7792,,DEC 25 JAN 26 SAL,,,,,,,02-18-2026 11:58:06,,,,,20260218B1Q9282C002277
+02-17-2026,ENABLE TECH LLC,17000.00,Sent,Mercury Checking xx7792,,OCT NOV 2025 SAL,,,,,Revenue,,02-17-2026 02:18:55,,,,,20260217B1Q9282C001884
+02-11-2026,Anthropic,-100.00,Sent,Mercury Checking xx7792,CLAUDE.AI SUBSCRIPTION,,,3770,Anh Luong,Software,Software & Subscriptions,,02-11-2026 12:56:14,USD,,,alex@alexluong.com,
+02-09-2026,Microsoft,-3.69,Sent,Mercury Checking xx7792,MICROSOFT#G140399996,,,3770,Anh Luong,Software,Software & Subscriptions,,02-09-2026 15:07:09,USD,,,alex@alexluong.com,
+02-02-2026,Vultr,-7.20,Sent,Mercury Checking xx7792,VULTR BY CONSTANT,,,3770,Anh Luong,Software,Software & Subscriptions,,02-02-2026 07:52:08,USD,,,alex@alexluong.com,
+02-02-2026,Cloudflare,-5.00,Sent,Mercury Checking xx7792,CLOUDFLARE,,,3770,Anh Luong,Software,Software & Subscriptions,,02-02-2026 02:54:09,USD,,,alex@alexluong.com,
+02-02-2026,Google Workspace,-10.80,Sent,Mercury Checking xx7792,Google Workspace_alexl,,,3770,Anh Luong,Software,Software & Subscriptions,,02-02-2026 02:19:22,USD,,,alex@alexluong.com,
+01-31-2026,OVHcloud,-7.70,Sent,Mercury Checking xx7792,OVHcloud,,,3770,Anh Luong,Software,Software & Subscriptions,,01-31-2026 02:17:09,USD,,,alex@alexluong.com,
+01-12-2026,Anthropic,-200.00,Sent,Mercury Checking xx7792,CLAUDE.AI SUBSCRIPTION,,,3770,Anh Luong,Software,,,01-12-2026 02:11:08,USD,,,alex@alexluong.com,
+01-11-2026,Cursor,-20.00,Sent,Mercury Checking xx7792,"CURSOR, AI POWERED IDE",,,3770,Anh Luong,Software,Software & Subscriptions,,01-11-2026 13:01:10,USD,,,alex@alexluong.com,
+01-05-2026,Jump Desktop,-37.09,Sent,Mercury Checking xx7792,FS *JUMP DESKTOP,,,3770,Anh Luong,Software,Software & Subscriptions,,01-05-2026 04:07:07,USD,,,alex@alexluong.com,
+01-02-2026,Vultr,-7.20,Sent,Mercury Checking xx7792,VULTR BY CONSTANT,,,3770,Anh Luong,Software,Software & Subscriptions,,01-02-2026 07:30:21,USD,,,alex@alexluong.com,
+01-02-2026,Google Workspace,-10.80,Sent,Mercury Checking xx7792,Google Workspace_alexl,,,3770,Anh Luong,Software,Software & Subscriptions,,01-02-2026 02:11:14,USD,,,alex@alexluong.com,
+01-01-2026,Cloudflare,-5.00,Sent,Mercury Checking xx7792,CLOUDFLARE,,,3770,Anh Luong,Software,Software & Subscriptions,,01-01-2026 15:16:06,USD,,,alex@alexluong.com,
+12-16-2025,GENESIS TAX 121,2800.00,Sent,Mercury Checking xx7792,GENESIS TAX 121; MERCURYACH; Collie Studio LLC,From Genesis Tax 121 LLC via mercury.com,,,,,Revenue,,12-16-2025 22:10:04,,,,,091311220020316
+12-12-2025,"ngrok, Inc",-10.00,Sent,Mercury Checking xx7792,NGROK INC.,,,3770,Anh Luong,Software,Software & Subscriptions,,12-12-2025 15:15:46,USD,,,alex@alexluong.com,
+12-11-2025,Cursor,-20.00,Sent,Mercury Checking xx7792,"CURSOR, AI POWERED IDE",,,3770,Anh Luong,Software,Software & Subscriptions,,12-11-2025 13:26:03,USD,,,alex@alexluong.com,
+12-11-2025,Anthropic,-200.00,Sent,Mercury Checking xx7792,CLAUDE.AI SUBSCRIPTION,,,3770,Anh Luong,Software,,,12-11-2025 13:13:10,USD,,,alex@alexluong.com,
+12-07-2025,Porkbun,-46.65,Sent,Mercury Checking xx7792,PORKBUN.COM,,,3770,Anh Luong,Software,Software & Subscriptions,,12-07-2025 02:32:11,USD,,,alex@alexluong.com,
+12-03-2025,EBUTLER QFC LLC,8500.00,Sent,Mercury Checking xx7792,,/RFB/Compensation of employees (short term) Sep 25 Salary,,,,,,,12-03-2025 08:22:39,,,,,20251203MMQFMPYZ013477
+12-02-2025,Vultr,-7.20,Sent,Mercury Checking xx7792,VULTR BY CONSTANT,,,3770,Anh Luong,Software,Software & Subscriptions,,12-02-2025 07:57:09,USD,,,alex@alexluong.com,
+12-02-2025,Google Workspace,-10.80,Sent,Mercury Checking xx7792,Google GSUITE_alexluon,,,3770,Anh Luong,Software,Software & Subscriptions,,12-02-2025 02:50:03,USD,,,alex@alexluong.com,
+12-01-2025,Cloudflare,-5.00,Sent,Mercury Checking xx7792,CLOUDFLARE,,,3770,Anh Luong,Software,Software & Subscriptions,,12-01-2025 15:19:58,USD,,,alex@alexluong.com,
+11-12-2025,"ngrok, Inc",-10.00,Sent,Mercury Checking xx7792,NGROK INC.,,,3770,Anh Luong,Software,Software & Subscriptions,,11-12-2025 15:16:06,USD,,,alex@alexluong.com,
+11-12-2025,Anthropic,-200.00,Sent,Mercury Checking xx7792,CLAUDE.AI SUBSCRIPTION,,,3770,Anh Luong,Software,,,11-12-2025 02:27:06,USD,,,alex@alexluong.com,
+11-11-2025,Cursor,-20.00,Sent,Mercury Checking xx7792,"CURSOR, AI POWERED IDE",,,3770,Anh Luong,Software,Software & Subscriptions,,11-11-2025 13:07:09,USD,,,alex@alexluong.com,
+11-02-2025,Vultr,-7.20,Sent,Mercury Checking xx7792,VULTR BY CONSTANT,,,3770,Anh Luong,ProfessionalServices,Software & Subscriptions,,11-02-2025 09:29:07,USD,,,alex@alexluong.com,
+11-02-2025,Cloudflare,-5.00,Sent,Mercury Checking xx7792,CLOUDFLARE,,,3770,Anh Luong,Software,Software & Subscriptions,,11-02-2025 01:36:06,USD,,,alex@alexluong.com,
+11-02-2025,Google Workspace,-10.80,Sent,Mercury Checking xx7792,Google GSUITE_alexluon,,,3770,Anh Luong,Software,Software & Subscriptions,,11-02-2025 01:23:08,USD,,,alex@alexluong.com,
+10-22-2025,Porkbun,-11.08,Sent,Mercury Checking xx7792,PORKBUN.COM,,,3770,Anh Luong,Software,Software & Subscriptions,,10-22-2025 09:50:08,USD,,,alex@alexluong.com,
+10-17-2025,GENESIS TAX 121,3500.00,Sent,Mercury Checking xx7792,GENESIS TAX 121; MERCURYACH; Collie Studio LLC,From Genesis Tax 121 LLC via mercury.com,,,,,Revenue,,10-17-2025 17:10:11,,,,,091311220006501
+10-14-2025,Microsoft,-0.07,Sent,Mercury Checking xx7792,MICROSOFT#G117196026,,,3770,Anh Luong,Software,Software & Subscriptions,,10-14-2025 14:31:09,USD,,,alex@alexluong.com,
+10-13-2025,"ngrok, Inc",-10.00,Sent,Mercury Checking xx7792,NGROK INC.,,,3770,Anh Luong,Software,Software & Subscriptions,,10-13-2025 01:27:12,USD,,,alex@alexluong.com,
+10-12-2025,Anthropic,-200.00,Sent,Mercury Checking xx7792,CLAUDE.AI SUBSCRIPTION,,,3770,Anh Luong,Software,,,10-12-2025 01:17:16,USD,,,alex@alexluong.com,
+10-11-2025,Cursor,-20.00,Sent,Mercury Checking xx7792,"CURSOR, AI POWERED IDE",,,3770,Anh Luong,Software,Software & Subscriptions,,10-11-2025 12:36:06,USD,,,alex@alexluong.com,
+10-02-2025,Vultr,-7.20,Sent,Mercury Checking xx7792,VULTR BY CONSTANT,,,3770,Anh Luong,ProfessionalServices,Software & Subscriptions,,10-02-2025 07:13:10,USD,,,alex@alexluong.com,
+10-02-2025,Google Workspace,-10.80,Sent,Mercury Checking xx7792,Google GSUITE_alexluon,,,3770,Anh Luong,Software,Software & Subscriptions,,10-02-2025 01:44:05,USD,,,alex@alexluong.com,
+10-01-2025,Cloudflare,-5.00,Sent,Mercury Checking xx7792,CLOUDFLARE,,,3770,Anh Luong,Software,Software & Subscriptions,,10-01-2025 15:00:30,USD,,,alex@alexluong.com,
+09-17-2025,EBUTLER QFC LLC,8000.00,Sent,Mercury Checking xx7792,,/RFB/COMPENSATION OF EMPLOYEES (SHORT TERM) JULY AND AUG 25 SALARY,,,,,,,09-17-2025 04:56:20,,,,,20250917B1Q8021C001752
+09-13-2025,"ngrok, Inc",-10.00,Sent,Mercury Checking xx7792,NGROK INC.,,,3770,Anh Luong,Software,Software & Subscriptions,,09-13-2025 01:10:25,USD,,,alex@alexluong.com,
+09-11-2025,Cursor,-20.00,Sent,Mercury Checking xx7792,"CURSOR, AI POWERED IDE",,,3770,Anh Luong,Software,Software & Subscriptions,,09-11-2025 12:36:10,USD,,,alex@alexluong.com,
+09-11-2025,Anthropic,-200.00,Sent,Mercury Checking xx7792,CLAUDE.AI SUBSCRIPTION,,,3770,Anh Luong,Software,,,09-11-2025 12:32:19,USD,,,alex@alexluong.com,
+09-02-2025,Vultr,-7.20,Sent,Mercury Checking xx7792,VULTR BY CONSTANT,,,3770,Anh Luong,ProfessionalServices,Software & Subscriptions,,09-02-2025 07:31:15,USD,,,alex@alexluong.com,
+09-02-2025,Cloudflare,-5.00,Sent,Mercury Checking xx7792,CLOUDFLARE,,,3770,Anh Luong,Software,Software & Subscriptions,,09-02-2025 01:57:12,USD,,,alex@alexluong.com,
+09-02-2025,Google Workspace,-10.80,Sent,Mercury Checking xx7792,Google GSUITE_alexluon,,,3770,Anh Luong,Software,Software & Subscriptions,,09-02-2025 01:44:08,USD,,,alex@alexluong.com,
+08-13-2025,"ngrok, Inc",-10.00,Sent,Mercury Checking xx7792,NGROK INC.,,,3770,Anh Luong,Software,Software & Subscriptions,,08-13-2025 01:31:06,USD,,,alex@alexluong.com,
+08-11-2025,Cursor,-20.00,Sent,Mercury Checking xx7792,"CURSOR, AI POWERED IDE",,,3770,Anh Luong,Software,Software & Subscriptions,,08-11-2025 12:11:06,USD,,,alex@alexluong.com,
+08-11-2025,Anthropic,-200.00,Sent,Mercury Checking xx7792,CLAUDE.AI SUBSCRIPTION,,,3770,Anh Luong,Software,,,08-11-2025 11:46:02,USD,,,alex@alexluong.com,
+08-03-2025,Vultr,-7.20,Sent,Mercury Checking xx7792,VULTR BY CONSTANT,,,3770,Anh Luong,ProfessionalServices,Software & Subscriptions,,08-03-2025 08:41:06,USD,,,alex@alexluong.com,
+08-02-2025,Google Workspace,-10.48,Sent,Mercury Checking xx7792,Google GSUITE_alexluon,,,3770,Anh Luong,Software,Software & Subscriptions,,08-02-2025 02:36:07,USD,,,alex@alexluong.com,
+08-01-2025,Cloudflare,-5.00,Sent,Mercury Checking xx7792,CLOUDFLARE,,,3770,Anh Luong,Software,Software & Subscriptions,,08-01-2025 15:33:11,USD,,,alex@alexluong.com,
+07-22-2025,Mercury Checking xx8595,1.00,Sent,Mercury Checking xx7792,Transfer to your new Mercury account,,,,,,,,07-22-2025 21:10:41,,,,,
+07-22-2025,Mercury Checking xx7792,-1.00,Sent,Mercury Checking xx8595,Transfer to your new Mercury account,,,,,,,,07-22-2025 14:36:02,,,,,084106760052241
+07-13-2025,"ngrok, Inc",-10.00,Sent,Mercury Checking xx7792,NGROK INC.,,,3770,Anh Luong,Software,Software & Subscriptions,,07-13-2025 12:36:11,USD,,,alex@alexluong.com,
+07-13-2025,"ngrok, Inc",-1.94,Sent,Mercury Checking xx7792,NGROK INC.,,,3770,Anh Luong,Software,Software & Subscriptions,,07-13-2025 12:27:10,USD,,,alex@alexluong.com,
+07-12-2025,"ngrok, Inc",-10.00,Failed,Mercury Checking xx8595,NGROK INC.,,,4947,Anh Luong,Software,,,07-12-2025 11:27:18,USD,,,alex@alexluong.com,
+07-11-2025,Cursor,-20.00,Sent,Mercury Checking xx7792,"CURSOR, AI POWERED IDE",,,3770,Anh Luong,Software,Software & Subscriptions,,07-11-2025 12:40:06,USD,,,alex@alexluong.com,
+07-11-2025,Anthropic,-200.00,Sent,Mercury Checking xx7792,CLAUDE.AI SUBSCRIPTION,,,3770,Anh Luong,Software,,,07-11-2025 12:25:14,USD,,,alex@alexluong.com,
+07-09-2025,"ngrok, Inc",-10.00,Failed,Mercury Checking xx8595,NGROK INC.,,,4947,Anh Luong,Software,,,07-09-2025 12:08:44,USD,,,alex@alexluong.com,
+07-07-2025,"ngrok, Inc",-10.00,Failed,Mercury Checking xx8595,NGROK INC.,,,4947,Anh Luong,Software,,,07-07-2025 11:26:46,USD,,,alex@alexluong.com,
+07-06-2025,"ngrok, Inc",-10.00,Failed,Mercury Checking xx8595,NGROK INC.,,,4947,Anh Luong,Software,,,07-06-2025 12:06:37,USD,,,alex@alexluong.com,
+07-03-2025,Cloudflare,-6.00,Sent,Mercury Checking xx7792,CLOUDFLARE,,,3770,Anh Luong,Software,Software & Subscriptions,,07-03-2025 09:11:15,USD,,,alex@alexluong.com,
+07-03-2025,Vultr,-7.20,Sent,Mercury Checking xx7792,VULTR BY CONSTANT,,,3770,Anh Luong,ProfessionalServices,Software & Subscriptions,,07-03-2025 09:09:03,USD,,,alex@alexluong.com,
+07-03-2025,Company Sage,-241.25,Sent,Mercury Checking xx7792,COMPANY SAGE,,,3770,Anh Luong,ProfessionalServices,,,07-03-2025 02:02:07,USD,,,alex@alexluong.com,
+07-03-2025,Google Workspace,-9.60,Sent,Mercury Checking xx7792,Google GSUITE_alexluon,,,3770,Anh Luong,Software,Software & Subscriptions,,07-03-2025 02:01:03,USD,,,alex@alexluong.com,
+07-02-2025,Google Workspace,-9.60,Failed,Mercury Checking xx8595,Google GSUITE_alexluon,,,4947,Anh Luong,Software,,,07-02-2025 12:07:35,USD,,,alex@alexluong.com,
+07-02-2025,Google Workspace,-9.60,Failed,Mercury Checking xx8595,Google GSUITE_alexluon,,,4947,Anh Luong,Software,,,07-02-2025 12:07:33,USD,,,alex@alexluong.com,
+07-02-2025,Google Workspace,-9.60,Failed,Mercury Checking xx8595,GOOGLE*GSUITE ALEXLUON,,,4947,Anh Luong,Software,,,07-02-2025 12:07:08,USD,,,alex@alexluong.com,
+07-02-2025,Cloudflare,-6.00,Failed,Mercury Checking xx8595,CLOUDFLARE,,,4947,Anh Luong,Software,,,07-02-2025 11:08:41,USD,,,alex@alexluong.com,
+07-02-2025,Google Workspace,-9.60,Failed,Mercury Checking xx8595,Google GSUITE_alexluon,,,4947,Anh Luong,Software,,,07-02-2025 06:07:02,USD,,,alex@alexluong.com,
+07-02-2025,Cloudflare,-6.00,Failed,Mercury Checking xx8595,CLOUDFLARE,,,4947,Anh Luong,Software,,,07-02-2025 02:08:34,USD,,,alex@alexluong.com,
+07-02-2025,Google Workspace,-9.60,Failed,Mercury Checking xx8595,Google GSUITE_alexluon,,,4947,Anh Luong,Software,,,07-02-2025 00:06:59,USD,,,alex@alexluong.com,
+07-01-2025,Google Workspace,-9.60,Failed,Mercury Checking xx8595,Google GSUITE_alexluon,,,4947,Anh Luong,Software,,,07-01-2025 20:06:53,USD,,,alex@alexluong.com,
+07-01-2025,Cloudflare,-6.00,Failed,Mercury Checking xx8595,CLOUDFLARE,,,4947,Anh Luong,Software,,,07-01-2025 18:08:27,USD,,,alex@alexluong.com,
+07-01-2025,Cs* Wyomingllcattorney,-179.00,Failed,Mercury Checking xx8595,CS* WYOMINGLLCATTORNEY,,,4947,Anh Luong,ProfessionalServices,,,07-01-2025 16:54:47,USD,,,alex@alexluong.com,
+07-01-2025,Google Workspace,-9.60,Failed,Mercury Checking xx8595,GOOGLE *GSUITE_alexluo,,,4947,Anh Luong,Software,,,07-01-2025 16:06:48,USD,,,alex@alexluong.com,
+07-01-2025,Google Workspace,-9.60,Failed,Mercury Checking xx8595,Google GSUITE_alexluon,,,4947,Anh Luong,Software,,,07-01-2025 14:06:36,USD,,,alex@alexluong.com,
+07-01-2025,Vultr,-7.20,Failed,Mercury Checking xx8595,VULTR BY CONSTANT,,,4947,Anh Luong,ProfessionalServices,,,07-01-2025 12:52:36,USD,,,alex@alexluong.com,
+07-01-2025,Google Workspace,-9.60,Failed,Mercury Checking xx8595,Google GSUITE_alexluon,,,4947,Anh Luong,Software,,,07-01-2025 12:36:34,USD,,,alex@alexluong.com,
+07-01-2025,Google Workspace,-9.60,Failed,Mercury Checking xx8595,GOOGLE*GSUITE ALEXLUON,,,4947,Anh Luong,Software,,,07-01-2025 12:11:26,USD,,,alex@alexluong.com,
+07-01-2025,Google Workspace,-9.60,Failed,Mercury Checking xx8595,Google GSUITE_alexluon,,,4947,Anh Luong,Software,,,07-01-2025 12:03:33,USD,,,alex@alexluong.com,
+07-01-2025,Cloudflare,-6.00,Failed,Mercury Checking xx8595,CLOUDFLARE,,,4947,Anh Luong,Software,,,07-01-2025 10:08:07,USD,,,alex@alexluong.com,
+06-30-2025,EBUTLER QFC LLC,5200.00,Sent,Mercury Checking xx7792,,/RFB/B4B07 - COMPENSATION OF EMPLOYEES (SHORT TERM) JUNE 25 SALARY,,,,,,,06-30-2025 16:43:16,,,,,20250630MMQFMPYZ032616
+06-11-2025,Anthropic,-135.56,Sent,Mercury Checking xx7792,CLAUDE.AI SUBSCRIPTION,,,3770,Anh Luong,Software,Software & Subscriptions,,06-11-2025 12:29:03,USD,,,alex@alexluong.com,
+06-11-2025,Cursor,-20.00,Sent,Mercury Checking xx7792,"CURSOR, AI POWERED IDE",,,3770,Anh Luong,Software,Software & Subscriptions,,06-11-2025 12:18:07,USD,,,alex@alexluong.com,
+06-09-2025,Mercury Checking xx8595,9656.74,Sent,Mercury Checking xx7792,Transfer to your new Mercury account,,,,,,,,06-09-2025 21:10:16,,,,,
+06-09-2025,Mercury Checking xx7792,-9656.74,Sent,Mercury Checking xx8595,Transfer to your new Mercury account,,,,,,,,06-09-2025 14:36:02,,,,,084106760182485
+06-09-2025,Cursor,-20.00,Failed,Mercury Checking xx8595,"CURSOR, AI POWERED IDE",,,4947,Anh Luong,Software,,,06-09-2025 04:09:47,USD,,,alex@alexluong.com,
+06-09-2025,Cursor,-20.00,Failed,Mercury Checking xx7792,"CURSOR, AI POWERED IDE",,,3770,Anh Luong,Software,,,06-09-2025 04:08:31,USD,,,alex@alexluong.com,
+06-07-2025,"ngrok, Inc",-10.00,Sent,Mercury Checking xx8595,NGROK INC.,,,4947,Anh Luong,Software,Software & Subscriptions,,06-07-2025 02:20:08,USD,,,alex@alexluong.com,
+06-02-2025,Vultr,-7.20,Sent,Mercury Checking xx8595,VULTR BY CONSTANT,,,4947,Anh Luong,ProfessionalServices,Software & Subscriptions,,06-02-2025 08:35:12,USD,,,alex@alexluong.com,
+06-02-2025,Google Workspace,-9.60,Sent,Mercury Checking xx8595,Google GSUITE_alexluon,,,4947,Anh Luong,Software,Software & Subscriptions,,06-02-2025 03:09:09,USD,,,alex@alexluong.com,
+06-02-2025,Cloudflare,-5.00,Sent,Mercury Checking xx8595,CLOUDFLARE,,,4947,Anh Luong,Software,Software & Subscriptions,,06-02-2025 02:41:16,USD,,,alex@alexluong.com,
+06-01-2025,Anthropic,-100.00,Sent,Mercury Checking xx8595,CLAUDE.AI SUBSCRIPTION,,,4947,Anh Luong,Software,Software & Subscriptions,,06-01-2025 09:04:04,USD,,,alex@alexluong.com,
+05-29-2025,Cloudflare,-10.44,Sent,Mercury Checking xx8595,CLOUDFLARE,,,4947,Anh Luong,Software,Software & Subscriptions,,05-29-2025 10:40:10,USD,,,alex@alexluong.com,
+05-16-2025,Toucanfax.com,-5.00,Sent,Mercury Checking xx8595,WWW.TOUCANFAX.COM,,,4947,Anh Luong,Software,Software & Subscriptions,,05-16-2025 08:58:08,USD,,,alex@alexluong.com,
+05-07-2025,Porkbun,-44.73,Sent,Mercury Checking xx8595,PORKBUN.COM,,,4947,Anh Luong,Software,Software & Subscriptions,,05-07-2025 10:09:11,USD,,,alex@alexluong.com,
+05-07-2025,"ngrok, Inc",-10.00,Sent,Mercury Checking xx8595,NGROK INC.,,,4947,Anh Luong,Software,Software & Subscriptions,,05-07-2025 01:56:10,USD,,,alex@alexluong.com,
+05-05-2025,Cursor,-60.00,Sent,Mercury Checking xx8595,"CURSOR, AI POWERED IDE",,,4947,Anh Luong,Software,Software & Subscriptions,,05-05-2025 12:18:15,USD,,,alex@alexluong.com,
+05-02-2025,Vultr,-7.20,Sent,Mercury Checking xx8595,VULTR BY CONSTANT,,,4947,Anh Luong,ProfessionalServices,Software & Subscriptions,,05-02-2025 09:12:12,USD,,,alex@alexluong.com,
+05-02-2025,Google Workspace,-9.60,Sent,Mercury Checking xx8595,Google GSUITE_alexluon,,,4947,Anh Luong,Software,Software & Subscriptions,,05-02-2025 02:17:19,USD,,,alex@alexluong.com,
+05-01-2025,Cloudflare,-5.00,Sent,Mercury Checking xx8595,CLOUDFLARE,,,4947,Anh Luong,Software,Software & Subscriptions,,05-01-2025 14:31:14,USD,,,alex@alexluong.com,
+04-16-2025,Toucanfax.com,-5.00,Sent,Mercury Checking xx8595,WWW.TOUCANFAX.COM,,,4947,Anh Luong,Software,Software & Subscriptions,,04-16-2025 09:24:09,USD,,,alex@alexluong.com,
+04-07-2025,Google Cloud,-0.02,Sent,Mercury Checking xx8595,Google CLOUD VXF8GF,,,4947,Anh Luong,Software,Software & Subscriptions,,04-07-2025 02:06:03,USD,,,alex@alexluong.com,
+04-06-2025,Cursor,-60.00,Sent,Mercury Checking xx8595,"CURSOR, AI POWERED IDE",,,4947,Anh Luong,Software,Software & Subscriptions,,04-06-2025 01:34:12,USD,,,alex@alexluong.com,
+04-02-2025,Vultr,-7.20,Sent,Mercury Checking xx8595,VULTR BY CONSTANT,,,4947,Anh Luong,ProfessionalServices,Software & Subscriptions,,04-02-2025 10:52:05,USD,,,alex@alexluong.com,
+04-02-2025,Google Workspace,-9.60,Sent,Mercury Checking xx8595,Google GSUITE_alexluon,,,4947,Anh Luong,Software,Software & Subscriptions,,04-02-2025 02:18:08,USD,,,alex@alexluong.com,
+04-01-2025,Cloudflare,-5.00,Sent,Mercury Checking xx8595,CLOUDFLARE,,,4947,Anh Luong,Software,Software & Subscriptions,,04-01-2025 14:31:04,USD,,,alex@alexluong.com,
+03-29-2025,Cloudflare,-41.62,Sent,Mercury Checking xx8595,CLOUDFLARE,,,4947,Anh Luong,Software,Software & Subscriptions,,03-29-2025 11:22:05,USD,,,alex@alexluong.com,
+03-25-2025,WISE US INC,10000.00,Sent,Mercury Checking xx8595,WISE US INC; COLLIE STU; Collie Studio LLC,From Collie Studio LLC Via WISE,,,,,,,03-25-2025 06:40:24,,,,,111000029212261
+03-05-2025,Cursor,-60.00,Sent,Mercury Checking xx8595,"CURSOR, AI POWERED IDE",,,4947,Anh Luong,Software,Software & Subscriptions,,03-05-2025 13:38:12,USD,,,alex@alexluong.com,
+03-02-2025,Vultr,-7.20,Sent,Mercury Checking xx8595,VULTR BY CONSTANT,,,4947,Anh Luong,ProfessionalServices,Software & Subscriptions,,03-02-2025 13:40:06,USD,,,alex@alexluong.com,
+03-02-2025,Google Workspace,-10.36,Sent,Mercury Checking xx8595,GOOGLE *GSUITE_alexluo,,,4947,Anh Luong,Software,Software & Subscriptions,,03-02-2025 13:36:06,USD,,,alex@alexluong.com,
+03-01-2025,Cloudflare,-5.00,Sent,Mercury Checking xx8595,CLOUDFLARE,,,4947,Anh Luong,Software,Software & Subscriptions,,03-01-2025 18:14:04,USD,,,alex@alexluong.com,
+02-05-2025,Cursor,-60.00,Sent,Mercury Checking xx8595,"CURSOR, AI POWERED IDE",,,4947,Anh Luong,Software,Software & Subscriptions,,02-05-2025 11:56:11,USD,,,alex@alexluong.com,
+02-02-2025,Vultr,-7.20,Sent,Mercury Checking xx8595,VULTR BY CONSTANT,,,4947,Anh Luong,ProfessionalServices,Software & Subscriptions,,02-02-2025 11:11:10,USD,,,alex@alexluong.com,
+02-02-2025,Google Workspace,-14.40,Sent,Mercury Checking xx8595,Google GSUITE_alexluon,,,4947,Anh Luong,Software,Software & Subscriptions,,02-02-2025 02:38:05,USD,,,alex@alexluong.com,
+02-01-2025,Cloudflare,-5.00,Sent,Mercury Checking xx8595,CLOUDFLARE,,,4947,Anh Luong,Software,Software & Subscriptions,,02-01-2025 15:44:08,USD,,,alex@alexluong.com,
+01-06-2025,Cursor,-80.50,Sent,Mercury Checking xx8595,"CURSOR, AI POWERED IDE",,,4947,Anh Luong,Software,Software & Subscriptions,,01-06-2025 02:37:07,USD,,,alex@alexluong.com,
+01-02-2025,Vultr,-7.20,Sent,Mercury Checking xx8595,VULTR BY CONSTANT,,,4947,Anh Luong,ProfessionalServices,Software & Subscriptions,,01-02-2025 07:27:02,USD,,,alex@alexluong.com,
+01-02-2025,Google Workspace,-14.40,Sent,Mercury Checking xx8595,Google GSUITE_alexluon,,,4947,Anh Luong,Software,Software & Subscriptions,,01-02-2025 02:27:05,USD,,,alex@alexluong.com,
+01-01-2025,Cloudflare,-5.00,Sent,Mercury Checking xx8595,CLOUDFLARE,,,4947,Anh Luong,Software,Software & Subscriptions,,01-01-2025 15:05:48,USD,,,alex@alexluong.com,
+12-14-2024,GitHub,-10.00,Sent,Mercury Checking xx8595,"GITHUB, INC.",,,4947,Anh Luong,Software,,,12-14-2024 03:07:04,USD,,,alex@alexluong.com,
+12-06-2024,Porkbun,-40.47,Sent,Mercury Checking xx8595,PORKBUN.COM,,,4947,Anh Luong,Software,,,12-06-2024 16:10:09,USD,,,alex@alexluong.com,
+12-05-2024,Cursor,-20.00,Sent,Mercury Checking xx8595,"CURSOR, AI POWERED IDE",,,4947,Anh Luong,Software,,,12-05-2024 13:24:10,USD,,,alex@alexluong.com,
+12-02-2024,Vultr,-7.20,Sent,Mercury Checking xx8595,VULTR BY CONSTANT,,,4947,Anh Luong,ProfessionalServices,,,12-02-2024 08:15:06,USD,,,alex@alexluong.com,
+12-02-2024,Google Workspace,-14.40,Sent,Mercury Checking xx8595,GOOGLE*GSUITE ALEXLUON,,,4947,Anh Luong,Software,,,12-02-2024 04:46:18,USD,,,alex@alexluong.com,
+12-01-2024,Cloudflare,-5.00,Sent,Mercury Checking xx8595,CLOUDFLARE,,,4947,Anh Luong,Software,,,12-01-2024 15:48:07,USD,,,alex@alexluong.com,
+11-14-2024,GitHub,-10.00,Sent,Mercury Checking xx8595,"GITHUB, INC.",,,4947,Anh Luong,Software,,,11-14-2024 02:34:14,USD,,,alex@alexluong.com,
+11-02-2024,Vultr,-7.20,Sent,Mercury Checking xx8595,VULTR BY CONSTANT,,,4947,Anh Luong,ProfessionalServices,,,11-02-2024 06:55:10,USD,,,alex@alexluong.com,
+11-02-2024,Google Workspace,-14.40,Sent,Mercury Checking xx8595,GOOGLE*GSUITE ALEXLUON,,,4947,Anh Luong,Software,,,11-02-2024 03:53:04,USD,,,alex@alexluong.com,
+11-01-2024,Cloudflare,-5.00,Sent,Mercury Checking xx8595,CLOUDFLARE,,,4947,Anh Luong,Software,,,11-01-2024 14:38:06,USD,,,alex@alexluong.com,
+10-22-2024,Porkbun,-11.06,Sent,Mercury Checking xx8595,PORKBUN.COM,,,4947,Anh Luong,Software,,,10-22-2024 11:43:13,USD,,,alex@alexluong.com,
+10-14-2024,GitHub,-10.00,Sent,Mercury Checking xx8595,"GITHUB, INC.",,,4947,Anh Luong,Software,,,10-14-2024 01:40:02,USD,,,alex@alexluong.com,
+10-09-2024,Porkbun,-14.91,Sent,Mercury Checking xx8595,PORKBUN.COM,,,4947,Anh Luong,Software,,,10-09-2024 11:57:03,USD,,,alex@alexluong.com,
+10-03-2024,Porkbun,-12.85,Sent,Mercury Checking xx8595,PORKBUN.COM,,,4947,Anh Luong,Software,,,10-03-2024 12:36:43,USD,,,alex@alexluong.com,
+10-02-2024,Vultr,-7.62,Sent,Mercury Checking xx8595,VULTR BY CONSTANT,,,4947,Anh Luong,ProfessionalServices,,,10-02-2024 06:36:13,USD,,,alex@alexluong.com,
+10-02-2024,Google Workspace,-14.40,Sent,Mercury Checking xx8595,GOOGLE*GSUITE ALEXLUON,,,4947,Anh Luong,Advertising,,,10-02-2024 03:24:12,USD,,,alex@alexluong.com,
+10-01-2024,Cloudflare,-6.00,Sent,Mercury Checking xx8595,CLOUDFLARE,,,4947,Anh Luong,Software,,,10-01-2024 14:26:22,USD,,,alex@alexluong.com,
+10-01-2024,Porkbun,-25.03,Sent,Mercury Checking xx8595,PORKBUN.COM,,,4947,Anh Luong,Software,,,10-01-2024 12:29:06,USD,,,alex@alexluong.com,
+09-14-2024,GitHub,-10.00,Sent,Mercury Checking xx8595,"GITHUB, INC.",,,4947,Anh Luong,Software,,,09-14-2024 01:16:22,USD,,,alex@alexluong.com,
+09-09-2024,Porkbun,-14.91,Sent,Mercury Checking xx8595,PORKBUN.COM,,,4947,Anh Luong,Software,,,09-09-2024 01:29:13,USD,,,alex@alexluong.com,
+09-02-2024,Google Workspace,-14.40,Sent,Mercury Checking xx8595,GOOGLE *GSUITE_alexluo,,,4947,Anh Luong,Advertising,,,09-02-2024 01:42:15,USD,,,alex@alexluong.com,
+09-02-2024,Cloudflare,-5.00,Sent,Mercury Checking xx8595,CLOUDFLARE,,,4947,Anh Luong,Software,,,09-02-2024 01:40:24,USD,,,alex@alexluong.com,
+08-14-2024,GitHub,-10.00,Sent,Mercury Checking xx8595,"GITHUB, INC.",,,4947,Anh Luong,Software,,,08-14-2024 01:19:30,USD,,,alex@alexluong.com,
+08-02-2024,Google Workspace,-14.40,Sent,Mercury Checking xx8595,GOOGLE  GSUITE_alexluo,,,4947,Anh Luong,Other,,,08-02-2024 00:56:25,USD,,,alex@alexluong.com,
+08-01-2024,Cloudflare,-5.00,Sent,Mercury Checking xx8595,CLOUDFLARE,,,4947,Anh Luong,Other,,,08-01-2024 14:30:10,USD,,,alex@alexluong.com,
+08-01-2024,Fly.io,-51.13,Sent,Mercury Checking xx8595,FLY.IO,,,8754,Anh Luong,Software,,,08-01-2024 09:56:02,USD,,,alex@alexluong.com,
+07-25-2024,Figma,-144.00,Sent,Mercury Checking xx8595,FIGMA ANNUAL RENEWAL,,,4947,Anh Luong,Software,,,07-25-2024 14:09:45,USD,,,alex@alexluong.com,
+07-19-2024,Wise Inc,-1504.20,Sent,Mercury Checking xx8595,Wise Inc; WISE; Collie Studio LLC,,,,,,,,07-19-2024 21:31:57,,,,,021000024679699
+07-19-2024,WISHTENDER LLC,1650.00,Sent,Mercury Checking xx8595,WISHTENDER LLC; ACH Pmt; Collie Studio LLC,,,,,,,,07-19-2024 12:31:41,,,,,021000023342527
+07-17-2024,Wise US Inc.,-21006.11,Sent,Mercury Checking xx8595,Send Money transaction initiated on Mercury,P29423022; P29423022 - Transfering to my own account (Collie Studio LLC) on Wise.com,,,,,,,07-17-2024 16:10:50,,,,,20240717MMQFMPD1000155
+07-17-2024,WISHTENDER LLC,21150.00,Sent,Mercury Checking xx8595,WISHTENDER LLC; ACH Pmt; Collie Studio LLC,,,,,,,,07-17-2024 12:33:54,,,,,021000024240057
+07-11-2024,Figma,-18.00,Sent,Mercury Checking xx8595,FIGMA,,,2257,Anh Luong,Software,,,07-11-2024 14:08:45,USD,,,alex@alexluong.com,
+07-11-2024,OpenAI,-5.00,Sent,Mercury Checking xx8595,OPENAI,,,0211,Anh Luong,Software,,,07-11-2024 09:43:10,USD,,,alex@alexluong.com,
+07-04-2024,Cs Wyomingllcattorney,-179.00,Sent,Mercury Checking xx8595,CS* WYOMINGLLCATTORNEY,,,4947,Anh Luong,ProfessionalServices,,,07-04-2024 03:15:59,USD,,,alex@alexluong.com,
+07-04-2024,State of Wyoming,-60.00,Sent,Mercury Checking xx8595,CS* STATE OF WYOMING,,,4947,Anh Luong,ProfessionalServices,,,07-04-2024 03:15:57,USD,,,alex@alexluong.com,
+07-02-2024,Cloudflare,-5.00,Sent,Mercury Checking xx8595,CLOUDFLARE,,,4947,Anh Luong,Other,,,07-02-2024 01:18:35,USD,,,alex@alexluong.com,
+07-02-2024,Google Workspace,-14.40,Sent,Mercury Checking xx8595,GOOGLE  GSUITE_alexluo,,,4947,Anh Luong,Other,,,07-02-2024 01:14:56,USD,,,alex@alexluong.com,
+07-01-2024,Fly.io,-5.00,Sent,Mercury Checking xx8595,FLY.IO,,,8754,Anh Luong,Software,,,07-01-2024 11:44:58,USD,,,alex@alexluong.com,
+07-01-2024,Fly.io,-51.05,Sent,Mercury Checking xx8595,FLY.IO,,,8754,Anh Luong,Software,,,07-01-2024 09:44:56,USD,,,alex@alexluong.com,
+06-26-2024,Loom,-15.00,Sent,Mercury Checking xx8595,LOOM SUBSCRIPTION,,,2257,Anh Luong,Software,,,06-26-2024 14:14:14,USD,,,alex@alexluong.com,
+06-21-2024,Wise US Inc.,-19006.11,Sent,Mercury Checking xx8595,Send Money transaction initiated on Mercury,P29423022; Transfering to my own account (Collie Studio LLC) on Wise.com,,,,,,,06-21-2024 22:10:05,,,,,20240621MMQFMPD1001038
+06-21-2024,Alex - Personal Wise (Anh Luong),-10000.00,Sent,Mercury Checking xx8595,Send Money transaction initiated on Mercury,From Collie Studio LLC via mercury.com,Distribution,,,,,,06-21-2024 16:35:10,,,,,084106760182790
+06-21-2024,Alex - Personal Wise (Anh Luong),-10000.00,Failed,Mercury Checking xx8595,Send Money transaction initiated on Mercury,From Collie Studio LLC via mercury.com; member distribution,,,,,,,06-21-2024 16:13:21,,,,,
+06-21-2024,WISHTENDER LLC,29300.00,Sent,Mercury Checking xx8595,WISHTENDER LLC; ACH Pmt; Collie Studio LLC,,,,,,,,06-21-2024 12:31:55,,,,,021000022651250
+06-11-2024,Figma,-18.00,Sent,Mercury Checking xx8595,FIGMA,,,2257,Anh Luong,Software,,,06-11-2024 16:27:53,USD,,,alex@alexluong.com,
+06-10-2024,Cloudflare,-5.00,Sent,Mercury Checking xx8595,CLOUDFLARE,,,4947,Anh Luong,Other,,,06-10-2024 03:11:17,USD,,,alex@alexluong.com,
+06-02-2024,Google Workspace,-14.40,Sent,Mercury Checking xx8595,GOOGLE  GSUITE_alexluo,,,4947,Anh Luong,Other,,,06-02-2024 00:23:32,USD,,,alex@alexluong.com,
+06-01-2024,Fly.io,-5.00,Sent,Mercury Checking xx8595,FLY.IO,,,8754,Anh Luong,Software,,,06-01-2024 10:50:40,USD,,,alex@alexluong.com,
+06-01-2024,Fly.io,-39.08,Sent,Mercury Checking xx8595,FLY.IO,,,8754,Anh Luong,Software,,,06-01-2024 10:50:39,USD,,,alex@alexluong.com,
+05-29-2024,Cloudflare,-9.77,Sent,Mercury Checking xx8595,CLOUDFLARE,,,4947,Anh Luong,Other,,,05-29-2024 11:03:25,USD,,,alex@alexluong.com,
+05-27-2024,Loom,-15.00,Sent,Mercury Checking xx8595,LOOM SUBSCRIPTION,,,2257,Anh Luong,Software,,,05-27-2024 00:28:37,USD,,,alex@alexluong.com,
+05-15-2024,Anh Luong,-25000.00,Sent,Mercury Checking xx8595,Send Money transaction initiated on Mercury,From Collie Studio LLC via mercury.com,Distribution,,,,,,05-15-2024 14:35:43,,,#distribution,,084106760062295
+05-14-2024,Anh Luong,-25000.00,Sent,Mercury Checking xx8595,Send Money transaction initiated on Mercury,From Collie Studio LLC via mercury.com,Distribution,,,,,,05-14-2024 14:35:18,,,#distribution,,084106760057915
+05-13-2024,Anh Luong,-25000.00,Sent,Mercury Checking xx8595,Send Money transaction initiated on Mercury,From Collie Studio LLC via mercury.com,Distribution,,,,,,05-13-2024 22:35:08,,,#distribution,,084106760243517
+05-13-2024,Wise Inc,9999.61,Sent,Mercury Checking xx8595,Wise Inc; E STUDIO L; Collie Studio LLC,From Collie Studio LLC Via WISE,,,,,,,05-13-2024 20:11:18,,,,,021000029701333
+05-11-2024,Figma,-18.00,Sent,Mercury Checking xx8595,FIGMA,,,2257,Anh Luong,Software,,,05-11-2024 14:14:31,USD,,,alex@alexluong.com,
+05-10-2024,WISHTENDER LLC,30100.00,Sent,Mercury Checking xx8595,WISHTENDER LLC; ACH Pmt; Collie Studio LLC,,,,,,,,05-10-2024 12:35:40,,,,,021000029215733
+05-10-2024,WISHTENDER LLC,29300.00,Sent,Mercury Checking xx8595,WISHTENDER LLC; ACH Pmt; Collie Studio LLC,,,,,,,,05-10-2024 12:35:23,,,,,021000029215734
+05-07-2024,Porkbun,-38.55,Sent,Mercury Checking xx8595,PORKBUN.COM,,,4947,Anh Luong,Other,,,05-07-2024 06:32:16,USD,,,alex@alexluong.com,
+05-02-2024,Cloudflare,-5.00,Sent,Mercury Checking xx8595,CLOUDFLARE,,,4947,Anh Luong,Other,,,05-02-2024 01:09:31,USD,,,alex@alexluong.com,
+05-02-2024,Google Workspace,-14.40,Sent,Mercury Checking xx8595,GOOGLE  GSUITE_alexluo,,,4947,Anh Luong,Other,,,05-02-2024 01:05:34,USD,,,alex@alexluong.com,
+05-01-2024,Fly.io,-5.00,Sent,Mercury Checking xx8595,FLY.IO,,,8754,Anh Luong,Software,,,05-01-2024 11:47:10,USD,,,alex@alexluong.com,
+05-01-2024,Fly.io,-39.08,Sent,Mercury Checking xx8595,FLY.IO,,,8754,Anh Luong,Software,,,05-01-2024 10:47:04,USD,,,alex@alexluong.com,
+04-26-2024,Loom,-15.00,Sent,Mercury Checking xx8595,LOOM SUBSCRIPTION,,,2257,Anh Luong,Software,,,04-26-2024 14:08:33,USD,,,alex@alexluong.com,
+04-16-2024,Wise US Inc.,-20003.52,Sent,Mercury Checking xx8595,Send Money transaction initiated on Mercury,From Collie Studio LLC via mercury.com; P29423022 Company's Wise.com Business Account,,,,,,,04-16-2024 18:10:28,,,,,20240416MMQFMPD1000644
+04-16-2024,Anh Luong,-5000.00,Sent,Mercury Checking xx8595,Send Money transaction initiated on Mercury,From Collie Studio LLC via mercury.com,Distribution,,,,,,04-16-2024 16:35:09,,,#distribution,,084106760108776
+04-16-2024,WISHTENDER LLC,30900.00,Sent,Mercury Checking xx8595,WISHTENDER LLC; ACH Pmt; Collie Studio LLC,,,,,,,,04-16-2024 12:36:39,,,,,021000023391495
+04-15-2024,Mobbin.com,-36.00,Sent,Mercury Checking xx8595,MOBBIN.COM,,,2257,Anh Luong,,,,04-15-2024 14:15:25,USD,,,alex@alexluong.com,
+04-11-2024,Figma,-18.00,Sent,Mercury Checking xx8595,FIGMA,,,2257,Anh Luong,Software,,,04-11-2024 14:13:59,USD,,,alex@alexluong.com,
+04-02-2024,Cloudflare,-5.00,Sent,Mercury Checking xx8595,CLOUDFLARE,,,4947,Anh Luong,Other,,,04-02-2024 01:18:56,USD,,,alex@alexluong.com,
+04-02-2024,Google Workspace,-12.84,Sent,Mercury Checking xx8595,GOOGLE  GSUITE_alexluo,,,4947,Anh Luong,Other,,,04-02-2024 01:15:05,USD,,,alex@alexluong.com,
+04-01-2024,Fly.io,-5.00,Sent,Mercury Checking xx8595,FLY.IO,,,8754,Anh Luong,Software,,,04-01-2024 09:42:11,USD,,,alex@alexluong.com,
+04-01-2024,Fly.io,-45.75,Sent,Mercury Checking xx8595,FLY.IO,,,8754,Anh Luong,Software,,,04-01-2024 06:17:33,USD,,,alex@alexluong.com,
+03-30-2024,Cloudflare,-33.95,Sent,Mercury Checking xx8595,CLOUDFLARE,,,4947,Anh Luong,Other,,,03-30-2024 00:28:50,USD,,,alex@alexluong.com,
+03-27-2024,Loom,-15.00,Sent,Mercury Checking xx8595,LOOM SUBSCRIPTION,,,2257,Anh Luong,Software,,,03-27-2024 03:36:48,USD,,,alex@alexluong.com,
+03-11-2024,Wise US Inc.,-20003.52,Sent,Mercury Checking xx8595,Send Money transaction initiated on Mercury,From Collie Studio LLC via mercury.com; P29423022 Company's Wise.com Business Account,,,,,,,03-11-2024 18:10:40,,,,,20240311MMQFMPD1001044
+03-11-2024,Mercury Checking xx8595,-10000.05,Sent,Mercury Savings xx9955,Transfer between your Mercury accounts,,,,,,,,03-11-2024 17:24:38,,,,,
+03-11-2024,Mercury Savings xx9955,10000.05,Sent,Mercury Checking xx8595,Transfer between your Mercury accounts,,,,,,,,03-11-2024 17:24:38,,,,,
+03-11-2024,Figma,-18.00,Sent,Mercury Checking xx8595,FIGMA,,,2257,Anh Luong,Software,,,03-11-2024 14:11:32,USD,,,alex@alexluong.com,
+03-09-2024,Savings Interest,0.01,Sent,Mercury Savings xx9955,February interest payment,,,,,,,,03-09-2024 12:18:41,,,,,
+03-06-2024,Wise US Inc.,-20003.52,Sent,Mercury Checking xx8595,Send Money transaction initiated on Mercury,From Collie Studio LLC via mercury.com; P29423022 Company's Wise.com Business Account,,,,,,,03-06-2024 17:10:54,,,,,20240306MMQFMPD1000311
+03-06-2024,Anh Luong,-5000.00,Sent,Mercury Checking xx8595,Send Money transaction initiated on Mercury,From Collie Studio LLC via mercury.com,Distribution,,,,,,03-06-2024 15:35:20,,,#distribution,,084106760054440
+03-06-2024,WISHTENDER LLC,30900.00,Sent,Mercury Checking xx8595,WISHTENDER LLC; ACH Pmt; Collie Studio LLC,,,,,,,,03-06-2024 13:36:39,,,,,021000026889809
+03-05-2024,Mercury Technolo,200.00,Sent,Mercury Checking xx8595,Mercury Technolo; MercuryACH; Collie Studio LLC,Cash bonus for FirstBase deal.,,,,,,,03-05-2024 13:36:22,,,,,091311220020215
+03-04-2024,Wise US Inc.,-20003.52,Sent,Mercury Checking xx8595,Send Money transaction initiated on Mercury,From Collie Studio LLC via mercury.com; P29423022 Company's Wise.com Business Account,,,,,,,03-04-2024 20:11:04,,,,,20240304MMQFMPD1001054
+03-02-2024,Google Workspace,-12.00,Sent,Mercury Checking xx8595,GOOGLE*GSUITE ALEXLUON,,,4947,Anh Luong,Other,,,03-02-2024 04:34:41,USD,,,alex@alexluong.com,
+03-02-2024,Cloudflare,-5.00,Sent,Mercury Checking xx8595,CLOUDFLARE,,,4947,Anh Luong,Other,,,03-02-2024 02:13:40,USD,,,alex@alexluong.com,
+03-01-2024,Fly.io,-42.90,Sent,Mercury Checking xx8595,FLY.IO,,,8754,Anh Luong,Software,,,03-01-2024 10:46:37,USD,,,alex@alexluong.com,
+03-01-2024,Fly.io,-5.00,Sent,Mercury Checking xx8595,FLY.IO,,,8754,Anh Luong,Software,,,03-01-2024 10:46:33,USD,,,alex@alexluong.com,
+02-27-2024,Loom,-15.00,Sent,Mercury Checking xx8595,LOOM SUBSCRIPTION,,,2257,Anh Luong,Software,,,02-27-2024 01:49:44,USD,,,alex@alexluong.com,
+02-15-2024,Wise US Inc.,-20003.52,Sent,Mercury Checking xx8595,Send Money transaction initiated on Mercury,From Collie Studio LLC via mercury.com; P29423022 Company's Wise.com Business Account,,,,,,,02-15-2024 18:11:18,,,,,20240215MMQFMPD1000245
+02-15-2024,Anh Luong,-5000.00,Sent,Mercury Checking xx8595,Send Money transaction initiated on Mercury,From Collie Studio LLC via mercury.com,Payroll: Anh Luong,,,,,,02-15-2024 15:35:22,,,#distribution,,084106760069892
+02-14-2024,WISHTENDER,-5.50,Failed,Mercury Checking xx8595,WISHTENDER,,,7588,Anh Luong,,,,02-14-2024 07:08:22,,,,alex@alexluong.com,
+02-11-2024,Figma,-18.00,Sent,Mercury Checking xx8595,FIGMA,,,2257,Anh Luong,Software,,,02-11-2024 16:12:56,USD,,,alex@alexluong.com,
+02-10-2024,Remove.bg,-36.00,Failed,Mercury Checking xx8595,PADDLE.NET* SIZZY,,,6441,Anh Luong,,,,02-10-2024 00:18:36,,,,alex@alexluong.com,
+02-07-2024,WISHTENDER LLC,36090.00,Sent,Mercury Checking xx8595,WISHTENDER LLC; ACH Pmt,,,,,,,,02-07-2024 13:34:41,,,,,021000023429594
+02-05-2024,Remove.bg,-36.00,Failed,Mercury Checking xx8595,PADDLE.NET* SIZZY,,,6441,Anh Luong,,,,02-05-2024 00:39:39,,,,alex@alexluong.com,
+02-02-2024,Savings Interest,0.01,Sent,Mercury Savings xx9955,Interest payment,,,,,,,,02-02-2024 14:27:40,,,,,
+02-02-2024,Cloudflare,-5.00,Sent,Mercury Checking xx8595,CLOUDFLARE,,,4947,Anh Luong,Other,,,02-02-2024 02:01:27,USD,,,alex@alexluong.com,
+02-02-2024,Google Workspace,-12.00,Sent,Mercury Checking xx8595,GOOGLE  GSUITE_alexluo,,,4947,Anh Luong,Other,,,02-02-2024 01:58:41,USD,,,alex@alexluong.com,
+02-02-2024,Remove.bg,-36.00,Failed,Mercury Checking xx8595,PADDLE.NET* SIZZY,,,6441,Anh Luong,,,,02-02-2024 00:56:08,,,,alex@alexluong.com,
+02-01-2024,Fly.io,-5.00,Sent,Mercury Checking xx8595,FLY.IO,,,8754,Anh Luong,Software,,,02-01-2024 11:44:27,USD,,,alex@alexluong.com,
+02-01-2024,Fly.io,-34.23,Sent,Mercury Checking xx8595,FLY.IO,,,8754,Anh Luong,Software,,,02-01-2024 07:12:54,USD,,,alex@alexluong.com,
+01-26-2024,Loom,-15.00,Sent,Mercury Checking xx8595,LOOM SUBSCRIPTION,,,2257,Anh Luong,Software,,,01-26-2024 15:09:16,USD,,,alex@alexluong.com,
+01-22-2024,Fly.io,-93.31,Failed,Mercury Checking xx8595,FLY.IO,,,8754,Anh Luong,,,,01-22-2024 01:43:16,USD,,,alex@alexluong.com,
+01-19-2024,Fly.io,-93.31,Failed,Mercury Checking xx8595,FLY.IO,,,8754,Anh Luong,,,,01-19-2024 18:42:35,USD,,,alex@alexluong.com,
+01-13-2024,Fly.io,-93.31,Failed,Mercury Checking xx8595,FLY.IO,,,8754,Anh Luong,,,,01-13-2024 18:42:06,USD,,,alex@alexluong.com,
+01-11-2024,Savings Interest,0.01,Sent,Mercury Savings xx9955,Interest payment,,,,,,,,01-11-2024 16:47:10,,,,,
+01-11-2024,Figma,-18.00,Sent,Mercury Checking xx8595,FIGMA,,,2257,Anh Luong,Software,,,01-11-2024 12:53:53,USD,,,alex@alexluong.com,
+01-10-2024,Wise US Inc.,-20003.52,Sent,Mercury Checking xx8595,Send Money transaction initiated on Mercury,From Collie Studio LLC via mercury.com; P29423022 Company's Wise.com Business Account,,,,,,,01-10-2024 18:10:43,,,,,20240110MMQFMPD1000574
+01-10-2024,Anh Luong,-5000.00,Sent,Mercury Checking xx8595,Send Money transaction initiated on Mercury,From Collie Studio LLC via mercury.com,Payroll: Anh Luong,,,,,,01-10-2024 17:35:10,,,#distribution,,084106760098629
+01-10-2024,Mobbin.com,-36.00,Sent,Mercury Checking xx8595,MOBBIN.COM,,,2257,Anh Luong,,,,01-10-2024 10:21:08,USD,,,alex@alexluong.com,
+01-09-2024,Flightcontrol,-41.94,Failed,Mercury Checking xx8595,FLIGHTCONTROL,,,4947,Anh Luong,,,,01-09-2024 20:03:21,USD,,,alex@alexluong.com,
+01-08-2024,MOBBIN.COM,-36.00,Failed,Mercury Checking xx8595,MOBBIN.COM,,,0099,Anh Luong,,,,01-08-2024 13:48:57,,,,alex@alexluong.com,
+01-08-2024,WISHTENDER LLC,36090.00,Sent,Mercury Checking xx8595,WISHTENDER LLC; ACH Pmt,December Dev contract,,,,,,,01-08-2024 13:34:38,,,,,021000028713792
+01-07-2024,MOBBIN.COM,-36.00,Failed,Mercury Checking xx8595,MOBBIN.COM,,,0099,Anh Luong,,,,01-07-2024 14:10:49,,,,alex@alexluong.com,
+01-06-2024,MOBBIN.COM,-36.00,Failed,Mercury Checking xx8595,MOBBIN.COM,,,0099,Anh Luong,,,,01-06-2024 08:24:26,,,,alex@alexluong.com,
+01-06-2024,Fly.io,-93.31,Failed,Mercury Checking xx8595,FLY.IO,,,8754,Anh Luong,,,,01-06-2024 02:41:42,USD,,,alex@alexluong.com,
+01-04-2024,Flightcontrol,-41.94,Failed,Mercury Checking xx8595,FLIGHTCONTROL,,,4947,Anh Luong,,,,01-04-2024 18:02:55,USD,,,alex@alexluong.com,
+01-02-2024,Cloudflare,-5.00,Sent,Mercury Checking xx8595,CLOUDFLARE,,,4947,Anh Luong,Other,,,01-02-2024 02:13:09,USD,,,alex@alexluong.com,
+01-02-2024,Google Workspace,-12.00,Sent,Mercury Checking xx8595,GOOGLE *GSUITE_alexluo,,,4947,Anh Luong,Other,,,01-02-2024 02:01:29,USD,,,alex@alexluong.com,
+01-01-2024,Fly.io,-22.09,Sent,Mercury Checking xx8595,FLY.IO,,,8754,Anh Luong,Software,,,01-01-2024 07:20:19,USD,,,alex@alexluong.com,
+01-01-2024,Fly.io,-93.31,Failed,Mercury Checking xx8595,FLY.IO,,,8754,Anh Luong,,,,01-01-2024 01:41:23,USD,,,alex@alexluong.com,
+12-09-2023,Doppler Technologies,-144.00,Failed,Mercury Checking xx8595,DOPPLER TECHNOLOGIES,,,8754,Anh Luong,,,,12-09-2023 18:44:51,USD,,,alex@alexluong.com,
+12-06-2023,Loom,-15.00,Sent,Mercury Checking xx8595,LOOM SUBSCRIPTION,,,2257,Anh Luong,Software,,,12-06-2023 12:46:18,USD,,,alex@alexluong.com,
+12-06-2023,Lemsqzy Kailash,-7.99,Sent,Mercury Checking xx8595,LEMSQZY* KAILASH,,,2257,Anh Luong,Software,,,12-06-2023 12:44:24,USD,,,alex@alexluong.com,
+12-05-2023,Doppler Technologies,-144.00,Failed,Mercury Checking xx8595,DOPPLER TECHNOLOGIES,,,8754,Anh Luong,,,,12-05-2023 06:40:54,USD,,,alex@alexluong.com,
+12-05-2023,Doppler Technologies,-144.00,Failed,Mercury Checking xx8595,DOPPLER TECHNOLOGIES,,,8754,Anh Luong,,,,12-05-2023 06:40:45,USD,,,alex@alexluong.com,
+12-05-2023,Doppler Technologies,-144.00,Failed,Mercury Checking xx8595,DOPPLER TECHNOLOGIES,,,8754,Anh Luong,,,,12-05-2023 06:40:44,USD,,,alex@alexluong.com,
+12-04-2023,Wise US Inc.,-20003.52,Sent,Mercury Checking xx8595,Send Money transaction initiated on Mercury,From Collie Studio LLC via mercury.com; P29423022 Company's Wise.com Business Account,,,,,,,12-04-2023 19:10:25,,,,,20231204MMQFMPD1001178
+12-02-2023,Google Workspace,-12.00,Sent,Mercury Checking xx8595,GOOGLE *GSUITE_ALEXLUO,,,4947,Anh Luong,Other,,,12-02-2023 12:44:43,USD,,,alex@alexluong.com,
+12-02-2023,Cloudflare,-5.00,Sent,Mercury Checking xx8595,CLOUDFLARE,,,4947,Anh Luong,Other,,,12-02-2023 02:54:38,USD,,,alex@alexluong.com,
+12-01-2023,Savings Interest,0.01,Sent,Mercury Savings xx9955,Interest payment,,,,,,,,12-01-2023 15:01:28,,,,,
+12-01-2023,Porkbun,-37.38,Sent,Mercury Checking xx8595,PORKBUN.COM,,,4947,Anh Luong,Other,,,12-01-2023 07:32:11,USD,,,alex@alexluong.com,
+12-01-2023,Fly.io,-12.05,Sent,Mercury Checking xx8595,FLY.IO,,,8754,Anh Luong,Software,,,12-01-2023 07:31:09,USD,,,alex@alexluong.com,
+12-01-2023,Fly.io,-6.03,Sent,Mercury Checking xx8595,FLY.IO,,,8754,Anh Luong,Software,,,12-01-2023 07:31:08,USD,,,alex@alexluong.com,
+11-29-2023,Wise US Inc.,-20003.52,Sent,Mercury Checking xx8595,Send Money transaction initiated on Mercury,From Collie Studio LLC via mercury.com; P29423022 Company's Wise.com Business Account,,,,,,,11-29-2023 18:10:21,,,,,20231129MMQFMPD1000628
+11-29-2023,WISHTENDER LLC,27257.00,Sent,Mercury Checking xx8595,WISHTENDER LLC; ACH Pmt,,,,,,,,11-29-2023 13:31:33,,,,,021000026986058
+11-24-2023,Fly.io,-1.15,Sent,Mercury Checking xx8595,FLY.IO,,,8754,Anh Luong,Software,,,11-24-2023 07:18:48,USD,,,alex@alexluong.com,
+11-21-2023,Gumrd.com,-59.00,Sent,Mercury Checking xx8595,GUMRD.COM* ADHAM DANNA,,,2257,Anh Luong,BooksAndNewspaper,,,11-21-2023 01:47:53,USD,,,alex@alexluong.com,
+11-17-2023,Loom,-15.00,Sent,Mercury Checking xx8595,LOOM SUBSCRIPTION,,,2257,Anh Luong,Software,,,11-17-2023 12:53:23,USD,,,alex@alexluong.com,
+11-11-2023,GRAPHJSON.COM,-5.00,Failed,Mercury Checking xx8595,GRAPHJSON.COM,,,6441,Anh Luong,,,,11-11-2023 16:33:52,,,,alex@alexluong.com,
+11-11-2023,Loom,-15.00,Failed,Mercury Checking xx8595,LOOM SUBSCRIPTION,,,0099,Anh Luong,,,,11-11-2023 11:38:43,,,,alex@alexluong.com,
+11-11-2023,GRAPHJSON.COM,-5.00,Failed,Mercury Checking xx8595,GRAPHJSON.COM,,,6441,Anh Luong,,,,11-11-2023 00:28:01,,,,alex@alexluong.com,
+11-09-2023,GRAPHJSON.COM,-5.00,Failed,Mercury Checking xx8595,GRAPHJSON.COM,,,6441,Anh Luong,,,,11-09-2023 05:23:23,,,,alex@alexluong.com,
+11-08-2023,Fly.io,-3.97,Sent,Mercury Checking xx8595,FLY.IO,,,8754,Anh Luong,Software,,,11-08-2023 14:06:25,USD,,,alex@alexluong.com,
+11-07-2023,GRAPHJSON.COM,-5.00,Failed,Mercury Checking xx8595,GRAPHJSON.COM,,,6441,Anh Luong,,,,11-07-2023 00:21:36,,,,alex@alexluong.com,
+11-06-2023,Wise US Inc.,-20003.52,Sent,Mercury Checking xx8595,Send Money transaction initiated on Mercury,From Collie Studio LLC via mercury.com; P29423022 Company's Wise.com Business Account,,,,,,,11-06-2023 21:10:37,,,,,20231106MMQFMPD1002011
+11-06-2023,Anh Luong,-5000.00,Sent,Mercury Checking xx8595,Send Money transaction initiated on Mercury,From Collie Studio LLC via mercury.com,Payroll: Anh Luong,,,,,,11-06-2023 15:35:25,,,#distribution,,084106760302700
+11-06-2023,Loom,-15.00,Failed,Mercury Checking xx8595,LOOM SUBSCRIPTION,,,0099,Anh Luong,,,,11-06-2023 04:37:52,,,,alex@alexluong.com,
+11-04-2023,GRAPHJSON.COM,-5.00,Failed,Mercury Checking xx8595,GRAPHJSON.COM,,,6441,Anh Luong,,,,11-04-2023 06:18:21,,,,alex@alexluong.com,
+11-03-2023,DOPPLER TECHNOLOGIES,-26.99,Failed,Mercury Checking xx8595,DOPPLER TECHNOLOGIES,,,6441,Anh Luong,,,,11-03-2023 17:26:24,,,,alex@alexluong.com,
+11-02-2023,Savings Interest,0.01,Sent,Mercury Savings xx9955,Interest payment,,,,,,,,11-02-2023 19:23:53,,,,,
+11-02-2023,Cloudflare,-5.00,Sent,Mercury Checking xx8595,CLOUDFLARE,,,4947,Anh Luong,Other,,,11-02-2023 06:33:04,USD,,,alex@alexluong.com,
+11-02-2023,Google Workspace,-12.00,Sent,Mercury Checking xx8595,GOOGLE*GSUITE ALEXLUON,,,4947,Anh Luong,Other,,,11-02-2023 03:33:25,USD,,,alex@alexluong.com,
+11-01-2023,Google Pay,-12.00,Failed,Mercury Checking xx8595,GOOGLE*GSUITE ALEXLUON,,,6441,Anh Luong,,,,11-01-2023 11:46:19,,,,alex@alexluong.com,
+11-01-2023,Google LLC GSUITE_alex,-12.00,Failed,Mercury Checking xx8595,Google LLC GSUITE_alex,,,6441,Anh Luong,,,,11-01-2023 11:32:10,,,,alex@alexluong.com,
+11-01-2023,GRAPHJSON.COM,-5.00,Failed,Mercury Checking xx8595,GRAPHJSON.COM,,,6441,Anh Luong,,,,11-01-2023 05:10:43,,,,alex@alexluong.com,
+10-31-2023,WISHTENDER LLC,33940.00,Sent,Mercury Checking xx8595,WISHTENDER LLC; ACH Pmt,,,,,,,,10-31-2023 12:49:27,,,,,021000025471220
+10-31-2023,POSTMARKAPP.COM,-15.00,Failed,Mercury Checking xx8595,POSTMARKAPP.COM,,,6441,Anh Luong,,,,10-31-2023 05:43:40,,,,alex@alexluong.com,
+10-28-2023,GRAPHJSON.COM,-5.00,Failed,Mercury Checking xx8595,GRAPHJSON.COM,,,6441,Anh Luong,,,,10-28-2023 19:08:42,,,,alex@alexluong.com,
+10-26-2023,POSTMARKAPP.COM,-15.00,Failed,Mercury Checking xx8595,POSTMARKAPP.COM,,,6441,Anh Luong,,,,10-26-2023 05:43:08,,,,alex@alexluong.com,
+10-25-2023,GRAPHJSON.COM,-5.00,Failed,Mercury Checking xx8595,GRAPHJSON.COM,,,6441,Anh Luong,,,,10-25-2023 12:04:54,,,,alex@alexluong.com,
+10-24-2023,Porkbun,-10.37,Sent,Mercury Checking xx8595,PORKBUN.COM,,,4947,Anh Luong,Other,,,10-24-2023 06:26:58,USD,,,alex@alexluong.com,
+10-23-2023,POSTMARKAPP.COM,-15.00,Failed,Mercury Checking xx8595,POSTMARKAPP.COM,,,6441,Anh Luong,,,,10-23-2023 05:39:35,,,,alex@alexluong.com,
+10-23-2023,Porkbun,-10.37,Failed,Mercury Checking xx8595,PORKBUN.COM,,,6441,Anh Luong,,,,10-23-2023 02:42:40,,,,alex@alexluong.com,
+10-21-2023,GRAPHJSON.COM,-5.00,Failed,Mercury Checking xx8595,GRAPHJSON.COM,,,6441,Anh Luong,,,,10-21-2023 16:04:39,,,,alex@alexluong.com,
+10-07-2023,Apple,-2210.85,Sent,Mercury Checking xx8595,APPLE.COM/US,,,6441,Anh Luong,,,,10-07-2023 09:40:41,,,,alex@alexluong.com,
+10-07-2023,Apple,-150.00,Sent,Mercury Checking xx8595,APPLE.COM/US,,,6441,Anh Luong,,,,10-07-2023 09:40:40,,,,alex@alexluong.com,
+10-06-2023,MOBBIN.COM,-36.00,Sent,Mercury Checking xx8595,MOBBIN.COM,,,0099,Anh Luong,,,,10-06-2023 14:10:38,,,,alex@alexluong.com,
+10-06-2023,Loom,-15.00,Sent,Mercury Checking xx8595,LOOM SUBSCRIPTION,,,0099,Anh Luong,,,,10-06-2023 12:26:25,,,,alex@alexluong.com,
+10-04-2023,Wise US Inc.,-20003.52,Sent,Mercury Checking xx8595,Send Money transaction initiated on Mercury,From Collie Studio LLC via mercury.com; P29423022 Company's Wise.com Business Account,,,,,,,10-04-2023 12:44:52,,,,,
+10-04-2023,Porkbun,-12.85,Sent,Mercury Checking xx8595,PORKBUN.COM,,,6441,Anh Luong,,,,10-04-2023 09:07:00,,,,alex@alexluong.com,
+10-04-2023,DOPPLER,-13.89,Sent,Mercury Checking xx8595,DOPPLER,,,6441,Anh Luong,,,,10-04-2023 01:12:54,,,,alex@alexluong.com,
+10-03-2023,Anh Luong,-5000.00,Sent,Mercury Checking xx8595,Send Money transaction initiated on Mercury,From Collie Studio LLC via mercury.com,Payroll: Anh Luong,,,,,,10-03-2023 22:15:31,,,#distribution,,84106760325361
+10-03-2023,WISHTENDER LLC,29599.96,Sent,Mercury Checking xx8595,WISHTENDER LLC; WISHTENDER LLC::Collie Studio LLC; 11110190995,,,,,,,,10-03-2023 10:51:20,,,,,21000023462475
+10-02-2023,Google Pay,-12.00,Sent,Mercury Checking xx8595,GOOGLE *GSUITE_ALEXLUO,,,6441,Anh Luong,,,,10-02-2023 06:31:55,,,,alex@alexluong.com,
+10-02-2023,Cloudflare,-5.00,Sent,Mercury Checking xx8595,CLOUDFLARE,,,6441,Anh Luong,,,,10-02-2023 01:13:46,,,,alex@alexluong.com,
+09-28-2023,Porkbun,-10.79,Sent,Mercury Checking xx8595,PORKBUN.COM,,,6441,Anh Luong,,,,09-28-2023 06:24:18,,,,alex@alexluong.com,
+09-26-2023,Porkbun,-22.97,Sent,Mercury Checking xx8595,PORKBUN.COM,,,6441,Anh Luong,,,,09-26-2023 09:04:55,,,,alex@alexluong.com,
+09-22-2023,GRAPHJSON.COM,-5.00,Sent,Mercury Checking xx8595,GRAPHJSON.COM,,,6441,Anh Luong,,,,09-22-2023 01:05:48,,,,alex@alexluong.com,
+09-18-2023,Apple,-150.00,Failed,Mercury Checking xx8595,APPLE.COM/US,,,6441,Anh Luong,,,,09-18-2023 14:49:41,,,,alex@alexluong.com,
+09-16-2023,FIGMA,-15.00,Sent,Mercury Checking xx8595,FIGMA,,,0099,Anh Luong,,,,09-16-2023 02:22:04,,,,alex@alexluong.com,
+09-06-2023,Loom,-15.00,Sent,Mercury Checking xx8595,LOOM SUBSCRIPTION,,,0099,Anh Luong,,,,09-06-2023 12:06:55,,,,alex@alexluong.com,
+09-05-2023,Anh Luong,-5000.00,Sent,Mercury Checking xx8595,Send Money transaction initiated on Mercury,From Collie Studio LLC via mercury.com,Payroll: Anh Luong,,,,,,09-05-2023 20:17:23,,,#distribution,,84106760237538
+09-04-2023,BETTERSTACK.COM,-245.00,Failed,Mercury Checking xx8595,BETTERSTACK.COM,,,7588,Anh Luong,,,,09-04-2023 15:55:58,,,,alex@alexluong.com,
+09-04-2023,BETTERSTACK.COM,-245.00,Failed,Mercury Checking xx8595,BETTERSTACK.COM,,,7588,Anh Luong,,,,09-04-2023 15:55:56,,,,alex@alexluong.com,
+09-04-2023,DOPPLER,-18.49,Sent,Mercury Checking xx8595,DOPPLER,,,6441,Anh Luong,,,,09-04-2023 00:47:56,,,,alex@alexluong.com,
+09-03-2023,Porkbun,-12.85,Sent,Mercury Checking xx8595,PORKBUN.COM,,,6441,Anh Luong,,,,09-03-2023 09:09:38,,,,alex@alexluong.com,
+09-02-2023,Cloudflare,-5.00,Sent,Mercury Checking xx8595,CLOUDFLARE,,,6441,Anh Luong,,,,09-02-2023 01:26:09,,,,alex@alexluong.com,
+09-01-2023,Google Pay,-12.00,Sent,Mercury Checking xx8595,GOOGLE *GSUITE_alexluong.,,,6441,Anh Luong,,,,09-01-2023 13:30:03,,,,alex@alexluong.com,
+08-28-2023,Wise US Inc.,-20003.52,Sent,Mercury Checking xx8595,Send Money transaction initiated on Mercury,From Collie Studio LLC via mercury.com; P29423022 Company's Wise.com Business Account,,,,,,,08-28-2023 12:25:20,,,,,20230828MMQFMPD1000302
+08-22-2023,GRAPHJSON.COM,-5.00,Sent,Mercury Checking xx8595,GRAPHJSON.COM,,,6441,Anh Luong,,,,08-22-2023 01:01:41,,,,alex@alexluong.com,
+08-15-2023,FIGMA,-15.00,Sent,Mercury Checking xx8595,FIGMA,,,0099,Anh Luong,,,,08-15-2023 15:09:33,,,,alex@alexluong.com,
+08-12-2023,WISHTENDER LLC,24651.99,Sent,Mercury Checking xx8595,WISHTENDER LLC; WISHTENDER LLC::Collie Studio LLC; 11027284173,Dev Team,,,,,,,08-12-2023 08:57:36,,,,,21000020501808
+08-11-2023,BETTERSTACK.COM,-78.44,Failed,Mercury Checking xx8595,BETTERSTACK.COM,,,7588,Anh Luong,,,,08-11-2023 07:17:52,,,,alex@alexluong.com,
+08-11-2023,BETTERSTACK.COM,-78.44,Failed,Mercury Checking xx8595,BETTERSTACK.COM,,,7588,Anh Luong,,,,08-11-2023 07:17:51,,,,alex@alexluong.com,
+08-07-2023,BETTERSTACK.COM,-64.23,Sent,Mercury Checking xx8595,BETTERSTACK.COM,,,7588,Anh Luong,,,,08-07-2023 09:23:35,,,,alex@alexluong.com,
+08-06-2023,Loom,-15.00,Sent,Mercury Checking xx8595,LOOM SUBSCRIPTION,,,0099,Anh Luong,,,,08-06-2023 12:08:11,,,,alex@alexluong.com,
+08-05-2023,BETTERSTACK.COM,-30.00,Sent,Mercury Checking xx8595,BETTERSTACK.COM,,,7588,Anh Luong,,,,08-05-2023 02:03:12,,,,alex@alexluong.com,
+08-04-2023,DOPPLER,-5.69,Sent,Mercury Checking xx8595,DOPPLER,,,6441,Anh Luong,,,,08-04-2023 00:50:15,,,,alex@alexluong.com,
+08-02-2023,Cloudflare,-5.00,Sent,Mercury Checking xx8595,CLOUDFLARE,,,6441,Anh Luong,,,,08-02-2023 01:19:23,,,,alex@alexluong.com,
+08-02-2023,Google Pay,-12.00,Sent,Mercury Checking xx8595,GOOGLE *GSUITE_alexluo,,,6441,Anh Luong,,,,08-02-2023 01:18:32,,,,alex@alexluong.com,
+08-01-2023,FLY.IO,-13.01,Sent,Mercury Checking xx8595,FLY.IO,,,9641,Anh Luong,,,,08-01-2023 09:08:57,,,,alex@alexluong.com,
+07-22-2023,WY* WYOMINGLLCATTORNEY,-119.00,Sent,Mercury Checking xx8595,WY* WYOMINGLLCATTORNEY,,,6441,Anh Luong,,,,07-22-2023 04:11:58,,,,alex@alexluong.com,
+07-22-2023,WY* STATE OF WYOMING,-60.00,Sent,Mercury Checking xx8595,WY* STATE OF WYOMING,,,6441,Anh Luong,,,,07-22-2023 04:11:58,,,,alex@alexluong.com,
+07-22-2023,GRAPHJSON.COM,-5.00,Sent,Mercury Checking xx8595,GRAPHJSON.COM,,,6441,Anh Luong,,,,07-22-2023 04:11:46,,,,alex@alexluong.com,
+07-22-2023,UDEMY  ONLINE COURSES,-12.99,Sent,Mercury Checking xx8595,UDEMY  ONLINE COURSES,,,6441,Anh Luong,,,,07-22-2023 04:11:41,,,,alex@alexluong.com,
+07-19-2023,Anh Luong,-5000.00,Sent,Mercury Checking xx8595,Send Money transaction initiated on Mercury,From Collie Studio LLC via mercury.com,Payroll: AL,,,,,,07-19-2023 20:15:42,,,#distribution,,84106760025977
+07-19-2023,Wise US Inc.,-20003.52,Sent,Mercury Checking xx8595,Send Money transaction initiated on Mercury,From Collie Studio LLC via mercury.com; P29423022 Company's Wise.com Business Account,Transfer to Wise.com Business Account,,,,,,07-19-2023 13:09:07,,,,,20230719MMQFMPD1001098
+07-19-2023,Mercury Savings xx9955,-5000.00,Sent,Mercury Checking xx8595,Transfer between your Mercury accounts,,,,,,,,07-19-2023 09:34:47,,,,,
+07-19-2023,Mercury Checking xx8595,5000.00,Sent,Mercury Savings xx9955,Transfer between your Mercury accounts,,,,,,,,07-19-2023 09:34:47,,,,,
+07-18-2023,WISHTENDER LLC,24717.81,Sent,Mercury Checking xx8595,WISHTENDER LLC; WISHTENDER LLC::Collie Studio LLC; 11024804757,,,,,,,,07-18-2023 09:35:37,,,,,21000024480461
+07-18-2023,1PASSWORD,-3.99,Sent,Mercury Checking xx8595,1PASSWORD,,,1030,Anh Luong,,,,07-18-2023 00:59:31,,,,alex@alexluong.com,
+07-15-2023,FIGMA,-15.00,Sent,Mercury Checking xx8595,FIGMA,,,0099,Anh Luong,,,,07-15-2023 14:45:01,,,,alex@alexluong.com,
+07-06-2023,MOBBIN.COM,-36.00,Sent,Mercury Checking xx8595,MOBBIN.COM,,,0099,Anh Luong,,,,07-06-2023 12:21:14,,,,alex@alexluong.com,
+07-06-2023,Loom,-15.00,Sent,Mercury Checking xx8595,LOOM SUBSCRIPTION,,,0099,Anh Luong,,,,07-06-2023 09:39:58,,,,alex@alexluong.com,
+07-05-2023,Anh Luong,-5000.00,Sent,Mercury Checking xx8595,Send Money transaction initiated on Mercury,From Collie Studio LLC via mercury.com,Payroll: AL,,,,,,07-05-2023 20:18:30,,,#distribution,,84106760290457
+07-03-2023,Wise Ltd,-2357.74,Sent,Mercury Checking xx8595,Wise Ltd; Wise Ltd::Collie Studio LLC,WEB000000000000000000                      Collie ,,,,,,,07-03-2023 18:23:01,,,,,21000026153745
+07-03-2023,Wise Ltd,-3043.12,Sent,Mercury Checking xx8595,Wise Ltd; Wise Ltd::Collie Studio LLC,WEB000000000000000000                      Collie ,,,,,,,07-03-2023 18:19:58,,,,,21000026154739
+07-03-2023,Wise Ltd,-1072.63,Sent,Mercury Checking xx8595,Wise Ltd; Wise Ltd::Collie Studio LLC,WEB000000000000000000                      Collie ,,,,,,,07-03-2023 17:40:58,,,,,21000026154918
+07-03-2023,Wise Ltd,-1608.09,Sent,Mercury Checking xx8595,Wise Ltd; Wise Ltd::Collie Studio LLC,WEB000000000000000000                      Collie ,,,,,,,07-03-2023 17:40:51,,,,,21000026154244
+07-03-2023,Wise Ltd,-2357.74,Sent,Mercury Checking xx8595,Wise Ltd; Wise Ltd::Collie Studio LLC,WEB000000000000000000                      Collie ,,,,,,,07-03-2023 17:40:44,,,,,21000026153815
+07-03-2023,Wise Ltd,-4285.39,Sent,Mercury Checking xx8595,Wise Ltd; Wise Ltd::Collie Studio LLC,WEB000000000000000000                      Collie ,,,,,,,07-03-2023 17:31:49,,,,,21000026154299
+07-02-2023,Cloudflare,-5.00,Sent,Mercury Checking xx8595,CLOUDFLARE,,,6441,Anh Luong,,,,07-02-2023 00:57:32,,,,alex@alexluong.com,
+07-01-2023,Google Pay,-12.00,Sent,Mercury Checking xx8595,GOOGLE *GSUITE_alexluong.,,,6441,Anh Luong,,,,07-01-2023 10:49:11,,,,alex@alexluong.com,
+07-01-2023,FLY.IO,-7.78,Sent,Mercury Checking xx8595,FLY.IO,,,9641,Anh Luong,,,,07-01-2023 09:20:02,,,,alex@alexluong.com,
+06-30-2023,Wise Ltd,-7579.50,Sent,Mercury Checking xx8595,Wise Ltd; Wise Ltd::Collie Studio LLC,WEB000000000000000000                      Collie ,,,,,,,06-30-2023 16:05:54,,,,,21000021764949
+06-29-2023,WISHTENDER LLC,32844.43,Sent,Mercury Checking xx8595,WISHTENDER LLC; WISHTENDER LLC::Collie Studio LLC; 11023015308,May Dev,,,,,,,06-29-2023 05:33:24,,,,,21000026019848
+06-22-2023,GRAPHJSON.COM,-5.00,Sent,Mercury Checking xx8595,GRAPHJSON.COM,,,6441,Anh Luong,,,,06-22-2023 00:59:07,,,,alex@alexluong.com,
+06-02-2023,Wise Ltd,-1077.30,Sent,Mercury Checking xx8595,Wise Ltd; Wise Ltd::Collie Studio LLC,WEB000000000000000000                      Collie ,,,,,,,06-02-2023 23:10:11,,,,,21000026120151
+06-02-2023,Wise Ltd,-2368.02,Sent,Mercury Checking xx8595,Wise Ltd; Wise Ltd::Collie Studio LLC,WEB000000000000000000                      Collie ,,,,,,,06-02-2023 23:10:04,,,,,21000026119750
+06-02-2023,Wise Ltd,-2368.02,Sent,Mercury Checking xx8595,Wise Ltd; Wise Ltd::Collie Studio LLC,WEB000000000000000000                      Collie ,,,,,,,06-02-2023 23:06:54,,,,,21000026119610
+06-02-2023,Wise Ltd,-647.06,Sent,Mercury Checking xx8595,Wise Ltd; Wise Ltd::Collie Studio LLC,WEB000000000000000000                      Collie ,,,,,,,06-02-2023 22:20:43,,,,,21000026120275
+06-02-2023,Wise Ltd,-1507.54,Sent,Mercury Checking xx8595,Wise Ltd; Wise Ltd::Collie Studio LLC,WEB000000000000000000                      Collie ,,,,,,,06-02-2023 22:20:41,,,,,21000026119985
+06-02-2023,Cloudflare,-5.00,Sent,Mercury Checking xx8595,CLOUDFLARE,,,6441,Anh Luong,,,,06-02-2023 00:58:42,,,,alex@alexluong.com,
+06-01-2023,Google Pay,-12.00,Sent,Mercury Checking xx8595,GOOGLE *GSUITE_alexluong.,,,6441,Anh Luong,,,,06-01-2023 11:37:25,,,,alex@alexluong.com,
+05-31-2023,Currency Cloud,2723.85,Sent,Mercury Checking xx8595,Currency Cloud; Currency Cloud:230531-726MQN962:Collie Studio LLC,,,,,,,,05-31-2023 22:18:49,,,,,26073150040886
+05-30-2023,Cloudflare,-9.15,Sent,Mercury Checking xx8595,CLOUDFLARE,,,6441,Anh Luong,,,,05-30-2023 00:42:25,,,,alex@alexluong.com,
+05-22-2023,GRAPHJSON.COM,-5.00,Sent,Mercury Checking xx8595,GRAPHJSON.COM,,,6441,Anh Luong,,,,05-22-2023 00:31:38,,,,alex@alexluong.com,
+05-17-2023,Anh Luong,-5000.00,Sent,Mercury Checking xx8595,Send Money transaction initiated on Mercury,From Collie Studio LLC via mercury.com,Payroll: Anh Luong,,,,,,05-17-2023 20:15:33,,,#distribution,,84106760031175
+05-17-2023,Mercury Checking xx8595,5000.00,Sent,Mercury Savings xx9955,Transfer between your Mercury accounts,,,,,,,,05-17-2023 10:12:54,,,,,
+05-17-2023,Mercury Savings xx9955,-5000.00,Sent,Mercury Checking xx8595,Transfer between your Mercury accounts,,,,,,,,05-17-2023 10:12:54,,,,,
+05-17-2023,WISHTENDER LLC,19238.36,Sent,Mercury Checking xx8595,WISHTENDER LLC; WISHTENDER LLC::Collie Studio LLC; 11019125649,May Dev 2023,,,,,,,05-17-2023 10:08:28,,,,,21000021385878
+05-04-2023,Wise Ltd,-863.28,Sent,Mercury Checking xx8595,Wise Ltd; Wise Ltd::Collie Studio LLC,WEB000000000000000000                      Collie ,,,,,,,05-04-2023 20:47:17,,,,,21000025561786
+05-02-2023,Wise Ltd,-1616.30,Sent,Mercury Checking xx8595,Wise Ltd; Wise Ltd::Collie Studio LLC,WEB000000000000000000                      Collie ,,,,,,,05-02-2023 19:05:10,,,,,21000027878859
+05-02-2023,Wise Ltd,-2369.80,Sent,Mercury Checking xx8595,Wise Ltd; Wise Ltd::Collie Studio LLC,WEB000000000000000000                      Collie ,,,,,,,05-02-2023 19:04:24,,,,,21000027877828
+05-02-2023,Wise Ltd,-1508.65,Sent,Mercury Checking xx8595,Wise Ltd; Wise Ltd::Collie Studio LLC,WEB000000000000000000                      Collie ,,,,,,,05-02-2023 18:14:29,,,,,21000027878228
+05-02-2023,Porkbun,-38.55,Sent,Mercury Checking xx8595,PORKBUN.COM,,,6441,Anh Luong,,,,05-02-2023 11:41:07,,,,alex@alexluong.com,
+05-02-2023,Google Pay,-6.60,Sent,Mercury Checking xx8595,GOOGLE*GSUITE ALEXLUON,,,6441,Anh Luong,,,,05-02-2023 03:12:00,,,,alex@alexluong.com,
+05-02-2023,Cloudflare,-5.00,Sent,Mercury Checking xx8595,CLOUDFLARE,,,6441,Anh Luong,,,,05-02-2023 00:39:52,,,,alex@alexluong.com,
+04-28-2023,Cloudflare,-20.18,Sent,Mercury Checking xx8595,CLOUDFLARE,,,6441,Anh Luong,,,,04-28-2023 11:55:28,,,,alex@alexluong.com,
+04-28-2023,Cloudflare,-9.15,Sent,Mercury Checking xx8595,CLOUDFLARE,,,6441,Anh Luong,,,,04-28-2023 11:53:59,,,,alex@alexluong.com,
+04-27-2023,MIDJOURNEY INC.,-96.00,Sent,Mercury Checking xx8595,MIDJOURNEY INC.,,,6441,Anh Luong,,,,04-27-2023 00:45:04,,,,alex@alexluong.com,
+04-25-2023,Anh Luong,-8000.00,Sent,Mercury Checking xx8595,Send Money transaction initiated on Mercury,From Collie Studio LLC via mercury.com,Payroll: Anh Luong,,,,,,04-25-2023 20:15:54,,,#distribution,,84106760038966
+04-25-2023,Remove.bg,-422.94,Sent,Mercury Checking xx8595,PADDLE.NET* JOSHCOMEAU,,,6441,Anh Luong,,,,04-25-2023 01:09:04,,,,alex@alexluong.com,
+04-22-2023,GRAPHJSON.COM,-5.00,Sent,Mercury Checking xx8595,GRAPHJSON.COM,,,6441,Anh Luong,,,,04-22-2023 01:05:27,,,,alex@alexluong.com,
+04-21-2023,Cloudflare,-6.18,Sent,Mercury Checking xx8595,CLOUDFLARE,,,9641,Anh Luong,,,,04-21-2023 09:20:51,,,,alex@alexluong.com,
+04-04-2023,WISHTENDER LLC,13200.00,Sent,Mercury Checking xx8595,WISHTENDER LLC; WISHTENDER LLC::Collie Studio LLC; 11015215287,April,,,,,,,04-04-2023 10:54:24,,,,,21000021732093
+04-03-2023,Anh Luong,-8000.00,Sent,Mercury Checking xx8595,Send Money transaction initiated on Mercury,From Collie Studio LLC via mercury.com,Payroll: Anh Luong,,,,,,04-03-2023 20:17:58,,,#distribution,,84106760238846
+04-03-2023,Wise Ltd,-1293.80,Sent,Mercury Checking xx8595,Wise Ltd; Wise Ltd::Collie Studio LLC,WEB000000000000000000                      Collie ,Payroll: Thanh Pham,,,,,,04-03-2023 12:58:15,,,,,91000015235327
+04-03-2023,Wise Ltd,-863.11,Sent,Mercury Checking xx8595,Wise Ltd; Wise Ltd::Collie Studio LLC,WEB000000000000000000                      Collie ,Payroll: Can Ngo,,,,,,04-03-2023 12:18:21,,,,,91000015234949
+04-02-2023,Cloudflare,-5.00,Sent,Mercury Checking xx8595,CLOUDFLARE,,,6441,Anh Luong,,,,04-02-2023 01:36:17,,,,alex@alexluong.com,
+04-01-2023,Google Pay,-6.00,Sent,Mercury Checking xx8595,GOOGLE *GSUITE_alexluong.,,,6441,Anh Luong,,,,04-01-2023 10:56:40,,,,alex@alexluong.com,
+03-31-2023,Wise Ltd,-1000.00,Sent,Mercury Checking xx8595,Wise Ltd; Wise Ltd::Collie Studio LLC,WEB000000000000000000                      Collie ,Payroll: Anh Luong,,,,,,03-31-2023 03:01:55,,,,,91000015090246
+03-22-2023,GRAPHJSON.COM,-5.00,Sent,Mercury Checking xx8595,GRAPHJSON.COM,,,6441,Anh Luong,,,,03-22-2023 00:49:48,,,,alex@alexluong.com,
+03-11-2023,WISHTENDER LLC,10000.00,Sent,Mercury Checking xx8595,WISHTENDER LLC; WISHTENDER LLC::Collie Studio LLC; 11013243322,March Development,,,,,,,03-11-2023 06:24:33,,,,,21000022706456
+03-06-2023,Anh Luong,-5000.00,Sent,Mercury Checking xx8595,Send Money transaction initiated on Mercury,From Collie Studio LLC via mercury.com,Payroll: Anh Luong,,,,,,03-06-2023 21:15:47,,,#distribution,,84106760243399
+03-02-2023,Cloudflare,-5.00,Sent,Mercury Checking xx8595,CLOUDFLARE,,,6441,Anh Luong,,,,03-02-2023 02:08:52,,,,alex@alexluong.com,
+03-01-2023,GOOGLE *GSUITE_alexluong.,-6.00,Sent,Mercury Checking xx8595,GOOGLE *GSUITE_alexluong.,,,6441,Anh Luong,,,,03-01-2023 14:03:32,,,,alex@alexluong.com,
+02-28-2023,Luong Ha Trung Anh,-10000.00,Sent,Mercury Checking xx8595,Send Money transaction initiated on Mercury,From Collie Studio LLC,Payroll: AL,,,,,,02-28-2023 14:32:52,,,,,
+02-27-2023,IN  BOOKMATE CORPORATION,-350.00,Sent,Mercury Checking xx8595,IN  BOOKMATE CORPORATION,,,6441,Anh Luong,,,,02-27-2023 16:03:17,,,,alex@alexluong.com,
+02-23-2023,Anh Luong,-3000.00,Sent,Mercury Checking xx8595,Send Money transaction initiated on Mercury,From Collie Studio LLC via mercury.com,Payroll: Anh Luong,,,,,,02-23-2023 21:16:01,,,#distribution,,84106760070288
+02-22-2023,GRAPHJSON.COM,-5.00,Sent,Mercury Checking xx8595,GRAPHJSON.COM,,,6441,Anh Luong,,,,02-22-2023 02:24:30,,,,alex@alexluong.com,
+02-16-2023,WISHTENDER LLC,10000.00,Sent,Mercury Checking xx8595,WISHTENDER LLC; WISHTENDER LLC::Collie Studio LLC; 11011173011,February Dev Work,,,,,,,02-16-2023 13:34:03,,,,,21000029762703
+02-07-2023,INSTAPRICE,-287.00,Sent,Mercury Checking xx8595,INSTAPRICE,,,6441,Anh Luong,,,,02-07-2023 02:38:56,,,,alex@alexluong.com,
+02-05-2023,Remove.bg,-36.00,Sent,Mercury Checking xx8595,PADDLE.NET* SIZZY,,,6441,Anh Luong,,,,02-05-2023 12:58:04,,,,alex@alexluong.com,
+02-02-2023,Anh Luong,-1000.00,Sent,Mercury Checking xx8595,Send Money transaction initiated on Mercury,From Collie Studio LLC via mercury.com,Payroll: Anh Luong,,,,,,02-02-2023 21:17:29,,,#distribution,,84106760093606
+02-02-2023,WISHTENDER LLC,10000.00,Sent,Mercury Checking xx8595,WISHTENDER LLC; WISHTENDER LLC::Collie Studio LLC; 11009853655,January Dev Contract,,,,,,,02-02-2023 12:41:46,,,,,21000029152913
+02-02-2023,Cloudflare,-5.00,Sent,Mercury Checking xx8595,CLOUDFLARE,,,6441,Anh Luong,,,,02-02-2023 03:13:24,,,,alex@alexluong.com,
+02-01-2023,GOOGLE *GSUITE_alexluong.,-6.00,Sent,Mercury Checking xx8595,GOOGLE *GSUITE_alexluong.,,,6441,Anh Luong,,,,02-01-2023 17:10:27,,,,alex@alexluong.com,
+01-31-2023,Remove.bg,-221.11,Sent,Mercury Checking xx8595,PADDLE.NET* JOSHCOMEAU,,,6441,Anh Luong,,,,01-31-2023 02:35:39,,,,alex@alexluong.com,
+01-22-2023,GRAPHJSON.COM,-5.00,Sent,Mercury Checking xx8595,GRAPHJSON.COM,,,6441,Anh Luong,,,,01-22-2023 01:29:08,,,,alex@alexluong.com,
+01-02-2023,Cloudflare,-5.00,Sent,Mercury Checking xx8595,CLOUDFLARE,,,6441,Anh Luong,,,,01-02-2023 02:11:36,,,,alex@alexluong.com,
+12-22-2022,GRAPHJSON.COM,-5.00,Sent,Mercury Checking xx8595,GRAPHJSON.COM,,,6441,Anh Luong,,,,12-22-2022 02:38:45,,,,alex@alexluong.com,
+12-12-2022,Duy Pham,-5000.00,Sent,Mercury Checking xx8595,Send Money transaction initiated on Mercury,From Collie Studio LLC,,,,,,,12-12-2022 21:17:18,,,,,84106760215794
+12-07-2022,WISHTENDER LLC,6250.00,Sent,Mercury Checking xx8595,WISHTENDER LLC; WISHTENDER LLC::Collie Studio LLC; 11004762805,Product Development,,,,,,,12-07-2022 21:33:30,,,,,21000023429367
+12-02-2022,Cloudflare,-5.00,Sent,Mercury Checking xx8595,CLOUDFLARE,,,6441,Anh Luong,,,,12-02-2022 05:01:12,,,,alex@alexluong.com,
+12-01-2022,Porkbun,-34.29,Sent,Mercury Checking xx8595,PORKBUN.COM,,,6441,Anh Luong,,,,12-01-2022 11:14:58,,,,alex@alexluong.com,
+11-30-2022,WISHTENDER LLC,1500.00,Sent,Mercury Checking xx8595,WISHTENDER LLC; WISHTENDER LLC::Collie Studio LLC; 11003937512,auto-tweet project,,,,,,,11-30-2022 20:55:28,,,,,21000024471170
+11-22-2022,GRAPHJSON.COM,-5.00,Sent,Mercury Checking xx8595,GRAPHJSON.COM,,,6441,Anh Luong,,,,11-22-2022 02:28:00,,,,alex@alexluong.com,
+11-05-2022,Interest Accrual,0.01,Failed,Mercury Checking xx8595,Interest Accrual,,,,,,,,11-05-2022 03:21:58,,,,,
+11-02-2022,Cloudflare,-5.00,Sent,Mercury Checking xx8595,CLOUDFLARE,,,6441,Anh Luong,,,,11-02-2022 01:31:58,,,,alex@alexluong.com,
+10-22-2022,GRAPHJSON.COM,-5.00,Sent,Mercury Checking xx8595,GRAPHJSON.COM,,,6441,Anh Luong,,,,10-22-2022 00:20:00,,,,alex@alexluong.com,
+10-17-2022,Porkbun,-9.73,Sent,Mercury Checking xx8595,PORKBUN.COM,,,6441,Anh Luong,,,,10-17-2022 09:18:22,,,,alex@alexluong.com,
+10-17-2022,NORTHFLANK LTD,-10.28,Sent,Mercury Checking xx8595,NORTHFLANK LTD,,,6441,Anh Luong,,,,10-17-2022 01:47:00,,,,alex@alexluong.com,
+10-11-2022,APPLE.COM/US,99.00,Sent,Mercury Checking xx8595,APPLE.COM/US,,,6441,Anh Luong,,,,10-11-2022 09:12:22,,,,alex@alexluong.com,
+10-11-2022,APPLE.COM/US,5.94,Sent,Mercury Checking xx8595,APPLE.COM/US,,,6441,Anh Luong,,,,10-11-2022 08:48:28,,,,alex@alexluong.com,
+10-06-2022,Apple,-5.94,Sent,Mercury Checking xx8595,APPLE.COM/US,,,6441,Anh Luong,,,,10-06-2022 09:05:35,,,,alex@alexluong.com,
+10-06-2022,Apple,-99.00,Sent,Mercury Checking xx8595,APPLE.COM/US,,,6441,Anh Luong,,,,10-06-2022 08:59:50,,,,alex@alexluong.com,
+10-04-2022,Porkbun,-10.79,Sent,Mercury Checking xx8595,PORKBUN.COM,,,6441,Anh Luong,,,,10-04-2022 12:31:17,,,,alex@alexluong.com,
+10-04-2022,Porkbun,-12.87,Sent,Mercury Checking xx8595,PORKBUN.COM,,,6441,Anh Luong,,,,10-04-2022 09:26:11,,,,alex@alexluong.com,
+10-02-2022,Porkbun,-7.00,Sent,Mercury Checking xx8595,PORKBUN.COM,,,6441,Anh Luong,,,,10-02-2022 15:15:51,,,,alex@alexluong.com,
+10-02-2022,Cloudflare,-5.00,Sent,Mercury Checking xx8595,CLOUDFLARE,,,6441,Anh Luong,,,,10-02-2022 08:54:56,,,,alex@alexluong.com,
+09-22-2022,GRAPHJSON.COM,-5.00,Sent,Mercury Checking xx8595,GRAPHJSON.COM,,,6441,Anh Luong,,,,09-22-2022 00:34:39,,,,alex@alexluong.com,
+09-02-2022,Cloudflare,-5.00,Sent,Mercury Checking xx8595,CLOUDFLARE,,,6441,Anh Luong,,,,09-02-2022 00:14:51,,,,alex@alexluong.com,
+08-22-2022,GRAPHJSON.COM,-5.00,Sent,Mercury Checking xx8595,GRAPHJSON.COM,,,6441,Anh Luong,,,,08-22-2022 00:41:25,,,,alex@alexluong.com,
+08-02-2022,Cloudflare,-5.00,Sent,Mercury Checking xx8595,CLOUDFLARE,,,6441,Anh Luong,,,,08-02-2022 02:05:24,,,,alex@alexluong.com,
+07-30-2022,CLOUD PEAK LAW GROUP,-209.00,Sent,Mercury Checking xx8595,CLOUD PEAK LAW GROUP,,,6441,Anh Luong,,,,07-30-2022 01:31:32,,,,alex@alexluong.com,
+07-22-2022,GRAPHJSON.COM,-5.00,Sent,Mercury Checking xx8595,GRAPHJSON.COM,,,6441,Anh Luong,,,,07-22-2022 00:05:11,,,,alex@alexluong.com,
+07-02-2022,Cloudflare,-5.00,Sent,Mercury Checking xx8595,CLOUDFLARE,,,6441,Anh Luong,,,,07-02-2022 02:06:15,,,,alex@alexluong.com,
+06-28-2022,"FIRSTBASE.IO, INC.",99.00,Sent,Mercury Checking xx8595,"FIRSTBASE.IO, INC.",,,6441,Anh Luong,,,,06-28-2022 02:44:28,,,,alex@alexluong.com,
+06-22-2022,GRAPHJSON.COM,-5.00,Sent,Mercury Checking xx8595,GRAPHJSON.COM,,,6441,Anh Luong,,,,06-22-2022 01:17:00,,,,alex@alexluong.com,
+06-18-2022,"FIRSTBASE.IO, INC.",-99.00,Sent,Mercury Checking xx8595,"FIRSTBASE.IO, INC.",,,6441,Anh Luong,,,,06-18-2022 01:24:29,,,,alex@alexluong.com,
+06-02-2022,Cloudflare,-5.00,Sent,Mercury Checking xx8595,CLOUDFLARE,,,6441,Anh Luong,,,,06-02-2022 00:41:47,,,,alex@alexluong.com,
+05-30-2022,Cloudflare,-8.57,Sent,Mercury Checking xx8595,CLOUDFLARE,,,6441,Anh Luong,,,,05-30-2022 02:20:29,,,,alex@alexluong.com,
+05-22-2022,GRAPHJSON.COM,-5.00,Sent,Mercury Checking xx8595,GRAPHJSON.COM,,,6441,Anh Luong,,,,05-22-2022 00:49:43,,,,alex@alexluong.com,
+05-02-2022,Cloudflare,-5.00,Sent,Mercury Checking xx8595,CLOUDFLARE,,,6441,Anh Luong,,,,05-02-2022 04:47:48,,,,alex@alexluong.com,
+04-22-2022,GRAPHJSON.COM,-5.00,Sent,Mercury Checking xx8595,GRAPHJSON.COM,,,6441,Anh Luong,,,,04-22-2022 11:39:06,,,,alex@alexluong.com,
+04-08-2022,GORAILS,-19.00,Failed,Mercury Checking xx8595,GORAILS,,,6441,Anh Luong,,,,04-08-2022 15:57:14,,,,alex@alexluong.com,
+04-06-2022,GORAILS,-19.00,Failed,Mercury Checking xx8595,GORAILS,,,6441,Anh Luong,,,,04-06-2022 08:55:54,,,,alex@alexluong.com,
+04-06-2022,GORAILS,-19.00,Failed,Mercury Checking xx8595,GORAILS,,,6441,Anh Luong,,,,04-06-2022 08:55:52,,,,alex@alexluong.com,
+04-06-2022,GORAILS,-19.00,Failed,Mercury Checking xx8595,GORAILS,,,6441,Anh Luong,,,,04-06-2022 06:28:26,,,,alex@alexluong.com,
+04-06-2022,GORAILS,-19.00,Failed,Mercury Checking xx8595,GORAILS,,,6441,Anh Luong,,,,04-06-2022 06:28:25,,,,alex@alexluong.com,
+04-02-2022,Cloudflare,-5.00,Sent,Mercury Checking xx8595,CLOUDFLARE,,,6441,Anh Luong,,,,04-02-2022 02:50:38,,,,alex@alexluong.com,
+03-22-2022,GRAPHJSON.COM,-5.00,Sent,Mercury Checking xx8595,GRAPHJSON.COM,,,6441,Anh Luong,,,,03-22-2022 00:58:49,,,,alex@alexluong.com,
+03-14-2022,GORAILS,-249.00,Sent,Mercury Checking xx8595,GORAILS,,,6441,Anh Luong,,,,03-14-2022 13:00:15,,,,alex@alexluong.com,
+03-10-2022,VIBER,-4.99,Sent,Mercury Checking xx8595,VIBER,,,6441,Anh Luong,,,,03-10-2022 04:00:22,,,,alex@alexluong.com,
+03-08-2022,GORAILS,-19.00,Sent,Mercury Checking xx8595,GORAILS,,,6441,Anh Luong,,,,03-08-2022 10:03:41,,,,alex@alexluong.com,
+03-08-2022,GORAILS,-19.00,Failed,Mercury Checking xx8595,GORAILS,,,6441,Anh Luong,,,,03-08-2022 02:46:54,,,,alex@alexluong.com,
+03-06-2022,GORAILS,-19.00,Failed,Mercury Checking xx8595,GORAILS,,,6441,Anh Luong,,,,03-06-2022 08:46:38,,,,alex@alexluong.com,
+03-06-2022,GORAILS,-19.00,Failed,Mercury Checking xx8595,GORAILS,,,6441,Anh Luong,,,,03-06-2022 08:46:36,,,,alex@alexluong.com,
+03-06-2022,GORAILS,-19.00,Failed,Mercury Checking xx8595,GORAILS,,,6441,Anh Luong,,,,03-06-2022 06:25:16,,,,alex@alexluong.com,
+03-06-2022,GORAILS,-19.00,Failed,Mercury Checking xx8595,GORAILS,,,6441,Anh Luong,,,,03-06-2022 06:25:06,,,,alex@alexluong.com,
+03-02-2022,Cloudflare,-5.00,Sent,Mercury Checking xx8595,CLOUDFLARE,,,6441,Anh Luong,,,,03-02-2022 01:21:27,,,,alex@alexluong.com,
+02-22-2022,GRAPHJSON.COM,-5.00,Sent,Mercury Checking xx8595,GRAPHJSON.COM,,,6441,Anh Luong,,,,02-22-2022 02:22:12,,,,alex@alexluong.com,
+02-06-2022,GORAILS,-19.00,Sent,Mercury Checking xx8595,GORAILS,,,6441,Anh Luong,,,,02-06-2022 09:50:28,,,,alex@alexluong.com,
+02-06-2022,GORAILS,-19.00,Failed,Mercury Checking xx8595,GORAILS,,,6441,Anh Luong,,,,02-06-2022 05:23:47,,,,alex@alexluong.com,
+02-03-2022,1/AANL AFTERNEXT LTD,600.00,Sent,Mercury Checking xx8595,ACCOUNT 9800858595 FOR COLLIE STUDIO LLC AT EVOLVE; 1/AANL AFTERNEXT LTD,,,,,,,,02-03-2022 20:21:31,,,,,20220201B1QGC07C007245
+02-02-2022,Cloudflare,-3.67,Sent,Mercury Checking xx8595,CLOUDFLARE,,,6441,Anh Luong,,,,02-02-2022 02:28:44,,,,alex@alexluong.com,
+02-02-2022,LEMONSQUEEZY.COM,-79.00,Sent,Mercury Checking xx8595,LEMONSQUEEZY.COM,,,6441,Anh Luong,,,,02-02-2022 02:28:12,,,,alex@alexluong.com,
+01-11-2022,KENNO DESIGN SOFTWARE COMPANY LIMITED,-1500.00,Sent,Mercury Checking xx8595,Send Money transaction initiated on Mercury,From Collie Studio LLC Contractor:web development;Software development contracting,,,,,,,01-11-2022 21:17:28,,,,,84106760026713
+01-04-2022,Cloudflare,-4.68,Sent,Mercury Checking xx8595,CLOUDFLARE,,,6441,Anh Luong,,,,01-04-2022 02:45:45,,,,alex@alexluong.com,
+12-30-2021,NAME-CHEAP.COM* M1433D,-64.98,Sent,Mercury Checking xx8595,NAME-CHEAP.COM* M1433D,,,6441,Anh Luong,,,,12-30-2021 01:10:25,,,,alex@alexluong.com,
+12-07-2021,KENNO DESIGN SOFTWARE COMPANY LIMITED,-1500.00,Sent,Mercury Checking xx8595,Send Money transaction initiated on Mercury,From Collie Studio LLC Contractor:web development;Software development contracting,,,,,,,12-07-2021 15:51:36,,,,,84106760015451
+12-01-2021,Wise Inc,1500.00,Sent,Mercury Checking xx8595,Wise Inc; Wise Inc:273219910:Collie Studio LLC; Traverse,,,,,,,,12-01-2021 22:53:04,,,,,91000011571348
+11-21-2021,Apple,-2385.20,Sent,Mercury Checking xx8595,APPLE.COM/US,,,6441,Anh Luong,,,,11-21-2021 09:58:29,,,,alex@alexluong.com,
+11-09-2021,"ATeams, Inc.",790.00,Sent,Mercury Checking xx8595,"ATeams, Inc.; ATeams, Inc.:EDI:Anh Luong; 102369025986206",,,,,,,,11-09-2021 12:13:25,,,,,91000013045510
+11-08-2021,KENNO DESIGN SOFTWARE COMPANY LIMITED,-1500.00,Sent,Mercury Checking xx8595,Send Money transaction initiated on Mercury,From Collie Studio LLC Contractor:web development;Software development contracting,,,,,,,11-08-2021 20:18:28,,,,,84106760173569
+10-25-2021,"ATeams, Inc.",900.00,Sent,Mercury Checking xx8595,"ATeams, Inc.; ATeams, Inc.:EDI:Anh Luong; 102369025555354",,,,,,,,10-25-2021 03:22:55,,,,,91000013713786
+10-12-2021,"ATeams, Inc.",3590.00,Sent,Mercury Checking xx8595,"ATeams, Inc.; ATeams, Inc.:EDI:Anh Luong; 102369024836352",,,,,,,,10-12-2021 15:31:31,,,,,91000012699950
+10-04-2021,Nam Nguyen,-2000.00,Sent,Mercury Checking xx8595,Send Money transaction initiated on Mercury,From Collie Studio LLC Contractor:Web Development;Web development subcontracting on Crystallize project,,,,,,,10-04-2021 20:17:19,,,,,84106760192315
+09-22-2021,"ATeams, Inc.",1300.00,Sent,Mercury Checking xx8595,"ATeams, Inc.; ATeams, Inc.:EDI:Anh Luong; 102369024411499",,,,,,,,09-22-2021 11:11:08,,,,,91000016170300
+09-10-2021,"ATeams, Inc.",2520.00,Sent,Mercury Checking xx8595,"ATeams, Inc.; ATeams, Inc.:EDI:Anh Luong; 102369023762140",,,,,,,,09-10-2021 11:40:51,,,,,91000018202101
