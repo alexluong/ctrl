@@ -8,44 +8,72 @@
 - Block-level intel already strong from owning down the street.
 - Natural double-down candidate if numbers work.
 
-## Web Data (Unverified — Conflicting Across Sources)
+## Listing Details (Confirmed)
 
-| Field | Source A (Movoto SFH) | Source B (multi-family) |
-|---|---|---|
-| Price | $80,000 | $65,000 |
-| Type | SFH | Duplex (2 units) |
-| Beds/Baths | 4 / 2 | — / 2 |
-| Sqft | 1,898 | 2,096 |
-| Year built | 1927 | — |
-| Brokerage | S&P Realty | S&P Realty |
+| | |
+|---|---|
+| Asking | **$65,000** (dropped from $80K on 04/30/2026) |
+| Type | **2-unit multifamily** (duplex, basement could become 3rd unit) |
+| Beds/Baths | 4 / 2 (combined across units) |
+| Sqft | 1,898 |
+| $/sqft | $34 |
+| Year built | 1927 |
+| Brokerage | S&P Realty |
+| MLS | MiRealSource #60985843 / Realcomp #20261027237 |
+| Coming soon | 04/21/2026 |
+| Listed | 04/24/2026 @ $80K |
+| Price drop | 04/30/2026 → $65K (-19% in 6 days) |
+| 2024 taxes | $3,666 (+106%) |
+| 2025 taxes | $1,680 (-54%, reassessed down) |
 
-The 4bd/2ba + 1,898sqft signal often = up/down duplex (2bd/1ba per unit) listed as SFH on some feeds. Built 1927 fits Morningside vintage stock.
+## Listing Description
+
+> Excellent income-producing opportunity in an up-and-coming Detroit neighborhood. 2-unit multifamily with rental potential plus upside — basement provides opportunity to be finished into a potential 3rd unit. Perfect for investors or owner-occupants looking to house hack. **With the right vision and full remodel**, this property can truly shine. Minutes from Downtown Detroit, easy freeway access. **Seller is motivated** — ready to work with the right buyer.
+
+Key takeaway: needs full remodel. Price reflects condition. "Motivated seller" + 19% drop in 6 days confirms.
+
+## Photo Observations (Front)
+
+- Classic Detroit brick bungalow with arched entry portico, multi-pane windows.
+- Front yard well-kept (mature shrub, fresh mulch, mowed lawn).
+- Single front door visible — typical up/down duplex layout (shared entry, internal stairs to upper unit).
+- Concrete steps and walkway in good shape.
+- Driveway present.
+- Adjacent houses similar quality brick — block reads as decent.
+- Listing photos limited (only exterior shown publicly). Need interior from Mike.
+
+## Strategy / Quick Math
+
+- $65K duplex with potential $1,800-2,200 rent → 1% rule clears handily IF rehab budget known.
+- 48224 duplex comps trade $120K+ stabilized → meaningful equity play if rehab pencils.
+- Tax volatility: 2024 jump to $3,666 was likely Wayne County reassessment, 2025 corrected back. Budget conservatively at $1,700-2,500/yr.
+- Compared to 4300 Haverhill (3/1.5 SFH, $85K range): this is bigger, cheaper per sqft, and has 2-unit income potential — but condition is the variable.
+
+## Risks
+
+- "Full remodel" needed — could be $30-60K+ rehab. Budget unknown until walk-through.
+- $34/sqft is the ultimate distress signal for this area.
+- 2-unit conversion could be a bootleg duplex (zoning/permits unclear) — verify with city.
+- Insurance carrier may treat 2-4 unit differently than SFH.
 
 ## Need from Mike
 
-- Confirm: SFH vs duplex (units count)
-- Final list price + any seller motivation
-- Beds/baths configuration per unit
-- Rent (current tenant? market estimate?)
-- Condition / rehab needed
-- MLS# for direct lookup
-- Photos
-- Recent comps on the block
-
-## Strategy Notes
-
-- If duplex w/ ~$1,800-2,000 total rent at $65-80K → strong. 48224 duplex comps trade $120K+.
-- If SFH 4/2 at $80K → on the high side for sqft but unusual config could justify if condition is good.
-- Either way, price-per-sqft ($34-42) is below 48224 averages — usually means rehab or distressed.
-- 48224 "block-by-block matters" (per notes.md) — Morningside vs deeper interior matters. We already know this block from 4300.
+- Interior photos / walkthrough video
+- Rehab estimate (his or his contractor's)
+- Rent estimate per unit at market post-rehab
+- Confirm legal duplex (zoning/CofO status)
+- Comps: recent duplex sales on Morningside
 
 ## Insurance Note
 
-- If acquired, fits same insurance policy as 4300 Haverhill (Katie Haller / Simplified, Fortegra). Keep entity consistent.
+- 2-4 unit may need different policy than SFH. Confirm with Katie Haller (Simplified) if pursuing.
+- Currently 4300 Haverhill + 20259 Oakfield share Fortegra policy.
 
 ## TODO
 
-- [ ] Mike: get listing details + photos
-- [ ] Drive-by request — already familiar with block from 4300
-- [ ] Check Wayne County tax/assessment record
-- [ ] Run numbers once price + rent confirmed
+- [ ] Mike: interior photos + walkthrough
+- [ ] Drive-by — already familiar with block from 4300
+- [ ] Verify legal duplex via Detroit BSEED / Wayne County
+- [ ] Rehab scope w/ contractor
+- [ ] Run BRRRR + DSCR numbers post-rehab
+- [ ] Confirm wholesale vs MLS path (price drop suggests motivated)
