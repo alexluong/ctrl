@@ -46,7 +46,7 @@ Options if this becomes an issue:
 
 ## Dual Agency on Dixie
 
-Mike is dual agent on Dixie (KW Paint Creek represents both buyer and seller). Seller is Leveredge Michigan Holding LLC. Be aware: Mike is incentivized to close, not necessarily to get lowest price. Use inspection findings as leverage independently.
+Mike is dual agent on Dixie (KW Paint Creek represents both buyer and seller). Seller changed from Leveredge Michigan Holding LLC to Lampman Holdings LLC (Addendum A, 04/07/2026). Be aware: Mike is incentivized to close, not necessarily to get lowest price. Use inspection findings as leverage independently.
 
 ## Strategy Observations
 
@@ -55,6 +55,10 @@ Mike is dual agent on Dixie (KW Paint Creek represents both buyer and seller). S
 - Metro deals ($130-150K) will need DSCR from the start
 - MFH (duplex) strategy makes sense for scaling — 2 rent checks, 1 roof
 - Value-add projects capped at $100-120K total keep risk manageable
+
+## Area Preferences
+
+- 48235 (Greenfield/Oakfield area): not looking to buy more here. Already own Oakfield, area not strong enough to double down.
 
 ## Block-by-Block Matters
 

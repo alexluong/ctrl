@@ -1,6 +1,6 @@
 # RE Investor Profile
 
-Foreign national, based in Vietnam.
+Foreign national, based in Vietnam. Partner: Hannah (has input on deals).
 
 ## Current Portfolio
 
@@ -52,5 +52,15 @@ Foreign national, based in Vietnam.
 - **Rene Perozeni** — NEXA Lending (Axen Mortgage). NMLS# 2328044. (440) 821-2170. rperozeni@axenmortgage.com. Pre-qual letter: up to $160K, conventional 30yr, expires 06/29/2026.
 - **Kris Natschke** — lender (referred by Mike)
 
+### Insurance
+- **Katie Haller** — Simplified Insurance Agency (NPG & Associates LLC). 248-229-2725. katie@myrentalguard.com. Carrier: Fortegra Specialty Insurance Company. Policy: LPP1500005/LPG1500005. Covers 4300 Haverhill + 20259 Oakfield. Annual cost: $1,057.88. Expires 03/31/2027.
+
+### Transaction Coordinators
+- **Josie Witt** — Fire Realty Team (Mike's team). 856-295-3813. admin@firerealtyteam.com. 440 S Main St, Rochester MI 48307.
+
+### Title
+- **Collab Title / Epic Title Services, LLC** — selected for Dixie purchase. Affiliated with KW Paint Creek. Amy Leonardo, 810-603-7879, amy@epictitlemi.com.
+
 ### Other
 - **Collie MI Properties LLC** — purchasing entity, Anh Luong authorized signatory
+- **MINO Lending Solutions** — Cedar Neeley, Director of Commercial Lending. 866-646-6536. 6001 Cass Ave Ste 500, Detroit MI 48202. Competing lender for Dixie.
