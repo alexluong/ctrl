@@ -28,4 +28,4 @@ address,zip,neighborhood,type,beds,baths,sqft,price,rent,status,buy_box,notes
 18109 Cornwall St,48224,Cornerstone Village,SFH,2,,,,1000,watching,city_sfh,"David. $75,000. Rented $1000. Market $1200. Bungalow. Full basement. Part of Cornwall 3-house package."
 18119 Cornwall St,48224,Cornerstone Village,SFH,,,,,,,watching,city_sfh,"David. $75,000. Rent ready, vacant. Market $1200. Part of Cornwall 3-house package."
 20851 8 Mile,48080,St. Clair Shores,Duplex,,,,,2800,watching,mfh,"Mike. $269,900. $2,800 rent ($1,400/unit). Near Parkside. BiggerPockets analysis: $384/mo CF at 6.25%. $77K cash needed. Revisit after Dixie closes."
-4326 Haverhill St,48224,Morningside,SFH,,,,,,exploring,city_sfh,"On market. In convo with Mike, no further info yet. Same street as our 4300 Haverhill — block-level intel already strong. Get: price, beds/baths/sqft, condition, rent."
+4326 Haverhill St,48224,Morningside,Duplex?,4,2,1898,80000,,exploring,mfh,"Same street as our 4300 Haverhill. Listed S&P Realty. Web shows price split $65K-$80K, type split SFH 4/2 vs duplex 2-units (1898 vs 2096 sqft). Built 1927. CONFIRM with Mike: price, SFH vs duplex, units, rent, condition, MLS#."
