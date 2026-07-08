@@ -1,3 +1,6 @@
+# ALWAYS-ON stack (~250 MB). The torrent engine + seeding + catalog pipeline.
+# Part of the always-on set: download + private + calibre + audiobookshelf.
+# Start the whole always-on set with:  ./scripts/up.sh core
 services:
   gluetun:
     image: qmcgaw/gluetun:latest

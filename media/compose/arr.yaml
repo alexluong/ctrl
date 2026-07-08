@@ -1,3 +1,7 @@
+# ON-DEMAND stack (~550 MB). Do NOT leave running — the VM is RAM-tight and
+# this + everything else OOM-kills qBittorrent. Start only when managing
+# indexers/automation:  ./scripts/up.sh arr   then   ./scripts/down.sh arr
+# Always-on set is: download + private + calibre + audiobookshelf (see README).
 services:
   flaresolverr:
     image: ghcr.io/flaresolverr/flaresolverr:latest

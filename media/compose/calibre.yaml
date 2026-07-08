@@ -1,3 +1,5 @@
+# ALWAYS-ON stack (~310 MB, two instances). Ebook readers for alex + hannah.
+# Part of the always-on set: download + private + calibre + audiobookshelf.
 services:
   calibre-web-hannah:
     image: linuxserver/calibre-web:latest

@@ -1,3 +1,6 @@
+# ON-DEMAND stack (~155 MB). Do NOT leave running — the VM is RAM-tight.
+# Start only when streaming:  ./scripts/up.sh jellyfin   then  down.sh jellyfin
+# Always-on set is: download + private + calibre + audiobookshelf (see README).
 services:
   jellyfin:
     image: linuxserver/jellyfin:latest

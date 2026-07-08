@@ -1,3 +1,5 @@
+# ALWAYS-ON stack (~40 MB). Audiobook + podcast server.
+# Part of the always-on set: download + private + calibre + audiobookshelf.
 services:
   audiobookshelf:
     image: ghcr.io/advplyr/audiobookshelf:latest

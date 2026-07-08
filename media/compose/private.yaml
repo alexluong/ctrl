@@ -1,3 +1,5 @@
+# ALWAYS-ON stack (~125 MB). Secondary torrent client on 8081 (PIA DE Frankfurt).
+# Part of the always-on set: download + private + calibre + audiobookshelf.
 services:
   gluetun-private:
     image: qmcgaw/gluetun:latest
