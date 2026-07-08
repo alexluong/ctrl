@@ -8699,7 +8699,411 @@
       "hdr": "",
       "status": "linked",
       "library": "red4/movies/A Series of Unfortunate Events (2004)"
+    },
+    {
+      "download": "red4/How.To.Lose.A.Guy.In.10.Days.2003.1080p.BluRay.x265-RARBG",
+      "type": "movie",
+      "title": "How To Lose A Guy In 10 Days",
+      "year": 2003,
+      "resolution": "1080p",
+      "source": "BluRay",
+      "group": "RARBG",
+      "video": "x265",
+      "audio": "",
+      "hdr": "",
+      "status": "linked",
+      "library": "red4/movies/How To Lose A Guy In 10 Days (2003)"
+    },
+    {
+      "download": "red4/The Hot Chick 2002 1080p WEB-DL HEVC x265 5.1 BONE.mkv",
+      "type": "movie",
+      "title": "The Hot Chick",
+      "year": 2002,
+      "resolution": "1080p",
+      "source": "WEB-DL",
+      "group": "unknown",
+      "video": "x265",
+      "audio": "",
+      "hdr": "",
+      "status": "linked",
+      "library": "red4/movies/The Hot Chick (2002)"
+    },
+    {
+      "download": "red4/Shallow Hal 2001 1080p BluRay HEVC x265 5.1 BONE.mkv",
+      "type": "movie",
+      "title": "Shallow Hal",
+      "year": 2001,
+      "resolution": "1080p",
+      "source": "BluRay",
+      "group": "BONE",
+      "video": "x265",
+      "audio": "",
+      "hdr": "",
+      "status": "linked",
+      "library": "red4/movies/Shallow Hal (2001)"
+    },
+    {
+      "download": "red4/A.Thousand.Words.2012.1080p.BluRay.x265-RARBG",
+      "type": "movie",
+      "title": "A Thousand Words",
+      "year": 2012,
+      "resolution": "1080p",
+      "source": "BluRay",
+      "group": "RARBG",
+      "video": "x265",
+      "audio": "",
+      "hdr": "",
+      "status": "linked",
+      "library": "red4/movies/A Thousand Words (2012)"
+    },
+    {
+      "download": "red4/Criminal.Minds.S01.1080p.WEBRip.x265-KONTRAST",
+      "type": "tv",
+      "title": "Criminal Minds",
+      "seasons": [
+        1
+      ],
+      "resolution": "1080p",
+      "source": "WEBRip",
+      "group": "KONTRAST",
+      "video": "x265",
+      "audio": "",
+      "hdr": "",
+      "status": "linked",
+      "library": "red4/tv/Criminal Minds"
+    },
+    {
+      "download": "red4/Criminal.Minds.S02.1080p.WEBRip.x265-KONTRAST",
+      "type": "tv",
+      "title": "Criminal Minds",
+      "seasons": [
+        2
+      ],
+      "resolution": "1080p",
+      "source": "WEBRip",
+      "group": "KONTRAST",
+      "video": "x265",
+      "audio": "",
+      "hdr": "",
+      "status": "linked",
+      "library": "red4/tv/Criminal Minds"
+    },
+    {
+      "download": "red4/Criminal.Minds.S03.1080p.WEBRip.x265-KONTRAST",
+      "type": "tv",
+      "title": "Criminal Minds",
+      "seasons": [
+        3
+      ],
+      "resolution": "1080p",
+      "source": "WEBRip",
+      "group": "KONTRAST",
+      "video": "x265",
+      "audio": "",
+      "hdr": "",
+      "status": "linked",
+      "library": "red4/tv/Criminal Minds"
+    },
+    {
+      "download": "red4/Criminal.Minds.S04.1080p.WEBRip.x265-KONTRAST",
+      "type": "tv",
+      "title": "Criminal Minds",
+      "seasons": [
+        4
+      ],
+      "resolution": "1080p",
+      "source": "WEBRip",
+      "group": "KONTRAST",
+      "video": "x265",
+      "audio": "",
+      "hdr": "",
+      "status": "linked",
+      "library": "red4/tv/Criminal Minds"
+    },
+    {
+      "download": "red4/Criminal.Minds.S05.1080p.WEBRip.x265-KONTRAST",
+      "type": "tv",
+      "title": "Criminal Minds",
+      "seasons": [
+        5
+      ],
+      "resolution": "1080p",
+      "source": "WEBRip",
+      "group": "KONTRAST",
+      "video": "x265",
+      "audio": "",
+      "hdr": "",
+      "status": "linked",
+      "library": "red4/tv/Criminal Minds"
+    },
+    {
+      "download": "red4/Scary Movie (2000) (1080p Bluray AV1 Opus) [NeoNyx343].mkv",
+      "type": "movie",
+      "title": "Scary Movie",
+      "year": 2000,
+      "resolution": "1080p",
+      "source": "BluRay",
+      "group": "NeoNyx343",
+      "video": "AV1",
+      "audio": "Opus",
+      "hdr": "",
+      "status": "linked",
+      "library": "red4/movies/Scary Movie (2000)"
+    },
+    {
+      "download": "red4/Forbidden Fruits 2026 1080p WEB-DL HEVC x265 5.1 BONE.mkv",
+      "type": "movie",
+      "title": "Forbidden Fruits",
+      "year": 2026,
+      "resolution": "1080p",
+      "source": "WEB-DL",
+      "group": "BONE",
+      "video": "x265",
+      "audio": "",
+      "hdr": "",
+      "status": "linked",
+      "library": "red4/movies/Forbidden Fruits (2026)"
+    },
+    {
+      "download": "red4/Criminal.Minds.S06.1080p.WEBRip.x265-KONTRAST",
+      "type": "tv",
+      "title": "Criminal Minds",
+      "seasons": [
+        6
+      ],
+      "resolution": "1080p",
+      "source": "WEBRip",
+      "group": "KONTRAST",
+      "video": "x265",
+      "audio": "",
+      "hdr": "",
+      "status": "linked",
+      "library": "red4/tv/Criminal Minds"
+    },
+    {
+      "download": "red4/Criminal.Minds.S07.1080p.WEBRip.x265-KONTRAST",
+      "type": "tv",
+      "title": "Criminal Minds",
+      "seasons": [
+        7
+      ],
+      "resolution": "1080p",
+      "source": "WEBRip",
+      "group": "KONTRAST",
+      "video": "x265",
+      "audio": "",
+      "hdr": "",
+      "status": "linked",
+      "library": "red4/tv/Criminal Minds"
+    },
+    {
+      "download": "red4/Criminal.Minds.S08.1080p.WEBRip.x265-KONTRAST",
+      "type": "tv",
+      "title": "Criminal Minds",
+      "seasons": [
+        8
+      ],
+      "resolution": "1080p",
+      "source": "WEBRip",
+      "group": "KONTRAST",
+      "video": "x265",
+      "audio": "",
+      "hdr": "",
+      "status": "linked",
+      "library": "red4/tv/Criminal Minds"
+    },
+    {
+      "download": "red4/Criminal.Minds.S09.1080p.WEBRip.x265-KONTRAST",
+      "type": "tv",
+      "title": "Criminal Minds",
+      "seasons": [
+        9
+      ],
+      "resolution": "1080p",
+      "source": "WEBRip",
+      "group": "KONTRAST",
+      "video": "x265",
+      "audio": "",
+      "hdr": "",
+      "status": "linked",
+      "library": "red4/tv/Criminal Minds"
+    },
+    {
+      "download": "red4/Criminal.Minds.S10.1080p.WEBRip.x265-KONTRAST",
+      "type": "tv",
+      "title": "Criminal Minds",
+      "seasons": [
+        10
+      ],
+      "resolution": "1080p",
+      "source": "WEBRip",
+      "group": "KONTRAST",
+      "video": "x265",
+      "audio": "",
+      "hdr": "",
+      "status": "linked",
+      "library": "red4/tv/Criminal Minds"
+    },
+    {
+      "download": "red4/Criminal.Minds.S11.1080p.WEBRip.x265-KONTRAST",
+      "type": "tv",
+      "title": "Criminal Minds",
+      "seasons": [
+        11
+      ],
+      "resolution": "1080p",
+      "source": "WEBRip",
+      "group": "KONTRAST",
+      "video": "x265",
+      "audio": "",
+      "hdr": "",
+      "status": "linked",
+      "library": "red4/tv/Criminal Minds"
+    },
+    {
+      "download": "red4/Criminal.Minds.S12.1080p.WEBRip.x265-KONTRAST",
+      "type": "tv",
+      "title": "Criminal Minds",
+      "seasons": [
+        12
+      ],
+      "resolution": "1080p",
+      "source": "WEBRip",
+      "group": "KONTRAST",
+      "video": "x265",
+      "audio": "",
+      "hdr": "",
+      "status": "linked",
+      "library": "red4/tv/Criminal Minds"
+    },
+    {
+      "download": "red4/Criminal.Minds.S13.1080p.WEBRip.x265-KONTRAST",
+      "type": "tv",
+      "title": "Criminal Minds",
+      "seasons": [
+        13
+      ],
+      "resolution": "1080p",
+      "source": "WEBRip",
+      "group": "KONTRAST",
+      "video": "x265",
+      "audio": "",
+      "hdr": "",
+      "status": "linked",
+      "library": "red4/tv/Criminal Minds"
+    },
+    {
+      "download": "red4/Criminal.Minds.S14.1080p.WEBRip.x265-KONTRAST",
+      "type": "tv",
+      "title": "Criminal Minds",
+      "seasons": [
+        14
+      ],
+      "resolution": "1080p",
+      "source": "WEBRip",
+      "group": "KONTRAST",
+      "video": "x265",
+      "audio": "",
+      "hdr": "",
+      "status": "linked",
+      "library": "red4/tv/Criminal Minds"
+    },
+    {
+      "download": "red4/Criminal.Minds.S15.1080p.WEBRip.x265-KONTRAST",
+      "type": "tv",
+      "title": "Criminal Minds",
+      "seasons": [
+        15
+      ],
+      "resolution": "1080p",
+      "source": "WEBRip",
+      "group": "KONTRAST",
+      "video": "x265",
+      "audio": "",
+      "hdr": "",
+      "status": "linked",
+      "library": "red4/tv/Criminal Minds"
+    },
+    {
+      "download": "red4/Criminal.Minds.S16.1080p.WEBRip.x265-KONTRAST",
+      "type": "tv",
+      "title": "Criminal Minds",
+      "seasons": [
+        16
+      ],
+      "resolution": "1080p",
+      "source": "WEBRip",
+      "group": "KONTRAST",
+      "video": "x265",
+      "audio": "",
+      "hdr": "",
+      "status": "linked",
+      "library": "red4/tv/Criminal Minds"
+    },
+    {
+      "download": "red4/Criminal.Minds.S17.1080p.WEBRip.x265-KONTRAST",
+      "type": "tv",
+      "title": "Criminal Minds",
+      "seasons": [
+        17
+      ],
+      "resolution": "1080p",
+      "source": "WEBRip",
+      "group": "KONTRAST",
+      "video": "x265",
+      "audio": "",
+      "hdr": "",
+      "status": "linked",
+      "library": "red4/tv/Criminal Minds"
+    },
+    {
+      "download": "red4/Reacher.S01.1080p.AMZN.WEBRip.x265-ZiTO",
+      "type": "tv",
+      "title": "Reacher",
+      "seasons": [
+        1
+      ],
+      "resolution": "1080p",
+      "source": "WEBRip",
+      "group": "ZiTO",
+      "video": "x265",
+      "audio": "",
+      "hdr": "",
+      "status": "linked",
+      "library": "red4/tv/Reacher"
+    },
+    {
+      "download": "red4/Reacher.S02.1080p.WEBRip.10bit.DDP5.1.x265-HODL",
+      "type": "tv",
+      "title": "Reacher",
+      "seasons": [
+        2
+      ],
+      "resolution": "1080p",
+      "source": "WEBRip",
+      "group": "HODL",
+      "video": "x265",
+      "audio": "DD+",
+      "hdr": "",
+      "status": "linked",
+      "library": "red4/tv/Reacher"
+    },
+    {
+      "download": "red4/Reacher.S03.1080p.WEBRip.10bit.DDP5.1.x265-HODL",
+      "type": "tv",
+      "title": "Reacher",
+      "seasons": [
+        3
+      ],
+      "resolution": "1080p",
+      "source": "WEBRip",
+      "group": "HODL",
+      "video": "x265",
+      "audio": "DD+",
+      "hdr": "",
+      "status": "linked",
+      "library": "red4/tv/Reacher"
     }
   ],
-  "updated_at": "2026-01-05 00:14:51"
+  "updated_at": "2026-06-20 18:32:43"
 }
