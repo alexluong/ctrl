@@ -104,11 +104,33 @@ Run via Docker on a Colima VM (`colima-arr` context). Compose files in `compose/
 | **Calibre-Web (Hannah)** | 8073 | calibre.yaml | Ebook reader |
 | **Calibre-Web (Alex)** | 8074 | calibre.yaml | Ebook reader |
 | **qBittorrent** | 8080 | download.yaml | Torrent client (behind PIA VPN) |
-| **qBittorrent Private** | 8081 | private.yaml | Secondary torrent client (behind PIA VPN, DE Berlin) |
+| **qBittorrent Private** | 8081 | private.yaml | Secondary torrent client (behind PIA VPN, DE Frankfurt) |
 | **Gluetun** | — | download.yaml | VPN container (PIA, Singapore) |
-| **Gluetun Private** | — | private.yaml | Secondary VPN (PIA, DE Berlin) |
+| **Gluetun Private** | — | private.yaml | Secondary VPN (PIA, DE Frankfurt) |
 | **Seedbox API** | — | download.yaml | MAM dynamic seedbox registration (see below) |
 | **Prowlarr** | 9696 | arr.yaml | Indexer manager (not actively used) |
+
+### Stacks & always-on policy
+
+The VM has limited RAM, so **not every stack runs 24/7** — running all of them starves qBittorrent and it gets OOM-killed (the WebUI then flaps/dies). Keep only the always-on set up; start the rest on demand.
+
+| Stack | Services | ~RAM | Policy |
+|-------|----------|------|--------|
+| **download** | gluetun, qbittorrent, autoheal, seedboxapi | ~250 MB | **always-on** — torrent engine + seeding + catalog pipeline |
+| **private** | gluetun-private, qbittorrent-private | ~125 MB | **always-on** |
+| **calibre** | calibre-web (alex + hannah) | ~310 MB | **always-on** |
+| **audiobookshelf** | audiobookshelf | ~40 MB | **always-on** |
+| **arr** | prowlarr, radarr, sonarr, bazarr, flaresolverr | ~550 MB | **on-demand** — downloads are mostly manual; start when managing indexers |
+| **jellyfin** | jellyfin | ~155 MB | **on-demand** — start when you want to stream |
+
+Always-on total ≈ 725 MB, leaving healthy headroom. Start the on-demand ones only when needed:
+
+```bash
+./scripts/up.sh core       # the always-on set (download + private + calibre + audiobookshelf)
+./scripts/up.sh arr        # when you need indexer search / automation
+./scripts/up.sh jellyfin   # when you want to stream
+./scripts/down.sh arr      # frees ~550 MB when done
+```
 
 ### VM management
 
