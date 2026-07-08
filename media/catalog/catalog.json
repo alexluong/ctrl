@@ -9103,7 +9103,71 @@
       "hdr": "",
       "status": "linked",
       "library": "red4/tv/Reacher"
+    },
+    {
+      "download": "red4/Invincible (2021) Season 1 S01 (1080p AMZN WEB-DL x265 HEVC 10bit DDP 5.1 Vyndros)",
+      "type": "tv",
+      "title": "Invincible",
+      "seasons": [
+        1
+      ],
+      "resolution": "1080p",
+      "source": "WEB-DL",
+      "group": "Vyndros",
+      "video": "x265",
+      "audio": "DD+",
+      "hdr": "",
+      "status": "linked",
+      "library": "red4/tv/Invincible"
+    },
+    {
+      "download": "red4/Invincible (2021) Season 2 S02 (1080p AMZN WEB-DL x265 HEVC 10bit DDP 5.1 Vyndros)",
+      "type": "tv",
+      "title": "Invincible",
+      "seasons": [
+        2
+      ],
+      "resolution": "1080p",
+      "source": "WEB-DL",
+      "group": "Vyndros",
+      "video": "x265",
+      "audio": "DD+",
+      "hdr": "",
+      "status": "linked",
+      "library": "red4/tv/Invincible"
+    },
+    {
+      "download": "red4/Invincible (2021) Season 3 S03 (1080p AMZN WEB-DL x265 HEVC 10bit DDP 5.1 Vyndros)",
+      "type": "tv",
+      "title": "Invincible",
+      "seasons": [
+        3
+      ],
+      "resolution": "1080p",
+      "source": "WEB-DL",
+      "group": "Vyndros",
+      "video": "x265",
+      "audio": "DD+",
+      "hdr": "",
+      "status": "linked",
+      "library": "red4/tv/Invincible"
+    },
+    {
+      "download": "red4/Invincible (2021) Season 4 S04 (1080p AMZN WEB-DL x265 HEVC 10bit DDP 5.1 Vyndros)",
+      "type": "tv",
+      "title": "Invincible",
+      "seasons": [
+        4
+      ],
+      "resolution": "1080p",
+      "source": "WEB-DL",
+      "group": "Vyndros",
+      "video": "x265",
+      "audio": "DD+",
+      "hdr": "",
+      "status": "linked",
+      "library": "red4/tv/Invincible"
     }
   ],
-  "updated_at": "2026-06-20 18:32:43"
+  "updated_at": "2026-07-09 01:59:50"
 }

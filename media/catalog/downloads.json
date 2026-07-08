@@ -1533,8 +1533,8 @@
       "download": "blue4/Shazam.2019.1080p.BluRay.Opus.7.1.AV1-KIMJI"
     },
     {
-      "torrent": "blue4/dc/WALL\u00b7E.2008.1080p.BluRay.Opus.5.1.AV1-KIMJI.torrent",
-      "download": "blue4/WALL\u00b7E.2008.1080p.BluRay.Opus.5.1.AV1-KIMJI"
+      "torrent": "blue4/dc/WALL·E.2008.1080p.BluRay.Opus.5.1.AV1-KIMJI.torrent",
+      "download": "blue4/WALL·E.2008.1080p.BluRay.Opus.5.1.AV1-KIMJI"
     },
     {
       "torrent": "blue4/dc/Spider-Man.Into.the.Spider-Verse.2018.2160p.UHD.BluRay.x265-TERMiNAL.torrent",
@@ -2687,6 +2687,22 @@
     {
       "torrent": "magnet/Reacher.S03.1080p.WEBRip.10bit.DDP5.1.x265-HODL",
       "download": "red4/Reacher.S03.1080p.WEBRip.10bit.DDP5.1.x265-HODL"
+    },
+    {
+      "torrent": "magnet/Invincible.2021.S01.1080p.AMZN.WEB-DL.x265.HEVC.10bit.DDP5.1-Vyndros",
+      "download": "red4/Invincible (2021) Season 1 S01 (1080p AMZN WEB-DL x265 HEVC 10bit DDP 5.1 Vyndros)"
+    },
+    {
+      "torrent": "magnet/Invincible.2021.S02.1080p.AMZN.WEB-DL.x265.HEVC.10bit.DDP5.1-Vyndros",
+      "download": "red4/Invincible (2021) Season 2 S02 (1080p AMZN WEB-DL x265 HEVC 10bit DDP 5.1 Vyndros)"
+    },
+    {
+      "torrent": "magnet/Invincible.2021.S03.1080p.AMZN.WEB-DL.x265.HEVC.10bit.DDP5.1-Vyndros",
+      "download": "red4/Invincible (2021) Season 3 S03 (1080p AMZN WEB-DL x265 HEVC 10bit DDP 5.1 Vyndros)"
+    },
+    {
+      "torrent": "magnet/Invincible.2021.S04.1080p.AMZN.WEB-DL.x265.HEVC.10bit.DDP5.1-Vyndros",
+      "download": "red4/Invincible (2021) Season 4 S04 (1080p AMZN WEB-DL x265 HEVC 10bit DDP 5.1 Vyndros)"
     }
   ],
   "updated_at": "2026-06-20 12:52:35"
