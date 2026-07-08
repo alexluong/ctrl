@@ -54,7 +54,14 @@ services:
       - PGID=${PGID}
       - TZ=${TZ}
     volumes:
-      - ${DATA_PATH}/qbittorrent:/config
+      # /config lives on a NATIVE docker volume, not the virtiofs-mounted drive.
+      # The LSIO image can't chown/lock config on virtiofs ("volume mounts are
+      # remote or read-only" -> qbit crash-loops/flaps the WebUI). Migrated with:
+      #   docker volume create qbit_config
+      #   docker run --rm -v qbit_config:/dest -v ${DATA_PATH}/qbittorrent:/src:ro \
+      #     alpine cp -a /src/. /dest/
+      # The old ${DATA_PATH}/qbittorrent copy stays on the drive as a backup.
+      - qbit_config:/config
       - /Volumes/Blue4/arr/downloads:/Blue4/downloads
       - /Volumes/Red4/arr/downloads:/Red4/downloads
     # WebUI wedges/flaps occasionally (stale single-instance lock socket, an
@@ -103,3 +110,9 @@ services:
     depends_on:
       - gluetun
     restart: unless-stopped
+
+volumes:
+  # Native volume for qBittorrent config (see qbittorrent service above for why).
+  # Created/populated out-of-band, so marked external.
+  qbit_config:
+    external: true
