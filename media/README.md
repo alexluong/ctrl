@@ -144,6 +144,21 @@ Both gluetun containers use PIA. If one shows unhealthy with TLS handshake failu
 4. Restart: `docker --context colima-arr restart <container>`
 5. If the region is consistently failing, change `SERVER_REGIONS` in `.env` (main) or `compose/private.yaml` (private)
 
+### VPN port forwarding (auto-synced)
+
+PIA hands gluetun a **new** forwarded port every time the tunnel fully re-establishes (restart, health-restart, or PIA lease expiry). qBittorrent's listening port is static, so historically it would silently desync → incoming peers fail → slow downloads until noticed.
+
+This is now **automatic**: gluetun's `VPN_PORT_FORWARDING_UP_COMMAND` hook (in `compose/download.yaml`) fires on every port-forward event and pushes the new port into qBittorrent via its WebUI API. It works credential-free because qbit has `WebUI\LocalHostAuth=false` and the call comes from *inside* gluetun's shared network namespace.
+
+- To verify or force a manual re-sync: `./scripts/port-status.sh` (add `--sync`).
+- Requires the qbit config flag `WebUI\LocalHostAuth=false` (in `${DATA_PATH}/qbittorrent/qBittorrent/qBittorrent.conf`). If the config is ever wiped, re-add that line or the hook can't push the port.
+
+### qBittorrent WebUI flakiness (auto-healed)
+
+qbit's WebUI occasionally wedges or flaps on a stale single-instance lock socket (an artifact of `/config` on the virtiofs-mounted drive), and gets orphaned when gluetun restarts. A Docker **healthcheck** on qbit + the **autoheal** container (both in `compose/download.yaml`) now detect this and restart qbit automatically. autoheal is scoped by the `autoheal=true` label so it only ever touches qbittorrent.
+
+- If qbit still seems down, check `docker --context colima-arr ps` (look for `unhealthy`) and `docker --context colima-arr logs autoheal`.
+
 ### MyAnonamouse (MAM) seedbox API
 
 The `seedboxapi` container registers the VPN IP with MAM as a dynamic seedbox. It runs through the main gluetun (Singapore) and pings MAM every 60 minutes.

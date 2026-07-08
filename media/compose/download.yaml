@@ -7,12 +7,35 @@ services:
     devices:
       - /dev/net/tun:/dev/net/tun
     environment:
-      - VPN_SERVICE_PROVIDER=${VPN_SERVICE_PROVIDER}
-      - OPENVPN_USER=${OPENVPN_USER}
-      - OPENVPN_PASSWORD=${OPENVPN_PASSWORD}
-      - SERVER_REGIONS=${SERVER_REGIONS}
-      - VPN_PORT_FORWARDING=${VPN_PORT_FORWARDING}
-      - TZ=${TZ}
+      VPN_SERVICE_PROVIDER: ${VPN_SERVICE_PROVIDER}
+      OPENVPN_USER: ${OPENVPN_USER}
+      OPENVPN_PASSWORD: ${OPENVPN_PASSWORD}
+      SERVER_REGIONS: ${SERVER_REGIONS}
+      VPN_PORT_FORWARDING: ${VPN_PORT_FORWARDING}
+      TZ: ${TZ}
+      # Auto-sync PIA's forwarded port into qBittorrent on every (re)connect.
+      # PIA hands out a NEW forwarded port whenever the tunnel re-establishes;
+      # this hook fires on that exact event and pushes it to qbit's WebUI API
+      # (localhost reaches qbit because it shares this network namespace).
+      # Requires qbit WebUI\LocalHostAuth=false so the in-namespace call needs
+      # no credentials. Retries ~2min to cover qbit's WebUI boot on cold start.
+      VPN_PORT_FORWARDING_UP_COMMAND: |
+        /bin/sh -c '
+        n=0
+        while [ $$n -lt 24 ]; do
+          p=$$(cat /tmp/gluetun/forwarded_port 2>/dev/null)
+          if [ -n "$$p" ]; then
+            if wget -qO- --post-data "json={\"listen_port\":$$p}" http://localhost:8080/api/v2/app/setPreferences >/dev/null 2>&1; then
+              echo "[port-sync] set qBittorrent listen_port=$$p"
+              exit 0
+            fi
+          fi
+          n=$$((n+1))
+          sleep 5
+        done
+        echo "[port-sync] failed to set port after retries" >&2
+        exit 1
+        '
     volumes:
       - ${DATA_PATH}/gluetun:/gluetun # optional: caches server list
     ports:
@@ -34,8 +57,35 @@ services:
       - ${DATA_PATH}/qbittorrent:/config
       - /Volumes/Blue4/arr/downloads:/Blue4/downloads
       - /Volumes/Red4/arr/downloads:/Red4/downloads
+    # WebUI wedges/flaps occasionally (stale single-instance lock socket, an
+    # artifact of /config living on the virtiofs-mounted drive). This
+    # healthcheck marks qbit unhealthy when 8080 stops serving; the autoheal
+    # service below then restarts it automatically. Also self-heals the case
+    # where a gluetun restart orphans qbit on the dead network namespace.
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8080 >/dev/null 2>&1 || wget -qO- http://localhost:8080 >/dev/null 2>&1 || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 120s
+    labels:
+      - autoheal=true
     depends_on:
       - gluetun
+    restart: unless-stopped
+
+  # Restarts any container labeled autoheal=true that Docker marks "unhealthy".
+  # Scoped by label so it only ever touches qbittorrent (never gluetun etc.).
+  autoheal:
+    image: willfarrell/autoheal:latest
+    container_name: autoheal
+    environment:
+      - AUTOHEAL_CONTAINER_LABEL=autoheal
+      - AUTOHEAL_INTERVAL=15
+      - AUTOHEAL_START_PERIOD=120
+      - TZ=${TZ}
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
     restart: unless-stopped
 
   seedboxapi:
