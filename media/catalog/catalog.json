@@ -9167,7 +9167,164 @@
       "hdr": "",
       "status": "linked",
       "library": "red4/tv/Invincible"
+    },
+    {
+      "download": "red4/Banshee (2013) Complete Series S01-S04 (1080p BluRay x265 HEVC 10bit AAC 5.1 Vyndros)",
+      "type": "tv",
+      "title": "Banshee",
+      "seasons": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "resolution": "1080p",
+      "source": "BluRay",
+      "group": "Vyndros",
+      "video": "x265",
+      "audio": "AAC",
+      "hdr": "",
+      "status": "linked",
+      "library": "red4/tv/Banshee"
+    },
+    {
+      "download": "red4/Prison Break (2005) Season 1-5 S01-S05 (1080p BluRay x265 HEVC 10bit AAC 5.1 Silence)",
+      "type": "tv",
+      "title": "Prison Break",
+      "seasons": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "resolution": "1080p",
+      "source": "BluRay",
+      "group": "QxR",
+      "video": "x265",
+      "audio": "AAC",
+      "hdr": "",
+      "status": "linked",
+      "library": "red4/tv/Prison Break"
+    },
+    {
+      "download": "red4/New Girl",
+      "type": "tv",
+      "title": "New Girl",
+      "seasons": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "resolution": "1080p",
+      "source": "WEB-DL",
+      "group": "Qman",
+      "video": "x265",
+      "audio": "",
+      "hdr": "",
+      "status": "linked",
+      "library": "red4/tv/New Girl"
+    },
+    {
+      "download": "red4/Band of Brothers (1080p x265 HQ Joy)",
+      "type": "tv",
+      "title": "Band of Brothers",
+      "seasons": [
+        1
+      ],
+      "resolution": "1080p",
+      "source": "BluRay",
+      "group": "Joy",
+      "video": "x265",
+      "audio": "AAC",
+      "hdr": "",
+      "status": "linked",
+      "library": "red4/tv/Band of Brothers"
+    },
+    {
+      "download": "red4/Chernobyl - Season 1 (2019) [1080p]",
+      "type": "tv",
+      "title": "Chernobyl",
+      "seasons": [
+        1
+      ],
+      "resolution": "1080p",
+      "source": "WEB-DL",
+      "group": "Rapta",
+      "video": "x264",
+      "audio": "AAC",
+      "hdr": "",
+      "status": "linked",
+      "library": "red4/tv/Chernobyl"
+    },
+    {
+      "download": "red4/Mare Of Easttown (2021) Season 1 S01 (1080p BluRay x265 HEVC 10bit AAC 5.1 Vyndros)",
+      "type": "tv",
+      "title": "Mare of Easttown",
+      "seasons": [
+        1
+      ],
+      "resolution": "1080p",
+      "source": "BluRay",
+      "group": "Vyndros",
+      "video": "x265",
+      "audio": "AAC",
+      "hdr": "",
+      "status": "linked",
+      "library": "red4/tv/Mare of Easttown"
+    },
+    {
+      "download": "red4/The Night of (2016) Season 1 S01 (1080p BluRay x265 HEVC 10bit AAC 5.1 Silence)",
+      "type": "tv",
+      "title": "The Night Of",
+      "seasons": [
+        1
+      ],
+      "resolution": "1080p",
+      "source": "BluRay",
+      "group": "QxR",
+      "video": "x265",
+      "audio": "AAC",
+      "hdr": "",
+      "status": "linked",
+      "library": "red4/tv/The Night Of"
+    },
+    {
+      "download": "red4/Fargo (2014) Season 1 S01 (1080p BluRay x265 HEVC 10bit AAC 5.1 Silence)",
+      "type": "tv",
+      "title": "Fargo",
+      "seasons": [
+        1
+      ],
+      "resolution": "1080p",
+      "source": "BluRay",
+      "group": "QxR",
+      "video": "x265",
+      "audio": "AAC",
+      "hdr": "",
+      "status": "linked",
+      "library": "red4/tv/Fargo"
+    },
+    {
+      "download": "red4/True Detective (2014) Season 1 S01 + Extras (1080p BluRay x265 HEVC 10bit AAC 5.1 afm72)",
+      "type": "tv",
+      "title": "True Detective",
+      "seasons": [
+        1
+      ],
+      "resolution": "1080p",
+      "source": "BluRay",
+      "group": "afm72",
+      "video": "x265",
+      "audio": "AAC",
+      "hdr": "",
+      "status": "linked",
+      "library": "red4/tv/True Detective"
     }
   ],
-  "updated_at": "2026-07-09 01:59:50"
+  "updated_at": "2026-07-09 18:00:59"
 }
