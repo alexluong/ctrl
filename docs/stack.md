@@ -55,6 +55,15 @@ Three layers, never conflated:
 
 Auth code + PKCE flow: app redirects to IdP → user authenticates, IdP sets its own session cookie → IdP redirects back with one-time code → app backend exchanges code for ID token (JWT: sub/email/name, verified against IdP JWKS) → app sets own session. SSO = the IdP session cookie makes the second app's redirect bounce straight back.
 
+## Distribution: the `collie` kit (shared Go module)
+
+How services share the auth/user/etc. code: one platform library repo — `github.com/alexluong/collie` (own go.mod, semver tags). Candidate packages: `auth`, `userstore` (JIT provisioning), `config`, `httpx` (server/health/shutdown), `log`. Services import via go.mod and upgrade deliberately (no forced lockstep — the internal-platform-SDK pattern; exact enterprise analog).
+
+- **Behavior goes in the module, boilerplate gets stamped** — auth/security code must propagate via version bump; main.go skeletons and compose files can be template-stamped copies.
+- **Local dev**: `go.work` at `~/git/hub/alexluong/` (`use ./collie ./feed ./fitjournal`) — edits to the kit visible in services instantly, publish by tagging.
+- **2-uses rule guards entry**: nothing goes into collie until a second service needs it. (Kit-becomes-framework is the #1 failure mode.)
+- **Public repo** — open-source services can't import a private kit; collie itself is the most portfolio-worthy artifact anyway.
+
 ## Component map (2 services from scratch)
 
 Day 1:
