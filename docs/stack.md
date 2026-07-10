@@ -94,14 +94,20 @@ Three layers, never conflated:
 
 Auth code + PKCE flow: app redirects to IdP → user authenticates, IdP sets its own session cookie → IdP redirects back with one-time code → app backend exchanges code for ID token (JWT: sub/email/name, verified against IdP JWKS) → app sets own session. SSO = the IdP session cookie makes the second app's redirect bounce straight back.
 
-## Distribution: the `collie` kit (shared Go module) — CANDIDATE, under evaluation
+## Distribution: authkit under the colliestudio org (direction liked 2026-07-10)
 
-How services share the auth/user/etc. code: one platform library repo — `github.com/alexluong/collie` (own go.mod, semver tags). Candidate packages: `auth`, `userstore` (JIT provisioning), `config`, `httpx` (server/health/shutdown), `log`. Services import via go.mod and upgrade deliberately (no forced lockstep — the internal-platform-SDK pattern; exact enterprise analog).
+Repo structure (Alex's proposal, refined):
+
+- **`colliestudio/authkit`** — Go module, **pkg only**, auth-concern only: `auth/` (Principal, authenticator chain, Require), `apikeys/`, `confirm/`. Light deps, semver. Company org because client work importing company-owned infra is the professional arrangement; personal projects importing company OSS is fine.
+  - Name collision note: WorkOS has a product literally called AuthKit. Fine for company/private use (import path disambiguates); pick a distinct name if it should be findable OSS.
+- **`colliestudio/authkit-ui`** — sibling deployable: brandable login+account app (Go+templ) rendering Kratos flows + Hydra challenges; Kratos admin screens later. Ships as container image. Versioned separately from the module (different cadences).
+- **`collielab/services/auth/`** — deployment config (compose: kratos + hydra + postgres + authkit-ui) in the existing infra repo. No separate collielab-auth repo.
+- Other kit candidates (httpx, config, log) = separate module later, 2-uses rule. One concern per module; keeps authkit's dep tree clean.
+
+The hotelacme test (validates the split): client repo `hotelacme/erp` imports authkit; client infra deploys its own kratos+hydra+authkit-ui → fully isolated identity stack per client (their userbase, their infra). Same artifacts, different deployment config only.
 
 - **Behavior goes in the module, boilerplate gets stamped** — auth/security code must propagate via version bump; main.go skeletons and compose files can be template-stamped copies.
-- **Local dev**: `go.work` at `~/git/hub/alexluong/` (`use ./collie ./feed ./fitjournal`) — edits to the kit visible in services instantly, publish by tagging.
-- **2-uses rule guards entry**: nothing goes into collie until a second service needs it. (Kit-becomes-framework is the #1 failure mode.)
-- **Public repo** — open-source services can't import a private kit; collie itself is the most portfolio-worthy artifact anyway.
+- **Local dev**: `go.work` (`use ./authkit ./feed ./fitjournal`) — kit edits visible in services instantly, publish by tagging.
 
 ## Component map (2 services from scratch)
 
