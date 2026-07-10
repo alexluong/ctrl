@@ -12,7 +12,7 @@ Personal operations hub. Monorepo. Alex's repo, Claude-operated.
 
 - `re` — real estate: deals, notes, logs, bookkeeping (`re/notes.md` for conventions & context)
 - `biz` — bookkeeping, invoices (`biz/BOOKKEEPING.md` for the system)
-- `docs` — ideas, project discussions, cross-domain notes
+- `docs` — ideas, project discussions, cross-domain notes; `docs/machine.md` = Alex's machine/repo organization
 - `media` — plex/arr stack (migrating from `hub/alexluong/arr`)
 - `finance` — personal budgeting, tracking
 - `career` — resume, job search
