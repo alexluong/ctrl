@@ -9338,7 +9338,21 @@
       "hdr": "",
       "status": "linked",
       "library": "red4/movies/The Ballad of Buster Scruggs (2018)"
+    },
+    {
+      "download": "red4/Send.Help.2026.iNTERNAL.1080p.HULU.WEB-DL.DDP5.1.HEVC-LuCY",
+      "type": "movie",
+      "title": "Send Help",
+      "year": 2026,
+      "resolution": "1080p",
+      "source": "WEB-DL",
+      "group": "LuCY",
+      "video": "x265",
+      "audio": "DD+",
+      "hdr": "",
+      "status": "linked",
+      "library": "red4/movies/Send Help (2026)"
     }
   ],
-  "updated_at": "2026-07-11 01:10:26"
+  "updated_at": "2026-07-11 01:17:57"
 }
