@@ -68,6 +68,19 @@ All IdP-side (Kratos + login UI); services see only sessions/tokens — adding M
 
 Account-less access (hotel guests): `auth.Capability(store)` authenticator → limited principal `{Kind: guest, User: nil, Scopes: ["booking:ABC123:read"]}` — same middleware/gates, no handler special-casing. **Hard rule: guests never become Kratos identities** (capabilities, not users).
 
+Fintech-style action OTP (authenticated user still challenged before sensitive action) = two distinct patterns:
+- **Re-authentication / fresh step-up**: "prove presence recently" — auth layer (OIDC `max_age`/`acr_values`; check `auth_time` + AAL on Principal). Generic, no action binding.
+- **Transaction confirmation** (PSD2 SCA "dynamic linking"): challenge bound to the *specific action + params* via pending-action record + params-hash; single-use, short TTL. Defeats session hijack (stolen session can't approve a different payee/amount). Domain feature using capability-code plumbing (`confirm` kit candidate); `action.approved` check is tier-2 business logic.
+
+### AuthZ model — Principal is evidence, not judge
+
+Three tiers, each a different question:
+1. **Credential gate** (route middleware): may this *credential* attempt this action class? Inputs: Principal only (scopes/kind/AAL). `a.Require(auth.Scope(...), auth.AAL2)`.
+2. **Domain authz** (handler/query): may this *user* touch this *resource*? Inputs: Principal.Subject + service tables (ownership/membership/role). Prefer authz-by-construction (`WHERE user_id = $1`); role checks = if-statements. Deliberately NOT centralized — it's business logic.
+3. **Policy engine** (Keto/SpiceDB = ReBAC, OPA/Cedar = ABAC): only when tier-2 outgrows role-column+ifs (e.g. multi-hotel per-property permissions). Buys cross-service consistency + listing queries; costs a hop per decision + policy far from code. Feed/fitjournal: never. Hotel: maybe.
+
+Key rule: scopes bound the credential, domain authz bounds the person — **both must pass**, neither substitutes. Collapsing them = "token was valid so we allowed it" bugs.
+
 ### User / tenancy layering (the part auth doesn't solve)
 
 Three layers, never conflated:
