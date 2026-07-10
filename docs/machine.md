@@ -14,10 +14,14 @@ Alex's personal machine conventions (macOS).
 
 ### hub orgs (as of 2026-07)
 
-- `alexluong` — personal. Notable: `ctrl` (ops hub), `collielab` (homelab VM), `arr` (media stack, migrating into ctrl), `alexluong.com`, `cv`, `dotfiles`, `template-go-templ-tailwindcss` (Go template prior art), many explorations/POCs
+- `alexluong` — personal apps & life: `ctrl` (ops hub), `alexluong.com`, `cv`, `dotfiles`, fitjournal/feed (planned), many explorations/POCs
+- `collielab` — (org being established 2026-07) personal infrastructure: `infra` (VM/terraform/services; transfer of `alexluong/collielab`), `auth` (IdP login/admin UI, planned), `media` (arr migration, later)
+- `colliestudio` — professional, public-facing company (Collie Studio LLC): `authkit` (planned)
 - `ebutler-qa` — EButler (work): enable-backend, enable_loyalty_app, ebchat-saas-backend, etc.
 - `hookdeck` — Hookdeck repos (core, CLI, SDKs)
 - `nirholas`, `saifulapm`, `zengm-games` — third-party clones/forks
+
+Org semantics: alexluong = personal apps (deploy onto collielab); collielab = the lab platform; colliestudio = only things with the company's name behind them.
 
 ## Shell shortcuts
 

@@ -98,13 +98,15 @@ Auth code + PKCE flow: app redirects to IdP → user authenticates, IdP sets its
 
 Repo structure (Alex's proposal, refined):
 
+Org boundaries (revised 2026-07-10): `alexluong/` = personal apps; `collielab/` (new GitHub org) = personal infrastructure; `colliestudio/` = professional/public-facing company artifacts only.
+
 - **`colliestudio/authkit`** — Go module, **pkg only**, auth-concern only: `auth/` (Principal, authenticator chain, Require), `apikeys/`, `confirm/`. Light deps, semver. Company org because client work importing company-owned infra is the professional arrangement; personal projects importing company OSS is fine.
   - Name collision note: WorkOS has a product literally called AuthKit. Fine for company/private use (import path disambiguates); pick a distinct name if it should be findable OSS.
-- **`colliestudio/authkit-ui`** — sibling deployable: brandable login+account app (Go+templ) rendering Kratos flows + Hydra challenges; Kratos admin screens later. Ships as container image. Versioned separately from the module (different cadences).
-- **`collielab/services/auth/`** — deployment config (compose: kratos + hydra + postgres + authkit-ui) in the existing infra repo. No separate collielab-auth repo.
+- **`collielab/auth`** — deployment-specific login+account UI + Kratos admin for the homelab IdP (Go+templ, renders Kratos flows + Hydra challenges). Personal infra, NOT a colliestudio product. If client work needs a login UI, it's their deployment's thin app; genuinely generic flow-rendering emerges as importable helpers in authkit, not as a UI product.
+- **`collielab/infra`** — current `alexluong/collielab` transferred: terraform, VM, `services/` compose entries incl. `services/auth/` (kratos + hydra + postgres + collielab/auth image). `arr` → `collielab/media` when the media migration happens.
 - Other kit candidates (httpx, config, log) = separate module later, 2-uses rule. One concern per module; keeps authkit's dep tree clean.
 
-The hotelacme test (validates the split): client repo `hotelacme/erp` imports authkit; client infra deploys its own kratos+hydra+authkit-ui → fully isolated identity stack per client (their userbase, their infra). Same artifacts, different deployment config only.
+The hotelacme test (validates the split): client repo `hotelacme/erp` imports authkit; client infra deploys its own kratos + hydra + their thin login UI → fully isolated identity stack per client (their userbase, their infra). Same module, different deployments.
 
 - **Behavior goes in the module, boilerplate gets stamped** — auth/security code must propagate via version bump; main.go skeletons and compose files can be template-stamped copies.
 - **Local dev**: `go.work` (`use ./authkit ./feed ./fitjournal`) — kit edits visible in services instantly, publish by tagging.
