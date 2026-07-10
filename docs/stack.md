@@ -44,6 +44,18 @@ Modes (config-selected, same three lines):
 - `header` — trust proxy-injected identity. **Explicit opt-in, fail closed**: requires trusted-proxy source verification + shared secret or JWT signature. Never a default. Mitigates header-spoofing (app reachable by any path other than the proxy = instant impersonation). Proxy must strip inbound identity headers.
 - (`whoami` — optional Kratos-direct optimization; demoted from primary, may never be built.)
 
+### Auth pkg interface (design liked 2026-07-10, not final)
+
+Core: middleware produces a **Principal**, not a User — callers aren't always human.
+
+- `Principal{Kind (user|service|api_key|agent), Subject, User *User, Actor string, Scopes []string}`
+- **User vs Actor**: User = whose behalf (data attribution, permission ceiling); Actor = what mechanically called (audit, rate-limit, revocation target). Differ only under delegation: Shortcut key → `{User: alex, Actor: key:fj_...}`; agent → `{User: alex, Actor: agent:x}`; bot → `{User: nil, Actor: service:backupd}`. OAuth `act` claim analog.
+- **Authenticator chain**: `auth.New(auth.OIDC(issuer), auth.Session(cfg), auth.APIKeys(store))` — tried in order, first match wins; mechanism (cookie/JWT/key) orthogonal to Kind. `auth.FromEnv()` builds the chain from AUTH_MODE so service code is identical in dev/prod/open-source.
+- **API keys**: app-issued (bypass IdP), hashed in service DB, prefix-routed (`fj_live_...`), owned by a user → requests attribute to the owner. fitJournal Shortcut uses this (not a bare static token).
+- **Scopes**: standard OAuth2 concept, normalized onto Principal (JWT scopes + key permissions = one field). Discipline: coarse vocabulary only (`entries:read/write`, `admin`); one scope per route-group; interactive sessions get full scope implicitly; fine-grained permissions belong to layer-3 membership/roles, not scopes. Scope explosion = authz leaking into the credential layer.
+- **Agent auth**: frontier; hedge = User+Actor split. Today: user-issued scope-limited API keys. Later: OAuth token exchange (RFC 8693) as a 4th authenticator — same Principal, zero handler changes.
+- **No-OIDC setups**: `dev` mode = `auth.Static(fakeUser)` (zero infra); tests = `auth.WithPrincipal(ctx, ...)` injection; `local` mode = `auth.Local(db, secret)` + `a.LocalRoutes()` (built-in bcrypt login, own session cookie, ~200 lines in kit).
+
 ### User / tenancy layering (the part auth doesn't solve)
 
 Three layers, never conflated:
