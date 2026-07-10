@@ -44,7 +44,12 @@ Modes (config-selected, same three lines):
 - `header` — trust proxy-injected identity. **Explicit opt-in, fail closed**: requires trusted-proxy source verification + shared secret or JWT signature. Never a default. Mitigates header-spoofing (app reachable by any path other than the proxy = instant impersonation). Proxy must strip inbound identity headers.
 - (`whoami` — optional Kratos-direct optimization; demoted from primary, may never be built.)
 
-Residual auth surface services still own: store the IdP `sub` as an opaque foreign key (`user_id`); never mirror a users table locally (cache display names at most).
+### User / tenancy layering (the part auth doesn't solve)
+
+Three layers, never conflated:
+1. **Identity** (IdP/Kratos, global): sub, email, credentials. Kept dumb — no org/role claims in tokens (stale-authz-in-token trap).
+2. **App user record** (per service): local `users` table, JIT-provisioned by middleware on first authenticated request, keyed by sub. App-specific profile/prefs; domain tables FK to this, not raw subs. Every service has this; the JIT middleware lives in the template. (Don't mirror *identity*; do own the app user record.)
+3. **Tenancy/membership** (per service, domain code): `orgs`/`spaces` + `memberships(user, org, role)`. Business logic, not plumbing — modeled per app: fitjournal = none; feed = one space, two members; hotel = real orgs + staff roles (and multi-tenant if ever >1 hotel). Extract a template package for the shape after hotel proves it (2-uses rule). Keto only if roles outgrow a role column + if-statements.
 
 ### OIDC mental model (reference)
 
