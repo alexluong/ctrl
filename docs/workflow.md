@@ -21,6 +21,24 @@ Two ways to work on a project; both keep notes in ctrl:
 
 `ctrl/.claude/settings.json` grants `additionalDirectories: ~/git/hub/alexluong` so cockpit sessions/subagents write to sibling project repos without permission prompts.
 
+### Skills (cockpit entry points)
+
+Skills in `ctrl/.claude/skills/` give fresh ctrl sessions a known procedure — Alex types `/<skill> <args>` instead of re-explaining the workflow:
+
+- `/new-project <name>` — bootstrap repo + GitHub remote + scaffold + living doc + pointer CLAUDE.md (or recreate the pointer on a new machine)
+- `/implement <project>: <feature>` — plan → implement (delegated agents) → test → review → land (PR or direct) → log to living doc
+- `/import`, `/report` — bookkeeping (see `biz/BOOKKEEPING.md`)
+
+Skills stay thin: they sequence steps and point at this doc for conventions. New repeated procedure → new skill.
+
+### Worktrees
+
+Git worktrees = extra checkouts of a repo, each on its own branch. Used opportunistically, not configured up front:
+
+- **Parallel delegated agents on the same repo** → each agent gets `isolation: worktree` so they don't clobber each other; worktrees auto-clean if unchanged.
+- **Long-running delegated impl** while the main checkout stays clean for Alex — agent works in a worktree branch, pushes, opens PR; main checkout never sees intermediate state.
+- Single-agent or sequential work doesn't need one — a branch in the main checkout is enough.
+
 ## Working conventions
 
 Personal projects are lowkey — optimize for Claude operating solo, not team process.
