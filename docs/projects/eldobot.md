@@ -21,7 +21,7 @@ Discord bot for Basketball GM (BBGM) fantasy leagues — loads BBGM export files
 
 ## Incidents
 
-- **2026-07-10 — bot hung 1.5 days, container "Up".** `progspredict` command → plotly `write_image` → kaleido's `t.join()` (no timeout) blocked the asyncio event loop → Discord heartbeat stopped → bot offline; container stayed healthy-looking so `restart: unless-stopped` never fired. Fixed with `docker restart eldobot`; root cause patched same day (eldobot `2d733f8`: renders run in a daemon thread with 30s timeout, requirements pinned to prod versions, rebuilt & redeployed). Nothing monitors bot liveness — outage went unnoticed until users reported it.
+- **2026-07-10 — bot hung 1.5 days, container "Up".** `progspredict` command → plotly `write_image` → kaleido's `t.join()` (no timeout) blocked the asyncio event loop → Discord heartbeat stopped → bot offline; container stayed healthy-looking so `restart: unless-stopped` never fired. Fixed with `docker restart eldobot`; root cause patched same day (eldobot `067b2d3`: renders run in a daemon thread with 30s timeout, requirements pinned to prod versions, rebuilt & redeployed). Nothing monitors bot liveness — outage went unnoticed until users reported it.
 
 ## Open items
 
@@ -31,5 +31,6 @@ Discord bot for Basketball GM (BBGM) fantasy leagues — loads BBGM export files
 
 ## Status log
 
-- 2026-07-10 (later) — system audit & cleanup (`6fb22cb`): security dep bumps (aiohttp, Pillow, python-dotenv, simpleeval — all had OSV advisories; new pins verified clean), dead files removed, rebuilt & redeployed, bot healthy. VM: pruned 4.4GB dangling images (disk 74%→59%). Deliberately skipped: kaleido/plotly/pandas upgrades (no security need, churn risk), 4 orphan docker volumes on the VM (portainer/grafana/loki/prometheus data from stopped collielab services — collielab's call, not eldobot's).
-- 2026-07-10 — deadlock incident: diagnosed, restarted, root cause fixed & deployed (`2d733f8`); project documented (this doc + repo CLAUDE.md). Prior code change 2026-01-04 (server whitelist).
+- 2026-07-10 (later) — history rewrite (git filter-repo): Dropbox app credentials were in `.env.example` and as `basics.py` getenv fallbacks since Aug 2025; scrubbed from working tree and all history, force-pushed, clones reset. Alex chose not to rotate the secret. Note: pre-rewrite objects remain fetchable by SHA on GitHub until their GC (support ticket would purge). All commit SHAs changed — this log uses the new ones.
+- 2026-07-10 (later) — system audit & cleanup (`2f857d2`): security dep bumps (aiohttp, Pillow, python-dotenv, simpleeval — all had OSV advisories; new pins verified clean), dead files removed, rebuilt & redeployed, bot healthy. VM: pruned 4.4GB dangling images (disk 74%→59%). Deliberately skipped: kaleido/plotly/pandas upgrades (no security need, churn risk), 4 orphan docker volumes on the VM (portainer/grafana/loki/prometheus data from stopped collielab services — collielab's call, not eldobot's).
+- 2026-07-10 — deadlock incident: diagnosed, restarted, root cause fixed & deployed (`067b2d3`); project documented (this doc + repo CLAUDE.md). Prior code change 2026-01-04 (server whitelist).
