@@ -56,6 +56,10 @@ Core: middleware produces a **Principal**, not a User — callers aren't always 
 - **Agent auth**: frontier; hedge = User+Actor split. Today: user-issued scope-limited API keys. Later: OAuth token exchange (RFC 8693) as a 4th authenticator — same Principal, zero handler changes.
 - **No-OIDC setups**: `dev` mode = `auth.Static(fakeUser)` (zero infra); tests = `auth.WithPrincipal(ctx, ...)` injection; `local` mode = `auth.Local(db, secret)` + `a.LocalRoutes()` (built-in bcrypt login, own session cookie, ~200 lines in kit).
 
+### MFA & account security
+
+All IdP-side (Kratos + login UI); services see only sessions/tokens — adding MFA = zero service changes. Kratos natively: TOTP, WebAuthn/passkeys, recovery codes. Posture: **passkey primary, TOTP fallback**. The only service-visible concept: **AAL/step-up** (`acr` claim) — sensitive routes may `Require(auth.AAL2)` (delete account, refunds, API-key management). MFA gates key *issuance*, never key *usage* (non-interactive creds are bounded by scopes+expiry instead). Package deal in same place: email verification, recovery, lockout, device/session management. Infra consequence: needs outbound email → SMTP relay (SES/Resend/Postmark) — platform-wide useful (notifs, booking confirmations).
+
 ### User / tenancy layering (the part auth doesn't solve)
 
 Three layers, never conflated:
