@@ -13,13 +13,16 @@ MyFitnessPal-ish but tracking-first, food-second. Personal use.
 
 **Ease of use / quick action.** No opening a full app and tapping through screens to log one number. Capture must be near-instant. Tracking first; everything else expandable later.
 
+## Plan (agreed 2026-07-10)
+
+- **v1: iOS Shortcut → Go API + web chart.** Weekend-scale. Shortcut from widget/Action Button prompts weight / snaps pic → POST to API. Charts in simple web view. Validates the daily habit before investing in an app.
+- **v2 (earned, not speculative): SwiftUI app** — only if v1 sticks and friction demands it. Unlocks lock-screen widgets, App Intents, HealthKit. This becomes the iOS-native learning project.
+
 ## Open questions
 
-- Capture surface: native iOS app? PWA? iOS Shortcut → API? Widget? Share sheet? (friction requirement basically dictates this choice)
 - Apple Health integration — read weight from smart scale / write to Health?
-- Where does data live — Go API + SQLite/Postgres on collielab VM?
 - Pics storage (VM disk? object storage?) — note prior VM disk-space incident in collielab
 
 ## Status
 
-2026-07-10 — idea captured, discussing scope/stack.
+2026-07-10 — plan agreed, not started.

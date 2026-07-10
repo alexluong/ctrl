@@ -10,6 +10,7 @@ Alex has several personal projects planned (list TBD — discussion in progress)
 
 Answers so far (2026-07-10):
 - **Skillset**: JS + Golang, full stack. Wants to explore **Go at larger scope/scale** — a bigger Go project is a learning goal.
+- **Mobile**: also wants a mobile project. Open to iOS (Swift) or **Flutter** — company uses Flutter professionally (dedicated mobile devs), so Flutter has career relevance.
 - **Homelab**: single VM (`sshmylab` → `ssh alex@149.28.40.6`), managed via `hub/alexluong/collielab` repo — docker-compose services (vaultwarden, portainer, glances, observability) + terraform (DNS for alexluong.com, nhiluong.com, collie studio).
 - **OpenClaw direction (below)**: dead — no longer pursuing. Kept for historical context only.
 

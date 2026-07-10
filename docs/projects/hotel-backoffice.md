@@ -21,6 +21,10 @@ Semi-professional (not full professional). Booking/reservation management back-o
 - Just reservations, or also check-in/out, housekeeping, payments/invoicing, reporting?
 - Timeline/urgency? Anyone waiting on this?
 
+## Plan (agreed 2026-07-10)
+
+This is the **Go-at-scale learning project**: backend-heavy, web back office, no mobile. Discovery (questions above) comes before any scoping — Alex to brain-dump, Claude structures it.
+
 ## Status
 
-2026-07-10 — idea captured, needs discovery before scoping.
+2026-07-10 — plan agreed, awaiting discovery brain-dump.
