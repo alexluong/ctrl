@@ -29,6 +29,9 @@ Alex's personal machine conventions (macOS).
 
 ## Repo roles (personal ecosystem)
 
-- **ctrl** — the brain: docs, decisions, project status, domain data (bookkeeping CSVs). No app code.
-- **collielab** — the muscle: VM infra, docker-compose services, terraform DNS. Deploying a new service = new entry under `services/`.
-- **project repos** — one repo per project under `hub/alexluong/`, own CLAUDE.md, own lifecycle. ctrl references them by sibling path (`~/git/hub/alexluong/<repo>`) — no submodules.
+- **ctrl** — portfolio level only: project index (what exists, why, one-line status), cross-project notes (bootstrap stack, org/meta), domain data (bookkeeping, RE). No app code, no project internals.
+- **project repos** — one repo per project under `hub/alexluong/`, fully self-contained: code + docs + decisions + TODOs + own CLAUDE.md. Claude sessions for project work run in the project repo. No back-pointers to ctrl.
+- **collielab** — VM infra, docker-compose services, terraform DNS. Deploying a new service = new entry under `services/`.
+- No submodules anywhere — everything is colocated under `hub/alexluong/`, referenced by sibling path when needed.
+
+Seed flow: project ideas incubate as `ctrl/docs/projects/<name>.md`; when a project repo is scaffolded, the seed's content moves into it and ctrl keeps a one-line index entry.
