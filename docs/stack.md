@@ -6,18 +6,26 @@ Domain: `collie.studio`. Nodes: collielab VM (apps) + home Mac Mini (media: Plex
 
 ## Auth architecture (settled 2026-07-10)
 
-**Ory stack** (Alex is a fan; Go source = learning material; composable, enterprise-relevant).
+**Decision (2026-07-10, revised same day): OIDC-first, Ory as swappable implementation.**
 
-**Decision (2026-07-10): Kratos only.** Bill of materials: Kratos + Postgres + login UI (`account.collie.studio`) + Go `auth` package. Four pieces; we build two.
+Core requirement (Alex): build feed/fitjournal so auth is swappable with little-to-no change. Achieved with two insulation layers:
 
-- **Kratos** — identity: users, credentials, login/registration/recovery. Headless; we build the login UI. Covers ALL current needs:
-  - Browser SSO: shared session cookie on `.collie.studio`, services resolve users via `/sessions/whoami`
-  - First-party mobile (Flutter feed, Shortcuts): Kratos native API flows → session token as bearer header, validated via same whoami
-- **Hydra** — deferred. Triggers: (1) third-party "Sign in with collie.studio", (2) own app on a non-collie.studio domain (no cookie sharing → needs OIDC redirect), (3) M2M client-credentials tokens. None exist yet. When added: Hydra has no users/login — it delegates login+consent challenges to our existing login UI, which asks Kratos; token `sub` = Kratos identity ID, so identity stays unified and nothing existing changes. Open-sourcing does NOT require us to run Hydra (adopters point the `oidc` mode at their own IdP).
-- **Oathkeeper** — deferred, maybe never. For gating third-party dashboards (portainer, glances), Caddy's built-in `forward_auth` → Kratos whoami suffices. Oathkeeper earns its place only for centralized route-level policy across many services.
+1. **Auth package interface** — services only touch `auth.Middleware()` + `auth.User(ctx)` → `{ID, Email, Name}`. Any auth change = package/config change; service code change = zero by construction.
+2. **Standard OIDC as the package's production mode** — core is `go-oidc` + JWKS validation + standard redirect flow. Swapping the IdP = config only (`AUTH_ISSUER` + client creds): Hydra ↔ Keycloak ↔ Okta ↔ Pocket ID, no code change even in the package. This also means the open-source posture is dogfooded daily, not a rotting side mode; and token validation is stateless (no per-request whoami hop).
+
+**Irreducible lock-in surface**: data keyed by IdP `sub` (`user_id` columns). IdP swap = user remap migration (match by email, or import identities preserving IDs — Kratos supports this). Data migration, not code. Trivial at 2 users; know it exists.
+
+**Chosen implementation behind the protocol** (because Alex likes Ory + learning value; the stack no longer depends on this choice):
+
+- **Kratos** — identity source of truth: users, credentials, login/registration/recovery flows. Headless.
+- **Hydra** — OIDC provider, in from day 1. Has no users/login itself — delegates login+consent challenges to our login UI (~2 extra endpoints), which drives Kratos. Token `sub` = Kratos identity ID. Consent auto-skipped for trusted first-party clients.
+- **Login UI** (`account.collie.studio`) — small Go+templ app; renders Kratos self-service flows + handles Hydra login/consent challenges.
+- **Oathkeeper** — deferred, maybe never. Gating third-party dashboards (portainer, glances): Caddy built-in `forward_auth` suffices. Oathkeeper only for centralized route-level policy across many services.
 - **Keto** — authZ (Zanzibar-style). Only if/when hotel back office needs roles.
 
 Ory family in one line each: Kratos = who exists & how they log in; Hydra = standard tokens outsiders can trust; Oathkeeper = who gets past the door; Keto = what they may touch inside.
+
+Known Hydra-posture tradeoffs (accepted): token lifecycle to manage (short-TTL JWTs + refresh; revocation isn't instant), logout-everywhere is fiddlier than a shared cookie, more moving parts day 1. This is deliberate overengineering for learning + enterprise transferability.
 
 ### The `auth` package (Go template)
 
@@ -30,16 +38,13 @@ user := auth.User(r.Context())   // consume — {ID, Email, Name}
 ```
 
 Modes (config-selected, same three lines):
+- `oidc` — **primary production mode**: standard OIDC RP (redirect flow for browsers, JWT/JWKS validation for bearer tokens). Works against Hydra or any other IdP. Service never renders login.
 - `dev` — hardcoded fake user, no IdP needed; `go run .` just works. Plus `auth.NewFake(user)` for tests.
-- `whoami` — production: Kratos cookie → whoami; unauthenticated browsers redirected to login UI and back. Service never renders login.
-- `bearer` — non-browser clients: static token now → Kratos session tokens → Hydra JWTs later, same mode.
 - `local` — built-in username/password. **Open-source default** — a stranger's `docker compose up` is secure standalone.
-- `oidc` — bring-your-own IdP (for open-source adopters).
 - `header` — trust proxy-injected identity. **Explicit opt-in, fail closed**: requires trusted-proxy source verification + shared secret or JWT signature. Never a default. Mitigates header-spoofing (app reachable by any path other than the proxy = instant impersonation). Proxy must strip inbound identity headers.
+- (`whoami` — optional Kratos-direct optimization; demoted from primary, may never be built.)
 
 Residual auth surface services still own: store the IdP `sub` as an opaque foreign key (`user_id`); never mirror a users table locally (cache display names at most).
-
-Known tradeoff: whoami = one localhost network hop per request (~1ms, fine at this scale, cacheable per-session; the enterprise answer to this is stateless JWTs, i.e. Hydra).
 
 ### OIDC mental model (reference)
 
