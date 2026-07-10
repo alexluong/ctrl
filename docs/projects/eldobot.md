@@ -31,4 +31,5 @@ Discord bot for Basketball GM (BBGM) fantasy leagues — loads BBGM export files
 
 ## Status log
 
+- 2026-07-10 (later) — system audit & cleanup (`6fb22cb`): security dep bumps (aiohttp, Pillow, python-dotenv, simpleeval — all had OSV advisories; new pins verified clean), dead files removed, rebuilt & redeployed, bot healthy. VM: pruned 4.4GB dangling images (disk 74%→59%). Deliberately skipped: kaleido/plotly/pandas upgrades (no security need, churn risk), 4 orphan docker volumes on the VM (portainer/grafana/loki/prometheus data from stopped collielab services — collielab's call, not eldobot's).
 - 2026-07-10 — deadlock incident: diagnosed, restarted, root cause fixed & deployed (`2d733f8`); project documented (this doc + repo CLAUDE.md). Prior code change 2026-01-04 (server whitelist).
