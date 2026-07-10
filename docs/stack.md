@@ -60,7 +60,9 @@ Core: middleware produces a **Principal**, not a User — callers aren't always 
 
 Default: **system-browser OIDC** (auth code + PKCE via ASWebAuthenticationSession / flutter_appauth): free cross-app SSO (shared browser cookie), free MFA/recovery/passkey screens from collielab/auth, tokens in Keychain, refresh rotation = login ~once per device. PKCE = per-attempt hashed verifier replacing client_secret (public clients can't hold secrets; stops authorization-code interception via rogue custom-scheme handlers).
 
-Native in-app login (first-party UX upgrade, later if browser-sheet friction grates): Kratos **native API flows** — app renders own login widgets, POSTs to Kratos, gets session token as bearer. Server-side = one more chain link (`auth.KratosSessionToken`), zero handler changes. Costs: no cross-app SSO, app owns MFA/recovery screens (app-store releases for login changes).
+Native in-app login (first-party UX upgrade, later if browser-sheet friction grates): Kratos **native API flows** — app renders own login widgets, POSTs to Kratos, gets session token as bearer. Server-side = one more chain link (`auth.KratosSessionToken`), zero handler changes. Costs: no cross-app SSO (browser flow shares the IdP cookie in the system browser across apps; native tokens are per-app Keychain sandboxed), app owns MFA/recovery screens (app-store releases for login changes).
+
+Third dial position — **BFF / token mediation**: app speaks only to its own service (`POST /auth/login` → service session), service either proxies Kratos native flows or does the OIDC dance itself and custodies tokens server-side (app never holds IdP tokens). OIDC stays the mechanism among servers/browsers/federation. Buys: native UX + mobile auth iterable without app releases. Costs: service becomes a credential-handling surface (rate limiting, careful logs); same no-cross-app-SSO. All three positions = same chain, same Principal, switchable per app.
 
 ### MFA & account security
 
