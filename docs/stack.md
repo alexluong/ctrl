@@ -81,6 +81,8 @@ Three tiers, each a different question:
 
 Key rule: scopes bound the credential, domain authz bounds the person — **both must pass**, neither substitutes. Collapsing them = "token was valid so we allowed it" bugs.
 
+Clarification: scopes ARE authz — the credential half. **Scopes attenuate, never grant**: `effective permission = user's domain rights ∩ credential's scopes`. A scope means "may exercise the owner's X-rights, if the owner has any" — so scope checks can't answer resource questions, and domain checks can't keep a leaked narrow key narrow. Transaction confirmation is outside the auth layer (needs action semantics = business rules); re-auth/freshness is inside it (pure claims: auth_time, AAL).
+
 ### User / tenancy layering (the part auth doesn't solve)
 
 Three layers, never conflated:
