@@ -60,6 +60,14 @@ Core: middleware produces a **Principal**, not a User — callers aren't always 
 
 All IdP-side (Kratos + login UI); services see only sessions/tokens — adding MFA = zero service changes. Kratos natively: TOTP, WebAuthn/passkeys, recovery codes. Posture: **passkey primary, TOTP fallback**. The only service-visible concept: **AAL/step-up** (`acr` claim) — sensitive routes may `Require(auth.AAL2)` (delete account, refunds, API-key management). MFA gates key *issuance*, never key *usage* (non-interactive creds are bounded by scopes+expiry instead). Package deal in same place: email verification, recovery, lockout, device/session management. Infra consequence: needs outbound email → SMTP relay (SES/Resend/Postmark) — platform-wide useful (notifs, booking confirmations).
 
+### OTP taxonomy — classify by what the code proves
+
+1. **Identity** (login codes, TOTP, recovery) → IdP/Kratos config. Services never see it.
+2. **Channel ownership** (verify email/phone) → IdP/Kratos flows.
+3. **Capability** (booking codes, guest check-in links, feed invites, share links) → **feature, owned by the service**: short-lived resource-scoped grants in service DB. Mechanics (mint/hash/expire/verify/rate-limit) = kit candidate after 2 uses (feed invites + hotel bookings).
+
+Account-less access (hotel guests): `auth.Capability(store)` authenticator → limited principal `{Kind: guest, User: nil, Scopes: ["booking:ABC123:read"]}` — same middleware/gates, no handler special-casing. **Hard rule: guests never become Kratos identities** (capabilities, not users).
+
 ### User / tenancy layering (the part auth doesn't solve)
 
 Three layers, never conflated:
