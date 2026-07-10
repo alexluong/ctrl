@@ -6,19 +6,40 @@ Domain: `collie.studio`. Nodes: collielab VM (apps) + home Mac Mini (media: Plex
 
 ## Auth architecture (settled 2026-07-10)
 
-**Ory stack** (Alex is a fan; Go source = learning material; composable, enterprise-relevant):
+**Ory stack** (Alex is a fan; Go source = learning material; composable, enterprise-relevant).
 
-- **Kratos** — identity: users, credentials, login/registration/recovery. Headless; we build a small login UI at `account.collie.studio`. First-party apps on `*.collie.studio` share the session cookie and resolve users via Kratos `/sessions/whoami` — SSO without needing Hydra initially.
-- **Hydra** — OIDC/OAuth2 token issuance. Add when needed: Flutter app tokens, or open-source users bringing their own IdP.
-- **Oathkeeper** — identity-aware proxy (forward-auth done right: signed JWT identity headers). Add to gate third-party dashboards (portainer, glances).
+**Decision (2026-07-10): Kratos only.** Bill of materials: Kratos + Postgres + login UI (`account.collie.studio`) + Go `auth` package. Four pieces; we build two.
+
+- **Kratos** — identity: users, credentials, login/registration/recovery. Headless; we build the login UI. Covers ALL current needs:
+  - Browser SSO: shared session cookie on `.collie.studio`, services resolve users via `/sessions/whoami`
+  - First-party mobile (Flutter feed, Shortcuts): Kratos native API flows → session token as bearer header, validated via same whoami
+- **Hydra** — deferred. Triggers: (1) third-party "Sign in with collie.studio", (2) own app on a non-collie.studio domain (no cookie sharing → needs OIDC redirect), (3) M2M client-credentials tokens. None exist yet. When added: Hydra has no users/login — it delegates login+consent challenges to our existing login UI, which asks Kratos; token `sub` = Kratos identity ID, so identity stays unified and nothing existing changes. Open-sourcing does NOT require us to run Hydra (adopters point the `oidc` mode at their own IdP).
+- **Oathkeeper** — deferred, maybe never. For gating third-party dashboards (portainer, glances), Caddy's built-in `forward_auth` → Kratos whoami suffices. Oathkeeper earns its place only for centralized route-level policy across many services.
 - **Keto** — authZ (Zanzibar-style). Only if/when hotel back office needs roles.
+
+Ory family in one line each: Kratos = who exists & how they log in; Hydra = standard tokens outsiders can trust; Oathkeeper = who gets past the door; Keto = what they may touch inside.
 
 ### The `auth` package (Go template)
 
-One interface (`auth.UserFromContext`), pluggable modes via config:
-- `local` — built-in username/password. **Default** — safe for strangers who `docker compose up` an open-sourced service.
-- `oidc` / `kratos-whoami` — delegate to IdP (ours or bring-your-own).
-- `header` — trust proxy-injected identity. **Explicit opt-in, fail closed**: requires trusted-proxy source verification + shared secret or JWT signature. Never a default. Mitigates the classic header-spoofing attack (app reachable by any path other than the proxy = instant impersonation). Proxy must strip inbound identity headers.
+Design principle: **library-as-contract** — auth is enforced in-process but written once in the platform package, never by the service author. A service's entire auth surface:
+
+```go
+a := auth.FromEnv()              // construct
+r.Use(a.Middleware())            // install
+user := auth.User(r.Context())   // consume — {ID, Email, Name}
+```
+
+Modes (config-selected, same three lines):
+- `dev` — hardcoded fake user, no IdP needed; `go run .` just works. Plus `auth.NewFake(user)` for tests.
+- `whoami` — production: Kratos cookie → whoami; unauthenticated browsers redirected to login UI and back. Service never renders login.
+- `bearer` — non-browser clients: static token now → Kratos session tokens → Hydra JWTs later, same mode.
+- `local` — built-in username/password. **Open-source default** — a stranger's `docker compose up` is secure standalone.
+- `oidc` — bring-your-own IdP (for open-source adopters).
+- `header` — trust proxy-injected identity. **Explicit opt-in, fail closed**: requires trusted-proxy source verification + shared secret or JWT signature. Never a default. Mitigates header-spoofing (app reachable by any path other than the proxy = instant impersonation). Proxy must strip inbound identity headers.
+
+Residual auth surface services still own: store the IdP `sub` as an opaque foreign key (`user_id`); never mirror a users table locally (cache display names at most).
+
+Known tradeoff: whoami = one localhost network hop per request (~1ms, fine at this scale, cacheable per-session; the enterprise answer to this is stateless JWTs, i.e. Hydra).
 
 ### OIDC mental model (reference)
 
