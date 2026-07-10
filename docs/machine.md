@@ -33,9 +33,9 @@ Org semantics: alexluong = personal apps (deploy onto collielab); collielab = th
 
 ## Repo roles (personal ecosystem)
 
-- **ctrl** — portfolio level only: project index (what exists, why, one-line status), cross-project notes (bootstrap stack, org/meta), domain data (bookkeeping, RE). No app code, no project internals.
-- **project repos** — one repo per project under `hub/alexluong/`, fully self-contained: code + docs + decisions + TODOs + own CLAUDE.md. Claude sessions for project work run in the project repo. No back-pointers to ctrl.
+- **ctrl** — the notes layer for everything: project living docs (idea → design → decisions → status), cross-project notes (bootstrap stack, org/meta), domain data (bookkeeping, RE). No app code.
+- **project repos** — one repo per project under `hub/alexluong/`, **code-only**: no IDEAS/NOTES/TODO markdown; only docs strictly part of the software (README for building/running). Claude sessions for project work run in the project repo.
 - **collielab** — VM infra, docker-compose services, terraform DNS. Deploying a new service = new entry under `services/`.
 - No submodules anywhere — everything is colocated under `hub/alexluong/`, referenced by sibling path when needed.
 
-Project docs flow: `ctrl/docs/projects/<name>.md` is each project's living doc (idea → plan → status), kept in ctrl even after the code repo exists. New Claude sessions in a project repo get context by pasting the project doc (pbcopy) — no standing back-pointers.
+Project docs flow (convention set 2026-07-10, first applied to fitjournal): `ctrl/docs/projects/<name>.md` is each project's single living doc, kept in ctrl for the project's whole life. Each project repo gets a **machine-local, untracked `CLAUDE.md`** pointing at that doc — ignored via `.git/info/exclude` (add `CLAUDE.md` line), so the repo stays 100% code even in `.gitignore`. The pointer tells sessions to read the ctrl doc at start, write decisions back to it (committing in ctrl), and never create notes files or use `~/.claude` memory. On a new machine, recreate the pointer + exclude entry per project (any ctrl session can do it).
