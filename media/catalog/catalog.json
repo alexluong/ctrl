@@ -9324,7 +9324,21 @@
       "hdr": "",
       "status": "linked",
       "library": "red4/tv/True Detective"
+    },
+    {
+      "download": "red4/The.Ballad.of.Buster.Scruggs.2018.1080p.WEBRip.x265-LAMA",
+      "type": "movie",
+      "title": "The Ballad of Buster Scruggs",
+      "year": 2018,
+      "resolution": "1080p",
+      "source": "WEBRip",
+      "group": "LAMA",
+      "video": "x265",
+      "audio": "",
+      "hdr": "",
+      "status": "linked",
+      "library": "red4/movies/The Ballad of Buster Scruggs (2018)"
     }
   ],
-  "updated_at": "2026-07-09 18:00:59"
+  "updated_at": "2026-07-11 01:10:26"
 }
