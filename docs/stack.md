@@ -56,6 +56,12 @@ Core: middleware produces a **Principal**, not a User — callers aren't always 
 - **Agent auth**: frontier; hedge = User+Actor split. Today: user-issued scope-limited API keys. Later: OAuth token exchange (RFC 8693) as a 4th authenticator — same Principal, zero handler changes.
 - **No-OIDC setups**: `dev` mode = `auth.Static(fakeUser)` (zero infra); tests = `auth.WithPrincipal(ctx, ...)` injection; `local` mode = `auth.Local(db, secret)` + `a.LocalRoutes()` (built-in bcrypt login, own session cookie, ~200 lines in kit).
 
+### Mobile auth posture
+
+Default: **system-browser OIDC** (auth code + PKCE via ASWebAuthenticationSession / flutter_appauth): free cross-app SSO (shared browser cookie), free MFA/recovery/passkey screens from collielab/auth, tokens in Keychain, refresh rotation = login ~once per device. PKCE = per-attempt hashed verifier replacing client_secret (public clients can't hold secrets; stops authorization-code interception via rogue custom-scheme handlers).
+
+Native in-app login (first-party UX upgrade, later if browser-sheet friction grates): Kratos **native API flows** — app renders own login widgets, POSTs to Kratos, gets session token as bearer. Server-side = one more chain link (`auth.KratosSessionToken`), zero handler changes. Costs: no cross-app SSO, app owns MFA/recovery screens (app-store releases for login changes).
+
 ### MFA & account security
 
 All IdP-side (Kratos + login UI); services see only sessions/tokens — adding MFA = zero service changes. Kratos natively: TOTP, WebAuthn/passkeys, recovery codes. Posture: **passkey primary, TOTP fallback**. The only service-visible concept: **AAL/step-up** (`acr` claim) — sensitive routes may `Require(auth.AAL2)` (delete account, refunds, API-key management). MFA gates key *issuance*, never key *usage* (non-interactive creds are bounded by scopes+expiry instead). Package deal in same place: email verification, recovery, lockout, device/session management. Infra consequence: needs outbound email → SMTP relay (SES/Resend/Postmark) — platform-wide useful (notifs, booking confirmations).
