@@ -34,4 +34,4 @@ Alex's personal machine conventions (macOS).
 - **collielab** — VM infra, docker-compose services, terraform DNS. Deploying a new service = new entry under `services/`.
 - No submodules anywhere — everything is colocated under `hub/alexluong/`, referenced by sibling path when needed.
 
-Seed flow: project ideas incubate as `ctrl/docs/projects/<name>.md`; when a project repo is scaffolded, the seed's content moves into it and ctrl keeps a one-line index entry.
+Project docs flow: `ctrl/docs/projects/<name>.md` is each project's living doc (idea → plan → status), kept in ctrl even after the code repo exists. New Claude sessions in a project repo get context by pasting the project doc (pbcopy) — no standing back-pointers.

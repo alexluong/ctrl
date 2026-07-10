@@ -1,6 +1,8 @@
-# Project: Tracker (fitness/body tracking)
+# Project: fitJournal
 
-MyFitnessPal-ish but tracking-first, food-second. Personal use.
+Fitness/body tracking — MyFitnessPal-ish but tracking-first, food-second. Personal use.
+
+**Name lore:** successor to weightJournal, a project Alex built ~9 years ago when learning to code (weight-only). fitJournal widens the scope: weight, progress pics, exercise, meal pics. Repo: `hub/alexluong/fitjournal`.
 
 ## Core idea
 

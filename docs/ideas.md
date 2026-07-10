@@ -15,7 +15,7 @@ Answers so far (2026-07-10):
 - **OpenClaw direction (below)**: dead — no longer pursuing. Kept for historical context only.
 
 The 3 projects (each has a file in `docs/projects/`):
-1. [tracker](projects/tracker.md) — fitness/body tracking, friction-free capture
+1. [fitJournal](projects/fitjournal.md) — fitness/body tracking, friction-free capture (successor to 9-year-old weightJournal)
 2. [feed](projects/feed.md) — 2-person shared social feed (Alex + Hannah)
 3. [hotel-backoffice](projects/hotel-backoffice.md) — semi-professional hotel booking back office
 
