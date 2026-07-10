@@ -13,7 +13,12 @@ Answers so far (2026-07-10):
 - **Homelab**: single VM (`sshmylab` → `ssh alex@149.28.40.6`), managed via `hub/alexluong/collielab` repo — docker-compose services (vaultwarden, portainer, glances, observability) + terraform (DNS for alexluong.com, nhiluong.com, collie studio).
 - **OpenClaw direction (below)**: dead — no longer pursuing. Kept for historical context only.
 
-Still awaiting: the actual project list.
+The 3 projects (each has a file in `docs/projects/`):
+1. [tracker](projects/tracker.md) — fitness/body tracking, friction-free capture
+2. [feed](projects/feed.md) — 2-person shared social feed (Alex + Hannah)
+3. [hotel-backoffice](projects/hotel-backoffice.md) — semi-professional hotel booking back office
+
+Cross-cutting: bootstrap stack candidate — Go + docker-compose deploy to collielab VM; Alex has `template-go-templ-tailwindcss` repo as prior art.
 
 ## ~~Direction: OpenClaw as foundation~~ (SUPERSEDED 2026-07-10 — not pursuing)
 
