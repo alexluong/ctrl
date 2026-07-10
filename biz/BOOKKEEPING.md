@@ -28,7 +28,7 @@ Sources & coverage:
 Ledger: `transactions.csv` — 465 rows, Jul 2024 – Mar 2026
 Columns: `date,property,description,amount,type,category,source,notes`
 
-Properties: `oakfield` (20259 Oakfield, Detroit 48235), `haverhill` (4300 Haverhill, Detroit 48224)
+Properties: `oakfield` (20259 Oakfield, Detroit 48235), `haverhill` (4300 Haverhill, Detroit 48224), `dixie` (15490 Dixie, Redford — closed 2026-05)
 
 ### Collie Studio LLC (software)
 
@@ -60,7 +60,8 @@ Columns: `date,description,amount,type,category,account,notes`
 Insurance paid from Wise:
 - REInsurePro → haverhill
 - Breckenridge, OSC INS SVCS → oakfield
-- New provider (Apr 2026+) → TBD, covers both properties
+- Foremost (Farmers) → dixie
+- New provider (Apr 2026+) → TBD, covers oakfield + haverhill
 
 Detroit Water from Wise → oakfield (haverhill water goes through PM)
 

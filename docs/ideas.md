@@ -1,6 +1,21 @@
 # Ideas & Notes
 
-## Direction: OpenClaw as foundation
+## Projects discussion (started 2026-07-10)
+
+Alex has several personal projects planned (list TBD — discussion in progress). Context:
+- Motivation: fun/convenience + learning. Will flag if anything else drives a project.
+- Likes experimenting; wants to develop a personal **bootstrap stack** for starting projects quickly.
+- Runs a **homelab** with self-hosted services, most notably Vaultwarden.
+- Repo organization + Claude skills-as-shortcuts should evolve incrementally, not be scaffolded upfront.
+
+Answers so far (2026-07-10):
+- **Skillset**: JS + Golang, full stack. Wants to explore **Go at larger scope/scale** — a bigger Go project is a learning goal.
+- **Homelab**: single VM (`sshmylab` → `ssh alex@149.28.40.6`), managed via `hub/alexluong/collielab` repo — docker-compose services (vaultwarden, portainer, glances, observability) + terraform (DNS for alexluong.com, nhiluong.com, collie studio).
+- **OpenClaw direction (below)**: dead — no longer pursuing. Kept for historical context only.
+
+Still awaiting: the actual project list.
+
+## ~~Direction: OpenClaw as foundation~~ (SUPERSEDED 2026-07-10 — not pursuing)
 
 After researching Claude Code Channels, OpenClaw, and building from scratch —
 going with **OpenClaw** as the agent layer. It solves interface, memory, and

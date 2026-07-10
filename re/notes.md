@@ -73,3 +73,20 @@ Zips where sub-neighborhood selection is critical:
 - Property management is non-negotiable for out-of-country investor
 - PM quality varies dramatically in Detroit — bad PM = bad investment
 - Mike (agent) owes lender + resource list — follow up
+
+## Property Manager: Grant & Main
+
+Grant & Main manages the full portfolio: 15490 Dixie (Redford), 20259 Oakfield (Detroit), 4300 Haverhill (Detroit). Onboarded starting with Dixie handoff 2026-06-08; scope confirmed for all three.
+
+Contacts:
+- **Debbie** — primary point of contact; route correspondence/questions through her first
+- **Megan** — supporting / onboarding
+
+## Insurance Provider Mapping
+
+Wise pays insurance directly (not through PM), so property assignment is manual:
+- **REInsurePro** → Haverhill
+- **Breckenridge / OSC INS SVCS** → Oakfield
+- **Foremost** (Farmers; agent NPG & Associates) → Dixie. Policy 381-5025026626, 4/30/26–4/30/27, $1,189/yr
+- Detroit Water from Wise → always Oakfield (Haverhill water goes through PM)
+- Apr 2026: Oakfield + Haverhill switched to a single new provider — confirm mapping when first statement arrives
