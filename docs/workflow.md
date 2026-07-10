@@ -27,6 +27,7 @@ Skills in `ctrl/.claude/skills/` give fresh ctrl sessions a known procedure — 
 
 - `/new-project <name>` — bootstrap repo + GitHub remote + scaffold + living doc + pointer CLAUDE.md (or recreate the pointer on a new machine)
 - `/implement <project>: <feature>` — plan → implement (delegated agents) → test → review → land (PR or direct) → log to living doc
+- `/dev-setup <name>` — set the project up locally (fresh clone / new machine): pointer, tooling, deps, verified build; repairs the README setup doc if stale
 - `/import`, `/report` — bookkeeping (see `biz/BOOKKEEPING.md`)
 
 Skills stay thin: they sequence steps and point at this doc for conventions. New repeated procedure → new skill.
@@ -45,6 +46,7 @@ Personal projects are lowkey — optimize for Claude operating solo, not team pr
 
 - **Git flow:** default direct commits to main. Scope-dependent: branch + GitHub PR when the change is large or Alex wants to review — especially cockpit-delegated impl (agent works on a branch, opens a PR, Alex reviews on GitHub). When unsure and the change is big, prefer the PR.
 - **Commits:** Conventional Commits — `feat:` / `fix:` / `chore:` / `refactor:` / `docs:` / `test:`, optional scope (`feat(capture): …`), lowercase subject, body only when the why isn't obvious. Small, coherent commits. Applies to all personal repos going forward, ctrl included (`docs:` covers most ctrl commits).
+- **Setup doc:** every project repo's README has a "Local setup" section — prereqs/tooling, deps, build/test/run commands — good enough to go from fresh clone to passing build without guesswork. Kept accurate as part of feature work (new dep → same commit updates setup). Personal/machine-specific steps (secrets, signing, credentials — usually Vaultwarden) don't belong in the repo; they go in the project's ctrl living doc. `/dev-setup` executes and repairs all this.
 - **Code organization:** per-project call — pick what fits the project's shape at its current size, record the chosen layout in the project's ctrl doc, follow it consistently. No preemptive abstraction for hypothetical futures.
 - **Quality bar:**
   - Unit tests for genuinely tricky logic (date/tz handling, transforms, parsing). No coverage targets or test-first ritual.
