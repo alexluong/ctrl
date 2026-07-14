@@ -110,9 +110,15 @@ Run via Docker on a Colima VM (`colima-arr` context). Compose files in `compose/
 | **Seedbox API** | — | download.yaml | MAM dynamic seedbox registration (see below) |
 | **Prowlarr** | 9696 | arr.yaml | Indexer manager (not actively used) |
 
+**Jellyfin remote access, clients, and login → see [`jellyfin.md`](jellyfin.md).** Reached
+privately over Tailscale (`http://100.91.137.41:8096`); no public exposure, no Plex paywall.
+
 ### Stacks & always-on policy
 
-The VM has limited RAM, so **not every stack runs 24/7** — running all of them starves qBittorrent and it gets OOM-killed (the WebUI then flaps/dies). Keep only the always-on set up; start the rest on demand.
+The VM is provisioned with **8 GB / 6 CPU** (see VM management below), enough to run the
+core services plus Jellyfin 24/7. Only `arr` is left off by default — it's rarely needed
+and heavy. Historically this VM was 2 GB and running everything OOM-killed qBittorrent;
+the RAM bump resolved that.
 
 | Stack | Services | ~RAM | Policy |
 |-------|----------|------|--------|
@@ -120,23 +126,27 @@ The VM has limited RAM, so **not every stack runs 24/7** — running all of them
 | **private** | gluetun-private, qbittorrent-private | ~125 MB | **always-on** |
 | **calibre** | calibre-web (alex + hannah) | ~310 MB | **always-on** |
 | **audiobookshelf** | audiobookshelf | ~40 MB | **always-on** |
+| **jellyfin** | jellyfin | ~155 MB (more while scanning/transcoding) | **always-on** — remote streaming must be reachable anytime (see `jellyfin.md`) |
 | **arr** | prowlarr, radarr, sonarr, bazarr, flaresolverr | ~550 MB | **on-demand** — downloads are mostly manual; start when managing indexers |
-| **jellyfin** | jellyfin | ~155 MB | **on-demand** — start when you want to stream |
 
-Always-on total ≈ 725 MB, leaving healthy headroom. Start the on-demand ones only when needed:
+`./scripts/up.sh core` brings up the always-on set (download + private + calibre +
+audiobookshelf + jellyfin). Start `arr` only when needed:
 
 ```bash
-./scripts/up.sh core       # the always-on set (download + private + calibre + audiobookshelf)
+./scripts/up.sh core       # the always-on set (incl. jellyfin)
 ./scripts/up.sh arr        # when you need indexer search / automation
-./scripts/up.sh jellyfin   # when you want to stream
 ./scripts/down.sh arr      # frees ~550 MB when done
 ```
 
 ### VM management
 
+The VM is sized in `scripts/vm-start.sh` — currently **8 GB RAM / 6 CPU / 30 GB disk**
+on the 16 GB M4 Mac Mini. To change resources, edit that script and restart the VM
+(`./vm-stop.sh && ./vm-start.sh`); Colima applies the new limits on next start.
+
 ```bash
 # In scripts/
-./vm-start.sh        # Start Colima VM, mount both drives
+./vm-start.sh        # Start Colima VM (8 GB / 6 CPU), mount both drives
 ./vm-stop.sh         # Stop VM
 ./up.sh <stack>      # Start containers (download|arr|jellyfin|calibre|audiobookshelf|private|all)
 ./down.sh <stack>    # Stop containers

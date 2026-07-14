@@ -1,6 +1,6 @@
-# ON-DEMAND stack (~155 MB). Do NOT leave running — the VM is RAM-tight.
-# Start only when streaming:  ./scripts/up.sh jellyfin   then  down.sh jellyfin
-# Always-on set is: download + private + calibre + audiobookshelf (see README).
+# ALWAYS-ON stack (~155 MB, more while scanning/transcoding). Remote streaming
+# server — must be reachable anytime, so it stays resident (VM is 8 GB / 6 CPU).
+# Access + client notes: see media/jellyfin.md. Part of `./scripts/up.sh core`.
 services:
   jellyfin:
     image: linuxserver/jellyfin:latest

@@ -11,14 +11,15 @@ cd "$PROJECT_DIR"
 export DOCKER_CONTEXT="colima-arr"
 
 case "$STACKS" in
-  # The always-on set: keep these up 24/7. arr + jellyfin are on-demand
-  # (VM RAM is tight — running everything OOM-kills qBittorrent).
+  # The always-on set: keep these up 24/7. Only arr is on-demand now
+  # (VM was bumped to 8 GB / 6 CPU, so jellyfin can stay resident).
   core)
     docker-compose \
       -f compose/download.yaml \
       -f compose/private.yaml \
       -f compose/calibre.yaml \
       -f compose/audiobookshelf.yaml \
+      -f compose/jellyfin.yaml \
       --env-file .env up -d
     ;;
   download)
