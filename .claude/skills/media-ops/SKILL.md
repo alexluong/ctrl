@@ -56,9 +56,16 @@ _(Deeper workflow TBD — Alex wants to discuss this later; expand this section 
 
 - **qBit WebUI flapping = OOM**, historically (2 GB VM). Now on 8 GB it's fine; if it
   recurs, check `colima ssh -p arr -- free -h` and `docker inspect -f '{{.State.OOMKilled}}' qbittorrent` FIRST. See `media/README.md` and memory `project_qbit_oom`.
+- **LSIO container `/config` (qBit, Jellyfin) MUST be on a native docker volume, not the
+  virtiofs external drive.** SQLite/lock files on virtiofs → `database is locked` storms,
+  readonly-DB errors, WebUI flapping, and (Jellyfin, 2026-07-15) a 6m49s wedged boot that
+  never binds. qBit uses `qbit_config`, Jellyfin uses `jellyfin_config`. If you recreate a
+  config volume, chown it to `PUID:PGID` (`501:20`). Media stays on the external drives.
 - **Jellyfin metadata won't populate if `TypeOptions` is empty** (happens when a library is
   created via API) — must configure `TheMovieDb` fetchers + `FullRefresh`. Scans are
-  **disk-I/O-bound** (external USB), not RAM-bound. Full gotcha list → `media/jellyfin.md`.
+  **disk-I/O-bound** (external USB), not RAM-bound. A combined movie+TV `FullRefresh` does
+  movies first and starves TV — refresh TV alone to populate shows sooner. Full gotcha list
+  → `media/jellyfin.md`.
 - **Shell `rm -rf` is wrapped/rejected** on this Mac — use Python `shutil.rmtree` or
   `/bin/rm`.
 - Household: Hannah uses the stack too, mostly via Discord; don't narrate Discord actions.

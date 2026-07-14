@@ -73,6 +73,23 @@ Jellyfin is part of the **always-on** stack (see `README.md` → Stacks & always
 docker --context colima-arr logs jellyfin
 ```
 
+### Where config + the database live (important)
+
+`/config` (settings **and the SQLite DB**) lives on a **native Docker volume**
+`jellyfin_config`, **not** on the virtiofs-mounted external drive. This is deliberate —
+see gotcha #8. Only the **media** (`/Blue4`, `/Red4`) is on the external drives.
+
+```sh
+# inspect the native config volume
+docker --context colima-arr volume inspect jellyfin_config
+# DB path inside the container:  /config/data/data/jellyfin.db
+# a stale backup of the pre-migration config remains at ${DATA_PATH}/jellyfin (on the drive)
+```
+
+To back up Jellyfin, snapshot the `jellyfin_config` volume (stop the container first for a
+consistent DB copy). If you ever recreate the volume, chown its contents to `PUID:PGID`
+(`501:20`) or Jellyfin gets "attempt to write a readonly database".
+
 ### Force a scan
 
 Dashboard → Libraries → "Scan All Libraries", or via API:
@@ -130,9 +147,22 @@ curl -s -X DELETE "$J/ScheduledTasks/Running/<TASK_ID>" -H "$H"
    library monitor on — don't rely on it to scan a single show.
 6. **Changing the admin password invalidates existing API tokens** — re-authenticate after.
 7. No hardware transcoding in the VM — see Clients; keep clients direct-playing.
+8. **The SQLite DB must NOT live on the virtiofs-mounted external drive.** This bit us hard
+   on 2026-07-15: with `/config` on `${DATA_PATH}/jellyfin` (an external USB drive over
+   virtiofs), any sustained write load (a metadata `FullRefresh`) triggered a
+   `database is locked` storm — `AuthenticateByName` 500'd after a 30 s timeout, then a
+   restart **wedged for 6m49s and never bound port 8096** (process alive at 0% CPU, blocked
+   on the DB). Same class of bug qBittorrent already had (see `compose/download.yaml`). **Fix:
+   move `/config` to a native Docker volume** (`jellyfin_config`, on the VM's own disk); media
+   stays on the external drives. After the move: boot ~6 s, auth ~0.25 s, zero lock errors.
+   Migration recipe is in `compose/jellyfin.yaml`. Symptom → cause map: `database is locked` =
+   virtiofs contention (this); `attempt to write a readonly database` = volume owned by root,
+   chown it to `501:20`.
 
 A full first scan of the whole library takes ~25+ min per library (I/O bound). Metadata and
-artwork are a separate, network-bound pass on top (TMDB, ~10 items/min).
+artwork are a separate, network-bound pass on top (TMDB, ~10 items/min). Also: a **combined
+movie+TV `FullRefresh` runs movies first and starves TV** (TV posters sit unchanged until
+movies finish) — refresh the TV library on its own if you want shows populated sooner.
 
 ## Setup notes (how it was built)
 
@@ -144,3 +174,8 @@ artwork are a separate, network-bound pass on top (TMDB, ~10 items/min).
 - **VM was resized from 2 GB / 2 CPU to 8 GB / 6 CPU** (`scripts/vm-start.sh`) because the
   library scan was starving the 2 GB VM and OOM-killing containers. See
   `README.md` → VM management.
+- **2026-07-15: migrated `/config` off the virtiofs external drive to a native Docker volume**
+  `jellyfin_config` (see gotcha #8). The 3.7 GB config (incl. fetched artwork) was copied with
+  `docker run --rm -v jellyfin_config:/dest -v ${DATA_PATH}/jellyfin:/src:ro alpine cp -a /src/. /dest/`,
+  then chowned `501:20`. The old on-drive copy at `${DATA_PATH}/jellyfin` is kept as a backup
+  and can be deleted once the native volume is proven stable.
