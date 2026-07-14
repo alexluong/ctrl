@@ -9352,7 +9352,53 @@
       "hdr": "",
       "status": "linked",
       "library": "red4/movies/Send Help (2026)"
+    },
+    {
+      "download": "red4/Scream.Queens.2015.S01.1080p.WEBRip.x265-KONTRAST",
+      "type": "tv",
+      "title": "Scream Queens",
+      "seasons": [
+        1
+      ],
+      "resolution": "1080p",
+      "source": "WEBRip",
+      "group": "KONTRAST",
+      "video": "x265",
+      "audio": "",
+      "hdr": "",
+      "status": "linked",
+      "library": "red4/tv/Scream Queens"
+    },
+    {
+      "download": "red4/Scream.Queens.2015.S02.1080p.WEBRip.x265-KONTRAST",
+      "type": "tv",
+      "title": "Scream Queens",
+      "seasons": [
+        2
+      ],
+      "resolution": "1080p",
+      "source": "WEBRip",
+      "group": "KONTRAST",
+      "video": "x265",
+      "audio": "",
+      "hdr": "",
+      "status": "linked",
+      "library": "red4/tv/Scream Queens"
+    },
+    {
+      "download": "red4/www.UIndex.org    -    Backrooms 2026 1080p WEBRip 10Bit DDP5 1 x265-NeoNoir",
+      "type": "movie",
+      "title": "Backrooms",
+      "year": 2026,
+      "resolution": "1080p",
+      "source": "WEBRip",
+      "group": "NeoNoir",
+      "video": "x265",
+      "audio": "DD+",
+      "hdr": "",
+      "status": "linked",
+      "library": "red4/movies/Backrooms (2026)"
     }
   ],
-  "updated_at": "2026-07-11 01:17:57"
+  "updated_at": "2026-07-14 18:31:44"
 }
