@@ -87,7 +87,7 @@ Contacts:
 Bills received by mail July 2026 (PDFs in each property's iCloud `documents/` folder):
 
 - **Oakfield (Detroit, parcel 22069481)**: $2,201.80 total. Pay in full by **8/31/2026**, or halves 8/15/2026 + 1/15/2027. Taxable value 26,600. Pay at PayDetroit365.com (2.3% card fee) — do NOT use bank bill-pay per bill instructions.
-- **Dixie (Redford Twp, parcel 79 015 01 1078 000)**: $2,242.17 total, due **9/14/2026**. Penalties from 9/15. Taxable value 52,200. Came with new-owner letter: title company may have escrowed for this at the 5/16/2026 closing — check closing paperwork / title company before paying out of pocket. Pay via bsaonline.com (e-check flat fee) or mail to Redford Twp Treasurer.
+- **Dixie (Redford Twp, parcel 79 015 01 1078 000)**: $2,242.17 total, due **9/14/2026**. Penalties from 9/15. Taxable value 52,200. Per ALTA settlement statement (cen164207): title did NOT pay this bill, but the DSCR loan is escrowed for taxes — $2,124.60 impounded at closing (6 mo × $354.10/mo); servicer (MyLoanPathway, loan #2600004283) should pay from escrow. **TODO: confirm with servicer before ~9/1 that they have the bill and will pay** — Redford doesn't contact lenders, and our copy isn't marked "Informational Copy" (suggests lender never got the original). Don't pay out of pocket unless servicer confirms they won't.
 - Haverhill: no 2026 summer bill received yet (Detroit parcel — expect similar timing to Oakfield).
 
 ## Insurance Provider Mapping
