@@ -1,4 +1,8 @@
-# ALWAYS-ON stack (~125 MB). Secondary torrent client on 8081 (PIA DE Frankfurt).
+# ALWAYS-ON stack (~125 MB). Secondary torrent client on 8081 (PIA Netherlands).
+# Was DE Frankfurt until 2026-07-15, when PIA's German endpoints started failing
+# the OpenVPN TLS handshake (both Frankfurt + Berlin) and gluetun flapped ~every
+# 15s. Switched to Netherlands (adjacent, reliable). Retry a DE region later if a
+# German exit is needed and PIA has fixed those servers.
 # Part of the always-on set: download + private + calibre + audiobookshelf.
 services:
   gluetun-private:
@@ -12,7 +16,7 @@ services:
       - VPN_SERVICE_PROVIDER=${VPN_SERVICE_PROVIDER}
       - OPENVPN_USER=${OPENVPN_USER}
       - OPENVPN_PASSWORD=${OPENVPN_PASSWORD}
-      - SERVER_REGIONS=DE Frankfurt
+      - SERVER_REGIONS=Netherlands
       - VPN_PORT_FORWARDING=${VPN_PORT_FORWARDING}
       - TZ=${TZ}
     volumes:
