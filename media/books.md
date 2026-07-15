@@ -68,12 +68,55 @@ therefore **stop both calibre-web instances during writes and restart them after
 raw `calibredb` writes yourself, do the same:
 `docker --context colima-arr stop calibre-web-alex calibre-web-hannah` → write → `start`.
 
-## Out of scope (for now): manga / comics
+## The goal & the standing workflow (on-demand)
 
-`downloads/` also holds **cbz manga** (Detective Conan / Case Closed — same series, two names —
-and ASOUE loose page images). These are intentionally **not** handled by `books.py`. They also
-pollute the calibre library as 4 **"Unknown"**-author entries (ids 6/8/9/10). A dedicated comic
-server (Komga/Kavita) is the better home; TBD — expand this section when we tackle it.
+**Goal:** keep the calibre **catalog** (`metadata.db`) *current and clean*. The catalog is the
+asset; the per-user calibre-web `app.db` state (shelves, reading progress) is disposable and not
+something we go out of our way to preserve. "Clean" means: no duplicate or ghost (file-less)
+entries, no author filed two ways, series intact, and no untitled "Unknown" junk.
+
+**How new books get in — on-demand (not scheduled).** When ebooks land in `downloads/`:
+
+```sh
+cd media
+./catalog/scripts/books.py status        # 1. baseline: current counts + health
+./catalog/scripts/books.py scan           # 2. see what's NEW vs already-imported
+./catalog/scripts/books.py import          # 3. add the new ones (dedup + enrich + normalize)
+./catalog/scripts/books.py archive         # 4. move imported source files to _imported/
+./catalog/scripts/books.py status         # 5. confirm health is still clean
+```
+
+Every `import`/`normalize` runs **with a human/Claude looking at the output** — that review *is*
+the point (see decisions below). Re-running is always safe (idempotent dedup).
+
+## Design decisions (so we don't re-litigate)
+
+- **On-demand, not a blind schedule.** A cron that runs the script unattended has no judgment on
+  the tricky ~10% (unparseable filenames, maybe-duplicates, junk metadata) — the same weakness
+  as a generic auto-importer. Since "clean" is the priority and books arrive infrequently, we run
+  it *with eyes on it*. (If we ever want hands-off, the right form is Claude-on-a-timer that
+  reviews + reports, not a dumb cron.)
+- **Curated pipeline over calibre-web-automated (CWA).** CWA gives a drop-and-forget watch folder
+  (keeps the library *current*) but its ingest is trusting — it re-adds duplicates and files
+  authors as "Last, First". That erodes *clean*, which is exactly what we care about. `books.py`
+  does the dedup + normalization CWA doesn't. Revisit CWA only if the priority shifts to
+  convenience over cleanliness.
+- **calibredb via one-shot full-calibre container**, not the `universal-calibre` mod on
+  calibre-web — keeps the always-on readers lightweight; the tooling is only spun up when needed.
+
+## Backlog — improve when needed
+
+This doc + `books.py` are meant to grow. Known next steps:
+
+- **Manga / comics (cbz).** `downloads/` holds Detective Conan / Case Closed (same series, two
+  names) + ASOUE loose page images, and they pollute the catalog as 4 **"Unknown"**-author
+  entries (ids 6/8/9/10). Out of scope for `books.py`. Plan: stand up a dedicated comic server
+  (Komga/Kavita) and move them there, then remove the Unknown entries from calibre.
+- **Extend `AUTHOR_ALIASES`** in `books.py` as new split/odd author names show up.
+- **Other sources.** The filename parser is tuned for Anna's Archive; add parsers if books start
+  arriving from other sources with different naming.
+- **Covers.** Currently rely on the embedded epub cover + online metadata. If a book lands with no
+  cover, add an explicit cover-fetch step (`fetch-ebook-metadata -c`).
 
 ## History
 

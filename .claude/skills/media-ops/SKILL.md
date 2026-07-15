@@ -50,11 +50,18 @@ entries when folder names are verbose/misparsed.
 
 **Books (calibre / audiobookshelf).** Always-on. calibre-web alex `:8074` / hannah `:8073` share
 one calibre library at `/Volumes/Blue4/arr/media/books/library`; audiobookshelf `:13378` for
-audiobooks. Full runbook → `media/books.md`.
+audiobooks. **Full playbook + standing workflow + design decisions → `media/books.md`** (a living
+doc — extend it as the setup evolves).
 
+- **Goal:** keep the calibre **catalog** (`metadata.db`) current + clean (no dupes/ghosts/split
+  authors/Unknown junk). Per-user calibre-web `app.db` (shelves/progress) is disposable.
+- **On-demand workflow (not scheduled):** when books land in `downloads/`, run
+  `books.py status → scan → import → archive → status`, **with eyes on the output** — that
+  review is deliberate (a blind cron or CWA auto-import erodes "clean"; see books.md decisions).
 - **Ebook cataloging is scripted:** `catalog/scripts/books.py` (`status` / `scan` / `import` /
   `normalize` / `archive`). It de-dupes downloads against the library (they're usually already
-  imported), enriches metadata online, and normalizes author names. **Never hand-file into the
+  imported), enriches metadata online, and normalizes author names. Treat it as a codified helper,
+  not a crutch — operate `calibredb` directly and adapt when needed. **Never hand-file into the
   library** — go through `calibredb` (it owns `metadata.db`).
 - `calibredb` isn't in calibre-web; run it one-shot from the full-calibre image:
   `docker --context colima-arr run --rm -v /Volumes/Blue4/arr/media/books:/books --entrypoint /usr/bin/calibredb lscr.io/linuxserver/calibre:latest --library-path /books/library <cmd>`
