@@ -48,9 +48,21 @@ qBittorrent WebUI is reached inside the VM: `docker exec gluetun wget -qO- "http
 `catalog.py` (scan → import → link) — see README "Catalog scripts". Hand-author catalog
 entries when folder names are verbose/misparsed.
 
-**Books (calibre / audiobookshelf).** Always-on. calibre-web alex `:8074` / hannah `:8073`;
-audiobookshelf `:13378`. Libraries under `/Volumes/Blue4/arr/media/{books,audiobooks}`.
-_(Deeper workflow TBD — Alex wants to discuss this later; expand this section then.)_
+**Books (calibre / audiobookshelf).** Always-on. calibre-web alex `:8074` / hannah `:8073` share
+one calibre library at `/Volumes/Blue4/arr/media/books/library`; audiobookshelf `:13378` for
+audiobooks. Full runbook → `media/books.md`.
+
+- **Ebook cataloging is scripted:** `catalog/scripts/books.py` (`status` / `scan` / `import` /
+  `normalize` / `archive`). It de-dupes downloads against the library (they're usually already
+  imported), enriches metadata online, and normalizes author names. **Never hand-file into the
+  library** — go through `calibredb` (it owns `metadata.db`).
+- `calibredb` isn't in calibre-web; run it one-shot from the full-calibre image:
+  `docker --context colima-arr run --rm -v /Volumes/Blue4/arr/media/books:/books --entrypoint /usr/bin/calibredb lscr.io/linuxserver/calibre:latest --library-path /books/library <cmd>`
+  (mount must be read-write even for `list`).
+- **Writes must stop calibre-web first** — `metadata.db` is on virtiofs, so concurrent writers
+  hit `database is locked` (same class as the Jellyfin DB). `books.py` does this automatically.
+- Manga/comics (cbz) are **out of scope** for `books.py` and pollute the library as "Unknown"
+  authors — deferred to a future Komga/Kavita pass.
 
 ## Critical gotchas (full list in the docs)
 

@@ -113,6 +113,10 @@ Run via Docker on a Colima VM (`colima-arr` context). Compose files in `compose/
 **Jellyfin remote access, clients, and login → see [`jellyfin.md`](jellyfin.md).** Reached
 privately over Tailscale (`http://100.91.137.41:8096`); no public exposure, no Plex paywall.
 
+**Ebook library (Calibre-Web) + cataloging → see [`books.md`](books.md).** The shared calibre
+library is managed via `catalog/scripts/books.py` (scan/import/normalize/archive) — never
+hand-file into the library.
+
 ### Stacks & always-on policy
 
 The VM is provisioned with **8 GB / 6 CPU** (see VM management below), enough to run the
