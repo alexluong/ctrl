@@ -48,6 +48,15 @@ qBittorrent WebUI is reached inside the VM: `docker exec gluetun wget -qO- "http
 `catalog.py` (scan → import → link) — see README "Catalog scripts". Hand-author catalog
 entries when folder names are verbose/misparsed.
 
+- **MAM (MyAnonaMouse):** search API works from the box (via `docker exec qbittorrent curl -b mam_id=…`,
+  through the VPN) — good for *finding* books; but the **`.torrent` download must be done in the
+  browser** (seedbox session can't fetch torrent files). MAM is on the **main/Singapore** stack.
+  **Ban-safety is real** — a crash-looping client or flapping VPN re-announces repeatedly and
+  triggers "duplicate peer" bans (it happened 2026-07-08). Keep seeding; don't let it crash-loop.
+  Details + search payload → `media/README.md` (MAM section). For books specifically → `books.md`.
+- **Audiobooks ≠ ebooks:** audiobooks (mp3/m4b) go to **audiobookshelf** (`/media/audiobooks`),
+  not calibre. Reacher + GoT audiobooks are downloaded but were sitting uncataloged (2026-07-15).
+
 **Books (calibre / audiobookshelf).** Always-on. calibre-web alex `:8074` / hannah `:8073` share
 one calibre library at `/Volumes/Blue4/arr/media/books/library`; audiobookshelf `:13378` for
 audiobooks. **Full playbook + standing workflow + design decisions → `media/books.md`** (a living
@@ -74,12 +83,16 @@ doc — extend it as the setup evolves).
 ## Critical gotchas (full list in the docs)
 
 - **qBit WebUI flapping = OOM**, historically (2 GB VM). Now on 8 GB it's fine; if it
-  recurs, check `colima ssh -p arr -- free -h` and `docker inspect -f '{{.State.OOMKilled}}' qbittorrent` FIRST. See `media/README.md` and memory `project_qbit_oom`.
+  recurs, check `colima ssh -p arr -- free -h` and `docker inspect -f '{{.State.OOMKilled}}' qbittorrent` FIRST. See `media/README.md` and memory `project_qbit_oom`. **A crash-loop (OOM) or a
+  flapping VPN re-announces torrents on every restart → tracker "duplicate peer" bans** (MAM
+  disabled access 2026-07-08 this way). Stabilize the client/VPN before replying to a tracker ticket.
 - **LSIO container `/config` (qBit, Jellyfin) MUST be on a native docker volume, not the
   virtiofs external drive.** SQLite/lock files on virtiofs → `database is locked` storms,
-  readonly-DB errors, WebUI flapping, and (Jellyfin, 2026-07-15) a 6m49s wedged boot that
-  never binds. qBit uses `qbit_config`, Jellyfin uses `jellyfin_config`. If you recreate a
-  config volume, chown it to `PUID:PGID` (`501:20`). Media stays on the external drives.
+  readonly-DB errors, WebUI flapping (`QLocalServer::listen: Unknown error 22`), and (Jellyfin,
+  2026-07-15) a 6m49s wedged boot that never binds. Main qBit uses `qbit_config`, Jellyfin uses
+  `jellyfin_config`. **`qbittorrent-private` is the last one still on virtiofs (backlog — migrate
+  to `qbit_private_config`).** If you recreate a config volume, chown it to `PUID:PGID` (`501:20`).
+  Media stays on the external drives.
 - **Jellyfin metadata won't populate if `TypeOptions` is empty** (happens when a library is
   created via API) — must configure `TheMovieDb` fetchers + `FullRefresh`. Scans are
   **disk-I/O-bound** (external USB), not RAM-bound. A combined movie+TV `FullRefresh` does

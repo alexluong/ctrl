@@ -68,6 +68,29 @@ therefore **stop both calibre-web instances during writes and restart them after
 raw `calibredb` writes yourself, do the same:
 `docker --context colima-arr stop calibre-web-alex calibre-web-hannah` → write → `start`.
 
+## Getting new books (sourcing)
+
+Two sources; both end the same way (file lands in `downloads/` → `books.py import`):
+
+1. **Anna's Archive** — how the *existing* library was built (direct download, not torrents).
+   Search annas-archive.org, download the epub, drop it in `books/downloads/`. Simplest for
+   ebooks; the filename format parses cleanly (see the pipeline notes below).
+2. **MyAnonaMouse (MAM)** — private tracker; better for **audiobooks** and curated ebook releases,
+   and the source for whole-**series packs** (one torrent = the complete series). Flow: search
+   MAM → download the `.torrent` **in the browser** → drop it in `~/Documents/pt/red4/mam/` →
+   add to qBittorrent (behind the VPN) → it downloads to `downloads/` and seeds.
+   - The MAM **search API** works from the box (see `README.md` → MAM), so Claude can *find* books
+     and their torrent IDs. But **the `.torrent` download must be done in the browser** — the
+     seedbox session can't fetch torrent files. (Prowlarr's MAM indexer is the automated
+     alternative, if we ever set it up.)
+   - **Ban-safety:** keep torrents **seeding** for ratio, and don't let the client crash-loop or
+     the VPN flap — rapid re-announces trigger MAM "duplicate peer" bans (`README.md`).
+   - Prefer packs that include **epub** (calibre's native format); azw3/mobi-only needs conversion.
+
+**Only deliberately-chosen books get cataloged.** The MAM download pile is mostly ratio/seeding
+torrents — `books.py` is never pointed at the torrent `downloads/` dirs; it only ingests
+`books/downloads/`, and only what you actually want in the library.
+
 ## The goal & the standing workflow (on-demand)
 
 **Goal:** keep the calibre **catalog** (`metadata.db`) *current and clean*. The catalog is the

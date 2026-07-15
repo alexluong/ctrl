@@ -104,9 +104,9 @@ Run via Docker on a Colima VM (`colima-arr` context). Compose files in `compose/
 | **Calibre-Web (Hannah)** | 8073 | calibre.yaml | Ebook reader |
 | **Calibre-Web (Alex)** | 8074 | calibre.yaml | Ebook reader |
 | **qBittorrent** | 8080 | download.yaml | Torrent client (behind PIA VPN) |
-| **qBittorrent Private** | 8081 | private.yaml | Secondary torrent client (behind PIA VPN, DE Frankfurt) |
+| **qBittorrent Private** | 8081 | private.yaml | Secondary torrent client (behind PIA VPN, Netherlands) |
 | **Gluetun** | — | download.yaml | VPN container (PIA, Singapore) |
-| **Gluetun Private** | — | private.yaml | Secondary VPN (PIA, DE Frankfurt) |
+| **Gluetun Private** | — | private.yaml | Secondary VPN (PIA, Netherlands) |
 | **Seedbox API** | — | download.yaml | MAM dynamic seedbox registration (see below) |
 | **Prowlarr** | 9696 | arr.yaml | Indexer manager (not actively used) |
 
@@ -180,6 +180,14 @@ Both gluetun containers use PIA. If one shows unhealthy with TLS handshake failu
 4. Restart: `docker --context colima-arr restart <container>`
 5. If the region is consistently failing, change `SERVER_REGIONS` in `.env` (main) or `compose/private.yaml` (private)
 
+> **2026-07-15:** `gluetun-private` flapped ~every 15s — PIA's **German** endpoints (both
+> DE Frankfurt *and* DE Berlin) were failing the OpenVPN TLS handshake, while the main stack
+> (Singapore) was fine on the same credentials/server list. Restarts and switching cities
+> didn't help (PIA-side outage, not our config). Fix was `SERVER_REGIONS=Netherlands` in
+> `compose/private.yaml` — connected healthy immediately. Retry a DE region later if a German
+> exit is needed. A flapping VPN is not cosmetic: each reconnect re-announces torrents and can
+> trigger tracker "duplicate peer" bans (see MAM section).
+
 ### VPN port forwarding (auto-synced)
 
 PIA hands gluetun a **new** forwarded port every time the tunnel fully re-establishes (restart, health-restart, or PIA lease expiry). qBittorrent's listening port is static, so historically it would silently desync → incoming peers fail → slow downloads until noticed.
@@ -191,9 +199,11 @@ This is now **automatic**: gluetun's `VPN_PORT_FORWARDING_UP_COMMAND` hook (in `
 
 ### qBittorrent WebUI flakiness (auto-healed)
 
-qbit's WebUI occasionally wedges or flaps on a stale single-instance lock socket (an artifact of `/config` on the virtiofs-mounted drive), and gets orphaned when gluetun restarts. A Docker **healthcheck** on qbit + the **autoheal** container (both in `compose/download.yaml`) now detect this and restart qbit automatically. autoheal is scoped by the `autoheal=true` label so it only ever touches qbittorrent.
+qbit's WebUI occasionally wedges or flaps on a stale single-instance lock socket (an artifact of `/config` on the virtiofs-mounted drive — the `QLocalServer::listen: Unknown error 22` log line), and gets orphaned when gluetun restarts. A Docker **healthcheck** on qbit + the **autoheal** container (both in `compose/download.yaml`) now detect this and restart qbit automatically. autoheal is scoped by the `autoheal=true` label so it only ever touches qbittorrent.
 
 - If qbit still seems down, check `docker --context colima-arr ps` (look for `unhealthy`) and `docker --context colima-arr logs autoheal`.
+- **Config-on-virtiofs status:** the **main** qbit was migrated to a native Docker volume
+  (`qbit_config`) and Jellyfin likewise (`jellyfin_config`), so they no longer hit this. **`qbittorrent-private` is the last container still on virtiofs** (`${DATA_PATH}/qbittorrent-private`) and it has **no** healthcheck/autoheal — so if it wedges, nothing restarts it. **Backlog:** migrate it to a `qbit_private_config` native volume + add the autoheal healthcheck (same recipe as `compose/download.yaml`). See memory `project_lsio_config_virtiofs`.
 
 ### MyAnonamouse (MAM) seedbox API
 
@@ -213,6 +223,38 @@ The `seedboxapi` container registers the VPN IP with MAM as a dynamic seedbox. I
 6. Clear old cookies: `rm /Volumes/Blue4/arr/data/seedboxapi/MAM.cookies`
 7. Restart: `DOCKER_CONTEXT=colima-arr docker-compose -f compose/download.yaml --env-file .env up -d seedboxapi`
 8. Verify: `docker --context colima-arr logs seedboxapi --tail 5` — should show `"Success":true`
+
+#### Ban-safety: duplicate peer entries (learned 2026-07-08)
+
+MAM **disabled tracker access** after detecting "duplicate peer entries" — 10 copies each of 3
+torrents from the single VPN IP within ~11 minutes. Root cause: the main qBittorrent was in a
+**crash loop** (OOM-killed on the then-2 GB VM, auto-restarted by `restart: unless-stopped` +
+autoheal, over and over), and **every restart re-announces all torrents**. 10 restarts → 10
+"peers" per torrent → MAM's abuse detection tripped.
+
+- **The trigger is any rapid re-announce loop:** client crash-looping (OOM), or a **flapping VPN**
+  (each reconnect re-announces — see the Gluetun 2026-07-15 note above).
+- **Fixed by** the VM bump to 8 GB / 6 CPU (no more OOM; main qbit stable). We already follow
+  MAM's recommended layout — the client is bound to the VPN's network namespace
+  (`network_mode: service:gluetun`), not an external killswitch script.
+- **If it happens again:** stabilize the client/VPN first (`docker inspect <c> --format '{{.RestartCount}} {{.State.OOMKilled}}'`, check gluetun for TLS-flap loops), *then* reply to the
+  MAM ticket explaining the cause + fix. Don't just delete the torrents (MAM says that doesn't
+  fix the root cause). Keep torrents **seeding** to maintain ratio.
+
+#### Searching / downloading from MAM
+
+- The **search API works** from inside the VPN with our session cookie (the endpoint the site's
+  own search + Prowlarr use):
+  `curl -b "mam_id=$MAM_ID" https://www.myanonamouse.net/tor/js/loadSearchJSONbasic.php --data-raw '{"tor":{"text":"<query>","srchIn":{"title":true,"author":true},"searchType":"all","main_cat":[14],"sortType":"seedersDesc"},"perpage":8}'`
+  (run it via `docker exec qbittorrent` so it goes out the registered VPN IP; `main_cat` 14=ebooks,
+  13=audiobooks). Keep it to a few human-paced queries — MAM bans abusive scraping.
+- **Downloading the `.torrent` does NOT work** with the seedbox session — `download.php` returns
+  *"Invalid download link, or not signed in"*, and the search JSON carries no download token. The
+  seedbox `mam_id` is scoped for search + announce, not `.torrent` downloads (those need a full
+  web-login session). **So: grab the `.torrent` from the browser**, drop it in
+  `~/Documents/pt/red4/mam/`, add it to qBittorrent (behind the VPN), and it downloads + seeds.
+  The proper automated path (if wanted) is the **MAM indexer in Prowlarr** (already installed,
+  dormant), which handles the download token correctly.
 
 ## DigitalCore (DC)
 
