@@ -140,6 +140,39 @@ This doc + `books.py` are meant to grow. Known next steps:
   arriving from other sources with different naming.
 - **Covers.** Currently rely on the embedded epub cover + online metadata. If a book lands with no
   cover, add an explicit cover-fetch step (`fetch-ebook-metadata -c`).
+- **Orphan-purge safeguard.** After any deletion, `books.py` should purge orphaned book refs from
+  both calibre-web `app.db`s (see calibre-web gotcha #1) — add a `books.py purge-orphans` step and
+  run it as part of the standing workflow so a deletion never 500s a reader again.
+
+## calibre-web gotchas (500 Internal Server Errors)
+
+Both of these hit Hannah's instance on 2026-07-16 (Alex's was fine — see why below):
+
+1. **Deleting books orphans calibre-web's per-user `app.db`.** When `calibredb`/`books.py`
+   removes a book from the library, calibre-web's `app.db` (per user) can still reference the
+   deleted id in `book_read_link`, `archived_book`, `kobo_synced_books`, `kobo_reading_state`,
+   `downloads`, `book_shelf_link`. Rendering a view that joins those against the (now-missing)
+   book throws `AttributeError: 'NoneType' object has no attribute 'get'` → 500. **Fix:** purge
+   orphaned rows — `DELETE FROM <table> WHERE book_id NOT IN (SELECT id FROM <metadata.db>.books)`
+   for each per-user `app.db` (`${DATA_PATH}/calibre-web-{alex,hannah}/app.db`). Back up first;
+   this only removes pointers to already-deleted books, so no real data is lost. **Do this after
+   any `books.py`/`calibredb` deletion.** (See backlog: fold into the pipeline.)
+
+2. **Modern calibre dropped `books.isbn`/`lccn`/`flags`; calibre-web 0.6.25 still queries them.**
+   calibre 5+/9.x `metadata.db` has **no** `isbn`/`lccn`/`flags` columns in `books` (ISBN lives in
+   the `identifiers` table). calibre-web 0.6.25's **archived-books** code path
+   (`fill_indexpage_with_archived_books`) selects `books.isbn`/`books.flags` → `sqlite3.OperationalError:
+   no such column: books.isbn` → 500. **Only triggers for a user who has archived books** (that's
+   why it was "particularly Hannah's" — Alex had none). **Fix** (standard workaround) — add the
+   legacy columns back empty; calibre ignores extra columns (verified calibredb still reads fine):
+   ```sql
+   ALTER TABLE books ADD COLUMN isbn  TEXT DEFAULT '';
+   ALTER TABLE books ADD COLUMN lccn  TEXT DEFAULT '';
+   ALTER TABLE books ADD COLUMN flags INTEGER NOT NULL DEFAULT 1;
+   ```
+   Stop both calibre-web instances first (they hold `metadata.db` open), back up `metadata.db`,
+   apply, restart. New books added later inherit the column defaults, so it's durable unless
+   calibre ever rebuilds the `books` table.
 
 ## History
 
@@ -149,3 +182,9 @@ This doc + `books.py` are meant to grow. Known next steps:
   "Miller, Madeline" → "Madeline Miller". Archived 21 already-imported source files from
   `downloads/` to `downloads/_imported/`. Library: 50 → 47 books. Deletions go to the library's
   `.caltrash` (recoverable).
+- **2026-07-16 calibre-web 500s (Hannah):** the 07-15 deletions orphaned refs in Hannah's
+  `app.db` (purged 22 rows, backed up); and her archived-books view hit the
+  `no such column: books.isbn` bug (calibre-web 0.6.25 vs modern calibre) — fixed by adding the
+  legacy `isbn`/`lccn`/`flags` columns back to `metadata.db` (backed up as
+  `metadata.db.bak-isbncol-20260716`). No books lost; her 5 archived books (ids 19/58/8/10/6)
+  intact. Both gotchas documented above.
