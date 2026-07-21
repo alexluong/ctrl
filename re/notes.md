@@ -94,7 +94,7 @@ Bills received by mail July 2026 (PDFs in each property's iCloud `documents/` fo
 
 Wise pays insurance directly (not through PM), so property assignment is manual:
 - **REInsurePro** → Haverhill
-- **Breckenridge / OSC INS SVCS** → Oakfield
+- **Breckenridge / OSC INS SVCS** → Oakfield (OLD — OSC/Goosehead policy OSP1182069 cancelled 08/03/2026 for non-payment, intentional after switch to Katie/Simplified; any OSC charge after Jul 2026 is wrong)
 - **Foremost** (Farmers; agent NPG & Associates) → Dixie. Policy 381-5025026626, 4/30/26–4/30/27, $1,189/yr
 - Detroit Water from Wise → always Oakfield (Haverhill water goes through PM)
-- Apr 2026: Oakfield + Haverhill switched to a single new provider — confirm mapping when first statement arrives
+- Apr 2026: Oakfield + Haverhill switched to Katie Haller / Simplified Insurance (Fortegra, LPP1500005 — see `profile.md`); split any Wise payment across both properties. Confirm statement descriptor when first charge arrives
