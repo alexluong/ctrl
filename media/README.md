@@ -160,15 +160,29 @@ on the 16 GB M4 Mac Mini. To change resources, edit that script and restart the 
 
 ### Colima VM startup
 
-If the VM fails to start with "failed to run attach disk", the previous instance left stale state. Fix with:
+After an **unclean host shutdown/crash**, `vm-start.sh` may fail with
+`failed to run attach disk "colima-arr", in use by instance "colima-arr"` — an orphaned
+`colima daemon start arr` / `limactl usernet` process (from the aborted start) still holds
+the disk lock, even though `colima status` reports the VM as *Stopped*. **Try the gentle fix
+first** (no VM recreation):
+
+```bash
+colima stop arr -f      # releases the lock + reaps the orphan procs
+./scripts/vm-start.sh   # then start normally
+```
+
+Only if that doesn't clear it (or the error is specifically `failed to run attach disk`
+with no orphan process) fall back to recreating the VM:
 
 ```bash
 colima delete arr --force
-# Then start fresh:
 ./scripts/vm-start.sh
 ```
 
-This recreates the VM from scratch. Container data persists on the HDDs (`/Volumes/Blue4/arr/data/`), so nothing is lost.
+Either way, container data persists on the HDDs (`/Volumes/Blue4/arr/data/`) and in the
+native config volumes (`qbit_config`, `jellyfin_config`), so nothing is lost. On boot the
+containers auto-restart with the VM (`restart: unless-stopped`); running `./scripts/up.sh core`
+afterward is still worth it to confirm they're on the current compose config.
 
 ### Gluetun (VPN) troubleshooting
 
@@ -207,21 +221,37 @@ qbit's WebUI occasionally wedges or flaps on a stale single-instance lock socket
 
 ### MyAnonamouse (MAM) seedbox API
 
-The `seedboxapi` container registers the VPN IP with MAM as a dynamic seedbox. It runs through the main gluetun (Singapore) and pings MAM every 60 minutes.
+The `seedboxapi` container registers the VPN IP with MAM as a dynamic seedbox. It runs
+through the main gluetun (Singapore, `network_mode: service:gluetun`) and pings MAM every
+60 minutes. Because it shares gluetun's network namespace, it can **only** egress through
+the VPN — it never uses the host's default route.
 
-**When MAM_ID expires** (the container will restart-loop with "mam_id passed on command line is invalid"):
+> **Boot-race (fixed 2026-07-22):** `depends_on` was a plain `- gluetun`, which only waits
+> for the container to *start*, not for the tunnel to be *healthy*. On a cold VM boot,
+> seedboxapi's first registration ping fired in the sub-second window before OpenVPN
+> established, so MAM saw the host's real egress IP (a Viettel/VN residential IP → ASN 7552)
+> and rejected the session with `"Invalid session - ASN mismatch"`. Fixed by making the
+> dependency `condition: service_healthy` (gluetun ships a built-in healthcheck). It now
+> waits for the tunnel before pinging. If you ever see a non-Singapore IP in the MAM
+> response, check that this condition is still in `compose/download.yaml`.
+
+**When MAM_ID expires** (the container logs `"mam_id passed on command line is invalid"`):
 
 1. Log into myanonamouse.net
 2. Go to **Preferences → Security**
 3. Under "Create session":
    - **IP**: Current VPN IP (`docker --context colima-arr exec gluetun cat /tmp/gluetun/ip`)
    - **IP vs ASN locked session**: **ASN** (better for VPN — IP may change but ASN stays the same)
-   - **Allow Session to set Dynamic Seedbox**: **Yes**
+   - **Allow Session to set Dynamic Seedbox**: **Yes** ← *easy to miss; without it the new
+     session registers but seedboxapi is rejected with* `"Incorrect session type - not
+     allowed this function"` *(hit 2026-07-22). You can toggle this on the existing session
+     and just clear the cookie + restart — no need to mint a whole new ID.*
    - **Label**: `gluetun-singapore` or similar
 4. Submit and copy the new session ID
 5. Update `MAM_ID` in `.env`
 6. Clear old cookies: `rm /Volumes/Blue4/arr/data/seedboxapi/MAM.cookies`
 7. Restart: `DOCKER_CONTEXT=colima-arr docker-compose -f compose/download.yaml --env-file .env up -d seedboxapi`
+   (or `docker --context colima-arr restart seedboxapi` if `MAM_ID` is unchanged)
 8. Verify: `docker --context colima-arr logs seedboxapi --tail 5` — should show `"Success":true`
 
 #### Ban-safety: duplicate peer entries (learned 2026-07-08)

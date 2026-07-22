@@ -111,7 +111,14 @@ services:
     volumes:
       - ${DATA_PATH}/seedboxapi:/config
     depends_on:
-      - gluetun
+      # Wait for the VPN tunnel to be HEALTHY, not just started. Plain
+      # `- gluetun` only waits for the container to start, so on a cold boot
+      # seedboxapi's first MAM registration ping can fire in the sub-second
+      # window before OpenVPN establishes — MAM then sees the host's real
+      # egress IP (once logged a Viettel/VN residential IP -> ASN-mismatch
+      # rejection, 2026-07-22). service_healthy closes that race.
+      gluetun:
+        condition: service_healthy
     restart: unless-stopped
 
 volumes:
