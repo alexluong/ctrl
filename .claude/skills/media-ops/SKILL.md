@@ -42,11 +42,17 @@ gotchas → `media/jellyfin.md`. Tailscale runs on the **host**, CLI at
 `/Applications/Tailscale.app/Contents/MacOS/Tailscale`.
 
 **Download + catalog.** Alex drops a `.torrent`/magnet; standing rule is **save it, he runs
-the download himself** (saves to `~/Documents/pt/red4/`, sorted `dc/` vs `public/`). DC
-(DigitalCore) is the primary source — search/download via its API (`media/README.md`).
-qBittorrent WebUI is reached inside the VM: `docker exec gluetun wget -qO- "http://localhost:8080/api/v2/..."` (no creds, POST for toggles). After downloads finish, catalog with
-`catalog.py` (scan → import → link) — see README "Catalog scripts". Hand-author catalog
-entries when folder names are verbose/misparsed.
+the download himself** — archive to `~/Documents/pt/<drive>/<source>/` (drive `blue4`/`red4`,
+source `dc`/`mam`/`hf`/`public`; **ask if the source isn't obvious** — a public-looking
+release can still be from DC). DC (DigitalCore) is the primary source — search/download via
+its API (`media/README.md`). qBittorrent WebUI is reached inside the VM:
+`docker exec gluetun wget -qO- "http://localhost:8080/api/v2/..."` (no creds, POST for toggles).
+**When asked to actually add a torrent to qbit** (only ever the *main* qbit), don't guess the
+steps — follow the verified recipe in `media/README.md` → "Adding a torrent to qBittorrent"
+(`docker cp` file in → `curl -F torrents=@… -F savepath=/Red4/downloads` add → `setForceStart`
+so it leaves `queuedDL`). After downloads finish, catalog with `catalog.py` (scan → import →
+link) — see README "Catalog scripts". Hand-author catalog entries when folder names are
+verbose/misparsed.
 
 - **MAM (MyAnonaMouse):** search API works from the box (via `docker exec qbittorrent curl -b mam_id=…`,
   through the VPN) — good for *finding* books; but the **`.torrent` download must be done in the

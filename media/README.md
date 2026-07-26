@@ -49,13 +49,63 @@ arr/
 
 ## Torrent files
 
-Torrent files (`.torrent`) are stored locally, organized by target drive:
+Torrent files (`.torrent`/`.magnet`) are archived locally, organized **by target drive,
+then by source tracker**:
 
 ```
 ~/Documents/pt/
 ├── blue4/         # Torrents whose downloads go to Blue4
 └── red4/          # Torrents whose downloads go to Red4
+    ├── dc/        # DigitalCore (private)
+    ├── mam/       # MyAnonaMouse (private, books)
+    ├── hf/        # HD-Forever / other private
+    └── public/    # public trackers (YTS, RARBG-style release groups, etc.)
 ```
+
+The drive (`blue4`/`red4`) picks which disk the download lands on; the source subfolder
+(`dc`/`mam`/`hf`/`public`) is just how we file the `.torrent` — **ask if unsure which
+source**, it's not always guessable from the filename (a public-looking `x265-LAMA`
+release can still come from DC).
+
+### Adding a torrent to qBittorrent (manual)
+
+Standing rule is Alex runs downloads himself — but when asked to add one, this is the
+verified path. **Only ever interact with the *main* qBittorrent** (behind `gluetun`);
+`qbittorrent-private` is left alone.
+
+1. **Archive the `.torrent`** to `~/Documents/pt/<drive>/<source>/` (see above).
+2. **Copy it into the container.** The file is on the host; qbit runs in the VM sharing
+   gluetun's network namespace, and `~/Documents` isn't mounted into the VM — so `docker cp`
+   it in (curl *is* present in the qbittorrent image):
+   ```bash
+   docker --context colima-arr cp <file>.torrent qbittorrent:/tmp/add.torrent
+   ```
+3. **POST it to the WebUI API** from *inside* the qbittorrent container (its localhost:8080
+   is gluetun's namespace; auth-free via `WebUI\LocalHostAuth=false`). Default `save_path`
+   is `/Red4/downloads` (= `/Volumes/Red4/arr/downloads`); use `/Blue4/downloads` for a
+   Blue4 target. autoTMM is **off** and the `radarr`/`tv-sonarr` categories are unused —
+   add with an explicit `savepath`, no category:
+   ```bash
+   docker --context colima-arr exec qbittorrent \
+     curl -s -F "torrents=@/tmp/add.torrent" -F "savepath=/Red4/downloads" \
+     "http://localhost:8080/api/v2/torrents/add"    # returns "Ok."
+   ```
+4. **Force-start it** — a fresh add often sits in `queuedDL` behind the queue limit. Grab
+   the hash and force-start so it downloads immediately:
+   ```bash
+   H=$(docker --context colima-arr exec gluetun wget -qO- \
+       "http://localhost:8080/api/v2/torrents/info" | \
+       python3 -c "import sys,json;print(next(t['hash'] for t in json.load(sys.stdin) if 'grease' in t['name'].lower()))")
+   docker --context colima-arr exec gluetun wget -qO- \
+     --post-data="hashes=$H&value=true" "http://localhost:8080/api/v2/torrents/setForceStart"
+   ```
+5. **Verify** state moved to `downloading`/`forcedDL` with peers via `torrents/info?hashes=$H`,
+   then `docker --context colima-arr exec qbittorrent /bin/rm -f /tmp/add.torrent`.
+
+> Reads from qbit go through `gluetun` (`docker exec gluetun wget -qO- .../api/v2/...`);
+> the file *upload* must run from inside `qbittorrent` (it's where the `docker cp`'d file
+> lives, and it shares gluetun's netns). Both hit the same WebUI.
+> After the download completes, catalog it (`catalog.py`: scan → import → link).
 
 ## Tracking data
 
