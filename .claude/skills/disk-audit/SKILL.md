@@ -1,7 +1,6 @@
 ---
 name: disk-audit
 description: Audit disk usage on the MacBook Pro when it's filling up — snapshot the six buckets, check them against budget, diff against the last baseline to find what grew, then clean up safely. Use when disk is low/full or to record a fresh baseline. MBP only, not the Mac Mini.
-user_invocable: true
 ---
 
 # Disk Audit
