@@ -27,6 +27,12 @@ Org semantics: alexluong = personal apps (deploy onto collielab); collielab = th
 
 - `sshmylab` → `ssh alex@149.28.40.6` (the homelab VM; managed via `hub/alexluong/collielab`)
 
+## Disk
+
+460G volume. Usage baseline, buckets, and cleanup safety rules: `docs/machine-disk.md`.
+Run `bin/disk-audit.sh` (or `/disk-audit`) when it fills up — diff against the last
+snapshot to find what grew instead of re-deriving everything.
+
 ## Other locations
 
 - iCloud holds binary docs (RE property PDFs etc.) — see `re/notes.md`

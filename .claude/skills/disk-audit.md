@@ -1,0 +1,55 @@
+---
+name: disk-audit
+description: Audit disk usage on the Mac when it's filling up — snapshot the six buckets, diff against the last baseline to find what grew, then clean up safely. Use when disk is low/full or to record a fresh baseline.
+user_invocable: true
+---
+
+# Disk Audit
+
+Find *what changed* rather than re-deriving the whole disk picture. Baseline,
+bucket definitions, and safety rules: `docs/machine-disk.md`.
+
+## Instructions
+
+1. **Snapshot** — run `bin/disk-audit.sh` from the repo root. Takes ~8 minutes.
+   If the disk is so full that tooling fails (sandboxed bash can't `mkdir`), free
+   something trivial first — emptying `~/.Trash` is usually enough to unblock.
+
+2. **Diff** — compare against the latest row in `docs/machine-disk.md`. Report
+   the delta per bucket, biggest mover first. A bucket that didn't move needs no
+   investigation; say so and move on.
+
+3. **Explain the mover** — only drill into buckets that actually grew:
+   - `docker` → `docker system df -v`. Build cache and images are the usual cause.
+   - `repos` → stale `node_modules`:
+     `find ~/git ~/code -type d -name node_modules -prune -mtime +90`
+   - `caches` → pnpm store, `~/go`, `vm_bundles`.
+   - `apps` / `personal` growing is unusual — an install or an app hoarding data.
+     Investigate rather than assume.
+   - `other` → `du -sh ~/Library/*` and `~/Library/Application Support/*`.
+
+4. **Propose, then clean** — present findings grouped by the safety tiers in
+   `docs/machine-disk.md` (safe / ask first / never without checking), with sizes,
+   and get agreement before deleting. Then execute.
+
+   Non-negotiable checks:
+   - **Before deleting any repo directory**, run `git status --porcelain`,
+     `git stash list`, and `git log --branches --not --remotes --oneline` for
+     every repo under it. Stashes and unpushed commits exist only locally. Report
+     what would be lost and confirm before proceeding. A directory that looks
+     like "one old repo" is often a dozen.
+   - **Never prune named Docker volumes** without naming them and asking — they
+     hold dev databases. `docker volume prune` (no `--all`) spares them; keep it
+     that way.
+   - **Don't touch running containers** or repos with a live dev stack.
+
+5. **Record** — append the new row (the script prints it) to the snapshot table
+   in `docs/machine-disk.md`, and add a line to its History section describing
+   what was freed and why. Commit.
+
+## Notes
+
+- Report real numbers from `df` before and after; don't estimate what was freed.
+- Moving files into iCloud Drive does not free space — same volume.
+- Deleting `node_modules` in pnpm repos frees less than `du` shows (hardlinks into
+  the store); follow with `pnpm store prune`.
