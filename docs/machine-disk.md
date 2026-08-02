@@ -33,10 +33,10 @@ number we picked rather than waiting for the disk to hit 100% again.
 
 | Bucket | Budget | Rationale |
 |---|---|---|
-| `docker` | **60G** | Images + dev-DB volumes realistically need ~50G. Build cache should be near zero between sessions; if docker is over, it's almost always cache or dead images. |
+| `docker` | **120G** | Docker is the primary dev runtime here and gets room to work — starving it just means re-pulling and rebuilding constantly. Multi-service stacks (hookdeck core, enable, outpost) plus dev-DB volumes are genuinely large. Over budget means prune cache/dead images, not "use Docker less". |
 | `repos` | **80G** | ~40G of actual source across `~/git` + `~/code`, plus roughly one full set of `node_modules`. Over means stale worktree installs. |
-| `caches` | **35G** | pnpm store and `~/go` are ~11G each and only grow; 35G leaves room for both plus build caches. Fully reclaimable, so this is the cheapest bucket to enforce. |
-| **volatile total** | **175G** | Leaves ~130G free at budget, against ~154G of stable + system. |
+| `caches` | **35G** | Floor is ~12G (see below); 35G allows ~23G of accumulated cache before it's worth a pass. Fully reclaimable, so the cheapest bucket to enforce. |
+| **volatile total** | **235G** | Leaves ~70G free at budget, against ~153G of stable + system. |
 
 Stable buckets (`apps`, `personal`) are deliberately unbudgeted — there's no
 routine pruning to do, and changes there are decisions (uninstall a game, delete
@@ -45,10 +45,51 @@ messages), not maintenance.
 Budgets live in `bin/disk-audit.sh` as `BUDGET_*` and the script prints a verdict
 per bucket. Revise them here and there together, and note the change in History.
 
-**As of the 2026-08-02 baseline all three volatile buckets are over** (docker
-+10.9G, repos +1.0G, caches +11.1G). That's expected — the budgets were set
-after the cleanup, tight enough to trigger rather than to flatter. First
-enforcement pass is still owed.
+### How to prune each bucket
+
+**`caches`** — not at its floor. Measured 2026-08-02 at 46.1G, decomposing as:
+
+| Item | Size | Prunable? |
+|---|---|---|
+| `~/go/pkg` (module cache) | 11G | yes — `go clean -modcache` |
+| `~/Library/pnpm` (store) | 11G | partly — `pnpm store prune` drops unreferenced only |
+| Claude `vm_bundles` | 9.1G | yes — regenerates |
+| `~/Library/Caches` | 4.7G | partly — ms-playwright 2.1G yes; CloudKit 2.2G is system-managed, leave it |
+| mise / bun / asdf / pyenv / cargo | 7.4G | **no — floor.** Installed runtimes, not cache. Pruning means uninstalling versions. |
+| `.local/share` claude + opencode | 1.6G | no — tool state |
+| `~/.cache` (puppeteer, amp-repos) | 1.1G | yes |
+
+So ~23G is genuinely reclaimable and the floor is ~12G. Order of value:
+`go clean -modcache` (11G) → `vm_bundles` (9.1G) → playwright + `~/.cache` (3G)
+→ `pnpm store prune` (varies). Note pnpm's store only releases what no
+`node_modules` still hardlinks, so prune repos *first*, then the store.
+
+**`docker`** — `docker builder prune -a` first (build cache is usually the
+regrowth), then `docker image prune -a --filter until=720h`, then
+`docker volume prune` (no `--all`, so named dev-DB volumes survive). Never
+`--volumes` on a system prune.
+
+**`repos`** — delete `node_modules` untouched 90+ days:
+`find ~/git ~/code -type d -name node_modules -prune -mtime +90`.
+Then `pnpm store prune`.
+
+## Optimization backlog
+
+Neither of these is a cleanup — they're structural changes that would lower the
+floor. Worth a dedicated session.
+
+- **`repos` — reduce duplication.** ~40G of `node_modules` across worktrees that
+  largely share dependencies. Open questions: can `ebutler-qa/workspace` (11
+  worktrees) and `hookdeck-workspace` (5) share a single pnpm store properly, or
+  are some on npm/yarn and duplicating outright? Are `workspace-old` (2.9G) and
+  `hookdeck-workspace-old` (965M) still needed? Is `ebutler-qa`'s loose
+  `enable-backend` / `enable-frontend` / `frontend` (12G) superseded by the
+  workspace? Standardising on pnpm across these repos is probably the single
+  biggest structural win.
+- **`docker` — reduce image footprint.** 34.8G of images, 20.4G of volumes, with
+  ~13.6G of volumes unused. Worth auditing which named volumes are still live dev
+  DBs vs abandoned, and whether the large `server-*` images (~5G each) share base
+  layers or are rebuilt from scratch each time.
 
 ## Snapshots
 
@@ -59,7 +100,8 @@ All values in GB.
 | 2026-08-02 | 349.3 | 83.6 | 70.9 | 78.2 | 45.8 | 71.3 | 30.6 | 52.5 |
 
 Baseline taken right after a large cleanup (see below), so it's a *clean* floor,
-not a typical day. Volatile 194.9G / stable 101.9G.
+not a typical day. Volatile 194.9G / stable 101.9G — within the 235G budget,
+with `caches` the only bucket over (46.1G vs 35G).
 
 ## What normal looks like
 

@@ -17,7 +17,7 @@ VOL="/System/Volumes/Data"
 # Over budget = prune, whether or not the disk is hurting yet. Rationale and
 # revision history: docs/machine-disk.md.
 # Stable buckets are deliberately unbudgeted — nothing to routinely prune there.
-BUDGET_DOCKER=60
+BUDGET_DOCKER=120
 BUDGET_REPOS=80
 BUDGET_CACHES=35
 
