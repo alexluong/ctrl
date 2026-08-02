@@ -9,23 +9,23 @@ scratch. Run `bin/disk-audit.sh` (~8 min, mostly `du` over node_modules).
 
 ## Buckets
 
-Six buckets, defined in `bin/disk-audit.sh`. Split by whether they regrow on
-their own — that split is the whole point, because regressions are almost always
-volatile and cleanups should almost never touch stable.
+Six buckets, defined in `bin/disk-audit.sh`. Grouped by how they behave: two
+that regrow on their own and are worth pruning (`docker`, `repos`), one of
+tooling state that mostly refills (`system`), two that only change by decision
+(`apps`, `personal`), and the unclassified remainder (`other`).
 
 | Bucket | Kind | What's in it |
 |---|---|---|
 | `docker` | prunable | `~/Library/Containers/com.docker.docker` (the `Docker.raw` VM disk) |
 | `repos` | prunable | `~/git`, `~/code` — dominated by `node_modules` |
-| `caches` | prunable | pnpm store, `~/Library/Caches`, `~/.cache`, `~/.npm` |
-| `system` | baseline | `~/go` module cache, Claude `vm_bundles`, mise/bun/asdf/pyenv/cargo, AI tool state |
+| `system` | tooling | pnpm store, `~/Library/Caches`, `~/.cache`, `~/.npm`, `~/go` module cache, Claude `vm_bundles`, mise/bun/asdf/pyenv/cargo, AI tool state |
 | `apps` | stable | `/Applications`, `/opt/homebrew` |
 | `personal` | stable | Messages, Pictures, Documents, Downloads, Music, iCloud local, Spark mail |
 | `other` | — | Everything else: rest of `~/Library` (Application Support, Metadata, Containers besides Docker), `/Library`, OS. Steam and other App Support data land here. |
 
-**Why `system` is separate from `caches`.** Everything in `system` is technically
-deletable, but it refills to the same size the moment you use the tool, so
-clearing it is churn rather than cleanup:
+**What's in `system`, and what's worth clearing.** It's all tooling state, but
+prunability varies a lot. Roughly a third is worth clearing; the rest refills or
+isn't cache at all:
 
 - `~/go` (11G) — Go has no prune-unreferenced for the module cache, unlike
   `pnpm store prune`. It's all-or-nothing, and a rebuild re-downloads what your
@@ -36,8 +36,13 @@ clearing it is churn rather than cleanup:
 - mise / bun / asdf / pyenv / cargo (7.4G) — installed language runtimes. Not
   cache at all. "Pruning" them means uninstalling versions you use.
 
-`caches` after the split is genuinely transient: things with a real prune command
-we'd actually run.
+Genuinely prunable within `system`: the pnpm store (`pnpm store prune`),
+`~/Library/Caches` (~4.7G, and macOS evicts this itself under pressure), and
+`~/.cache` (~1.1G). That's the part to reach for.
+
+This started as two buckets (`caches` vs `system`) split on prunability. Folded
+back into one on 2026-08-03 — the distinction is real but too fine-grained to
+carry structurally, and `caches` was only ~15G. It lives in this table instead.
 
 If you change a bucket's paths, past snapshots stop being comparable — note the
 change below when you do.
@@ -53,32 +58,41 @@ had to justify deleting things that would immediately come back.
 | Bucket | Baseline | Budget | Note |
 |---|---|---|---|
 | `docker` | 70.9G | **120G** | Deliberately generous, not baseline-derived. Primary dev runtime, and the baseline was measured right after a full prune, so it understates the working peak. |
-| `repos` | 70.6G | **90G** | Headroom for a couple of fresh worktree installs. |
-| `caches` | 14.7G | **22G** | Genuinely transient after the `system` split. |
-| `system` | 29.2G | **36G** | Shouldn't move much. Growth here means a new runtime or tool VM, worth knowing about but not pruning. |
+| `repos` | 70.6G | **100G** | Headroom for a few fresh worktree installs. |
+| `system` | 44.0G | **50G** | Shouldn't move much. Growth means a new runtime or tool VM — worth knowing about, rarely worth pruning. |
+| `apps` | 71.3G | **80G** | Moves only when something is installed. |
+| `personal` | 30.6G | **40G** | Moves only by decision. |
+| `other` | 58.2G | **70G** | Unclassified remainder; drifts with OS churn. |
+| **sum** | 345.5G | **460G** | Equals the whole disk — see below. |
 
 Also `FREE_FLOOR=50` — **free space below 50G is the real act-now signal**,
 independent of buckets.
 
-Budgets are **independent tripwires, not a partition of the disk.** They sum past
-capacity on purpose, because the buckets don't all peak at once. Don't try to
-make them add up to 460G.
+**Units, because this is easy to get wrong:** everything here is GiB, what `df`
+reports. The disk shows as 460 GiB in `df` and 494 GB in `diskutil` (physical
+500.3 GB) — that's decimal vs binary, the *same* space, not extra headroom.
+Also `used + free` (345.6 + 89.3 = 434.9) doesn't reach 460: APFS reserves ~25 GiB
+for metadata, so allocatable is ~435 GiB.
 
-`apps` and `personal` stay unbudgeted — changes there are decisions (uninstall a
-game, delete messages), not maintenance.
+**Budgets are independent tripwires, not a partition.** They sum to 460G — the
+entire disk — so they cannot all sit at ceiling at once, and `docker` + `repos`
+alone (220G) grant more growth than the disk can actually give while keeping 50G
+free. That's fine and intended: each budget answers "has *this* grown past its
+normal range?", and `FREE_FLOOR` answers "is the disk actually in trouble?"
 
 Budgets live in `bin/disk-audit.sh` as `BUDGET_*`. Revise them here and there
 together, and note the change in History.
 
 ### How to prune each bucket
 
-**`caches`** (14.7G) — `pnpm store prune`, plus `~/Library/Caches` (ms-playwright
-2.1G is safe; CloudKit is system-managed, leave it) and `~/.cache` (puppeteer,
-amp-repos). pnpm's store only releases what no `node_modules` still hardlinks, so
-prune `repos` *first*, then the store.
+**`system`** (44.0G) — mostly leave alone. Worth clearing, in order: pnpm store
+(`pnpm store prune`), `~/Library/Caches` (ms-playwright 2.1G is safe; CloudKit is
+system-managed, leave it), `~/.cache` (puppeteer, amp-repos). pnpm's store only
+releases what no `node_modules` still hardlinks, so prune `repos` *first*, then
+the store.
 
-**`system`** (29.2G) — **don't, routinely.** It refills. Only reach for it when
-genuinely desperate, and know what you're buying:
+The rest refills — only reach for it when genuinely desperate, and know what
+you're buying:
 
 | Item | Size | If cleared |
 |---|---|---|
@@ -120,16 +134,16 @@ floor. Worth a dedicated session.
 
 ## Snapshots
 
-All values in GB.
+All values in GiB (see units note above).
 
-| Date | Used | Free | docker | repos | caches | system | apps | personal | other |
-|---|---|---|---|---|---|---|---|---|---|
-| 2026-08-02 | 349.3 | 83.6 | 70.9 | 78.2 | 45.8* | — | 71.3 | 30.6 | 52.5 |
-| 2026-08-03 | 345.7 | 89.2 | 70.9 | 70.6 | 44.0* | — | 71.3 | 30.6 | 58.3 |
-| 2026-08-03 | 345.6 | 89.3 | 70.9 | 70.6 | 14.7 | 29.2 | 71.3 | 30.6 | 58.2 |
+| Date | Used | Free | docker | repos | system | apps | personal | other |
+|---|---|---|---|---|---|---|---|---|
+| 2026-08-02 | 349.3 | 83.6 | 70.9 | 78.2 | 45.8 | 71.3 | 30.6 | 52.5 |
+| 2026-08-03 | 345.7 | 89.2 | 70.9 | 70.6 | 44.0 | 71.3 | 30.6 | 58.3 |
+| 2026-08-03 | 345.6 | 89.3 | 70.9 | 70.6 | 44.1 | 71.3 | 30.6 | 58.1 |
 
-\* Pre-split: these `caches` values still include what is now `system`, so they
-aren't comparable to later rows. Compare against the third row onward.
+The brief `caches`/`system` split on 2026-08-03 was folded back before any
+snapshot depended on it, so every row above is directly comparable.
 
 Baseline taken right after a large cleanup (see below), so it's a *clean* floor,
 not a typical day. As of the 2026-08-03 re-split: prunable 156.3G,
@@ -184,7 +198,14 @@ only returns once iCloud uploads and macOS evicts the local copies.
 
 ## History
 
-- **2026-08-03 (later)** — Split `system` out of `caches` and re-derived budgets
+- **2026-08-03 (final)** — Folded `caches` back into `system` (one tooling
+  bucket) and gave every bucket a round-number budget, including the previously
+  unbudgeted `apps` / `personal` / `other`: 120 / 100 / 50 / 80 / 40 / 70. Sum is
+  460G, the whole disk — deliberately, since they're tripwires rather than an
+  allocation. Also pinned down units: `df`'s 460 GiB and `diskutil`'s 494 GB are
+  the same space, and APFS reserves ~25 GiB so allocatable is ~435 GiB. Every
+  bucket within budget at 89.3G free.
+- **2026-08-03 (earlier)** — Split `system` out of `caches` and re-derived budgets
   from measured baseline + ~25% headroom instead of invented targets. The old
   `caches` budget (35G) was pushing toward deleting `~/go/pkg/mod` and Claude
   `vm_bundles` — 20G that refills the moment you use Go or the desktop sandbox.

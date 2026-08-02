@@ -18,10 +18,16 @@ VOL="/System/Volumes/Data"
 # Budgets are independent tripwires, not a partition of the disk: they're allowed
 # to sum past capacity because the buckets don't all peak at once. FREE_FLOOR is
 # the actual act-now signal. Rationale and revisions: docs/machine-disk.md.
-BUDGET_DOCKER=120   # deliberately generous — primary dev runtime, baseline is post-prune
-BUDGET_REPOS=90     # baseline 70.6 + headroom
-BUDGET_CACHES=22    # baseline ~17 + headroom
-BUDGET_SYSTEM=36    # baseline ~29 + headroom
+# NOTE: all figures here are GiB (what df reports). The disk is 460 GiB, which is
+# the same thing as the 494 GB / "500GB" you'll see quoted elsewhere — decimal vs
+# binary, not extra space. Budgets below sum to ~460, i.e. the whole disk, so they
+# cannot all be at ceiling at once. That's expected: FREE_FLOOR is the real guard.
+BUDGET_DOCKER=120   # deliberately generous — primary dev runtime, baseline post-prune
+BUDGET_REPOS=100    # baseline 70.6 + headroom for fresh worktree installs
+BUDGET_SYSTEM=50    # baseline 43.9 — shouldn't move much
+BUDGET_APPS=80      # baseline 71.3
+BUDGET_PERSONAL=40  # baseline 30.6
+BUDGET_OTHER=70     # baseline 58.2 — drifts on its own
 FREE_FLOOR=50       # free space below this = act now, regardless of buckets
 
 # --- bucket definitions -------------------------------------------------------
@@ -33,20 +39,18 @@ repos_paths=(
   "$HOME/git"
   "$HOME/code"
 )
-# Transient only: things with a real prune command that we'd actually run.
-caches_paths=(
-  "$HOME/Library/pnpm"
-  "$HOME/Library/Caches"
-  "$HOME/.cache"
-  "$HOME/.npm"
-)
-# Platform state: installed runtimes, module caches, and tool VMs. Technically
-# deletable, but they refill to the same size the moment you use the tool, so
-# pruning them is churn rather than cleanup. Sized by baseline, not trimmed.
+# Tooling state: package stores, module caches, installed runtimes, tool VMs.
+# Mixed prunability — see docs/machine-disk.md for what's worth clearing (pnpm
+# store, Library/Caches) vs what just refills on next use (go modcache,
+# vm_bundles) vs what isn't cache at all (mise/bun/asdf/pyenv/cargo).
 system_paths=(
-  "$HOME/go"                                              # module cache; no prune-unreferenced exists
-  "$HOME/Library/Application Support/Claude/vm_bundles"   # Claude desktop sandbox VM image
-  "$HOME/.local/share/mise"
+  "$HOME/Library/pnpm"                                    # prunable: pnpm store prune
+  "$HOME/Library/Caches"                                  # prunable; macOS also evicts this itself
+  "$HOME/.cache"                                          # prunable
+  "$HOME/.npm"                                            # prunable
+  "$HOME/go"                                              # refills: no prune-unreferenced exists
+  "$HOME/Library/Application Support/Claude/vm_bundles"   # refills: Claude desktop sandbox VM
+  "$HOME/.local/share/mise"                               # runtimes, not cache
   "$HOME/.bun"
   "$HOME/.asdf"
   "$HOME/.pyenv"
@@ -98,25 +102,21 @@ size_mb=$(df -m "$VOL" | awk 'NR==2{print $2}')
 
 docker_mb=$(sum_mb "${docker_paths[@]}")
 repos_mb=$(sum_mb "${repos_paths[@]}")
-caches_mb=$(sum_mb "${caches_paths[@]}")
 system_mb=$(sum_mb "${system_paths[@]}")
 apps_mb=$(sum_mb "${apps_paths[@]}")
 personal_mb=$(sum_mb "${personal_paths[@]}")
 
-accounted=$((docker_mb + repos_mb + caches_mb + system_mb + apps_mb + personal_mb))
+accounted=$((docker_mb + repos_mb + system_mb + apps_mb + personal_mb))
 other_mb=$((used_mb - accounted))
 [ "$other_mb" -lt 0 ] && other_mb=0
-
-volatile_mb=$((docker_mb + repos_mb + caches_mb))
-stable_mb=$((system_mb + apps_mb + personal_mb))
 
 today=$(date +%Y-%m-%d)
 
 # --- --row mode ---------------------------------------------------------------
 if [ "${1:-}" = "--row" ]; then
-  printf '| %s | %s | %s | %s | %s | %s | %s | %s | %s | %s |\n' \
+  printf '| %s | %s | %s | %s | %s | %s | %s | %s | %s |\n' \
     "$today" "$(gb $used_mb)" "$(gb $free_mb)" "$(gb $docker_mb)" "$(gb $repos_mb)" \
-    "$(gb $caches_mb)" "$(gb $system_mb)" "$(gb $apps_mb)" "$(gb $personal_mb)" "$(gb $other_mb)"
+    "$(gb $system_mb)" "$(gb $apps_mb)" "$(gb $personal_mb)" "$(gb $other_mb)"
   exit 0
 fi
 
@@ -143,15 +143,16 @@ fi
 echo
 printf '%-10s %8s %6s  %-9s %7s  %s\n' "BUCKET" "SIZE" "%USED" "KIND" "BUDGET" "VERDICT"
 printf '%-10s %8s %6s  %-9s %7s  %s\n' "------" "----" "-----" "----" "------" "-------"
-printf '%-10s %7sG %5s%%  %-9s %6sG  %s\n' "docker"   "$(gb $docker_mb)"   "$(pct $docker_mb)"   "prunable" "$BUDGET_DOCKER" "$(verdict $docker_mb $BUDGET_DOCKER)"
-printf '%-10s %7sG %5s%%  %-9s %6sG  %s\n' "repos"    "$(gb $repos_mb)"    "$(pct $repos_mb)"    "prunable" "$BUDGET_REPOS"  "$(verdict $repos_mb $BUDGET_REPOS)"
-printf '%-10s %7sG %5s%%  %-9s %6sG  %s\n' "caches"   "$(gb $caches_mb)"   "$(pct $caches_mb)"   "prunable" "$BUDGET_CACHES" "$(verdict $caches_mb $BUDGET_CACHES)"
-printf '%-10s %7sG %5s%%  %-9s %6sG  %s\n' "system"   "$(gb $system_mb)"   "$(pct $system_mb)"   "baseline" "$BUDGET_SYSTEM" "$(verdict $system_mb $BUDGET_SYSTEM)"
-printf '%-10s %7sG %5s%%  %-9s %7s  %s\n' "apps"     "$(gb $apps_mb)"     "$(pct $apps_mb)"     "stable"   "-" "-"
-printf '%-10s %7sG %5s%%  %-9s %7s  %s\n' "personal" "$(gb $personal_mb)" "$(pct $personal_mb)" "stable"   "-" "-"
-printf '%-10s %7sG %5s%%  %-9s %7s  %s\n' "other"    "$(gb $other_mb)"    "$(pct $other_mb)"    "-"        "-" "-"
+printf '%-10s %7sG %5s%%  %-9s %6sG  %s\n' "docker"   "$(gb $docker_mb)"   "$(pct $docker_mb)"   "prunable" "$BUDGET_DOCKER"   "$(verdict $docker_mb $BUDGET_DOCKER)"
+printf '%-10s %7sG %5s%%  %-9s %6sG  %s\n' "repos"    "$(gb $repos_mb)"    "$(pct $repos_mb)"    "prunable" "$BUDGET_REPOS"    "$(verdict $repos_mb $BUDGET_REPOS)"
+printf '%-10s %7sG %5s%%  %-9s %6sG  %s\n' "system"   "$(gb $system_mb)"   "$(pct $system_mb)"   "tooling"  "$BUDGET_SYSTEM"   "$(verdict $system_mb $BUDGET_SYSTEM)"
+printf '%-10s %7sG %5s%%  %-9s %6sG  %s\n' "apps"     "$(gb $apps_mb)"     "$(pct $apps_mb)"     "stable"   "$BUDGET_APPS"     "$(verdict $apps_mb $BUDGET_APPS)"
+printf '%-10s %7sG %5s%%  %-9s %6sG  %s\n' "personal" "$(gb $personal_mb)" "$(pct $personal_mb)" "stable"   "$BUDGET_PERSONAL" "$(verdict $personal_mb $BUDGET_PERSONAL)"
+printf '%-10s %7sG %5s%%  %-9s %6sG  %s\n' "other"    "$(gb $other_mb)"    "$(pct $other_mb)"    "drift"    "$BUDGET_OTHER"    "$(verdict $other_mb $BUDGET_OTHER)"
 echo
-echo "prunable: $(gb $volatile_mb)G   •   baseline+stable: $(gb $stable_mb)G"
+budget_total=$((BUDGET_DOCKER + BUDGET_REPOS + BUDGET_SYSTEM + BUDGET_APPS + BUDGET_PERSONAL + BUDGET_OTHER))
+printf 'total: %sG used / %sG budgeted (= whole disk; tripwires, not an allocation)\n' \
+  "$(gb $used_mb)" "$budget_total"
 
 echo
 echo "--- docker ---"
@@ -170,12 +171,6 @@ nm=$(find "$HOME/git" "$HOME/code" -type d -name node_modules -prune 2>/dev/null
 echo "    node_modules total: $(gb $nm)G"
 echo "    largest trees:"
 du -sh "$HOME"/git/hub/*/ 2>/dev/null | sort -rh | head -5 | sed 's/^/      /'
-
-echo
-echo "--- caches (largest) ---"
-for p in "${caches_paths[@]}"; do
-  [ -e "$p" ] && du -sh "$p" 2>/dev/null
-done | sort -rh | head -6 | sed 's/^/    /'
 
 echo
 echo "--- system (largest) ---"

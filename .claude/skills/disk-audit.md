@@ -32,11 +32,11 @@ budgets, bucket definitions, and safety rules: `docs/machine-disk.md`.
    - `docker` → `docker system df -v`. Build cache and images are the usual cause.
    - `repos` → stale `node_modules`:
      `find ~/git ~/code -type d -name node_modules -prune -mtime +90`
-   - `caches` → pnpm store, `~/Library/Caches`, `~/.cache`.
-   - `system` → growth means a new runtime or tool VM. Worth knowing about, but
-     it is NOT a prune target — it refills. Don't propose clearing it to hit a
-     number; see the table in `docs/machine-disk.md`.
-   - `apps` / `personal` growing is unusual — an install or an app hoarding data.
+   - `system` → prunable part is the pnpm store, `~/Library/Caches`, `~/.cache`.
+     The rest (go modcache, `vm_bundles`, installed runtimes) refills on next
+     use — don't propose clearing it just to hit a number. See the table in
+     `docs/machine-disk.md`.
+   - `apps` / `personal` / `other` growing is unusual — an install or an app hoarding data.
      Investigate rather than assume.
    - `other` → `du -sh ~/Library/*` and `~/Library/Application Support/*`.
 
