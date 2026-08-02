@@ -14,10 +14,17 @@ REI/
       documents/      # property-specific docs
       insurance/
       others/
+    archived/         # properties no longer owned/pursued
+    walks/            # walkthrough media for candidates we never bought
   others/             # pre-approvals, proof of funds, misc docs
   documents/          # PM agreements
   statements/         # monthly PM statements (zipped by month)
 ```
+
+Walkthrough media for a property we don't own goes in `properties/walks/`, not its
+own property folder — keeps `properties/` to things we actually hold. Candidates
+that went nowhere still get a `pass` row in `re/deals/pipeline.csv` so the media
+isn't orphaned.
 
 ## Market Context (Detroit, March 2026)
 
