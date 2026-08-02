@@ -1,7 +1,6 @@
 ---
-name: import
+name: bookkeeping-import
 description: Import new bank statements or PM data into the LLC ledgers
-user_invocable: true
 ---
 
 # Bookkeeping Import

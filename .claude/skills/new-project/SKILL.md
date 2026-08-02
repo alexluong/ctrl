@@ -1,7 +1,6 @@
 ---
 name: new-project
 description: Bootstrap a new personal project — repo + GitHub + local setup + living doc in ctrl + pointer CLAUDE.md. Also recreates the pointer for an existing project on a new machine.
-user_invocable: true
 ---
 
 # New Project Bootstrap

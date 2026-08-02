@@ -1,7 +1,6 @@
 ---
 name: implement
 description: Plan → implement → review → test a feature for a personal project (e.g. "/implement fitjournal: add ghost overlay to progress-pic camera"). Runs from a ctrl cockpit session; delegates impl to agents in the project repo.
-user_invocable: true
 ---
 
 # Implement a Feature

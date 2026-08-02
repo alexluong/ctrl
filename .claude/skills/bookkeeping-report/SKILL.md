@@ -1,7 +1,6 @@
 ---
-name: report
+name: bookkeeping-report
 description: Generate financial reports for the LLCs (P&L, per-property, by-period, tax summaries)
-user_invocable: true
 ---
 
 # Bookkeeping Report

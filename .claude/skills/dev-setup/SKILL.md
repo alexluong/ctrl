@@ -1,7 +1,6 @@
 ---
 name: dev-setup
 description: Set up a project for local dev on this machine (fresh clone or new machine) — follow its README setup doc, recreate the pointer CLAUDE.md, verify the build. Also creates/updates a project's setup doc.
-user_invocable: true
 ---
 
 # Local Dev Setup
