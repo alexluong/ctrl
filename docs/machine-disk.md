@@ -98,10 +98,16 @@ All values in GB.
 | Date | Used | Free | docker | repos | caches | apps | personal | other |
 |---|---|---|---|---|---|---|---|---|
 | 2026-08-02 | 349.3 | 83.6 | 70.9 | 78.2 | 45.8 | 71.3 | 30.6 | 52.5 |
+| 2026-08-03 | 345.7 | 89.2 | 70.9 | 70.6 | 44.0 | 71.3 | 30.6 | 58.3 |
 
 Baseline taken right after a large cleanup (see below), so it's a *clean* floor,
-not a typical day. Volatile 194.9G / stable 101.9G — within the 235G budget,
-with `caches` the only bucket over (46.1G vs 35G).
+not a typical day. As of 2026-08-03: volatile 185.5G / 235G budget, `caches` the
+only bucket over (44.0G vs 35G).
+
+`other` rose 52.5 → 58.3G across those two snapshots with nothing deliberately
+added to it — it's the unclassified remainder, so it absorbs normal OS churn
+(Application Support, Metadata, system caches). Treat movement there as noise
+unless it's large.
 
 ## What normal looks like
 
@@ -147,6 +153,13 @@ only returns once iCloud uploads and macOS evicts the local copies.
 
 ## History
 
+- **2026-08-03** — `repos` pass, 78.2 → 70.6G (now under budget). Cleared
+  `node_modules` from dirs kept for reference (`ebutler-qa/workspace-old` 2.9G →
+  379M, `hookdeck-workspace-old` 965M → 717M, `enable-backend` 5.1 → 4.3G), and
+  deleted `ebutler-qa/frontend` (4.1G) and `enable-frontend` (2.8G) — both
+  superseded by `ebutler-qa/workspace`. `enable-frontend` carried 13 stashes and
+  one unpushed `wip` commit, discarded knowingly. Note: one `node_modules` had a
+  `user:alexluong deny delete` ACL and needed `chmod -N` before `rmdir`.
 - **2026-08-02** — Disk hit 100% full (124Mi free). Freed ~83G: Docker prune
   (build cache 22.3G, anonymous volumes 7.5G, images >30d 41.6G), colima VM +
   uninstall (~5G, arrstack runs on a different device), npm caches (5.9G),
