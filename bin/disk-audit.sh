@@ -13,13 +13,16 @@ set -uo pipefail
 VOL="/System/Volumes/Data"
 
 # --- budgets (GB) -------------------------------------------------------------
-# What we've CHOSEN to allocate each volatile bucket, not what it happens to use.
-# Over budget = prune, whether or not the disk is hurting yet. Rationale and
-# revision history: docs/machine-disk.md.
-# Stable buckets are deliberately unbudgeted — nothing to routinely prune there.
-BUDGET_DOCKER=120
-BUDGET_REPOS=80
-BUDGET_CACHES=35
+# Derived from measured baseline + headroom, NOT invented targets. Over budget
+# means "this grew past its normal range, go look" — not "this is wasteful".
+# Budgets are independent tripwires, not a partition of the disk: they're allowed
+# to sum past capacity because the buckets don't all peak at once. FREE_FLOOR is
+# the actual act-now signal. Rationale and revisions: docs/machine-disk.md.
+BUDGET_DOCKER=120   # deliberately generous — primary dev runtime, baseline is post-prune
+BUDGET_REPOS=90     # baseline 70.6 + headroom
+BUDGET_CACHES=22    # baseline ~17 + headroom
+BUDGET_SYSTEM=36    # baseline ~29 + headroom
+FREE_FLOOR=50       # free space below this = act now, regardless of buckets
 
 # --- bucket definitions -------------------------------------------------------
 # Volatile = regrows on its own; this is where regressions almost always are.
@@ -30,18 +33,24 @@ repos_paths=(
   "$HOME/git"
   "$HOME/code"
 )
+# Transient only: things with a real prune command that we'd actually run.
 caches_paths=(
   "$HOME/Library/pnpm"
-  "$HOME/go"
+  "$HOME/Library/Caches"
+  "$HOME/.cache"
+  "$HOME/.npm"
+)
+# Platform state: installed runtimes, module caches, and tool VMs. Technically
+# deletable, but they refill to the same size the moment you use the tool, so
+# pruning them is churn rather than cleanup. Sized by baseline, not trimmed.
+system_paths=(
+  "$HOME/go"                                              # module cache; no prune-unreferenced exists
+  "$HOME/Library/Application Support/Claude/vm_bundles"   # Claude desktop sandbox VM image
   "$HOME/.local/share/mise"
   "$HOME/.bun"
   "$HOME/.asdf"
   "$HOME/.pyenv"
   "$HOME/.cargo"
-  "$HOME/.npm"
-  "$HOME/.cache"
-  "$HOME/Library/Caches"
-  "$HOME/Library/Application Support/Claude/vm_bundles"
   "$HOME/.local/share/claude"
   "$HOME/.local/share/opencode"
   "$HOME/.claude"
@@ -90,23 +99,24 @@ size_mb=$(df -m "$VOL" | awk 'NR==2{print $2}')
 docker_mb=$(sum_mb "${docker_paths[@]}")
 repos_mb=$(sum_mb "${repos_paths[@]}")
 caches_mb=$(sum_mb "${caches_paths[@]}")
+system_mb=$(sum_mb "${system_paths[@]}")
 apps_mb=$(sum_mb "${apps_paths[@]}")
 personal_mb=$(sum_mb "${personal_paths[@]}")
 
-accounted=$((docker_mb + repos_mb + caches_mb + apps_mb + personal_mb))
+accounted=$((docker_mb + repos_mb + caches_mb + system_mb + apps_mb + personal_mb))
 other_mb=$((used_mb - accounted))
 [ "$other_mb" -lt 0 ] && other_mb=0
 
 volatile_mb=$((docker_mb + repos_mb + caches_mb))
-stable_mb=$((apps_mb + personal_mb))
+stable_mb=$((system_mb + apps_mb + personal_mb))
 
 today=$(date +%Y-%m-%d)
 
 # --- --row mode ---------------------------------------------------------------
 if [ "${1:-}" = "--row" ]; then
-  printf '| %s | %s | %s | %s | %s | %s | %s | %s | %s |\n' \
+  printf '| %s | %s | %s | %s | %s | %s | %s | %s | %s | %s |\n' \
     "$today" "$(gb $used_mb)" "$(gb $free_mb)" "$(gb $docker_mb)" "$(gb $repos_mb)" \
-    "$(gb $caches_mb)" "$(gb $apps_mb)" "$(gb $personal_mb)" "$(gb $other_mb)"
+    "$(gb $caches_mb)" "$(gb $system_mb)" "$(gb $apps_mb)" "$(gb $personal_mb)" "$(gb $other_mb)"
   exit 0
 fi
 
@@ -127,18 +137,21 @@ verdict() {
 
 echo "DISK AUDIT — $today — MacBook Pro"
 echo "Volume: $(gb $used_mb)G used / $(gb $size_mb)G  •  $(gb $free_mb)G free"
+if [ "$free_mb" -lt $((FREE_FLOOR * 1024)) ]; then
+  echo "  !! below ${FREE_FLOOR}G free floor — act now"
+fi
 echo
 printf '%-10s %8s %6s  %-9s %7s  %s\n' "BUCKET" "SIZE" "%USED" "KIND" "BUDGET" "VERDICT"
 printf '%-10s %8s %6s  %-9s %7s  %s\n' "------" "----" "-----" "----" "------" "-------"
-printf '%-10s %7sG %5s%%  %-9s %6sG  %s\n' "docker"   "$(gb $docker_mb)"   "$(pct $docker_mb)"   "volatile" "$BUDGET_DOCKER" "$(verdict $docker_mb $BUDGET_DOCKER)"
-printf '%-10s %7sG %5s%%  %-9s %6sG  %s\n' "repos"    "$(gb $repos_mb)"    "$(pct $repos_mb)"    "volatile" "$BUDGET_REPOS"  "$(verdict $repos_mb $BUDGET_REPOS)"
-printf '%-10s %7sG %5s%%  %-9s %6sG  %s\n' "caches"   "$(gb $caches_mb)"   "$(pct $caches_mb)"   "volatile" "$BUDGET_CACHES" "$(verdict $caches_mb $BUDGET_CACHES)"
+printf '%-10s %7sG %5s%%  %-9s %6sG  %s\n' "docker"   "$(gb $docker_mb)"   "$(pct $docker_mb)"   "prunable" "$BUDGET_DOCKER" "$(verdict $docker_mb $BUDGET_DOCKER)"
+printf '%-10s %7sG %5s%%  %-9s %6sG  %s\n' "repos"    "$(gb $repos_mb)"    "$(pct $repos_mb)"    "prunable" "$BUDGET_REPOS"  "$(verdict $repos_mb $BUDGET_REPOS)"
+printf '%-10s %7sG %5s%%  %-9s %6sG  %s\n' "caches"   "$(gb $caches_mb)"   "$(pct $caches_mb)"   "prunable" "$BUDGET_CACHES" "$(verdict $caches_mb $BUDGET_CACHES)"
+printf '%-10s %7sG %5s%%  %-9s %6sG  %s\n' "system"   "$(gb $system_mb)"   "$(pct $system_mb)"   "baseline" "$BUDGET_SYSTEM" "$(verdict $system_mb $BUDGET_SYSTEM)"
 printf '%-10s %7sG %5s%%  %-9s %7s  %s\n' "apps"     "$(gb $apps_mb)"     "$(pct $apps_mb)"     "stable"   "-" "-"
 printf '%-10s %7sG %5s%%  %-9s %7s  %s\n' "personal" "$(gb $personal_mb)" "$(pct $personal_mb)" "stable"   "-" "-"
-printf '%-10s %7sG %5s%%  %-9s %7s  %s\n' "other"    "$(gb $other_mb)"    "$(pct $other_mb)"    "system"   "-" "-"
+printf '%-10s %7sG %5s%%  %-9s %7s  %s\n' "other"    "$(gb $other_mb)"    "$(pct $other_mb)"    "-"        "-" "-"
 echo
-budget_total=$((BUDGET_DOCKER + BUDGET_REPOS + BUDGET_CACHES))
-echo "volatile: $(gb $volatile_mb)G / ${budget_total}G budget   •   stable: $(gb $stable_mb)G"
+echo "prunable: $(gb $volatile_mb)G   •   baseline+stable: $(gb $stable_mb)G"
 
 echo
 echo "--- docker ---"
@@ -162,7 +175,13 @@ echo
 echo "--- caches (largest) ---"
 for p in "${caches_paths[@]}"; do
   [ -e "$p" ] && du -sh "$p" 2>/dev/null
-done | sort -rh | head -8 | sed 's/^/    /'
+done | sort -rh | head -6 | sed 's/^/    /'
+
+echo
+echo "--- system (largest) ---"
+for p in "${system_paths[@]}"; do
+  [ -e "$p" ] && du -sh "$p" 2>/dev/null
+done | sort -rh | head -6 | sed 's/^/    /'
 
 echo
 echo "--- apps (largest) ---"

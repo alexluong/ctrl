@@ -15,54 +15,81 @@ volatile and cleanups should almost never touch stable.
 
 | Bucket | Kind | What's in it |
 |---|---|---|
-| `docker` | volatile | `~/Library/Containers/com.docker.docker` (the `Docker.raw` VM disk) |
-| `repos` | volatile | `~/git`, `~/code` — dominated by `node_modules` |
-| `caches` | volatile | pnpm store, `~/go`, mise/bun/asdf/pyenv/cargo, `~/Library/Caches`, `~/.cache`, Claude `vm_bundles`, AI tool state |
+| `docker` | prunable | `~/Library/Containers/com.docker.docker` (the `Docker.raw` VM disk) |
+| `repos` | prunable | `~/git`, `~/code` — dominated by `node_modules` |
+| `caches` | prunable | pnpm store, `~/Library/Caches`, `~/.cache`, `~/.npm` |
+| `system` | baseline | `~/go` module cache, Claude `vm_bundles`, mise/bun/asdf/pyenv/cargo, AI tool state |
 | `apps` | stable | `/Applications`, `/opt/homebrew` |
 | `personal` | stable | Messages, Pictures, Documents, Downloads, Music, iCloud local, Spark mail |
 | `other` | — | Everything else: rest of `~/Library` (Application Support, Metadata, Containers besides Docker), `/Library`, OS. Steam and other App Support data land here. |
+
+**Why `system` is separate from `caches`.** Everything in `system` is technically
+deletable, but it refills to the same size the moment you use the tool, so
+clearing it is churn rather than cleanup:
+
+- `~/go` (11G) — Go has no prune-unreferenced for the module cache, unlike
+  `pnpm store prune`. It's all-or-nothing, and a rebuild re-downloads what your
+  live projects need.
+- Claude `vm_bundles` (9.1G) — the Claude *desktop app's* Linux sandbox VM
+  (`rootfs.img` + a compressed warm-start image). Binary, not accumulated;
+  deleting only helps permanently if you don't use that feature.
+- mise / bun / asdf / pyenv / cargo (7.4G) — installed language runtimes. Not
+  cache at all. "Pruning" them means uninstalling versions you use.
+
+`caches` after the split is genuinely transient: things with a real prune command
+we'd actually run.
 
 If you change a bucket's paths, past snapshots stop being comparable — note the
 change below when you do.
 
 ## Budgets
 
-What we've **chosen to allocate**, not what happens to fit. Over budget means
-prune — regardless of how much free space is left. The point is to act on a
-number we picked rather than waiting for the disk to hit 100% again.
+**Baseline + headroom, not invented targets.** Each budget is roughly the
+measured 2026-08-03 baseline plus ~25%. Over budget therefore means *this grew
+past its normal range, go look* — not *this is wasteful*. That distinction
+matters: a first pass at this set targets like "caches should be 35G" and then
+had to justify deleting things that would immediately come back.
 
-| Bucket | Budget | Rationale |
-|---|---|---|
-| `docker` | **120G** | Docker is the primary dev runtime here and gets room to work — starving it just means re-pulling and rebuilding constantly. Multi-service stacks (hookdeck core, enable, outpost) plus dev-DB volumes are genuinely large. Over budget means prune cache/dead images, not "use Docker less". |
-| `repos` | **80G** | ~40G of actual source across `~/git` + `~/code`, plus roughly one full set of `node_modules`. Over means stale worktree installs. |
-| `caches` | **35G** | Floor is ~12G (see below); 35G allows ~23G of accumulated cache before it's worth a pass. Fully reclaimable, so the cheapest bucket to enforce. |
-| **volatile total** | **235G** | Leaves ~70G free at budget, against ~153G of stable + system. |
+| Bucket | Baseline | Budget | Note |
+|---|---|---|---|
+| `docker` | 70.9G | **120G** | Deliberately generous, not baseline-derived. Primary dev runtime, and the baseline was measured right after a full prune, so it understates the working peak. |
+| `repos` | 70.6G | **90G** | Headroom for a couple of fresh worktree installs. |
+| `caches` | 14.7G | **22G** | Genuinely transient after the `system` split. |
+| `system` | 29.2G | **36G** | Shouldn't move much. Growth here means a new runtime or tool VM, worth knowing about but not pruning. |
 
-Stable buckets (`apps`, `personal`) are deliberately unbudgeted — there's no
-routine pruning to do, and changes there are decisions (uninstall a game, delete
-messages), not maintenance.
+Also `FREE_FLOOR=50` — **free space below 50G is the real act-now signal**,
+independent of buckets.
 
-Budgets live in `bin/disk-audit.sh` as `BUDGET_*` and the script prints a verdict
-per bucket. Revise them here and there together, and note the change in History.
+Budgets are **independent tripwires, not a partition of the disk.** They sum past
+capacity on purpose, because the buckets don't all peak at once. Don't try to
+make them add up to 460G.
+
+`apps` and `personal` stay unbudgeted — changes there are decisions (uninstall a
+game, delete messages), not maintenance.
+
+Budgets live in `bin/disk-audit.sh` as `BUDGET_*`. Revise them here and there
+together, and note the change in History.
 
 ### How to prune each bucket
 
-**`caches`** — not at its floor. Measured 2026-08-02 at 46.1G, decomposing as:
+**`caches`** (14.7G) — `pnpm store prune`, plus `~/Library/Caches` (ms-playwright
+2.1G is safe; CloudKit is system-managed, leave it) and `~/.cache` (puppeteer,
+amp-repos). pnpm's store only releases what no `node_modules` still hardlinks, so
+prune `repos` *first*, then the store.
 
-| Item | Size | Prunable? |
+**`system`** (29.2G) — **don't, routinely.** It refills. Only reach for it when
+genuinely desperate, and know what you're buying:
+
+| Item | Size | If cleared |
 |---|---|---|
-| `~/go/pkg` (module cache) | 11G | yes — `go clean -modcache` |
-| `~/Library/pnpm` (store) | 11G | partly — `pnpm store prune` drops unreferenced only |
-| Claude `vm_bundles` | 9.1G | yes — regenerates |
-| `~/Library/Caches` | 4.7G | partly — ms-playwright 2.1G yes; CloudKit 2.2G is system-managed, leave it |
-| mise / bun / asdf / pyenv / cargo | 7.4G | **no — floor.** Installed runtimes, not cache. Pruning means uninstalling versions. |
-| `.local/share` claude + opencode | 1.6G | no — tool state |
-| `~/.cache` (puppeteer, amp-repos) | 1.1G | yes |
+| `~/go/pkg/mod` | 11G | `go clean -modcache`. Re-downloads only what live projects reference — the rest is old versions from projects you've moved past. One slow, network-bound build. |
+| Claude `vm_bundles` | 9.1G | Permanent only if you don't use the Claude desktop sandbox; otherwise it returns at the same size. |
+| mise / bun / asdf / pyenv / cargo | 7.4G | Uninstalling runtimes. Not a cleanup. |
 
-So ~23G is genuinely reclaimable and the floor is ~12G. Order of value:
-`go clean -modcache` (11G) → `vm_bundles` (9.1G) → playwright + `~/.cache` (3G)
-→ `pnpm store prune` (varies). Note pnpm's store only releases what no
-`node_modules` still hardlinks, so prune repos *first*, then the store.
+`~/Library/Caches/go-build` is a *separate* Go cache from the module cache
+(`go clean -cache` vs `-modcache`). It was 3.4G at the start of 2026-08-02 and
+macOS evicted it on its own during the disk-full event — which is exactly what
+`~/Library/Caches` is for, and a reason not to bother pruning it by hand.
 
 **`docker`** — `docker builder prune -a` first (build cache is usually the
 regrowth), then `docker image prune -a --filter until=720h`, then
@@ -95,14 +122,18 @@ floor. Worth a dedicated session.
 
 All values in GB.
 
-| Date | Used | Free | docker | repos | caches | apps | personal | other |
-|---|---|---|---|---|---|---|---|---|
-| 2026-08-02 | 349.3 | 83.6 | 70.9 | 78.2 | 45.8 | 71.3 | 30.6 | 52.5 |
-| 2026-08-03 | 345.7 | 89.2 | 70.9 | 70.6 | 44.0 | 71.3 | 30.6 | 58.3 |
+| Date | Used | Free | docker | repos | caches | system | apps | personal | other |
+|---|---|---|---|---|---|---|---|---|---|
+| 2026-08-02 | 349.3 | 83.6 | 70.9 | 78.2 | 45.8* | — | 71.3 | 30.6 | 52.5 |
+| 2026-08-03 | 345.7 | 89.2 | 70.9 | 70.6 | 44.0* | — | 71.3 | 30.6 | 58.3 |
+| 2026-08-03 | 345.6 | 89.3 | 70.9 | 70.6 | 14.7 | 29.2 | 71.3 | 30.6 | 58.2 |
+
+\* Pre-split: these `caches` values still include what is now `system`, so they
+aren't comparable to later rows. Compare against the third row onward.
 
 Baseline taken right after a large cleanup (see below), so it's a *clean* floor,
-not a typical day. As of 2026-08-03: volatile 185.5G / 235G budget, `caches` the
-only bucket over (44.0G vs 35G).
+not a typical day. As of the 2026-08-03 re-split: prunable 156.3G,
+baseline+stable 131.1G, **every bucket within budget**, 89.3G free.
 
 `other` rose 52.5 → 58.3G across those two snapshots with nothing deliberately
 added to it — it's the unclassified remainder, so it absorbs normal OS churn
@@ -153,6 +184,13 @@ only returns once iCloud uploads and macOS evicts the local copies.
 
 ## History
 
+- **2026-08-03 (later)** — Split `system` out of `caches` and re-derived budgets
+  from measured baseline + ~25% headroom instead of invented targets. The old
+  `caches` budget (35G) was pushing toward deleting `~/go/pkg/mod` and Claude
+  `vm_bundles` — 20G that refills the moment you use Go or the desktop sandbox.
+  That's churn, not cleanup. Added `FREE_FLOOR=50` as the real act-now signal,
+  and made explicit that budgets are independent tripwires rather than a
+  partition of the disk. Every bucket now within budget with nothing deleted.
 - **2026-08-03** — `repos` pass, 78.2 → 70.6G (now under budget). Cleared
   `node_modules` from dirs kept for reference (`ebutler-qa/workspace-old` 2.9G →
   379M, `hookdeck-workspace-old` 965M → 717M, `enable-backend` 5.1 → 4.3G), and

@@ -19,8 +19,9 @@ budgets, bucket definitions, and safety rules: `docs/machine-disk.md`.
    something trivial first — emptying `~/.Trash` is usually enough to unblock.
 
 2. **Diff and check budget** — two separate questions, report both:
-   - *Over budget?* The script prints a verdict per volatile bucket. Over means
-     prune, even if free space looks fine.
+   - *Over budget?* Budgets are baseline + headroom, so over means "grew past
+     its normal range, go look" — not "this is wasteful". The script also flags
+     free space below `FREE_FLOOR` (50G), which is the real act-now signal.
    - *What moved?* Compare against the latest row in `docs/machine-disk.md`,
      biggest mover first. A bucket that didn't move needs no investigation; say
      so and move on.
@@ -31,7 +32,10 @@ budgets, bucket definitions, and safety rules: `docs/machine-disk.md`.
    - `docker` → `docker system df -v`. Build cache and images are the usual cause.
    - `repos` → stale `node_modules`:
      `find ~/git ~/code -type d -name node_modules -prune -mtime +90`
-   - `caches` → pnpm store, `~/go`, `vm_bundles`.
+   - `caches` → pnpm store, `~/Library/Caches`, `~/.cache`.
+   - `system` → growth means a new runtime or tool VM. Worth knowing about, but
+     it is NOT a prune target — it refills. Don't propose clearing it to hit a
+     number; see the table in `docs/machine-disk.md`.
    - `apps` / `personal` growing is unusual — an install or an app hoarding data.
      Investigate rather than assume.
    - `other` → `du -sh ~/Library/*` and `~/Library/Application Support/*`.
