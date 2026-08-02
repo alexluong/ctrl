@@ -2,6 +2,27 @@
 
 Alex's personal machine conventions (macOS). How Claude works across these repos: `docs/workflow.md`.
 
+## Devices
+
+Two Macs. Assume the MacBook Pro unless a doc says otherwise — most tooling here
+is written for it.
+
+| | MacBook Pro | Mac Mini |
+|---|---|---|
+| Role | primary dev machine | media/arrstack host (confirm) |
+| Model | MacBookPro18,3 — M1 Pro, 32GB | (TBD) |
+| Name | `Alexs-MacBook-Pro` | (TBD) |
+| Disk | 460G — see `docs/machine-disk.md` | (TBD) |
+| macOS | 26.5.2 | (TBD) |
+
+The Mac Mini runs the arrstack (`hub/alexluong/arr`) — that repo's README
+describes Colima setup that applies to the Mini, **not** the MBP. Colima was
+removed from the MBP on 2026-08-02.
+
+Anything device-specific should say which device it's for. `bin/disk-audit.sh`
+and the `/disk-audit` skill are **MacBook Pro only** — the buckets, paths, and
+budgets are all sized for it.
+
 ## ~/git layout
 
 ```

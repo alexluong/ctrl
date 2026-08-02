@@ -1,6 +1,7 @@
 # Machine Disk Baseline
 
-Disk usage baseline for the Mac (460G volume). Machine layout: `docs/machine.md`.
+**MacBook Pro only** (460G volume). The Mac Mini is a separate machine with its
+own storage — none of this applies there. Devices: `docs/machine.md`.
 
 Purpose: when the disk fills up again, compare a fresh snapshot against the last
 one to see *which bucket moved* instead of re-deriving the whole picture from
@@ -23,6 +24,31 @@ volatile and cleanups should almost never touch stable.
 
 If you change a bucket's paths, past snapshots stop being comparable — note the
 change below when you do.
+
+## Budgets
+
+What we've **chosen to allocate**, not what happens to fit. Over budget means
+prune — regardless of how much free space is left. The point is to act on a
+number we picked rather than waiting for the disk to hit 100% again.
+
+| Bucket | Budget | Rationale |
+|---|---|---|
+| `docker` | **60G** | Images + dev-DB volumes realistically need ~50G. Build cache should be near zero between sessions; if docker is over, it's almost always cache or dead images. |
+| `repos` | **80G** | ~40G of actual source across `~/git` + `~/code`, plus roughly one full set of `node_modules`. Over means stale worktree installs. |
+| `caches` | **35G** | pnpm store and `~/go` are ~11G each and only grow; 35G leaves room for both plus build caches. Fully reclaimable, so this is the cheapest bucket to enforce. |
+| **volatile total** | **175G** | Leaves ~130G free at budget, against ~154G of stable + system. |
+
+Stable buckets (`apps`, `personal`) are deliberately unbudgeted — there's no
+routine pruning to do, and changes there are decisions (uninstall a game, delete
+messages), not maintenance.
+
+Budgets live in `bin/disk-audit.sh` as `BUDGET_*` and the script prints a verdict
+per bucket. Revise them here and there together, and note the change in History.
+
+**As of the 2026-08-02 baseline all three volatile buckets are over** (docker
++10.9G, repos +1.0G, caches +11.1G). That's expected — the budgets were set
+after the cleanup, tight enough to trigger rather than to flatter. First
+enforcement pass is still owed.
 
 ## Snapshots
 

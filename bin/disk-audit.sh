@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 # Disk usage audit — measures the same buckets every run so snapshots are comparable.
+# MacBook Pro only (460G volume). See docs/machine-disk.md.
+#
 # Usage: bin/disk-audit.sh [--row]
 #   (no args)  human-readable report + drill-down
 #   --row      single markdown table row, to append to docs/machine-disk.md
@@ -9,6 +11,15 @@
 
 set -uo pipefail
 VOL="/System/Volumes/Data"
+
+# --- budgets (GB) -------------------------------------------------------------
+# What we've CHOSEN to allocate each volatile bucket, not what it happens to use.
+# Over budget = prune, whether or not the disk is hurting yet. Rationale and
+# revision history: docs/machine-disk.md.
+# Stable buckets are deliberately unbudgeted — nothing to routinely prune there.
+BUDGET_DOCKER=60
+BUDGET_REPOS=80
+BUDGET_CACHES=35
 
 # --- bucket definitions -------------------------------------------------------
 # Volatile = regrows on its own; this is where regressions almost always are.
@@ -102,19 +113,32 @@ fi
 # --- report -------------------------------------------------------------------
 pct() { awk -v a="$1" -v b="$used_mb" 'BEGIN{printf "%d", (a*100)/b}'; }
 
-echo "DISK AUDIT — $today"
+# Budget verdict: OVER by Ng (prune) / ok (Ng headroom).
+verdict() {
+  local mb="$1" budget_gb="$2"
+  [ "$budget_gb" = "-" ] && { echo "-"; return; }
+  local budget_mb=$((budget_gb * 1024))
+  if [ "$mb" -gt "$budget_mb" ]; then
+    echo "OVER by $(gb $((mb - budget_mb)))G"
+  else
+    echo "ok ($(gb $((budget_mb - mb)))G left)"
+  fi
+}
+
+echo "DISK AUDIT — $today — MacBook Pro"
 echo "Volume: $(gb $used_mb)G used / $(gb $size_mb)G  •  $(gb $free_mb)G free"
 echo
-printf '%-12s %8s %6s  %s\n' "BUCKET" "SIZE" "%USED" "KIND"
-printf '%-12s %8s %6s  %s\n' "------" "----" "-----" "----"
-printf '%-12s %7sG %5s%%  %s\n' "docker"   "$(gb $docker_mb)"   "$(pct $docker_mb)"   "volatile"
-printf '%-12s %7sG %5s%%  %s\n' "repos"    "$(gb $repos_mb)"    "$(pct $repos_mb)"    "volatile"
-printf '%-12s %7sG %5s%%  %s\n' "caches"   "$(gb $caches_mb)"   "$(pct $caches_mb)"   "volatile"
-printf '%-12s %7sG %5s%%  %s\n' "apps"     "$(gb $apps_mb)"     "$(pct $apps_mb)"     "stable"
-printf '%-12s %7sG %5s%%  %s\n' "personal" "$(gb $personal_mb)" "$(pct $personal_mb)" "stable"
-printf '%-12s %7sG %5s%%  %s\n' "other"    "$(gb $other_mb)"    "$(pct $other_mb)"    "system/unclassified"
+printf '%-10s %8s %6s  %-9s %7s  %s\n' "BUCKET" "SIZE" "%USED" "KIND" "BUDGET" "VERDICT"
+printf '%-10s %8s %6s  %-9s %7s  %s\n' "------" "----" "-----" "----" "------" "-------"
+printf '%-10s %7sG %5s%%  %-9s %6sG  %s\n' "docker"   "$(gb $docker_mb)"   "$(pct $docker_mb)"   "volatile" "$BUDGET_DOCKER" "$(verdict $docker_mb $BUDGET_DOCKER)"
+printf '%-10s %7sG %5s%%  %-9s %6sG  %s\n' "repos"    "$(gb $repos_mb)"    "$(pct $repos_mb)"    "volatile" "$BUDGET_REPOS"  "$(verdict $repos_mb $BUDGET_REPOS)"
+printf '%-10s %7sG %5s%%  %-9s %6sG  %s\n' "caches"   "$(gb $caches_mb)"   "$(pct $caches_mb)"   "volatile" "$BUDGET_CACHES" "$(verdict $caches_mb $BUDGET_CACHES)"
+printf '%-10s %7sG %5s%%  %-9s %7s  %s\n' "apps"     "$(gb $apps_mb)"     "$(pct $apps_mb)"     "stable"   "-" "-"
+printf '%-10s %7sG %5s%%  %-9s %7s  %s\n' "personal" "$(gb $personal_mb)" "$(pct $personal_mb)" "stable"   "-" "-"
+printf '%-10s %7sG %5s%%  %-9s %7s  %s\n' "other"    "$(gb $other_mb)"    "$(pct $other_mb)"    "system"   "-" "-"
 echo
-echo "volatile: $(gb $volatile_mb)G   stable: $(gb $stable_mb)G"
+budget_total=$((BUDGET_DOCKER + BUDGET_REPOS + BUDGET_CACHES))
+echo "volatile: $(gb $volatile_mb)G / ${budget_total}G budget   •   stable: $(gb $stable_mb)G"
 
 echo
 echo "--- docker ---"

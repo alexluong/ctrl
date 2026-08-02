@@ -1,13 +1,16 @@
 ---
 name: disk-audit
-description: Audit disk usage on the Mac when it's filling up — snapshot the six buckets, diff against the last baseline to find what grew, then clean up safely. Use when disk is low/full or to record a fresh baseline.
+description: Audit disk usage on the MacBook Pro when it's filling up — snapshot the six buckets, check them against budget, diff against the last baseline to find what grew, then clean up safely. Use when disk is low/full or to record a fresh baseline. MBP only, not the Mac Mini.
 user_invocable: true
 ---
 
 # Disk Audit
 
+**MacBook Pro only.** The Mac Mini has its own storage and none of these buckets,
+paths, or budgets apply to it — if the ask is about the Mini, stop and say so.
+
 Find *what changed* rather than re-deriving the whole disk picture. Baseline,
-bucket definitions, and safety rules: `docs/machine-disk.md`.
+budgets, bucket definitions, and safety rules: `docs/machine-disk.md`.
 
 ## Instructions
 
@@ -15,9 +18,14 @@ bucket definitions, and safety rules: `docs/machine-disk.md`.
    If the disk is so full that tooling fails (sandboxed bash can't `mkdir`), free
    something trivial first — emptying `~/.Trash` is usually enough to unblock.
 
-2. **Diff** — compare against the latest row in `docs/machine-disk.md`. Report
-   the delta per bucket, biggest mover first. A bucket that didn't move needs no
-   investigation; say so and move on.
+2. **Diff and check budget** — two separate questions, report both:
+   - *Over budget?* The script prints a verdict per volatile bucket. Over means
+     prune, even if free space looks fine.
+   - *What moved?* Compare against the latest row in `docs/machine-disk.md`,
+     biggest mover first. A bucket that didn't move needs no investigation; say
+     so and move on.
+
+   A bucket that is over budget **and** grew is the one to work on first.
 
 3. **Explain the mover** — only drill into buckets that actually grew:
    - `docker` → `docker system df -v`. Build cache and images are the usual cause.
@@ -46,6 +54,11 @@ bucket definitions, and safety rules: `docs/machine-disk.md`.
 5. **Record** — append the new row (the script prints it) to the snapshot table
    in `docs/machine-disk.md`, and add a line to its History section describing
    what was freed and why. Commit.
+
+6. **Revisit budgets** — if a bucket sits over budget after a genuine cleanup,
+   the budget is wrong, not the machine. Propose a new number with a reason and
+   update both `bin/disk-audit.sh` and the Budgets table together. Don't silently
+   raise a budget to make a verdict pass.
 
 ## Notes
 
