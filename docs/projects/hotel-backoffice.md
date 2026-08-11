@@ -28,3 +28,11 @@ This is the **Go-at-scale learning project**: backend-heavy, web back office, no
 ## Status
 
 2026-07-10 — plan agreed, awaiting discovery brain-dump.
+
+---
+
+http://113.161.73.53:99
+http://192.168.1.73:99
+
+daolt
+anhdao61
