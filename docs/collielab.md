@@ -44,16 +44,27 @@ How it went, for reference next time:
 
 Expected benign diff after migrating: IPv6 records show zero-padding restored (`5400:5ff` → `5400:05ff`, same address — v4 compressed what the vultr provider returns), CNAMEs regain the trailing dot the HCL already had, and `modified_on` refreshes. Grit-based migration is deprecated; ignore older guides that reach for it.
 
-### R2 for eldobot exports
+### R2 for eldobot exports — applied 2026-08-11
 
-`terraform/r2.tf` — bucket `eldobot-exports` (location `enam`), public at `exports.alexluong.com`, CORS for browser-side BBGM imports, and lifecycle rules aborting stalled multipart uploads (`exports/`, 1d) and expiring `snapshots/` (2d). Written and validated, **not applied**.
+`terraform/r2.tf` — bucket `eldobot-exports` (location `enam`), public at `exports.alexluong.com`, CORS allowing browser GET/HEAD, and a lifecycle rule aborting stalled multipart uploads under `exports/` after 1 day. Applied and verified: object PUT → public fetch returns 200 with `content-type: application/json`.
 
-Blocked on API token permissions. `TF_VAR_cloudflare_api_token` currently lacks:
+Also applied in the same run: `cloudflare_zone.nhi_luong` was **imported**, not created — the zone already existed in Cloudflare (`dca266ff…`), so the long-pending create would have failed regardless of permissions.
 
-- **Workers R2 Storage: Write** — for the bucket, lifecycle and CORS
-- **Zone: Create** (`com.cloudflare.api.account.zone.create`) — for `cloudflare_zone.nhi_luong`, which has been sitting unapplied in the config; this is the error it fails with
+## Tokens
 
-The R2 keys already in `.env` are S3 access keys for the state backend — a different credential the cloudflare provider cannot use. eldobot additionally needs its own **scoped R2 API token** (bucket-level, not the terraform one) for `R2_ACCESS_KEY_ID` / `R2_SECRET_ACCESS_KEY`.
+Three, with distinct jobs. Values live in Vaultwarden and untracked `.env` files, never here.
+
+| Token | ID | Used by | Scope |
+|---|---|---|---|
+| `collielab-terraform` | `a1f74a44…` | terraform: cloudflare provider **and** R2 state backend | account-wide + all zones (DNS/Zone read+write) |
+| `eldobot-exports-rw` | `001ee362…` | eldobot at runtime | that one bucket, object read+write only |
+| *(legacy user token)* | `cd18900d…` | nothing — superseded | zone-scoped, no account access |
+
+**R2 derives S3 credentials from a token**: `Access Key ID` = the token's ID, `Secret Access Key` = `SHA-256(token value)`. So one token serves both the provider (as a Bearer token) and the state backend (as S3 keys) — and **rolling a token silently breaks the S3 secret while the access key ID stays the same**. That failure looks like `SignatureDoesNotMatch` on `terraform init/plan`, and the fix is to re-derive the secret from the new value, not to hunt for a new key pair.
+
+Gotcha that cost real time: a token can carry account-scoped permissions (R2, Workers, etc.) and still 403 on every DNS call, because zone permissions are a **separate policy** with zone-scoped resources. `GET /accounts` returning `count: 0` is the quick tell for "no account resources"; DNS 403s with account access working is the tell for "no zone policy". The working form is one policy per scope — an account policy plus a zone policy listing each zone as `com.cloudflare.api.account.zone.<zone_id>`. The nested "all zones in account" form did not take effect. Policy edits take ~20–30s to propagate.
+
+eldobot's credential is in `~/.cache/eldobot-r2-creds.env` (mode 600) on the MBP until it's placed on the VM.
 
 ## Conventions
 
