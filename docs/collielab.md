@@ -22,7 +22,26 @@ In `services/` (repo-managed): vaultwarden, glances, portainer, observability (g
 
 Actually running on the VM (verified 2026-08-11): **vaultwarden, glances** — plus two things not in this repo. Portainer and the observability stack are stopped; their 4 orphaned docker volumes are still on the VM.
 
-**Not in collielab** — ad-hoc `~/services/` git clones on the VM: `eldobot`, `alexluong.com`, `caddy`, `mls`. Deliberate, unresolved (see `projects/eldobot.md`). Anything reached over HTTPS goes through the Caddy in that ad-hoc set, so a new public service needs a Caddy entry too, not just a compose file.
+**Not in collielab** — ad-hoc `~/services/` git clones on the VM: `eldobot`, `alexluong.com`, `caddy`, `mls`. Deliberate, unresolved (see `projects/eldobot.md`).
+
+### Caddy — read this before touching routing
+
+Public HTTPS is terminated by **host-level Caddy running under systemd** (`/usr/bin/caddy run --config /etc/caddy/Caddyfile`), not by Docker. `~/services/caddy/` is a **dead docker-compose Caddy**: no container exists, and its `Caddyfile` bind source is an empty *directory* Docker created when the file was missing. Editing anything in there has no effect — a trap worth remembering.
+
+`/etc/caddy/Caddyfile` is the single routing table for every public service on the box, and it is **not in any repo** (root-owned, world-readable, unversioned). Current entries, all `reverse_proxy` to localhost ports:
+
+| Host | → | Service |
+|---|---|---|
+| `alexluong.com` | `:8090` | personal site (`tls internal`, Cloudflare fronts it) |
+| `www.alexluong.com` | redir | 301 to apex |
+| `lab.collie.studio` | `:8090` | same app |
+| `vault.collie.studio` | `:3010` | vaultwarden (passes `Cf-Connecting-Ip` as `X-Real-IP`) |
+| `mls-stg.collie.studio` | `:8005` | mls staging |
+| `portainer.collie.studio` | `:3020` | portainer — **stopped**, entry stale |
+| `glances.collie.studio` | `:3031` | glances |
+| `dashboard.collie.studio` | `:4000` | dashboard — nothing running on that port |
+
+So a new public service needs three things, not one: a compose entry, a `cloudflare_dns_record` in terraform, and a stanza in `/etc/caddy/Caddyfile` (then `systemctl reload caddy`).
 
 ## Terraform
 
@@ -75,3 +94,10 @@ eldobot's credential is on the VM in `/home/alex/services/eldobot/.env` (previou
 - New service = new directory under `services/` with its compose file; deploy = pull on the VM and `docker-compose up -d` in that directory. Public hostname = a `cloudflare_dns_record` in the zone's tf file **and** a Caddy entry.
 - Commits follow the repo conventions in `workflow.md` (Conventional Commits, direct to main).
 - Incidents get a file in `incidents/` named `YYYY-MM-DD_slug.md`.
+
+## Open items
+
+- **`/etc/caddy/Caddyfile` is unversioned** — the routing table for every public hostname lives only on the VM. Should be a file in this repo, deployed to `/etc/caddy/`. Two entries are already stale (`portainer`, `dashboard` point at nothing).
+- **`~/services/caddy/` is dead** and should be deleted so nobody edits it by mistake.
+- Portainer and the observability stack are stopped with 4 orphaned volumes still on disk — decide: revive or remove.
+- `alexluong.com`'s PocketBase `data.db` has no backup beyond weekly Vultr snapshots (see `projects/alexluong-com.md`).
