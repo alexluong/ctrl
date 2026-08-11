@@ -6,7 +6,7 @@ How Claude operates across Alex's personal repos. Machine layout facts: `docs/ma
 
 - **ctrl** — the notes layer for everything: project living docs (idea → design → decisions → status), cross-project notes, domain data (bookkeeping, RE). No app code.
 - **project repos** — one repo per project under `hub/alexluong/`, **code-only**: no IDEAS/NOTES/TODO markdown. Allowed non-code: docs strictly part of the software (README for building/running) and `qa/` specs (see Quality bar).
-- **collielab** — VM infra, docker-compose services, terraform DNS. Deploying a new service = new entry under `services/`.
+- **collielab** — VM infra, docker-compose services, terraform DNS. Deploying a new service = new entry under `services/`. Living doc: `docs/collielab.md`.
 
 ## Project docs flow
 
@@ -20,6 +20,17 @@ Two ways to work on a project; both keep notes in ctrl:
 2. **Direct project session** — session started in the project repo; the untracked pointer CLAUDE.md feeds it context. Best for long interactive impl grind (build/debug loops, UI iteration).
 
 `ctrl/.claude/settings.json` grants `additionalDirectories: ~/git/hub/alexluong` so cockpit sessions/subagents write to sibling project repos without permission prompts.
+
+3. **Infra session (collielab)** — a ctrl cockpit session where the repo being managed is `collielab` and the "app" is the running VM. Alex chats here; Claude edits `services/`, `terraform/`, `incidents/` directly in the collielab checkout (no subagent needed — infra changes are small and read-heavy, and the diagnosis usually needs the same context as the fix). Facts and decisions land in `docs/collielab.md`; per-service detail that outgrows it gets its own ctrl doc (`docs/vaultwarden.md` is the model).
+
+   The loop, and where it stops on its own:
+
+   - **Diagnose** — read-only against the VM (`ssh alex@149.28.40.6`, `docker ps`, `docker logs`, `docker exec` reads) and the repo. No confirmation needed; do this freely and lead with findings.
+   - **Change** — edit the repo, commit. Direct to main. Not pushed by default.
+   - **Push / apply / deploy** — `git push`, `terraform apply`, and anything that restarts or reconfigures a live service are **confirm-first, every time**. They are outward-facing and users are on the other end (vaultwarden, eldobot's leagues). Claude prepares them and stops; Alex says go. A `terraform plan` is read-only and doesn't need asking.
+   - **Record** — what changed, what's still open, in `docs/collielab.md` (or the service's own doc). Incidents get `collielab/incidents/YYYY-MM-DD_slug.md`.
+
+   Secrets stay in Vaultwarden and in untracked `.env` files on the VM — never in either repo, never echoed into ctrl docs. Documenting *which* credential is needed and what permissions it wants is fine and useful; the value is not.
 
 ### Skills (cockpit entry points)
 
