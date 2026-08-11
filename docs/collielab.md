@@ -29,7 +29,7 @@ Actually running on the VM (verified 2026-08-11): **vaultwarden, glances** — p
 - Root module: `terraform/`. Providers: `cloudflare 5.23.0`, `vultr 2.21.0`. Migrated from v4.45.0 on 2026-08-11 (`0e24cdd`) — see below.
 - **State backend is Cloudflare R2** — bucket `collielab-terraform`, key `terraform.tfstate`, S3-compatible endpoint on account `3f6713b6ee228d00951382a7f7d85fbe`. So R2 is already in production use here.
 - Credentials: `terraform/.env` (untracked) → `source scripts/export_env.sh`. Needs `AWS_ACCESS_KEY_ID`/`AWS_SECRET_ACCESS_KEY` (R2 API token keys, for state) plus `TF_VAR_cloudflare_api_token` and `TF_VAR_vultr_api_key`. Secrets live in Vaultwarden, never in the repo.
-- Zones managed: `alexluong.com`, `collie.studio`, `nhiluong.com`. Records are per-zone files. Note: `terraform/nhiluong_com.tf` is currently **untracked** — uncommitted local work.
+- Zones managed: `alexluong.com`, `collie.studio`, `nhiluong.com`. Records are per-zone files.
 
 ### The v4 → v5 migration (2026-08-11)
 
@@ -44,9 +44,13 @@ How it went, for reference next time:
 
 Expected benign diff after migrating: IPv6 records show zero-padding restored (`5400:5ff` → `5400:05ff`, same address — v4 compressed what the vultr provider returns), CNAMEs regain the trailing dot the HCL already had, and `modified_on` refreshes. Grit-based migration is deprecated; ignore older guides that reach for it.
 
+Those first two were **not** one-time: they applied cleanly and came back on every plan, because Vultr and Cloudflare format the same values differently. Fixed by normalising in config — `local.lab_v6` strips leading zeros per hextet for the AAAA records, and the two CNAMEs lost their trailing dot. `terraform plan` is now `No changes`; keep it that way, since a permanently dirty plan hides real drift.
+
 ### R2 for eldobot exports — applied 2026-08-11
 
-`terraform/r2.tf` — bucket `eldobot-exports` (location `enam`), public at `exports.alexluong.com`, CORS allowing browser GET/HEAD, and a lifecycle rule aborting stalled multipart uploads under `exports/` after 1 day. Applied and verified: object PUT → public fetch returns 200 with `content-type: application/json`.
+`terraform/r2.tf` — bucket `eldobot-exports` (location `enam`), CORS allowing browser GET/HEAD, and a lifecycle rule aborting stalled multipart uploads under `exports/` after 1 day.
+
+Public access is Cloudflare's **managed r2.dev hostname**, `pub-a00ede68ec534ed6a68018b276d7fb34.r2.dev` — deliberately not a custom domain, so league-facing URLs carry none of Alex's domains (`exports.alexluong.com` existed briefly on 2026-08-11 and was removed). Tradeoff accepted: r2.dev is rate-limited and not guaranteed for production, which is fine at a handful of fetches a day. **Provider bug (v5.23.0):** creating `cloudflare_r2_managed_domain` with `enabled = true` left the API reporting `enabled = false`; public access had to be turned on with a `PUT` to `/r2/buckets/eldobot-exports/domains/managed`. Verify via the API after any recreate.
 
 Also applied in the same run: `cloudflare_zone.nhi_luong` was **imported**, not created — the zone already existed in Cloudflare (`dca266ff…`), so the long-pending create would have failed regardless of permissions.
 
@@ -64,10 +68,10 @@ Three, with distinct jobs. Values live in Vaultwarden and untracked `.env` files
 
 Gotcha that cost real time: a token can carry account-scoped permissions (R2, Workers, etc.) and still 403 on every DNS call, because zone permissions are a **separate policy** with zone-scoped resources. `GET /accounts` returning `count: 0` is the quick tell for "no account resources"; DNS 403s with account access working is the tell for "no zone policy". The working form is one policy per scope — an account policy plus a zone policy listing each zone as `com.cloudflare.api.account.zone.<zone_id>`. The nested "all zones in account" form did not take effect. Policy edits take ~20–30s to propagate.
 
-eldobot's credential is in `~/.cache/eldobot-r2-creds.env` (mode 600) on the MBP until it's placed on the VM.
+eldobot's credential is on the VM in `/home/alex/services/eldobot/.env` (previous version backed up as `.env.bak-20260811`), and mirrored on the MBP at `~/.cache/eldobot-r2-creds.env`, mode 600.
 
 ## Conventions
 
-- New service = new directory under `services/` with its compose file; deploy = pull on the VM and `docker-compose up -d` in that directory. Public hostname = a `cloudflare_record` in the zone's tf file **and** a Caddy entry.
+- New service = new directory under `services/` with its compose file; deploy = pull on the VM and `docker-compose up -d` in that directory. Public hostname = a `cloudflare_dns_record` in the zone's tf file **and** a Caddy entry.
 - Commits follow the repo conventions in `workflow.md` (Conventional Commits, direct to main).
 - Incidents get a file in `incidents/` named `YYYY-MM-DD_slug.md`.

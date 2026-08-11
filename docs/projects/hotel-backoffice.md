@@ -28,3 +28,11 @@ This is the **Go-at-scale learning project**: backend-heavy, web back office, no
 ## Status
 
 2026-07-10 — plan agreed, awaiting discovery brain-dump.
+
+---
+
+[REDACTED-URL]
+[REDACTED-URL]
+
+[REDACTED]
+[REDACTED]
