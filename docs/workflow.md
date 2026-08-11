@@ -6,7 +6,7 @@ How Claude operates across Alex's personal repos. Machine layout facts: `docs/ma
 
 - **ctrl** — the notes layer for everything: project living docs (idea → design → decisions → status), cross-project notes, domain data (bookkeeping, RE). No app code.
 - **project repos** — one repo per project under `hub/alexluong/`, **code-only**: no IDEAS/NOTES/TODO markdown. Allowed non-code: docs strictly part of the software (README for building/running) and `qa/` specs (see Quality bar).
-- **collielab** — VM infra, docker-compose services, terraform DNS. Deploying a new service = new entry under `services/`. Living doc: `docs/collielab.md`.
+- **collielab** — VM infra, docker-compose services, terraform DNS. Deploying a new service = new entry under `services/`, a terraform DNS record, and a Caddy stanza. Living doc: `docs/collielab.md`.
 
 ## Project docs flow
 
