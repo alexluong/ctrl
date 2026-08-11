@@ -26,29 +26,34 @@ Actually running on the VM (verified 2026-08-11): **vaultwarden, glances** — p
 
 ## Terraform
 
-- Root module: `terraform/`. Providers: `cloudflare ~> 4.0`, `vultr 2.21.0`.
+- Root module: `terraform/`. Providers: `cloudflare 5.23.0`, `vultr 2.21.0`. Migrated from v4.45.0 on 2026-08-11 (`0e24cdd`) — see below.
 - **State backend is Cloudflare R2** — bucket `collielab-terraform`, key `terraform.tfstate`, S3-compatible endpoint on account `3f6713b6ee228d00951382a7f7d85fbe`. So R2 is already in production use here.
 - Credentials: `terraform/.env` (untracked) → `source scripts/export_env.sh`. Needs `AWS_ACCESS_KEY_ID`/`AWS_SECRET_ACCESS_KEY` (R2 API token keys, for state) plus `TF_VAR_cloudflare_api_token` and `TF_VAR_vultr_api_key`. Secrets live in Vaultwarden, never in the repo.
 - Zones managed: `alexluong.com`, `collie.studio`, `nhiluong.com`. Records are per-zone files. Note: `terraform/nhiluong_com.tf` is currently **untracked** — uncommitted local work.
 
-### R2 via terraform — what's actually possible
+### The v4 → v5 migration (2026-08-11)
 
-Yes for buckets, no for the rest at the pinned version:
+Done because R2 lifecycle rules, custom domains and CORS only exist as resources from provider **v5.5+** — v4 had `cloudflare_r2_bucket` and nothing else. Since **v5.19** the provider ships automatic state upgraders, so this is no longer the hand-migration it once was.
 
-| Resource | In `~> 4.0` | Needed for |
-|---|---|---|
-| `cloudflare_r2_bucket` | **yes** | creating the bucket |
-| `cloudflare_r2_bucket_lifecycle` | no — v5.5+ | TTL / auto-expiry |
-| `cloudflare_r2_custom_domain` | no — v5.5+ | public `exports.*` domain |
-| `cloudflare_r2_bucket_cors` | no — v5.5+ | browser-side fetches |
+How it went, for reference next time:
 
-The v4→v5 provider jump is a rewrite with breaking schema changes across every existing `cloudflare_record`, so it is not a free upgrade. Three ways forward, in order of preference:
+1. `terraform state pull > backup` first. The R2 state bucket's versioning status is unverified — don't rely on it.
+2. Stepping stone to `4.52.5` (required), `init -upgrade`, plan to confirm the baseline.
+3. [`tf-migrate`](https://github.com/cloudflare/tf-migrate) v1.1.0 rewrites the HCL and emits `moved` blocks — 11 `cloudflare_record` → `cloudflare_dns_record`, zone `zone` → `name` and `account_id` → `account.id`. It also bumps the provider pin itself and leaves `*.tf.backup` files to delete.
+4. `init -upgrade`, then plan and **read it**: the bar is 0 to destroy, 0 to replace.
 
-1. **Second root module** `terraform/r2/` pinned to `cloudflare ~> 5`, own state key in the same bucket. DNS stays on v4 and untouched; R2 gets full IaC. Provider constraints are per-root-module, so this is legitimate, not a hack.
-2. Bucket in TF on v4, lifecycle/domain/CORS clicked in the dashboard. Fastest, but the interesting config is then undocumented.
-3. Upgrade the whole config to v5. Cleanest end state, biggest blast radius — a separate piece of work, not a side quest.
+Expected benign diff after migrating: IPv6 records show zero-padding restored (`5400:5ff` → `5400:05ff`, same address — v4 compressed what the vultr provider returns), CNAMEs regain the trailing dot the HCL already had, and `modified_on` refreshes. Grit-based migration is deprecated; ignore older guides that reach for it.
 
-The `TF_VAR_cloudflare_api_token` also needs **Workers R2 Storage: Write** (and zone DNS edit for a custom domain). The R2 keys already in `.env` are S3 access keys for the state backend — different credential, not usable by the cloudflare provider.
+### R2 for eldobot exports
+
+`terraform/r2.tf` — bucket `eldobot-exports` (location `enam`), public at `exports.alexluong.com`, CORS for browser-side BBGM imports, and lifecycle rules aborting stalled multipart uploads (`exports/`, 1d) and expiring `snapshots/` (2d). Written and validated, **not applied**.
+
+Blocked on API token permissions. `TF_VAR_cloudflare_api_token` currently lacks:
+
+- **Workers R2 Storage: Write** — for the bucket, lifecycle and CORS
+- **Zone: Create** (`com.cloudflare.api.account.zone.create`) — for `cloudflare_zone.nhi_luong`, which has been sitting unapplied in the config; this is the error it fails with
+
+The R2 keys already in `.env` are S3 access keys for the state backend — a different credential the cloudflare provider cannot use. eldobot additionally needs its own **scoped R2 API token** (bucket-level, not the terraform one) for `R2_ACCESS_KEY_ID` / `R2_SECRET_ACCESS_KEY`.
 
 ## Conventions
 
