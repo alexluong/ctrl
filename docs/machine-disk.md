@@ -141,6 +141,7 @@ All values in GiB (see units note above).
 | 2026-08-02 | 349.3 | 83.6 | 70.9 | 78.2 | 45.8 | 71.3 | 30.6 | 52.5 |
 | 2026-08-03 | 345.7 | 89.2 | 70.9 | 70.6 | 44.0 | 71.3 | 30.6 | 58.3 |
 | 2026-08-03 | 345.6 | 89.3 | 70.9 | 70.6 | 44.1 | 71.3 | 30.6 | 58.1 |
+| 2026-08-17 | 421.8 | 15.1 | 128.7 | 70.9 | 58.1 | 71.9 | 28.7 | 63.6 |
 
 The brief `caches`/`system` split on 2026-08-03 was folded back before any
 snapshot depended on it, so every row above is directly comparable.
@@ -198,6 +199,15 @@ only returns once iCloud uploads and macOS evicts the local copies.
 
 ## History
 
+- **2026-08-17** — Free space hit 15.1G (floor is 50G), first re-audit since
+  baseline. Docker was the mover, +57.8G to 128.7G (over budget) after two weeks
+  of heavy outpost + enable/ebchat dev — build cache alone 50.9G, confirming it
+  as the recurring offender. `system` also over (58.1 vs 50G budget) from
+  go-build/pnpm/go-mod growth; left alone per the table. Cleanup: build cache
+  prune (50.8G) + anonymous volume prune (2.9G) = 53.6G freed, **15 → 58G free**.
+  Alex chose to keep all unused images (49.2G reclaimable, incl. 3-yr-old
+  confluent stack) — actively on outpost, didn't want rebuild churn. Named
+  volumes untouched. Docker bucket post-clean: ~85G.
 - **2026-08-03 (final)** — Folded `caches` back into `system` (one tooling
   bucket) and gave every bucket a round-number budget, including the previously
   unbudgeted `apps` / `personal` / `other`: 120 / 100 / 50 / 80 / 40 / 70. Sum is
