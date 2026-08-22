@@ -10,6 +10,7 @@ Discord bot for Basketball GM (BBGM) fantasy leagues — loads BBGM export files
 - plotly + kaleido (headless Chromium) for chart images
 - Cloudflare R2 (S3 API via boto3) for storing/serving league export files; Dropbox backend retained but unused
 - State = JSON files in `data/` (points, inventory, daily, tracking, servers), volume-mounted
+- `dropbox-ui/` in the same repo = a **separate Cloudflare Worker** (TypeScript), no shared code or runtime with the bot — see "Dropbox UI" below
 
 ## Deployment
 
@@ -27,6 +28,17 @@ Discord bot for Basketball GM (BBGM) fantasy leagues — loads BBGM export files
 - Dropbox account: `lhtanh98@gmail.com`, free Basic, **2 GiB**. App client id `2ffbesv7yp2vtr2`.
 - **ibabot shares this Dropbox account** — near-certainly a fork of eldobot: it keeps our `{guild_id}-export` prefix but appends `-YYYYMMDD-HHMMSS`, so every upload is a new object and nothing is ever pruned. The app credentials sat in `.env.example` from `ac8ad2e` (2025-08-22) until the 2026-07-10 scrub, so any clone taken in that window has live write access. Secret still not rotated.
 - ibabot's league is **IBA** (`"meta": {"name": "IBA"}` in the export), guild `1346036658616930338` — created 2025-03-03, eldobot is not a member (403 on the guild API), so the name isn't resolvable from our side. eldobot *is* in `Buenos Aires Falcons HQ. IBA`, a team server downstream of it.
+
+## Dropbox UI
+
+- **https://dropbox.builders.so** — list / open / delete for the shared Dropbox account. Built 2026-08-22 so whoever runs IBA can clear ibabot's exports themselves instead of Alex hand-wiping the account each time it fills.
+- Cloudflare Worker, TypeScript, server-rendered HTML + plain CSS, no build step, no framework, mobile-friendly. Code: `dropbox-ui/` **in the eldobot repo** (Alex's call — no new repo), but it is an **independent deploy**: `cd dropbox-ui && npm run deploy`. Never needs the bot restarted, shares nothing with it.
+- **Domain choice:** the workers.dev subdomain is account-wide and already `alexluong`, and changing it would break 6 existing workers (scribbble-gateway, mbr-gateway-prd, nilventures-clubs, …) — so a neutral zone Alex already owns was used instead. Same reasoning as the r2.dev export hostname: nothing league-facing carries Alex's name.
+- **Auth:** one shared password in the `APP_PASSWORD` secret; login form is the first screen. Session cookie = `<expiry>.<HMAC-SHA256(expiry)>`, 30 days, `HttpOnly; Secure; SameSite=Strict` (which is also what covers CSRF — every mutating route is a same-site form POST). **The HMAC key is derived from `APP_PASSWORD` itself, so changing the password signs everyone out** — deliberate for a shared credential. Current password is a weak throwaway (Alex: "not the most critical in terms of security, we can change later"); it lives only in wrangler secrets, not in the repo.
+- **Deletes** use `files/delete_v2` — `files/permanently_delete` needs the `files.permanent_delete` scope, which Dropbox app 4558019 does not have. Fine: verified 2026-08-22 that trash does not count against this account's quota, so space frees immediately and files are recoverable ~30 days.
+- Secrets: `APP_PASSWORD`, `DROPBOX_REFRESH_TOKEN`, `DROPBOX_CLIENT_ID`, `DROPBOX_CLIENT_SECRET` via `wrangler secret put`. Dropbox values are the same ones in the VM `.env`.
+- **Deploy gotcha:** the collielab CF API token (`collielab/terraform/.env` → `TF_VAR_cloudflare_api_token`, account `3f6713b6…`) has R2/DNS scopes but **not Workers Routes**, so a `[[routes]]` block in `wrangler.toml` makes every deploy fail *after* uploading. The custom domain was bound once out-of-band via `PUT /accounts/{acct}/workers/domains` (that endpoint the token *can* call) and persists across deploys; `wrangler.toml` deliberately declares no route. `wrangler deploy` prints **"No targets deployed"** — that is expected and misleading: verified by probe that deploys do reach the live domain.
+- Not in collielab terraform (the Worker and its domain binding were created imperatively). Consistent with eldobot's existing "not registered in collielab" status.
 
 ## Incidents
 
@@ -47,6 +59,7 @@ Discord bot for Basketball GM (BBGM) fantasy leagues — loads BBGM export files
 
 ## Status log
 
+- 2026-08-22 (later still) — **Dropbox UI built and live at https://dropbox.builders.so** (`dropbox-ui/` in the eldobot repo, commit `3a3670f`, pushed). List / open / delete only, shared-password auth. Verified end-to-end against the live site: unauthenticated request shows only the login form, wrong password rejected, tampered and expired cookies rejected, and list → open (temporary link) → delete exercised with a throwaway file that was cleaned up. See "Dropbox UI" above for the deploy gotchas.
 - 2026-08-22 (later) — **Dropbox cleared** (Alex's call). All 9 ibabot IBA exports deleted: **2,374,984,455 B → 9,762,906 B used (110.6% → 0.5%)**, 2,365,221,549 B freed, 0 live files. `files/permanently_delete` is **not available to this app** (missing `files.permanent_delete` scope, app ID 4558019) — fell back to `files/delete_v2` (trash). Space freed immediately and in full, so **trash does not count against the quota** on this account; files recoverable from web trash ~30 days. IBA's export links issued before this are dead. Script: `dbx_clear.py` pattern — read VM `.env`, refresh-token, `list_folder` recursive, delete each. **Not durable:** ibabot still has working credentials, still writes ~263 MB per upload, still never prunes — refills to full in ~33 h at last week's cadence. Rotating the app secret is the only fix that holds; still Alex's call, still zero-cost to eldobot.
 - 2026-08-22 — **Dropbox re-checked (live API, VM creds; script pattern: read `/home/alex/services/eldobot/.env` on the VM, refresh-token → `users/get_space_usage` + `files/list_folder` recursive with `include_deleted`).** **Over quota: 2,374,984,455 B used / 2,147,483,648 B allocated = 110.6%.** Live contents: **9 files, all ibabot IBA exports** (`/exports/1346036658616930338-export-YYYYMMDD-HHMMSS.json`, 262.6–262.9 MB each, 2026-08-20 06:51 → 2026-08-21 15:46 UTC), 2,365,221,549 B — i.e. the entire account. **eldobot: zero bytes.** R2 migration confirmed clean.
   - **Full path history: 4,826 entries — 9 live, 4,816 deleted tombstones.** Names ever seen: 4,799 ibabot-style timestamped IBA exports, 11 for guild `1408169726466850817` (so ibabot serves ≥2 leagues), 14 plain `{guild_id}-export.json` (eldobot's convention), 1 `test-upload.json`.
