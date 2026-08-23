@@ -17,9 +17,12 @@ Same DX, different UI, across unrelated products:
 - **ENABLE** (work, EButler-QA) — this is the actual POC target. `enable-frontend`
   is a pnpm monorepo, ~5 React apps (main / callcenter / operations / passes /
   public) deployed on Cloudflare via wrangler.
-- **Hotel app** (tenx) — same system, different UI. Note there are ~8
-  `tenx-mobile-*` repos: the hotel side is **already multi-tenant per property**,
-  so per-client theming is a hard requirement, not a nice-to-have.
+- **Hotel back office** — Alex's own project (`ctrl/docs/projects/hotel-backoffice.md`),
+  the Go-at-scale learning project: Go backend, web back office, no mobile.
+  **NOT TenX / not an EButler product** (corrected 2026-08-23). Same DX, different
+  UI. **Open: is its frontend React, or server-rendered Go/templ?** Alex has
+  `hub/alexluong/template-go-templ-tailwindcss` locally. If templ, a React
+  component library cannot serve it — see "Renderer-agnosticism" below.
 - Personal projects later.
 
 ## Prior art: colliestudio/saasblocks-design-system (2022)
@@ -98,8 +101,20 @@ saasblocks already did correctly.
 `shadow`, `border-style`, `border-width`, `font-family` and wireframe becomes
 `radius: 0, shadow: none, border-style: dashed, font: mono, all gray`. Falling back
 to skin-swapping means maintaining two component trees, which is the thing that
-kills design systems. For 8 hotel properties, theme-level swap is the only sane
-answer regardless.
+kills design systems.
+
+### Renderer-agnosticism (elevated 2026-08-23)
+
+If hotel-backoffice is Go/templ, "stack-agnostic" is no longer a nice-to-have —
+React components can't serve it at all. saasblocks already anticipated this: it
+shipped **both** `apps/saasblocks-react` and `apps/saasblocks-html` over one shared
+Tailwind theme plugin.
+
+Implication: the **token layer + recipe layer (`*.css.ts` → plain class strings) is
+the actual product**; React components are one thin consumer of it. Class strings
+drop into templ unchanged. This also caps how much the headless library can be
+allowed to leak into the recipes (Go/templ gets no Base UI / React Aria — behavior
+would be hand-written or Alpine/HTMX-side).
 
 ### Headless: the date picker is the tiebreaker
 
@@ -135,8 +150,8 @@ Flutter apps in production**, so RN adds a third runtime rather than unifying
 anything.
 
 Instead: **tokens are cross-platform, components are not.** DTCG `tokens.json` →
-Style Dictionary → CSS vars (web) + Dart `ThemeData` (Flutter/tenx) + JS object (if
-RN ever happens). One visual language, zero runtime coupling. This is the main
+Style Dictionary → CSS vars (web) + Dart `ThemeData` (Flutter, if ENABLE's apps ever
+adopt it) + JS object (if RN ever happens). One visual language, zero runtime coupling. This is the main
 reason to adopt DTCG on day one.
 
 ### Distribution nuance
@@ -153,6 +168,7 @@ Shapes the repo layout, so decide early.
 - Headless choice — pending the DatePicker bake-off above.
 - Package-vs-copy split for tokens vs components.
 - Where the visual direction comes from (existing ENABLE look? fresh?).
+- **hotel-backoffice frontend: React or Go/templ?** Gates renderer-agnosticism.
 - If components are copied, how do fixes propagate to projects that already copied?
 
 ## Next step
