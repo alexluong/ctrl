@@ -9,7 +9,7 @@ Full pipeline for landing a feature in a project repo while keeping notes in ctr
 
 ## Instructions
 
-1. **Context** — parse project + feature from args (ask if unclear). Read `docs/projects/<project>.md` and `docs/workflow.md`. Repo is at `~/git/hub/alexluong/<project>`.
+1. **Context** — parse project + feature from args (ask if unclear). Read the living doc (`docs/projects/<project>.md`, or `docs/projects/<project>/` — start at its `README.md`) and `docs/workflow.md`. Repo is at `~/git/hub/alexluong/<project>`.
 2. **Plan** — draft the approach against the living doc's design stance. If it conflicts with a recorded decision, or a genuine design fork exists, raise it with Alex (AskUserQuestion) before coding. Record the agreed plan in the living doc. If Alex said "plan only", stop here.
 3. **Pick the flow** (per workflow.md): small/mechanical → direct to main; large or Alex-wants-review → branch + GitHub PR. Delegated impl defaults to branch + PR.
 4. **Implement** — in the project repo:

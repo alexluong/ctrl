@@ -10,7 +10,7 @@ How Claude operates across Alex's personal repos. Machine layout facts: `docs/ma
 
 ## Project docs flow
 
-`ctrl/docs/projects/<name>.md` is each project's single living doc, kept in ctrl for the project's whole life. Each project repo gets a **machine-local, untracked `CLAUDE.md`** pointing at that doc — ignored via `.git/info/exclude` (add `CLAUDE.md` line), so the repo stays 100% code even in `.gitignore`. The pointer tells sessions to read the ctrl doc at start, write decisions back to it (committing in ctrl), and never create notes files or use `~/.claude` memory. On a new machine, recreate the pointer + exclude entry per project — the `/new-project` skill does this.
+Each project's living doc lives in ctrl for the project's whole life, as either `ctrl/docs/projects/<name>.md` (one file) or `ctrl/docs/projects/<name>/` (a directory of topic files). Start with the single file; once it gets unwieldy, splitting it into a directory is worth reaching for. A directory gets a `README.md` as the entry point — what/why, status, decisions — with topic files alongside it. Each project repo gets a **machine-local, untracked `CLAUDE.md`** pointing at that doc — ignored via `.git/info/exclude` (add `CLAUDE.md` line), so the repo stays 100% code even in `.gitignore`. The pointer tells sessions to read the ctrl doc at start, write decisions back to it (committing in ctrl), and never create notes files or use `~/.claude` memory. On a new machine, recreate the pointer + exclude entry per project — the `/new-project` skill does this.
 
 ## Session modes (hub-and-spoke)
 
