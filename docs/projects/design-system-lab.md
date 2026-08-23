@@ -64,83 +64,183 @@ Clone for reference: `gh repo clone colliestudio/saasblocks-design-system`.
 - **2026-08-23 — distribution leaning copy-paste/template** (shadcn-style),
   because client A and client B genuinely need to diverge. Not final.
 
-## Proposals on the table (2026-08-23, not yet decided)
+## Research (2026-08-23/24)
 
-### Tokens: three tiers, Radix 12-step semantics
+### What has actually advanced since saasblocks (2022)
 
-Alex's objection — "a 9- or 12-number color scale isn't scalable / too much
-flexibility" — is answered by tiering, not by a shorter scale:
+Four of the old stack's assumptions are obsolete, not merely dated:
+
+1. **Tailwind v4 CSS-first `@theme`** — tokens compile to real CSS custom
+   properties, OKLCH color. v3 baked the theme into a JS object at build time
+   (which is why `tailwind-saasblocks` had to exist); v4 themes are
+   runtime-swappable var sets. That plugin no longer needs to be written.
+2. **The shadcn registry became a distribution mechanism.** CLI v4 (March 2026):
+   namespaced private registries with header auth, `--monorepo`, and
+   `registry:base` distributing an **entire design system as one payload**. This
+   is the answer to copy-paste-vs-package: copy-paste *with* an update path and a
+   versioned source of truth.
+3. **shadcn/ui defaults to Base UI since July 2026** (Radix still supported for
+   existing projects). Alex's Base UI preference is now the ecosystem default.
+4. **DTCG reached its first stable spec Oct 2025** — implemented by Figma, Style
+   Dictionary v4, Terrazzo, Tokens Studio, Penpot, Sketch. Token interchange is a
+   settled standard now, not a research project.
+
+Modern CSS that changes component design vs 2022: `@layer` (working override
+order), **container queries** (density per container, not viewport), `:has()`,
+`color-mix()` + OKLCH (generate ramps from one hue at runtime), `light-dark()`.
+RSC killed runtime CSS-in-JS; build-time (Tailwind, Panda) won — which suits the
+"stable, long-term" requirement.
+
+### Established token systems (full systems, not just color)
+
+| system | structure | why look |
+|---|---|---|
+| **Adobe Spectrum 2** | published as open data (`adobe/spectrum-design-data`), DTCG-shaped | most complete modern system adoptable wholesale; built for high-density pro tooling; has a real density/scale model |
+| **Fluent 2** (Microsoft) | global → alias → component, 600+ tokens | ships identical tokens to React, RN, WinUI — the multiplatform proof |
+| **Atlassian** | 391 semantic tokens | best *taxonomy* to copy; `space.100` = 8px (number = % of base unit) |
+| **Carbon** (IBM) | background/layer/component + explicit density modes | the "layer" model suits nested surfaces |
+| **Open Props** | pure CSS vars, no framework | relevant if hotel-backoffice is Go/templ |
+| Radix Colors | color only | a component of a system, not a system |
+
+Underlying naming grammar for all of them: EightShapes / Nathan Curtis —
+`namespace-category-concept-property-variant-scale-state`.
+
+**Recommendation: Spectrum 2's structure + Atlassian's naming clarity, expressed
+in DTCG, built with Style Dictionary.** Not Material — MD3's tokens drag Material's
+visual opinions and component taxonomy along with them.
+
+### Tokens: three tiers
 
 | tier | example | visibility |
 |---|---|---|
-| primitive ramp | `--blue-9`, `--gray-3` | internal, nobody uses directly |
+| primitive ramp | `--blue-9`, `--gray-3` | internal, never used directly |
 | **semantic** | `--surface`, `--border-strong`, `--text-muted`, `--accent-solid-hover` | **the only public API** |
 | component (optional) | `--button-solid-bg` | recipe authors only |
 
-Adopt **Radix Colors' 12-step semantics** — each step has a defined job, so the
-numbers stop being arbitrary: 1–2 app bg · 3–5 component bg (base/hover/active) ·
-6–8 borders (subtle/default/hover) · 9–10 solid fills (9 = the brand color) ·
-11 low-contrast text · 12 high-contrast text. One brand hue in → correct,
-contrast-safe ramp out. Authored once per palette generator, not per component.
+**Radix's 12-step scale usage IS explicitly documented per step** (Alex asked;
+confirmed at radix-ui.com/colors/docs/palette-composition/understanding-the-scale):
+1 app bg · 2 subtle bg · 3 component bg normal · 4 hovered · 5 active/selected ·
+6 subtle borders/separators · 7 element border + focus ring · 8 hovered border ·
+9 solid bg (highest saturation) · 10 hovered solid · 11 low-contrast text ·
+12 high-contrast text. So it's 12 shades per hue with an assigned job each — you
+never pick a shade because it looks nice. That constraint is the "less
+flexibility" Alex wants, but it covers color only.
 
-Format: **W3C DTCG `.tokens.json` + Style Dictionary** — the actual interchange
-standard, and the mobile hedge (below).
+Format: **W3C DTCG `.tokens.json` + Style Dictionary** — the standard, and the
+mobile hedge.
 
-**Spacing:** no bigger scale. 4px grid + two roles — layout spacing (gap/space) as
-tokens, and component **density as a variant** (`relaxed` / `compact`), which
-saasblocks already did correctly.
+### Density: correction — it is BOTH a scale and a variant
 
-### Theme vs skin (correction to the original mental model)
+Earlier note said "density is a variant, not a token." Wrong for Alex's case (one
+roomy app, one info-dense app). Spectrum solves this with **scale**: the same
+semantic token resolves to different px under a different scale (Spectrum ships
+desktop vs mobile scales; Carbon discussed condensed/default/cozy modes). Three
+levels:
 
-- **Theme** = token values only. Runtime swap (`data-theme="client-a"`), nests, no
-  rebuild. Light/dark, per-client, per-hotel-property.
-- **Skin** = the recipe layer (`.css.ts`). Changes which classes are emitted.
-  Build/provider-time swap.
+1. **Semantic space tokens** — `space.100`, `space.200` (Atlassian style).
+2. **Scale = app-level density**, swapped like a theme:
+   `[data-density=compact] { --space-100: 6px; ... }`. Roomy app vs dense app is
+   one attribute, zero component changes.
+3. **Per-component density variant** — `relaxed | compact`, for exceptions (a data
+   table inside a roomy app). This is what saasblocks already had.
 
-**Push to make "wireframe/mocky" a THEME, not a skin** — tokenize `radius`,
-`shadow`, `border-style`, `border-width`, `font-family` and wireframe becomes
-`radius: 0, shadow: none, border-style: dashed, font: mono, all gray`. Falling back
-to skin-swapping means maintaining two component trees, which is the thing that
-kills design systems.
+**Hard prerequisite:** components must never hardcode spacing. saasblocks'
+`button.css.ts` has literal `px-4 py-2.5` — exactly what makes app-level density
+impossible. Everything routes through tokens.
+
+### Theme vs skin, and the dev-mode/prod-mode wireframe
+
+The distinction is only *what changes*:
+
+- **Theme** — token VALUES change, class strings identical.
+  `[data-theme=wireframe] { --radius-md: 0; --shadow-1: none; --font-sans: mono }`.
+  Nests natively, zero JS.
+- **Skin** — the RECIPE changes; different classes emitted for the same component.
+  `skins/wireframe/button` vs `skins/polished/button`.
+
+**Clarified 2026-08-24: Alex does NOT need skins side-by-side.** The use case is
+whole-app modes — a wireframe dev-mode running the full app, polished mode in
+production. That is much cheaper: it can resolve at **build time** (one import
+indirection aliased per build) rather than through React context with both skins
+in the prod bundle. Runtime cost zero, one skin ships.
+
+Two things that keep it cheap long-term:
+
+1. **One import seam, enforced** — components get styles through a single
+   indirection, with a lint rule banning direct skin imports and raw Tailwind
+   classes in component files. **The seam's shape is undecided** (path alias?
+   provider? something else) — depends on decisions not yet made.
+2. **The wireframe skin should be mostly generated, not hand-maintained.** If
+   tokens carry radius/shadow/border-style/font, wireframe is largely
+   `theme(wireframe)` plus a thin overlay for genuinely structural differences
+   (images → placeholder boxes, copy → lorem). Target a few hundred lines, not a
+   parallel copy of every recipe — otherwise every new component costs 2x forever.
+
+Bonus: wireframe dev-mode doubles as a **conformance test**. Any component that
+hardcoded a style instead of using a token will still look polished in wireframe
+mode, which makes violations visible. It also surfaces layout/hierarchy bugs that
+color and shadow hide.
+
+### Headless: Base UI, with a known gap
+
+Base UI is at **1.7.0**. Ships Combobox, Number Field, OTP Field, Field/Fieldset/
+Form, Autocomplete, Menubar, Drawer, Toolbar, etc. **Ships no Calendar, Date
+Picker, Date Field, or Time Field** — and that gap is unlikely to close soon.
+Alex prefers Base UI over React Aria Components and Ark UI. Accepted; the date
+picker becomes a build.
+
+**Build our own date picker — yes, if scoped right:**
+
+- **Don't write:** date arithmetic, DST, tz resolution, non-Gregorian calendars
+  (Hijri matters — ENABLE is Qatar) → use `@internationalized/date` (headless, no
+  React, tz-aware).
+- **Do write:** popover + calendar grid + segmented date field, over Base UI's
+  Popover/Field.
+- Effort estimate: date field + single-date calendar ≈ a few days; adding range,
+  time, and tz picker ≈ 1–2 weeks to production quality.
+- Good first build for the lab: exercises tokens, recipes, and the headless seam
+  at once.
+
+### Date boundary: ISO string, not `Date`
+
+Alex asked whether a `Date` object would do. No. `Date` is a bare timestamp with no
+timezone; it cannot represent "2026-08-23 09:00 **in Asia/Qatar**", and
+calendar-only dates (a checkout date) shift by a day depending on the reader's
+offset — the classic hotel-booking bug. Boundary is **ISO 8601 string + IANA tz
+id**; Temporal is the eventual internal type.
+
+### Formatting layer (Alex flagged as needed across the board)
+
+Needed: number formatter, number text input, currency formatter, date formatter.
+`Intl.NumberFormat` / `Intl.DateTimeFormat` handle output; the hard part is
+**parsing localized input back** (Arabic-Indic digits, `1.234,56`, currency
+symbols) — `@internationalized/number`'s `NumberParser`, same family as the date
+lib.
+
+Proposal: `<FormatProvider locale currency timeZone>` at app root + a `useFormat()`
+hook (`formatNumber`, `formatCurrency`, `formatDate`, `formatRelative`), with
+`NumberInput` / `CurrencyInput` / `DateField` built on it. One provider drives
+every formatter and input — the same seam that makes ENABLE's Arabic locale work.
 
 ### Renderer-agnosticism (elevated 2026-08-23)
 
-If hotel-backoffice is Go/templ, "stack-agnostic" is no longer a nice-to-have —
-React components can't serve it at all. saasblocks already anticipated this: it
-shipped **both** `apps/saasblocks-react` and `apps/saasblocks-html` over one shared
-Tailwind theme plugin.
+If hotel-backoffice is Go/templ, "stack-agnostic" is not a nice-to-have — React
+components can't serve it at all. saasblocks already anticipated this: it shipped
+**both** `apps/saasblocks-react` and `apps/saasblocks-html` over one shared Tailwind
+theme plugin.
 
-Implication: the **token layer + recipe layer (`*.css.ts` → plain class strings) is
-the actual product**; React components are one thin consumer of it. Class strings
-drop into templ unchanged. This also caps how much the headless library can be
-allowed to leak into the recipes (Go/templ gets no Base UI / React Aria — behavior
-would be hand-written or Alpine/HTMX-side).
-
-### Headless: the date picker is the tiebreaker
-
-| candidate | date picker + TZ | agnostic | note |
-|---|---|---|---|
-| Base UI | ✗ none | React only | nicest API, Radix/MUI lineage; would need react-day-picker + own TZ layer |
-| React Aria Components | ✓✓ (`@internationalized/date`, full IANA) | React only | best a11y available; heavier API surface |
-| Ark UI (Zag.js) | ✓ | ✓✓ React/Vue/Solid state machines | Alex already has `zag` cloned locally |
-
-Don't mix libraries. **First real experiment: build the same DatePicker on all
-three**, judged on the TZ story and on how much the recipe layer must know about
-the primitive.
-
-### Date-lib agnosticism = a rule, not a library
-
-The DS API boundary speaks **ISO 8601 string + IANA tz id**
-(`"2026-08-23T14:00:00Z"`, `"Asia/Qatar"`). Never accept or return a `Date`,
-dayjs, or luxon object. Internals use whatever the headless lib needs; consumers
-convert on their side. Temporal is the eventual internal representation.
+Implication: the **token layer + recipe layer (→ plain class strings) is the actual
+product**; React components are one thin consumer. Class strings drop into templ
+unchanged. This also caps how much the headless library may leak into recipes —
+Go/templ gets no Base UI, so behavior would be hand-written or Alpine/HTMX-side.
 
 ### TanStack / framework coupling
 
 Core components stay **dumb and controlled** (`value`/`onChange`/`error`/`name`).
 TanStack bindings ship as separate optional entries (`ds/tanstack-form`,
 `ds/tanstack-router`); router gets a `LinkProvider` at app root. Core never imports
-TanStack. Same pattern as saasblocks' `useField`-as-a-prop, modernized.
+TanStack. Same pattern as saasblocks' `useField`-as-a-prop, modernized. Base UI's
+Field/Form primitives help here.
 
 ### Mobile: don't unify runtimes
 
@@ -150,22 +250,27 @@ Flutter apps in production**, so RN adds a third runtime rather than unifying
 anything.
 
 Instead: **tokens are cross-platform, components are not.** DTCG `tokens.json` →
-Style Dictionary → CSS vars (web) + Dart `ThemeData` (Flutter, if ENABLE's apps ever
-adopt it) + JS object (if RN ever happens). One visual language, zero runtime coupling. This is the main
-reason to adopt DTCG on day one.
+Style Dictionary → CSS vars (web) + Dart `ThemeData` (Flutter) + JS object (if RN
+ever happens). Fluent 2 is the proof this works at scale. One visual language, zero
+runtime coupling. Main reason to adopt DTCG on day one.
 
-### Distribution nuance
+### Distribution
 
-Copy-paste suits **components** (clients must diverge). But copy-pasted **tokens**
-means clients drift on the visual language itself, defeating the point. Proposed
-hybrid: **token/theme layer = versioned package; component layer = copy-paste.**
-Shapes the repo layout, so decide early.
+Copy-paste suits **components** (clients must diverge); copy-pasted **tokens** means
+clients drift on the visual language itself, defeating the point. The shadcn
+registry (CLI v4) now makes the hybrid concrete: token/theme layer as a versioned
+package or `registry:base` payload, components pulled from a **private namespaced
+registry** so there is a canonical source and an update path.
 
 ## Open questions
 
 - **Stack** — leaning Tailwind (v4) for long-term stability over CSS-in-JS. Not
   formally decided.
-- Headless choice — pending the DatePicker bake-off above.
+- **The style-seam shape** — how a component gets its recipes so the skin can be
+  swapped (path alias at build time? provider? other?). Undecided; depends on
+  renderer-agnosticism and the distribution model.
+- Headless: **Base UI preferred** (Alex, 2026-08-24). Remaining question is the
+  date/time build, not the library.
 - Package-vs-copy split for tokens vs components.
 - Where the visual direction comes from (existing ENABLE look? fresh?).
 - **hotel-backoffice frontend: React or Go/templ?** Gates renderer-agnosticism.
@@ -176,8 +281,11 @@ Shapes the repo layout, so decide early.
 Two candidate starting points; **(a) recommended** because it determines whether one
 component tree suffices, the most expensive thing to get wrong:
 
-- (a) Token layer: DTCG + Radix 12-step + prove "wireframe as a theme".
-- (b) Headless bake-off with DatePicker as the test case.
+- (a) Token layer: DTCG + Spectrum/Atlassian structure + Radix 12-step color +
+  space scale, then prove how far "wireframe" gets on tokens alone before any skin.
+- (b) DatePicker build on Base UI + `@internationalized/date` (no longer a bake-off
+  — Base UI is chosen; this is now a build that also stress-tests the token/recipe
+  seam).
 
 ## Consumers
 
