@@ -262,6 +262,209 @@ registry (CLI v4) now makes the hybrid concrete: token/theme layer as a versione
 package or `registry:base` payload, components pulled from a **private namespaced
 registry** so there is a canonical source and an update path.
 
+### Styling engine: Tailwind for ENABLE, Panda as a lab experiment
+
+**Constraint (Alex, 2026-08-24): ENABLE must be Tailwind** — team aspect, not a
+technical call. So Tailwind is the primary target. Panda CSS is genuinely
+interesting and Alex wants to see how the two stack up.
+
+This is cheap because of the zero-style component architecture: **one `tokens`
+package, two recipe implementations** (`recipes-tw`, `recipes-panda`) over the same
+anatomies and the same component layer. One extra package buys a real comparison.
+
+**Panda assessment** (researched 2026-08-24):
+
+- Build-time codegen: `panda.config.ts` → generated local `styled-system/` folder →
+  static analysis of source → emitted CSS. No runtime.
+- Fits the architecture natively: `defineSlotRecipe`, `defineSemanticTokens` with
+  conditions, multi-theme output, DTCG-shaped token input are all first-class.
+  With Tailwind we hand-assemble three of those four.
+- **Non-React story is better than first assumed.** Config recipes emit stable
+  semantic class names (`button button--variant_solid button--size_lg`), and
+  `staticCss: { recipes: '*' }` pre-generates CSS for all recipe variants
+  regardless of JS usage. A templ/Rails/Django template can emit those names
+  against a prebuilt stylesheet — nicer than the Tailwind equivalent, where the
+  same button is a 40-utility soup the template must reproduce exactly. Panda docs
+  frame `'*'` as mainly for Storybook and warn about combinatorial blowup; for a
+  ~30-recipe design system that is the intended use.
+- **Risks:** v2 is in beta now (`2.0.0-beta.14`, Aug 15 2026) — start on 1.12
+  stable, expect a migration. Bus factor: 18 of the last 40 commits are Segun
+  Adebayo personally. **Chakra v3 does NOT use Panda** (only
+  `@pandacss/is-valid-prop`; it ships its own styled-system) — so "backed by
+  Chakra" is false; Park UI is the main downstream. Codegen is a papercut for
+  copy-paste consumers (`panda codegen`, gitignored `styled-system/`). Choosing
+  Panda alone would forfeit the shadcn component corpus.
+- Health check (Aug 2026): Tailwind 4.3.3 / 97.3k stars · Panda 1.12.0 / 6.2k ·
+  vanilla-extract 1.21.2 / 10.4k (adoption plateaued ~450k wk) · StyleX 0.19.0 /
+  9.8k (still pre-1.0) · UnoCSS 18.9k (API churn). None is a maintenance risk
+  near-term; StyleX and UnoCSS ruled out.
+
+### Component architecture: zero-style components + slot recipes
+
+**Alex's stance (2026-08-24), adopted:** components carry NO styling at all. Break
+every component into its shape (Base UI style) and let recipes supply everything.
+
+- **Every component needs a documented anatomy** — the named parts/slots. This is
+  the public API of the styling layer. Example: `Button → root, icon`;
+  `Field → root, label, control, description, error`;
+  `DatePicker → root, field, segment, trigger, popup, calendar, header, nav, grid,
+  weekday, cell, day`.
+- **Recipes become slot recipes**, returning a class string per slot.
+- **State travels via data attributes, not props.** Base UI already emits
+  `data-disabled`, `data-selected`, `data-highlighted`, `data-open`, `data-checked`.
+  Recipes style off those; the component never passes state into the recipe. Only
+  design variants (size, tone, variant, density) cross the boundary. This is what
+  keeps the recipe layer React-free and portable.
+- **Payoff: the wireframe skin can be generated, not written.** Because a skin is
+  just "functions returning class strings per slot", a JS Proxy can return a
+  dashed-outline fallback for any unknown component/slot, with a few hand-tuned
+  exceptions for layout-bearing slots. New components get wireframe support for
+  free — this kills the earlier "2x maintenance forever" objection and makes the
+  provider seam (Option 3) cheap enough to be the default rather than a fallback.
+- **Costs to watch:** over-slotting (a slot exists only when it can be styled
+  independently AND something plausibly would); and **layout has to live
+  somewhere** — `flex`, `grid-cols-7`, `gap` are structural, so either the
+  component keeps them (violating "zero style") or skins must honor a layout
+  contract. Leaning toward the latter, with layout-bearing slots documented.
+
+### Semantic tokens: the grammar
+
+Role first, then intent, then prominence, then state:
+
+```
+color.{role}.{intent}.{prominence}.{state}
+      bg      accent    solid       hover
+      fg      neutral   subtle      active
+      border  critical  muted
+              success / warning / info
+```
+
+Role-first because it reads correctly at the point of use (`bg-accent-solid`,
+`text-fg-muted`).
+
+**The mapping that hides the 12-step scale** — semantic names as a fixed function
+of Radix step, written once and applied to every intent:
+
+| semantic token | step |
+|---|---|
+| `color.bg.canvas` | 1 |
+| `color.bg.surface` | 2 |
+| `color.bg.{intent}.subtle` | 3 |
+| `color.bg.{intent}.subtle.hover` | 4 |
+| `color.bg.{intent}.subtle.active` | 5 |
+| `color.border.{intent}.subtle` | 6 |
+| `color.border.{intent}` | 7 |
+| `color.border.{intent}.hover` | 8 |
+| `color.bg.{intent}.solid` | 9 |
+| `color.bg.{intent}.solid.hover` | 10 |
+| `color.fg.{intent}` | 11 |
+| `color.fg.{intent}.strong` | 12 |
+
+Plus `color.fg.on-{intent}` (contrasting text on a solid fill — Radix ships this as
+a "contrast" color, not a step). Six intents × the table ≈ 60 generated tokens,
+and nobody ever types a number.
+
+**Structure: the semantic layer is written once; modes swap what it references.**
+
+```
+packages/tokens/src/
+  primitive/  color.light.tokens.json, color.dark.tokens.json, scale.tokens.json
+  semantic/   color.tokens.json (references only, mode-agnostic), space, typography
+  theme/      wireframe.tokens.json, compact.tokens.json (override semantic)
+```
+
+Dark mode needs zero changes in the semantic layer — `{gray.1}` resolves against
+whichever primitive set is loaded. Light/dark/high-contrast/per-client are all
+primitive swaps; the semantic tier is the stable contract.
+
+**Non-color semantics matter equally:** `space.100` (Atlassian convention: number =
+% of the 8px base; density = a theme repointing these), typography as **composite
+tokens** (one token = family+size+line-height+weight+tracking, preventing the
+classic size/line-height drift), `radius.{sm,md,lg,full}`,
+`shadow.{raised,overlay,sunken}` (named by elevation purpose, not blur),
+`border.width.*`, `duration.*`, `easing.*`, `z.*`.
+
+**Build output from one DTCG source:** `theme.css` (`:root` + `[data-theme]` +
+`[data-density]`), `tailwind.css` (`@theme`), `panda.tokens.ts`, and `tokens.d.ts`
+— the **contract**: a union of every semantic token name, asserted in CI so a theme
+missing a token fails the build instead of silently falling back.
+
+**Two rules:** (1) a semantic token exists because of a *reason it differs*, not a
+*place it is used* — `color.bg.button` is a tier-3 component token, not semantic;
+(2) components may only reference semantic tokens — a primitive in a recipe is a
+lint error.
+
+### Where the naming grammar actually comes from (attribution)
+
+Alex asked for sources. Separated by kind, because they are not equivalent:
+
+**Actual spec — one, and it does not cover naming.** W3C DTCG specifies the file
+format only (`$value`, `$type`, `$description`, groups, `{group.token}` aliases,
+composite types `typography`/`shadow`/`transition`/`border`). **Naming is
+explicitly out of scope.** No spec anywhere mandates `color.bg.accent.solid`.
+
+**Documented conventions from real systems:**
+
+- **GitHub Primer** (verified directly): `--[category]-[role]-[prominence]`.
+  Categories `fgColor`, `bgColor`, `borderColor`, `shadow`; roles `accent`,
+  `danger`, `success`, `attention`, `neutral`, `muted`, `default`; prominence
+  `emphasis` (high contrast) / `muted` (reduced) / `default` (base). Examples:
+  `--bgColor-danger-emphasis`, `--fgColor-default`. Component tier:
+  `--button-primary-bgColor-rest|hover|active`. **Role-first with a prominence
+  modifier is Primer's published grammar — the word "prominence" is theirs.**
+- **Atlassian**: `color.background.accent.blue.subtle`, `color.text.subtlest`,
+  `space.100`. Prominence is a ladder (subtlest → subtler → subtle → default →
+  bold → bolder → boldest). The `space.100` = 8px convention is confirmed; the
+  ladder terms are from memory (their token table is JS-rendered and could not be
+  fetched).
+- **Radix Colors**: the per-step usage table is verbatim from their docs, verified.
+- **Three tiers**: universal under different names — MD3 (reference/system/
+  component), Fluent 2 (global/alias/component), SLDS (primitive/alias/styling
+  hook), Carbon (background/layer/component).
+- **EightShapes / Nathan Curtis, "Naming Tokens in Design Systems"** (2020): the
+  cited taxonomy — namespace, object, base, modifier; category / concept /
+  property / variant / state / scale. Influential blog post, **not a standard**.
+
+**What is Claude's synthesis, not received wisdom** (flagged so it can be
+challenged):
+
+- The step→semantic-name mapping table above. The step *usages* are Radix's
+  documented ones; the names assigned to them are synthesis.
+- **State suffixes at the semantic tier** (`.hover`, `.active`) — a **real
+  divergence from Primer**, which keeps rest/hover/active at the *component* tier
+  only and leaves the semantic tier stateless. Primer's is arguably more
+  disciplined; ours means fewer component-tier tokens. **Open decision.**
+- "Prominence" stretched to cover `subtle | muted | solid` — mixes Primer's
+  vocabulary with Radix Themes' variant names.
+- The CI theme-contract check — from vanilla-extract's `createThemeContract`, not a
+  token naming convention.
+- The two rules above — a formulation of a widely-held principle, not a citation.
+
+**Standing recommendation: adopt Primer's grammar wholesale** rather than
+synthesizing one, so the naming decision is defensible by reference instead of
+argument. That leaves only the stateless-semantic-tier question to decide.
+
+Reference links: primer.style/foundations/primitives/color ·
+radix-ui.com/colors/docs/palette-composition/understanding-the-scale ·
+w3.org/community/design-tokens · atlassian.design/foundations/spacing ·
+medium.com/eightshapes-llc/naming-tokens-in-design-systems-9e86c7444676 ·
+panda-css.com/docs/concepts/recipes
+
+## Documentation stance (2026-08-24)
+
+**No "official" docs yet.** Notes and ideas live here in ctrl for now; the repo gets
+no `docs/` until the shape settles. Two things to carry forward when official docs
+do happen:
+
+1. **Every convention must cite its source** — spec vs. borrowed-from-a-real-system
+   vs. our own synthesis, kept distinct (the attribution section above is the
+   model). Alex explicitly wants references/inspiration recorded, not conventions
+   presented as received wisdom.
+2. **Component anatomy is a first-class documented artifact**, not an
+   implementation detail. It is the public API of the styling layer — slot names,
+   which slots are layout-bearing, and which data attributes each exposes. Needs a
+   consistent per-component format when docs happen.
+
 ## Open questions
 
 - **Stack** — leaning Tailwind (v4) for long-term stability over CSS-in-JS. Not
