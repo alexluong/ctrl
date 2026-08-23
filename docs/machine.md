@@ -35,7 +35,7 @@ budgets are all sized for it.
 
 ### hub orgs (as of 2026-07)
 
-- `alexluong` — personal apps & life: `ctrl` (ops hub), `alexluong.com`, `cv`, `dotfiles`, `fitjournal`, feed (planned), many explorations/POCs
+- `alexluong` — personal apps & life: `ctrl` (ops hub), `alexluong.com`, `cv`, `dotfiles`, `fitjournal`, `design-system-lab`, feed (planned), many explorations/POCs
 - `collielab` — (org being established 2026-07) personal infrastructure: `infra` (VM/terraform/services; transfer of `alexluong/collielab`), `auth` (IdP login/admin UI, planned), `media` (arr migration, later)
 - `colliestudio` — professional, public-facing company (Collie Studio LLC): `authkit` (planned)
 - `ebutler-qa` — EButler (work): enable-backend, enable_loyalty_app, ebchat-saas-backend, etc.
