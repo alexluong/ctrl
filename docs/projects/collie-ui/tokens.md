@@ -309,3 +309,16 @@ writing an empty ramp.
 Warm ramps (sand/bronze/tomato/grass), larger radius, a humanist face, and a
 brown-tinted shadow — one file, no forked components. That is what "the hotel app
 and ENABLE share a design system" concretely means.
+
+## Component-tier tokens (2026-08-25)
+
+`semantic.tokens.json` now has a `button` group — the first component-tier
+tokens. Their values may reference the tone variables the recipe sets
+(`var(--btn-subtle)`); custom properties resolve at use time, so a theme-level
+value can point at a per-instance variable and it lands correctly.
+
+They exist for one reason: to move a decision out of the recipe so a theme can
+reach it. Sandstone uses that to make `secondary` a tonal fill instead of an
+outline. See `architecture.md` for why this kills most of the "skin" concept.
+
+Guardrail: each one is permanent public API. Add when a second theme needs it.
