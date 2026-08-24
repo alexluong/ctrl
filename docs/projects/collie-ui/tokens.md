@@ -240,3 +240,23 @@ instead of a pile of per-component overrides.
 
 Ramp generation from a single hue is not built yet — current ramps are hand-written
 OKLCH approximations of Radix gray/blue/red/amber/green.
+
+
+## Ramps are the real Radix scales now (2026-08-24)
+
+Hand-written OKLCH approximations were replaced by the actual `@radix-ui/colors`
+values, via a committed generator (`packages/tokens/scripts/sync-radix.mjs`). The
+ramps stay checked in rather than read at build time, so a generated brand ramp can
+replace a Radix one per theme without touching the build.
+
+Two things this surfaced:
+
+- **Step 9 → 10 is deliberately a small step.** `blue9 #0090ff → blue10 #0588f0`,
+  `gray9 #8d8d8d → gray10 #838383`. Alex noticed hover looked nearly identical to
+  rest; that is Radix's intent (a hover shouldn't jump), amplified by the earlier
+  hand-written ramps having compressed it further. A more assertive hover is a
+  deliberate deviation, not a bug fix.
+- **`fg.on-{tone}` is per-tone data, not a constant.** `amber9` is `#ffc53d` — a
+  light yellow — so white text on a solid warning fill is unreadable. `on-warning`
+  is now `{gray.12}`. Radix documents amber/yellow/lime/mint/sky as needing dark
+  foreground on step 9. Any generated brand ramp must decide this too.

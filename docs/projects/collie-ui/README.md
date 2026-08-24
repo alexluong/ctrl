@@ -66,6 +66,18 @@ Same DX, different UI, across unrelated products:
   scales, so even code that does reach for a utility can only name a design token;
   the one remaining escape hatch is arbitrary values (`p-[13px]`), which app code
   may never use.
+- **2026-08-24 — a button's tone list is short, and status tones are not action
+  tones.** A button's tone communicates *the consequence of clicking*, and actions
+  have roughly three consequences: ordinary, emphasised, destructive. `caution`,
+  `positive`, `info` and `promote` describe a state of the world, not a
+  consequence — a green "success" button is incoherent, and a "caution primary"
+  button is really either a `critical` action or one that needs a confirmation
+  dialog. Those tones belong on Badge / Alert / Banner / Toast. Braid reaches the
+  same conclusion: its button tones are `brandAccent | formAccent | critical |
+  neutral`. **Alex (2026-08-24): the brand-accent-as-a-button-tone idea doesn't
+  land** — so Button's tones are likely `neutral | accent | critical`, with the
+  brand/form accent distinction living at the theme level rather than in the
+  component API. Not finalised.
 - **2026-08-24 — Braid (SEEK) is the reference system.** Same philosophy, different
   mechanism; MIT, so structure and values can be ported. Adopt its vocabulary and
   shape, keep our generation and format. Detail in `tokens.md`.
@@ -115,7 +127,13 @@ do happen:
 - **hotel-backoffice frontend: React or Go/templ?** Gates renderer-agnosticism.
 - If components are copied, how do fixes propagate to projects that already copied?
 
-## Next step
+## Next step (current)
+
+**Layout primitives + a POC space** — see `poc.md`. Required by the closed-system
+goal, and the only way to evaluate the mechanism against real screens rather than
+in the abstract.
+
+## Earlier framing
 
 Two candidate starting points; **(a) recommended** because it determines whether one
 component tree suffices, the most expensive thing to get wrong:
