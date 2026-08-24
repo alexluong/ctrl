@@ -199,6 +199,13 @@ one formatter object or several: decide at build time.
 the source; swatches reference the live CSS variables, so the theme and density
 toolbars repaint them.
 
+## Storybook gotchas found
+
+- **MDX tables need `remark-gfm`.** Without it, GFM tables render as literal text.
+  Wired through `addon-docs` options in `.storybook/main.ts`.
+- **Storybook config changes need a dev-server restart**; token and component
+  changes hot-reload.
+
 ## Documentation approach
 
 Alex wants a space documenting the full system — anatomy, naming conventions,
