@@ -1,6 +1,6 @@
 # Collie UI: POC space & layout primitives
 
-Planned 2026-08-24. Nothing built yet.
+Planned 2026-08-24. Built 2026-08-24 — results at the bottom.
 
 ## Why
 
@@ -52,3 +52,68 @@ that list is the actual output of the exercise.
 
 These double as the "share a full UX with the team" surface Alex asked for: a POC
 screen rendered in Storybook, in both themes, at any viewport.
+
+## Results (2026-08-24)
+
+Both screens were built and **neither page file contains a single `className`**.
+The closed-system goal holds for these two shapes of screen.
+
+### The bug the exercise found
+
+Button's tone variants were built by interpolation:
+
+```ts
+const tone = (name) => `[--btn-solid:var(--collie-color-${name}-solid)]`;
+```
+
+Tailwind finds utilities by **scanning source text**, so none of those classes
+were ever generated. Every tone had `--btn-solid` unset — the tone axis had been
+dead the whole time, and the docs page that showed tones was reading token JSON,
+so nothing looked wrong. The only such class in the built CSS came from a code
+sample inside an MDX doc.
+
+Rule from this: **recipes write every class out in full.** A shared constant is
+fine (its literal text is in the file); interpolation is not. Worth a lint rule
+later.
+
+### Tokens that had to exist before layout could
+
+Tailwind's own defaults were leaking in for anything we had not tokenised —
+`text-sm`, `font-medium` and `leading-normal` were all Tailwind's, not ours. Added
+as semantic tiers, with the matching namespace resets so the defaults no longer
+compile: `text` (font size), `leading`, `weight`, `container` (max widths), and
+`space.0 / 400 / 600` for page-level gutters.
+
+Verified: `p-4` and `bg-blue-500` do not compile; `p-400` does.
+
+### Data point for the space-naming question
+
+Numeric token keys (`100`, `200`) become **number** keys in TypeScript, which
+forced `<Stack space={200}>` — braces at every call site. Quoting the keys in the
+recipe (`"200"`) restores `space="200"`. So the numeric scale is usable in JSX,
+but only because of that detail; a t-shirt scale would never have hit it.
+
+### Primitives the screens demanded
+
+Beyond the planned four: `Container` (max-width), `Divider`, `Text`, `Heading`,
+`Badge`, `TextField` / `TextAreaField` / `SelectField` / `CheckboxField`, and
+**`Table`** — Braid has no table, but a back-office system (ENABLE, hotel) cannot
+do without one. Two smaller gaps surfaced mid-build: `Box` needed an `overflow`
+variant (horizontal table scroll), and fields needed `hideLabel` (a filter bar
+wants the label for screen readers only).
+
+### Tone subsetting, tested for real
+
+Button and Badge became the first two consumers of the tone system, and they want
+different subsets. Button takes `neutral | accent | critical` — the tones an
+*action* can have. Badge takes all five, because `warning` and `success` describe
+the state of a thing, not the intent of a click. Same tokens, different reachable
+subset per component. This is now documented on the Hierarchy docs page.
+
+### Still open after the exercise
+
+- Breakpoints are not tokenised — `Columns collapseBelow` uses Tailwind's default
+  `sm`/`md`. The responsive-syntax question above is still unanswered.
+- `min-h-[6rem]` on the textarea is a raw value with no token behind it.
+- No focus-ring token; focus borrows `border-{tone}`.
+- No icon story at all — `leading`/`trailing` on Button take any node.
