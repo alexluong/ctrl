@@ -1,4 +1,4 @@
-# design-system-lab: architecture
+# Collie UI: architecture
 
 ### Theme vs skin, and the dev-mode/prod-mode wireframe
 

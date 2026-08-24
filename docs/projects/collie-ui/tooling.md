@@ -1,4 +1,4 @@
-# design-system-lab: tooling & package layout
+# Collie UI: tooling & package layout
 
 Decided/proposed 2026-08-24. Nothing built yet.
 
@@ -131,8 +131,9 @@ plugin story is not there yet), plus `eslint-plugin-boundaries` or
 `no-restricted-imports` zones — or `dependency-cruiser` as a separate graph check.
 **Prettier + `prettier-plugin-tailwindcss`** for class sorting, configured to sort
 inside `tv()`/`cva()` calls too. Configure **Tailwind IntelliSense** to recognise
-those calls early — small setting, disproportionate DX. Also `syncpack` (dep
-version consistency) and `knip` (dead exports — a DS accumulates them fast).
+those calls early — small setting, disproportionate DX. **Deferred (2026-08-24):**
+`syncpack` (dep version consistency) and `knip` (dead exports) — useful later, not
+worth setting up now.
 
 ## Naming: `formatting` → probably `intl`
 
@@ -168,7 +169,7 @@ one formatter object or several: decide at build time.
 Alex wants a space documenting the full system — anatomy, naming conventions,
 principles, token reference. Cheapest-first plan:
 
-1. **Start with Storybook Docs (MDX)** — conceptual pages (naming grammar, anatomy
+1. **Storybook Docs (MDX) to start — agreed 2026-08-24.** Conceptual pages (naming grammar, anatomy
    rules, theming model, contribution rules) plus autodocs per component from
    types. Zero extra infra, colocated, one dev server.
 2. **Graduate to a dedicated site** (Astro Starlight or Fumadocs) only if the prose
