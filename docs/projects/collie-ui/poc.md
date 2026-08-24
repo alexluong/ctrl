@@ -256,3 +256,19 @@ is discoverable rather than folk knowledge.
 
 GCP also draws a histogram of matching rows above the results, and clicking a bar
 narrows the range. That needs a chart primitive, which the system does not have.
+
+## Theme exploration (2026-08-24)
+
+Added **midnight** and **sandstone** alongside polished and wireframe, plus:
+
+- **Foundations/Theming** docs page, which renders the two theme files *verbatim*
+  by importing them with `?raw` — the docs cannot drift from the source.
+- **Foundations/Themes** story: the same reservation screen rendered side by side
+  in all four themes, and a density × theme grid.
+- Playroom now renders four frames, one per theme.
+
+Both docs and story restate the rule the portal bug taught: the theme attribute
+belongs on the document root. A subtree *can* carry its own theme — that is how
+the gallery works — but an app that does it will lose its first modal.
+
+See `tokens.md` for the `$ramps` mechanism and the Radix dark-ramp bug.
