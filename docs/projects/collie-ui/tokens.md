@@ -260,3 +260,52 @@ Two things this surfaced:
   light yellow — so white text on a solid warning fill is unreadable. `on-warning`
   is now `{gray.12}`. Radix documents amber/yellow/lime/mint/sky as needing dark
   foreground on step 9. Any generated brand ramp must decide this too.
+
+## Themes: mechanism settled (2026-08-24)
+
+Four themes now ship: **polished** (`:root` default), **midnight** (dark),
+**sandstone** (warm), **wireframe**. The build was reworked to make adding one a
+single-file operation.
+
+### `$ramps` — the shorthand that makes theming cheap
+
+A theme file may declare `$ramps: { gray: "grayDark", blue: "blueDark", ... }`.
+The build expands that into the per-step overrides before Style Dictionary sees
+it, then rebuilds **the whole semantic layer against the theme's sources**. So:
+
+- A theme never restates tokens it does not change.
+- A theme that repoints one ramp gets every token derived from it for free —
+  midnight is five lines of `$ramps` and changes sixty colour tokens.
+- A theme can still override semantic tokens directly (radius, font, shadow).
+
+Previously each theme emitted only the tokens it declared and inherited the rest
+from `:root`; now each emits a complete block. More CSS, no accidental
+inheritance.
+
+### Build discovers themes from the filesystem
+
+`src/theme/*.tokens.json` → `[data-theme="<name>"]`;
+`src/density/*.tokens.json` → `[data-density="<name>"]` (compact moved there).
+Adding a theme means adding a file — no build edit, and the watcher picks it up
+live.
+
+### The one thing a polarity flip cannot derive
+
+`fg.on-warning`. Amber's solid step stays light in the dark ramp, so text on it
+must go *dark* while every other `on-*` goes light. Midnight overrides that one
+token explicitly. Worth remembering as the example of why `on-{tone}` is per-tone
+data rather than a computed contrast.
+
+### Bug found: every Radix dark ramp was empty
+
+`sync-radix.mjs` read `radix.grayDark["grayDark1"]`, but Radix's dark exports key
+their steps by the **base** hue name — `radix.grayDark["gray1"]`. Every dark ramp
+serialised as `{}` and only surfaced as an unresolved-reference error once a
+theme actually pointed at one. The script now throws on a missing step instead of
+writing an empty ramp.
+
+### Sandstone is the "different product, same system" proof
+
+Warm ramps (sand/bronze/tomato/grass), larger radius, a humanist face, and a
+brown-tinted shadow — one file, no forked components. That is what "the hotel app
+and ENABLE share a design system" concretely means.
