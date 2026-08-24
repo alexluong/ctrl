@@ -186,3 +186,73 @@ token pages, plus stories for Overlays, Tabs, Layout, Typography and Fields.
   (the tenant list hand-composes one from Buttons and Text).
 - `Table` has no sorting, selection state or sticky header — the tenant list
   fakes bulk selection with `defaultChecked`.
+
+## Time range picker + the date boundary, settled (2026-08-24)
+
+Alex asked for a GCP-Logs-style time range picker on the order list. Building it
+forced the date/timezone boundary question that had been deferred since the
+stack discussion, so that is now decided **in code** rather than in prose.
+
+### New package: `@collie/format`
+
+No React, no Tailwind, no tokens — the one package a non-React target could use
+unchanged, and pure enough to test without a renderer.
+
+- `Instant = string` (ISO 8601) and `TimeZone = string` (IANA), kept separate.
+  **No `Date` crosses a component boundary.** A `Date` silently carries the
+  viewer's zone at format time, and nothing about it distinguishes a correctly
+  zoned value from an accidentally local one.
+- `formatDateTime(instant, { timeZone })` — zone is **required**, no default,
+  because the default anyone would pick (the browser's) is the assumption that
+  breaks for a team split across two countries.
+- `zonedToInstant(wallClock, timeZone)` — what a form field means, two passes so
+  DST is right. Verified against Detroit summer/winter, Saigon, midnight, and the
+  fall-back night. On fall-back the same wall clock happens twice; we take the
+  first occurrence, and that choice is written down in the docs.
+- `formatCurrency(minorUnits, currency)` — money is an integer, never a float.
+  Minor-unit count comes from `Intl` per currency, so JPY (0) and KWD (3) work
+  with no table of ours.
+- `formatNumber`, `formatPercent`, `formatRelative(instant, now)` — `now` is a
+  parameter, so it stays pure.
+
+### The range value is a description, not a window
+
+```ts
+{ kind: "relative", amount: 6, unit: "hour" }
+{ kind: "absolute", start, end }
+{ kind: "around", at, amount, unit }
+```
+
+"Last 6 hours" asked twice must mean two different windows, so the picker returns
+the description and `resolveTimeRange(range, now)` collapses it. Freezing a
+window at pick time makes a saved view quietly wrong the next morning. Taking
+`now` as an argument also makes every screen using a range deterministic to
+render — the order list passes a fixed `NOW` and renders identically every time.
+
+### The component
+
+`TimeRangePicker`, on Base UI Popover, with GCP's three modes: **Recent**
+(presets), **Custom** (two `datetime-local` fields), **Around a time**
+(timestamp ± window). Trigger reads `Last day · GMT+7`; the footer shows the
+resolved window and a zone selector, and switching zones visibly moves every
+timestamp on the page.
+
+Order list now stores instants and minor units and formats at render. Verified
+in the rendered HTML: `12:53Z` shows as `Aug 23, 2026, 7:53 PM` in
+`Asia/Ho_Chi_Minh`.
+
+### Bug the smoke test caught
+
+`formatDateTime` with `style: "long"` threw at render: `Intl.DateTimeFormat`
+rejects `dateStyle`/`timeStyle` combined with `timeZoneName`. Typechecking cannot
+see that — the smoke task paid for itself the day it was added.
+
+### New docs page
+
+**Foundations/Dates & money** states the boundary and the reasoning, so the rule
+is discoverable rather than folk knowledge.
+
+### Still missing on the order list
+
+GCP also draws a histogram of matching rows above the results, and clicking a bar
+narrows the range. That needs a chart primitive, which the system does not have.
