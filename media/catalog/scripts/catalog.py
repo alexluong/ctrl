@@ -7,6 +7,7 @@ Usage:
     ./catalog.py scan downloads [--source blue4|red4] [--dry-run]
     ./catalog.py import [--dry-run]
     ./catalog.py link [--type movies|movies4k|tv|tv4k|all] [--dry-run]
+    ./catalog.py refresh [--server plex|jellyfin|all] [--type movies|tv|all]
     ./catalog.py status
     ./catalog.py prune [--dry-run]
 """
@@ -16,6 +17,8 @@ import json
 import os
 import re
 import sys
+import urllib.parse
+import urllib.request
 from pathlib import Path
 from datetime import datetime
 from typing import Optional, Dict, Any, List, Set
@@ -55,6 +58,26 @@ LIBRARIES = {
 CATALOG_DIR = Path(__file__).parent.parent
 DOWNLOADS_JSON = CATALOG_DIR / "downloads.json"
 CATALOG_JSON = CATALOG_DIR / "catalog.json"
+
+# =============================================================================
+# Media server config (library refresh)
+# =============================================================================
+
+# Plex runs natively on the host (macOS app).
+PLEX_BASE = "http://localhost:32400"
+PLEX_TOKEN_FILE = Path.home() / "Library/Application Support/Plex Media Server/.LocalAdminToken"
+# Plex library section ids, grouped by content type.
+PLEX_SECTIONS = {
+    "movies": [1, 5],  # Movies, Movies 4k
+    "tv": [2, 6],      # TV Shows, TV Shows 4k
+}
+PLEX_SECTION_NAMES = {1: "Movies", 5: "Movies 4k", 2: "TV Shows", 6: "TV Shows 4k"}
+
+# Jellyfin runs in a Docker container, reached on host port 8096.
+JELLYFIN_BASE = "http://localhost:8096"
+JELLYFIN_ENV = CATALOG_DIR.parent / ".env"  # media/.env, next to the compose files
+# CollectionType per content type, used to match VirtualFolders.
+JELLYFIN_COLLECTION_TYPES = {"movies": "movies", "tv": "tvshows"}
 
 # Patterns that indicate TV show
 TV_PATTERNS = [
@@ -977,6 +1000,177 @@ def cmd_prune(args):
 
 
 # =============================================================================
+# Command: refresh (trigger Plex + Jellyfin library scans)
+# =============================================================================
+
+def parse_env_file(path: Path) -> Dict[str, str]:
+    """Minimal .env parser: KEY=VALUE lines, ignore comments/blanks."""
+    env: Dict[str, str] = {}
+    if not path.exists():
+        return env
+    with open(path) as f:
+        for line in f:
+            line = line.strip()
+            if not line or line.startswith("#") or "=" not in line:
+                continue
+            key, _, value = line.partition("=")
+            key = key.strip()
+            value = value.strip()
+            # Strip matching surrounding quotes.
+            if len(value) >= 2 and value[0] == value[-1] and value[0] in ("'", '"'):
+                value = value[1:-1]
+            env[key] = value
+    return env
+
+
+def refresh_plex(content_types: List[str]) -> None:
+    """Trigger a full-library scan of the relevant Plex sections."""
+    if not PLEX_TOKEN_FILE.exists():
+        print(f"  {RED}✗{NC} Plex: token file not found ({PLEX_TOKEN_FILE})")
+        return
+    token = PLEX_TOKEN_FILE.read_text().strip()
+    if not token:
+        print(f"  {RED}✗{NC} Plex: token file is empty")
+        return
+
+    for ctype in content_types:
+        for section in PLEX_SECTIONS[ctype]:
+            name = PLEX_SECTION_NAMES.get(section, f"section {section}")
+            url = f"{PLEX_BASE}/library/sections/{section}/refresh?X-Plex-Token={urllib.parse.quote(token)}"
+            try:
+                req = urllib.request.Request(url)
+                with urllib.request.urlopen(req, timeout=10) as resp:
+                    code = resp.getcode()
+                if code == 200:
+                    print(f"  {GREEN}✓{NC} Plex: {name} (section {section}) scan triggered")
+                else:
+                    print(f"  {YELLOW}?{NC} Plex: {name} (section {section}) returned HTTP {code}")
+            except Exception as e:
+                print(f"  {RED}✗{NC} Plex: {name} (section {section}) failed: {e}")
+
+
+def jellyfin_authenticate(base: str, user: str, password: str) -> str:
+    """Authenticate to Jellyfin, returning an access token."""
+    body = json.dumps({"Username": user, "Pw": password}).encode()
+    req = urllib.request.Request(
+        f"{base}/Users/AuthenticateByName",
+        data=body,
+        method="POST",
+    )
+    req.add_header("Content-Type", "application/json")
+    req.add_header(
+        "Authorization",
+        'MediaBrowser Client="cli", Device="cli", DeviceId="cli", Version="1.0"',
+    )
+    with urllib.request.urlopen(req, timeout=15) as resp:
+        data = json.load(resp)
+    token = data.get("AccessToken")
+    if not token:
+        raise RuntimeError("no AccessToken in auth response")
+    return token
+
+
+def jellyfin_get_virtual_folders(base: str, token: str) -> List[Dict[str, Any]]:
+    """Fetch Jellyfin VirtualFolders (library id + metadata)."""
+    req = urllib.request.Request(f"{base}/Library/VirtualFolders")
+    req.add_header("X-Emby-Token", token)
+    with urllib.request.urlopen(req, timeout=15) as resp:
+        return json.load(resp)
+
+
+def refresh_jellyfin(content_types: List[str]) -> None:
+    """Trigger a full-library scan of the relevant Jellyfin virtual folders."""
+    env = parse_env_file(JELLYFIN_ENV)
+    user = env.get("JELLYFIN_ADMIN_USER")
+    password = env.get("JELLYFIN_ADMIN_PASS")
+    if not user or not password:
+        print(f"  {RED}✗{NC} Jellyfin: JELLYFIN_ADMIN_USER/PASS missing from {JELLYFIN_ENV}")
+        return
+
+    try:
+        token = jellyfin_authenticate(JELLYFIN_BASE, user, password)
+    except Exception as e:
+        print(f"  {RED}✗{NC} Jellyfin: authentication failed: {e}")
+        return
+
+    try:
+        folders = jellyfin_get_virtual_folders(JELLYFIN_BASE, token)
+    except Exception as e:
+        print(f"  {RED}✗{NC} Jellyfin: could not list libraries: {e}")
+        return
+
+    for ctype in content_types:
+        want_collection = JELLYFIN_COLLECTION_TYPES[ctype]
+        label = "Movies" if ctype == "movies" else "TV Shows"
+
+        # Match by CollectionType first, fall back to name.
+        match = next(
+            (f for f in folders if (f.get("CollectionType") or "").lower() == want_collection),
+            None,
+        )
+        if match is None:
+            match = next(
+                (f for f in folders if (f.get("Name") or "").lower() == label.lower()),
+                None,
+            )
+        if match is None or not match.get("ItemId"):
+            print(f"  {RED}✗{NC} Jellyfin: no {label} library found")
+            continue
+
+        item_id = match["ItemId"]
+        name = match.get("Name") or label
+        url = (
+            f"{JELLYFIN_BASE}/Items/{item_id}/Refresh"
+            "?Recursive=true&MetadataRefreshMode=Default&ImageRefreshMode=Default"
+        )
+        try:
+            req = urllib.request.Request(url, data=b"", method="POST")
+            req.add_header("X-Emby-Token", token)
+            with urllib.request.urlopen(req, timeout=15) as resp:
+                code = resp.getcode()
+            if code in (200, 204):
+                print(f"  {GREEN}✓{NC} Jellyfin: {name} library scan triggered")
+            else:
+                print(f"  {YELLOW}?{NC} Jellyfin: {name} returned HTTP {code}")
+        except Exception as e:
+            print(f"  {RED}✗{NC} Jellyfin: {name} scan failed: {e}")
+
+
+def cmd_refresh(args):
+    """Trigger Plex and/or Jellyfin library scans for movies and/or TV."""
+
+    if args.type == "all":
+        content_types = ["movies", "tv"]
+    else:
+        content_types = [args.type]
+
+    servers = ["plex", "jellyfin"] if args.server == "all" else [args.server]
+
+    print()
+    print("=" * 50)
+    print("Refresh Libraries")
+    print("=" * 50)
+    print(f"Servers: {', '.join(servers)}  Types: {', '.join(content_types)}")
+
+    if "plex" in servers:
+        print(f"\n{BLUE}Plex:{NC}")
+        try:
+            refresh_plex(content_types)
+        except Exception as e:
+            print(f"  {RED}✗{NC} Plex: unexpected error: {e}")
+
+    if "jellyfin" in servers:
+        print(f"\n{BLUE}Jellyfin:{NC}")
+        try:
+            refresh_jellyfin(content_types)
+        except Exception as e:
+            print(f"  {RED}✗{NC} Jellyfin: unexpected error: {e}")
+
+    print("=" * 50)
+    return 0
+
+
+# =============================================================================
 # Helpers
 # =============================================================================
 
@@ -1033,6 +1227,11 @@ def main():
     p_link.add_argument("--type", choices=["movies", "movies4k", "tv", "tv4k", "all"])
     p_link.add_argument("--dry-run", action="store_true")
 
+    # refresh
+    p_refresh = subparsers.add_parser("refresh", help="Trigger Plex/Jellyfin library scans")
+    p_refresh.add_argument("--server", choices=["plex", "jellyfin", "all"], default="all")
+    p_refresh.add_argument("--type", choices=["movies", "tv", "all"], default="all")
+
     # status
     subparsers.add_parser("status", help="Show status")
 
@@ -1058,6 +1257,8 @@ def main():
         return cmd_import(args)
     elif args.command == "link":
         return cmd_link(args)
+    elif args.command == "refresh":
+        return cmd_refresh(args)
     elif args.command == "status":
         return cmd_status(args)
     elif args.command == "prune":

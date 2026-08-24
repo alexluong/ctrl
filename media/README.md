@@ -386,6 +386,7 @@ The `catalog.py` script in `catalog/scripts/` automates the tracking pipeline:
 ./catalog.py scan downloads     # Match completed downloads to torrents
 ./catalog.py import             # Parse metadata from filenames → catalog.json
 ./catalog.py link               # Create hardlinks to media library
+./catalog.py refresh            # Trigger Plex + Jellyfin library scans (--server, --type)
 ./catalog.py status             # Show pending/linked counts
 ./catalog.py prune              # Remove entries for deleted torrents
 ```
