@@ -1,21 +1,26 @@
-# Project: design-system-lab
+# Project: Collie UI
 
-Exploration of a personal/reusable design system with swappable themes.
-Repo: `hub/alexluong/design-system-lab` (code-only + consumer contract in its
-`docs/`; all notes here). Remote: github.com/alexluong/design-system-lab (private).
+> **Notice:** Collie UI is an *opinionated experiment*, not a finished product. It
+> exists to test a specific set of ideas — zero-style components over slot recipes,
+> DTCG-driven semantic tokens, whole-app theme and skin swapping, one system serving
+> unrelated products. Expect it to change shape. Nothing here is stable API.
 
-**Name:** "lab" = deliberately an exploration. Not committed to being *the* design
-system yet.
+A reusable design system with swappable themes, meant to serve unrelated products
+from one codebase. Repo: `hub/alexluong/collie-ui` (code-only; all notes here).
+Remote: github.com/alexluong/collie-ui (private).
 
-**Status:** empty repo + remote created. Design discussion in progress; stack not
-chosen; nothing built. (2026-08-23)
+**Name:** renamed from `design-system-lab` on 2026-08-24. Kept in the `alexluong`
+org for now — worth revisiting whether it belongs under `colliestudio`, since
+`docs/machine.md` reserves that org for things carrying the company's name.
 
-**Doc map** — this project's notes are a directory (see `docs/workflow.md`):
+**Status:** empty repo + remote created. Design discussion in progress; stack
+converging (Tailwind primary, Panda as an experiment); nothing built. (2026-08-24)
+
+**Doc map** — Collie UI's notes are a directory (see `docs/workflow.md`):
 
 | file | holds |
 |---|---|
 | `README.md` | what/why, consumers, decisions, open questions, next step |
-| `prior-art.md` | saasblocks (2022) — what to carry forward |
 | `stack.md` | styling engine, headless, date/tz, i18n, renderer & platform reach |
 | `tokens.md` | token systems surveyed, semantic grammar, density, attribution |
 | `architecture.md` | zero-style components, anatomy, themes vs skins |

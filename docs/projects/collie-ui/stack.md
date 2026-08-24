@@ -1,13 +1,13 @@
-# design-system-lab: stack
+# Collie UI: stack
 
-### What has actually advanced since saasblocks (2022)
+### State of the ecosystem (2026-08)
 
-Four of the old stack's assumptions are obsolete, not merely dated:
+Four assumptions that held a few years ago are now obsolete, not merely dated:
 
 1. **Tailwind v4 CSS-first `@theme`** — tokens compile to real CSS custom
-   properties, OKLCH color. v3 baked the theme into a JS object at build time
-   (which is why `tailwind-saasblocks` had to exist); v4 themes are
-   runtime-swappable var sets. That plugin no longer needs to be written.
+   properties, OKLCH color. v3 baked the theme into a JS object at build time, so
+   theming meant writing a Tailwind plugin; v4 themes are runtime-swappable var
+   sets and no such plugin is needed.
 2. **The shadcn registry became a distribution mechanism.** CLI v4 (March 2026):
    namespaced private registries with header auth, `--monorepo`, and
    `registry:base` distributing an **entire design system as one payload**. This
@@ -106,9 +106,8 @@ every formatter and input — the same seam that makes ENABLE's Arabic locale wo
 ### Renderer-agnosticism (elevated 2026-08-23)
 
 If hotel-backoffice is Go/templ, "stack-agnostic" is not a nice-to-have — React
-components can't serve it at all. saasblocks already anticipated this: it shipped
-**both** `apps/saasblocks-react` and `apps/saasblocks-html` over one shared Tailwind
-theme plugin.
+components can't serve it at all. The shape that works is two renderers over one
+shared token + recipe layer: a React package and a plain-HTML/class-string package.
 
 Implication: the **token layer + recipe layer (→ plain class strings) is the actual
 product**; React components are one thin consumer. Class strings drop into templ
@@ -120,8 +119,9 @@ Go/templ gets no Base UI, so behavior would be hand-written or Alpine/HTMX-side.
 Core components stay **dumb and controlled** (`value`/`onChange`/`error`/`name`).
 TanStack bindings ship as separate optional entries (`ds/tanstack-form`,
 `ds/tanstack-router`); router gets a `LinkProvider` at app root. Core never imports
-TanStack. Same pattern as saasblocks' `useField`-as-a-prop, modernized. Base UI's
-Field/Form primitives help here.
+TanStack. The general pattern is injection — a component receives `useField` (or a
+`Link`) rather than importing a form or router library. Base UI's Field/Form
+primitives help here.
 
 ### Mobile: don't unify runtimes
 

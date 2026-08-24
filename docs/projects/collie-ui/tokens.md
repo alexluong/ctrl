@@ -1,4 +1,4 @@
-# design-system-lab: tokens
+# Collie UI: tokens
 
 ### Established token systems (full systems, not just color)
 
@@ -51,11 +51,11 @@ levels:
    `[data-density=compact] { --space-100: 6px; ... }`. Roomy app vs dense app is
    one attribute, zero component changes.
 3. **Per-component density variant** — `relaxed | compact`, for exceptions (a data
-   table inside a roomy app). This is what saasblocks already had.
+   table inside a roomy app).
 
-**Hard prerequisite:** components must never hardcode spacing. saasblocks'
-`button.css.ts` has literal `px-4 py-2.5` — exactly what makes app-level density
-impossible. Everything routes through tokens.
+**Hard prerequisite:** components must never hardcode spacing. A recipe with a
+literal `px-4 py-2.5` is exactly what makes app-level density impossible.
+Everything routes through tokens.
 
 ### Semantic tokens: the grammar
 
