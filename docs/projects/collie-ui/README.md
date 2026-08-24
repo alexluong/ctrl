@@ -13,8 +13,10 @@ Remote: github.com/alexluong/collie-ui (private).
 org for now — worth revisiting whether it belongs under `colliestudio`, since
 `docs/machine.md` reserves that org for things carrying the company's name.
 
-**Status:** empty repo + remote created. Design discussion in progress; stack
-converging (Tailwind primary, Panda as an experiment); nothing built. (2026-08-24)
+**Status:** first vertical slice built and running, **uncommitted pending review**.
+Tokens (DTCG → CSS vars + Tailwind `@theme` + contract + docs JSON), Button,
+Storybook workshop with docs pages, Playroom sandbox, mise-based per-worktree dev
+setup. (2026-08-24)
 
 **Doc map** — Collie UI's notes are a directory (see `docs/workflow.md`):
 
@@ -51,6 +53,22 @@ Same DX, different UI, across unrelated products:
 - **2026-08-23 — repo `docs/` allowed here, narrowly.** This is a library with
   consumers; the consumer contract (token names, theme contract, component API)
   versions with the code. Status/ideas/TODOs still never live in the repo.
+- **2026-08-24 — the goal is that app code writes no CSS.** Applications compose
+  Collie UI components only: no utility classes, no stylesheets, no Tailwind config.
+  Consequences: the styling engine becomes an implementation detail of the recipes
+  package (so the "ENABLE must be Tailwind because the team knows it" constraint
+  dissolves — the team never writes a class), integration becomes one CSS import
+  instead of a Tailwind setup per app, and the system stays portable to the hotel
+  app and to a non-React renderer. The cost: **layout must be first-class** —
+  `Stack` / `Inline` / `Columns` / `Box` are the next slice after Button, because
+  until they exist "no classes in app code" just blocks people. Interim guard rail
+  already in place: the generated CSS drops Tailwind's own colour/spacing/radius
+  scales, so even code that does reach for a utility can only name a design token;
+  the one remaining escape hatch is arbitrary values (`p-[13px]`), which app code
+  may never use.
+- **2026-08-24 — Braid (SEEK) is the reference system.** Same philosophy, different
+  mechanism; MIT, so structure and values can be ported. Adopt its vocabulary and
+  shape, keep our generation and format. Detail in `tokens.md`.
 - **2026-08-23 — distribution leaning copy-paste/template** (shadcn-style),
   because client A and client B genuinely need to diverge. Not final.
 
@@ -73,6 +91,18 @@ do happen:
 
 - **Stack** — leaning Tailwind (v4) for long-term stability over CSS-in-JS. Not
   formally decided.
+- **Tone set** — keep `neutral/accent/critical/warning/success` or adopt Braid's
+  `critical/caution/positive/neutral/info/promote`. Braid's names describe a
+  situation rather than an outcome, and add `info` and `promote`.
+- **Hierarchy axis naming** — `emphasis: high|medium|low` vs
+  `importance: primary|secondary|tertiary` vs `prominence: bold|subtle|plain`. The
+  current pairing (`emphasis` + `primary/secondary/tertiary`) has the axis and its
+  values describing different concepts.
+- **Space token naming** — Atlassian numeric (`space.100`) vs Braid t-shirt
+  (`small`/`medium`). Alex has not decided. Note this matters less under the
+  closed-system goal, since app code stops naming spacing directly.
+- **Split `accent` into brand accent + form accent** now, or when a second client
+  exists.
 - **`intl` vs `formatter` vs `formatting`** as the package name — leaning `intl`.
 - Whether docs stay in Storybook MDX or graduate to a dedicated site.
 - **The style-seam shape** — how a component gets its recipes so the skin can be
