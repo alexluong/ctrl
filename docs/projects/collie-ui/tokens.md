@@ -179,3 +179,64 @@ radix-ui.com/colors/docs/palette-composition/understanding-the-scale ·
 w3.org/community/design-tokens · atlassian.design/foundations/spacing ·
 medium.com/eightshapes-llc/naming-tokens-in-design-systems-9e86c7444676 ·
 panda-css.com/docs/concepts/recipes
+
+
+## Braid's theming, and what to take (2026-08-24)
+
+**Mechanism.** `vars.css.ts` is a `createThemeContract`; `tokenType.ts` is a
+TypeScript interface (`BraidTokens`) every theme must satisfy; each theme is one
+object of final values; `makeBraidTheme` runs `createTheme(vars, …)` to emit a
+class; `<BraidProvider theme={…}>` applies it. Same architecture as ours with three
+swaps: their contract ↔ our generated `contract.d.ts`, their `createTheme` ↔ our
+Style Dictionary build, their provider class ↔ our `[data-theme]` attribute.
+
+**Braid ships a `wireframe` theme** that collapses every tone to black/white/grey —
+independent confirmation of the wireframe-as-a-theme approach.
+
+**A Braid theme contains:** `color.foreground.{tone}` (+`Light`, `neutralInverted`,
+`secondary`, `link`), `color.background.{tone}` (+`Hover`/`Active`/`Soft`/
+`SoftHover`/`SoftActive`/`Light`), `border.color.{tone}` (+`field`, `focus`),
+`border.radius`/`width`, `space.{xxsmall…xxxlarge, gutter}` plus `grid` (base unit),
+`typography` (fontFamily, Capsize `fontMetrics`, weights, `heading.level 1-4`,
+`text.xsmall…large`, each defined **per breakpoint**), `contentWidth`,
+`touchableSize`, `focusRingSize`, `shadows`, `transitions`, `transforms`.
+
+Their background naming is tone × prominence × state (`criticalSoftHover`) — our
+`bg.{tone}.subtle-hover` with different spelling; their `Soft` is our `subtle`.
+
+**Have that we don't, and should:** `touchableSize`, `contentWidth`,
+`focusRingSize`, and typography as per-breakpoint definitions with Capsize metrics
+(text sized in baseline rows with optical trimming). Adopting the typography model
+is a real chunk of work and the thing that most affects how the system feels.
+
+**We have that they don't:** a primitive tier. Braid themes hand-author every final
+value, so a new theme is dozens of colour decisions with no guaranteed contrast
+relationships. Our ramps + fixed step assignments generate all of it from one hue —
+that is what makes "a new client brand" cheap, and it is worth keeping.
+
+## Getting a brand colour into the system
+
+Brand enters as a **primitive ramp**, not as a special case: one hex from the
+client → twelve generated steps → the semantic accent tokens point at it. Every
+component that already understands tones is then correct in that brand with no
+component changes.
+
+The complication to plan for: **a brand colour is often not a usable UI colour.**
+Brand palettes are picked for logos and marketing and routinely fail contrast at
+step 9 (solid fills) or step 11 (text). If the only accent is the brand hue, either
+accessibility breaks or the brand renders wrong.
+
+Braid's answer, and the right one: **two accents.**
+
+- **brand accent** — hero moments, marketing surfaces, the literal brand colour,
+  used sparingly
+- **form accent** — the everyday interactive colour (emphasised action, focus
+  rings, links), contrast-safe by construction
+
+Usually both point at the same ramp. When a brand hue can't carry UI weight, the
+form accent points at a nearby hue that can, and only the brand accent stays
+literally on-brand. Client themes then differ by one or two ramp declarations
+instead of a pile of per-component overrides.
+
+Ramp generation from a single hue is not built yet — current ramps are hand-written
+OKLCH approximations of Radix gray/blue/red/amber/green.

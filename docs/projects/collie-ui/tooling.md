@@ -164,6 +164,41 @@ one formatter object or several: decide at build time.
   comparison.
 - **Skip Changesets** — no versioning under copy-paste distribution.
 
+## Built so far (2026-08-24, uncommitted)
+
+- `packages/tokens` — DTCG source → `theme.css` (`:root` + `[data-theme=wireframe]`
+  + `[data-density=compact]`), `tailwind.css` (`@theme inline`), `contract.d.ts`,
+  `tokens.json` + `primitives.json` (feed the docs). Watch mode; ~2–3s from source
+  edit to served CSS.
+- `packages/recipes-tw` — Button slot recipe. Tone sets component-tier vars,
+  hierarchy reads them: 5 + 3 declarations instead of 15 combinations.
+- `packages/ui` — Button. Zero class strings.
+- `apps/workshop` — Storybook 10 + Tailwind v4, theme/density toolbar globals.
+- `apps/playroom` — Playroom 1.3. **Webpack-only**, so the repo now has two
+  bundlers; its CSS rule is scoped to `issuer: /node_modules\/playroom/` so our
+  stylesheet needed its own style/css/postcss chain, and its babel rule only covers
+  `.jsx?` in cwd so workspace TypeScript needed one too (plus `extensionAlias` for
+  `./x.js` → `.tsx`). Health: 4.6k stars, last push 2026-08-20, v1.3.0 July 2026 —
+  maintained, low volume. Alex is lukewarm on simultaneous multi-theme frames; if
+  the second bundler grates, Storybook's viewport addon + theme toolbar cover the
+  same ground one-at-a-time and Playroom can be dropped.
+- **The compiler now enforces two of the three architectural rules**: the generated
+  CSS sets `--spacing: initial`, `--color-*: initial`, `--radius-*: initial`, so
+  `p-4`, `bg-blue-500` and `rounded-lg` do not compile. Only "components carry no
+  class strings" still needs a lint rule.
+- Dev setup: `mise` with per-worktree ports (`scripts/setup-env.mjs` hashes the
+  worktree directory name, then probes the port is actually free). `mise run dev`
+  runs tokens:watch ::: storybook ::: playroom.
+
+## Docs pages (Storybook MDX, built 2026-08-24)
+
+`Introduction`, `Foundations/Base tokens`, `Foundations/Semantic tokens`,
+`Foundations/Tones`, `Foundations/Hierarchy`, `Guides/Anatomy`,
+`Guides/Inspirations`. Token tables and swatches render from
+`packages/tokens/dist/{tokens,primitives}.json`, so the reference cannot drift from
+the source; swatches reference the live CSS variables, so the theme and density
+toolbars repaint them.
+
 ## Documentation approach
 
 Alex wants a space documenting the full system — anatomy, naming conventions,
