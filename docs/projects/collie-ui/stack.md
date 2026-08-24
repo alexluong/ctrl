@@ -142,3 +142,14 @@ clients drift on the visual language itself, defeating the point. The shadcn
 registry (CLI v4) now makes the hybrid concrete: token/theme layer as a versioned
 package or `registry:base` payload, components pulled from a **private namespaced
 registry** so there is a canonical source and an update path.
+
+## Base UI: adopted (2026-08-24)
+
+`@base-ui/react@1.7.0` is installed in `packages/ui` and now backs Dialog, Drawer
+and Tabs. The seam works as hoped: its parts accept `className`, so slot recipes
+style them like any other element, and state arrives as data attributes rather
+than as props to thread through.
+
+1.7.0 also ships a swipeable `Drawer` (mobile sheets) and `internals/temporal`
+with date-fns and Luxon adapters — the latter matters for the date/timezone
+boundary discussion.

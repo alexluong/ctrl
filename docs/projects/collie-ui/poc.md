@@ -117,3 +117,72 @@ subset per component. This is now documented on the Hierarchy docs page.
 - `min-h-[6rem]` on the textarea is a raw value with no token behind it.
 - No focus-ring token; focus borrows `border-{tone}`.
 - No icon story at all — `leading`/`trailing` on Button take any node.
+
+## Second round (2026-08-24): four more screens + overlays
+
+Screens now in the workshop under **POC/Screens**: dashboard, tenant list, tenant
+detail, integrations, settings, order list (plus an empty state). A generic SaaS,
+so the team can read them without domain context.
+
+Still **zero `className` in every POC file**, including the shared `parts.tsx`
+(PageHeader, Card, Panel, DetailRow, Page).
+
+### Base UI is in, and the headless seam works
+
+Installed `@base-ui/react@1.7.0` to build Dialog, Drawer and Tabs. This was the
+first test of whether recipes can dress a *headless library* rather than plain
+DOM, and it holds: Base UI parts take `className`, so a slot recipe styles them
+exactly like our own elements, and component state arrives as data attributes
+(`data-selected`, `data-starting-style`, `data-ending-style`) which Tailwind
+targets directly. No wrapper divs, no style props, no CSS file.
+
+Two things worth knowing about 1.7.0:
+
+- It ships a **`Drawer`** with swipe/snap points, built for mobile sheets. Our
+  `Drawer` is a side-anchored `Dialog` instead — full control of the transition,
+  no swipe machinery to fight. The real one is there if a mobile sheet is wanted.
+- It ships **`internals/temporal`** with date-fns and Luxon adapters. Relevant
+  whenever the date/timezone boundary question comes back.
+
+### The bug this round found: portals escape the theme
+
+`data-theme` was being set on a wrapper `<div>`. Dialogs portal to `<body>`, which
+is *outside* that wrapper — so every overlay would have rendered in the default
+theme regardless of the toolbar. Fixed by putting the attributes on
+`document.documentElement` in both Storybook's decorator and Playroom's frame.
+
+Rule: **the theme belongs on the document root.** Any app adopting this has to do
+the same, and a wrapper-div theme is a bug waiting for the first modal.
+
+### Tokens added this round
+
+`color.bg.overlay` (the scrim — needed a new alpha primitive, `blackA`) and
+`shadow.overlay`. Wireframe theme overrides the shadow to `none`.
+
+### Components added
+
+`Tiles` (responsive grid), `Avatar` (initials), `Dialog` / `DialogPanel`,
+`Drawer` / `DrawerPanel`, `Tabs` / `TabList` / `Tab` / `TabPanel`, and a bare
+`Checkbox` (the field-wrapped one is wrong inside a table cell).
+
+### Smoke test
+
+`mise run smoke` server-renders all six screens through Vite's SSR pipeline and
+is part of `mise run check`. It catches what typechecking cannot — a component
+that throws on first render. Not a substitute for Storybook Test later; it is
+about 30 lines and costs a second.
+
+### Docs
+
+Added **Foundations/Typography**, rendered from the token JSON like the other
+token pages, plus stories for Overlays, Tabs, Layout, Typography and Fields.
+
+### Gaps still open after this round
+
+- **No icon system.** Every screen leans on text-only buttons. This is the most
+  obvious next hole.
+- Breakpoints still untokenised; `Tiles` and `Columns` use Tailwind's defaults.
+- No toast/notification surface, no menu, no tooltip, no pagination component
+  (the tenant list hand-composes one from Buttons and Text).
+- `Table` has no sorting, selection state or sticky header — the tenant list
+  fakes bulk selection with `defaultChecked`.
