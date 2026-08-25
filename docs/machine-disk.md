@@ -114,19 +114,76 @@ regrowth), then `docker image prune -a --filter until=720h`, then
 `find ~/git ~/code -type d -name node_modules -prune -mtime +90`.
 Then `pnpm store prune`.
 
+### `repos` baseline — the big five
+
+`repos` is one bucket but almost all of it is five trees. Measure these
+individually before drilling anywhere else — if the bucket moved and these
+didn't, the growth is somewhere unexpected and worth a real look.
+
+```sh
+du -sh ~/git/hub/*/*/ | sort -rh | head -8
+```
+
+| Tree | 2026-08-25 | Expect | What it is |
+|---|---|---|---|
+| `ebutler-qa/workspace` | 19G (11 wt) | `6.5G + ~1.2G/worktree` | worktrees, each with its own `node_modules` |
+| `alexluong/hookdeck-workspace` | 15G (6 wt) | 10–18G | `core-workspace` alone is 7.4G |
+| `alexluong/hookdeck` | 9.3G (14 wt) | 8–12G | pnpm; separate tree from `hookdeck-workspace` |
+| `ebutler-qa/workspace.git` | 6.0G | ~6G | bare mirror backing the worktrees |
+| `alexluong/hookdeck-workspace.git` | 5.1G | ~5G | bare mirror backing the worktrees |
+| everything else | ~30G | ~30G | ~60 repos, none over 5.1G (`ebutler-qa/odoo`) |
+
+**Size the two workspace trees by worktree count, not by the absolute number
+above.** They are actively managed and swing hard: during this audit
+`ebutler-qa/workspace` went 39G/29 worktrees → 19G/11 worktrees in about forty
+minutes, because worktrees were being deleted while the audit ran. A single
+`du` of these trees has a shelf life of hours. `main` is the fixed ~6.3G base;
+every additional worktree is ~1.2–2.0G on top.
+
+Reading the numbers:
+
+- **The two `.git` mirrors are fixed cost.** They only grow with history. If one
+  jumps, someone fetched a large branch or a binary landed upstream — not a
+  cleanup target.
+- **Worktree count is the real driver.** Several sit at exactly 2.0G — the same
+  dependency set installed over and over. Adding five branches costs ~7G with no
+  new code. When this tree grows, check `ls -d */ | wc -l` first and divide;
+  only conclude that dependencies got heavier if per-worktree cost actually
+  moved.
+- **Stale worktrees are the cheap win.** Deleting `node_modules` from ones you
+  aren't actively on reclaims 1–2G each and costs one `install` to undo. See the
+  90-day `find` in the prune playbook.
+- **In `ebutler-qa/workspace` the duplication is real, not a `du` artifact.**
+  Worth stating because the opposite is the usual assumption. pnpm normally
+  hardlinks from `~/Library/pnpm/store`, in which case `du` bills the same bytes
+  to every worktree and deleting one frees almost nothing. Measured here it does
+  not: three worktrees are 2035 + 2035 + 2034 MB separately and 6042 MB under
+  `du -c` (which counts a hardlink once) — only 62 MB shared. So each worktree
+  really is its own ~2G copy and deleting one really does return ~2G. The store
+  is at the default path with no `.npmrc` overriding `node-linker`, so *why*
+  they aren't linked is unresolved — some of these sub-repos are on bun rather
+  than pnpm, which is the first thing to check.
+- **Elsewhere, assume the double-count until measured.** For pnpm trees that
+  *are* linked properly, deleting `node_modules` frees less than its reported
+  size until you also `pnpm store prune` — and prune the repos *first*, or the
+  store still considers those packages referenced. `du -c` across two sibling
+  worktrees tells you which case you're in, in about a minute.
+
 ## Optimization backlog
 
 Neither of these is a cleanup — they're structural changes that would lower the
 floor. Worth a dedicated session.
 
-- **`repos` — reduce duplication.** ~40G of `node_modules` across worktrees that
-  largely share dependencies. Open questions: can `ebutler-qa/workspace` (11
-  worktrees) and `hookdeck-workspace` (5) share a single pnpm store properly, or
-  are some on npm/yarn and duplicating outright? Are `workspace-old` (2.9G) and
-  `hookdeck-workspace-old` (965M) still needed? Is `ebutler-qa`'s loose
-  `enable-backend` / `enable-frontend` / `frontend` (12G) superseded by the
-  workspace? Standardising on pnpm across these repos is probably the single
-  biggest structural win.
+- **`repos` — reduce duplication.** 59.7G of `node_modules`, most of it across
+  worktrees sharing the same dependency set. `ebutler-qa/workspace` (29
+  worktrees) is the whole problem: 10 sit at exactly 2.0G each, and they are
+  genuinely separate copies — `du -c` across three of them shows only 62 MB
+  shared. The sub-repos do have `pnpm-lock.yaml` files and the store is at its
+  default path, so the store linking is failing or being bypassed rather than
+  absent; several sibling dirs (`dev`, `e2e`, `scripts`) are on `bun.lock`
+  instead. `alexluong/hookdeck` runs 14 worktrees in 9.3G total, which is what
+  this should look like. Finding out why the linking doesn't hold here is the
+  single biggest structural win available — worth ~20G.
 - **`docker` — reduce image footprint.** 34.8G of images, 20.4G of volumes, with
   ~13.6G of volumes unused. Worth auditing which named volumes are still live dev
   DBs vs abandoned, and whether the large `server-*` images (~5G each) share base
@@ -142,6 +199,8 @@ All values in GiB (see units note above).
 | 2026-08-03 | 345.7 | 89.2 | 70.9 | 70.6 | 44.0 | 71.3 | 30.6 | 58.3 |
 | 2026-08-03 | 345.6 | 89.3 | 70.9 | 70.6 | 44.1 | 71.3 | 30.6 | 58.1 |
 | 2026-08-17 | 421.8 | 15.1 | 128.7 | 70.9 | 58.1 | 71.9 | 28.7 | 63.6 |
+| 2026-08-25 | 416.0 | 3.4 | 116.4 | 104.4 | 57.8 | 72.3 | 28.9 | 36.2 |
+| 2026-08-25 | 376.6 | 42.8 | 77.9 | 90.3 | 57.8 | 72.3 | 28.9 | 49.4 |
 
 The brief `caches`/`system` split on 2026-08-03 was folded back before any
 snapshot depended on it, so every row above is directly comparable.
@@ -198,6 +257,25 @@ Moving files into iCloud Drive frees nothing on its own (same volume) — space
 only returns once iCloud uploads and macOS evicts the local copies.
 
 ## History
+
+- **2026-08-25** — Free space hit **3.4G**. Docker was over again (116.4G, +45.5
+  from baseline, having been pruned down from 128.7 on 08-17) and `repos` jumped
+  33.8G in the eight days since the last audit — flat at 70.9 on 08-17, 104.4
+  today. Pruned Docker build cache (28.2G) and images older than 30 days
+  (19.2G): 116.4 → 78.5G on host, free 3.4 → 42G. Left `docker volume prune`
+  alone — 32.2G shows reclaimable but 180 of 187 volumes are merely inactive,
+  and some are dev DBs; needs a by-name pass first. Images still hold 29.4G
+  reclaimable inside the 30-day window. Added the `repos` big-five baseline
+  after finding the bucket has no per-tree expectations to diff against, and
+  corrected the standing assumption that worktree `node_modules` are hardlink
+  duplicates — measured, they aren't.
+
+  Two rows below for this date: the second is post-prune. `repos` also drops
+  104.4 → 90.3 between them, which was **not** my doing — `ebutler-qa/workspace`
+  went 39G/29 worktrees → 19G/11 during the audit as worktrees were deleted
+  from another session. Lesson recorded in the big-five section: size the
+  workspace trees per worktree, because a single `du` of them goes stale within
+  hours.
 
 - **2026-08-17** — Free space hit 15.1G (floor is 50G), first re-audit since
   baseline. Docker was the mover, +57.8G to 128.7G (over budget) after two weeks
