@@ -9664,7 +9664,86 @@
       "hdr": "",
       "status": "linked",
       "library": "red4/movies/Breaking and Exiting (2018)"
+    },
+    {
+      "download": "red4/Dirk Gentlys Holistic Detective Agency (2016) Season 1-2 S01-S02 (1080p BluRay x265 HEVC 10bit AAC 5.1 Silence)",
+      "type": "tv",
+      "title": "Dirk Gentlys Holistic Detective Agency",
+      "seasons": [
+        1,
+        2
+      ],
+      "resolution": "1080p",
+      "source": "BluRay",
+      "group": "unknown",
+      "video": "x265",
+      "audio": "AAC",
+      "hdr": "",
+      "status": "linked",
+      "library": "red4/tv/Dirk Gentlys Holistic Detective Agency"
+    },
+    {
+      "download": "red4/One Battle After Another (2025) (2160p WEB-DL Hybrid H265 DV HDR DDP Atmos 5.1 English - HONE).mkv",
+      "type": "movie",
+      "title": "One Battle After Another",
+      "year": 2025,
+      "resolution": "2160p",
+      "source": "WEB-DL",
+      "group": "unknown",
+      "video": "x265",
+      "audio": "Atmos",
+      "hdr": "DV",
+      "status": "linked",
+      "library": "red4/movies4k/One Battle After Another (2025)"
+    },
+    {
+      "download": "red4/Bob.Hearts.Abishola.S01.S05.WEBRip.EAC3.5.1.1080p.x265-iVy",
+      "type": "tv",
+      "title": "Bob Hearts Abishola",
+      "seasons": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "resolution": "1080p",
+      "source": "WEBRip",
+      "group": "iVy",
+      "video": "x265",
+      "audio": "DD+",
+      "hdr": "",
+      "status": "linked",
+      "library": "red4/tv/Bob Hearts Abishola"
+    },
+    {
+      "download": "red4/RED.2010.1080p.BluRay.x264-OFT",
+      "type": "movie",
+      "title": "RED",
+      "year": 2010,
+      "resolution": "1080p",
+      "source": "BluRay",
+      "group": "OFT",
+      "video": "x264",
+      "audio": "",
+      "hdr": "",
+      "status": "linked",
+      "library": "red4/movies/RED (2010)"
+    },
+    {
+      "download": "red4/57.Seconds.2023.1080p.BluRay.x264-OFT",
+      "type": "movie",
+      "title": "57 Seconds",
+      "year": 2023,
+      "resolution": "1080p",
+      "source": "BluRay",
+      "group": "OFT",
+      "video": "x264",
+      "audio": "",
+      "hdr": "",
+      "status": "linked",
+      "library": "red4/movies/57 Seconds (2023)"
     }
   ],
-  "updated_at": "2026-08-17 01:44:44"
+  "updated_at": "2026-08-25 13:41:27"
 }

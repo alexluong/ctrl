@@ -2847,7 +2847,43 @@
     {
       "torrent": "red4/dc/Breaking.and.Exiting.2018.1080p.BluRay.x264-OFT.torrent",
       "download": "red4/Breaking.and.Exiting.2018.1080p.BluRay.x264-OFT"
+    },
+    {
+      "torrent": "blue4/The.Hot.Chick.2002.1080p.WEBRip.x265.torrent",
+      "download": null
+    },
+    {
+      "torrent": "blue4/How.To.Lose.A.Guy.In.10.Days.2003.1080p.BluRay.x265-LAMA.torrent",
+      "download": null
+    },
+    {
+      "torrent": "blue4/dc/How.to.Lose.a.Guy.in.10.Days.2003.BluRay.1080p.DDP.5.1.x264-hallowed.torrent",
+      "download": null
+    },
+    {
+      "torrent": "blue4/dc/Shallow.Hal.2001.1080p.BRRip.DDP.5.1.H.265.-iVy.torrent",
+      "download": null
+    },
+    {
+      "torrent": "red4/dc/Dirk Gently's Holistic Detective Agency (2016) Season 1-2 S01-S02 (1080p BluRay x265 HEVC 10bit AAC 5.1 Silence).torrent",
+      "download": "red4/Dirk Gentlys Holistic Detective Agency (2016) Season 1-2 S01-S02 (1080p BluRay x265 HEVC 10bit AAC 5.1 Silence)"
+    },
+    {
+      "torrent": "red4/dc/One Battle After Another (2025) (2160p WEB-DL Hybrid H265 DV HDR DDP Atmos 5.1 English - HONE).torrent",
+      "download": "red4/One Battle After Another (2025) (2160p WEB-DL Hybrid H265 DV HDR DDP Atmos 5.1 English - HONE).mkv"
+    },
+    {
+      "torrent": "red4/dc/Bob.Hearts.Abishola.S01.S05.WEBRip.EAC3.5.1.1080p.x265-iVy.torrent",
+      "download": "red4/Bob.Hearts.Abishola.S01.S05.WEBRip.EAC3.5.1.1080p.x265-iVy"
+    },
+    {
+      "torrent": "red4/dc/RED.2010.1080p.BluRay.x264-OFT.torrent",
+      "download": "red4/RED.2010.1080p.BluRay.x264-OFT"
+    },
+    {
+      "torrent": "red4/dc/57.Seconds.2023.1080p.BluRay.x264-OFT.torrent",
+      "download": "red4/57.Seconds.2023.1080p.BluRay.x264-OFT"
     }
   ],
-  "updated_at": "2026-08-17 01:44:27"
+  "updated_at": "2026-08-25 13:40:10"
 }
