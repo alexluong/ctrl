@@ -9759,7 +9759,103 @@
       "hdr": "",
       "status": "linked",
       "library": "red4/tv/The League"
+    },
+    {
+      "download": "red4/The.League.S07.1080p.DSNP.WEB-DL.DDP5.1.H.264-FLUX",
+      "type": "tv",
+      "title": "The League",
+      "seasons": [
+        7
+      ],
+      "resolution": "1080p",
+      "source": "WEB-DL",
+      "group": "FLUX",
+      "video": "x264",
+      "audio": "DD+",
+      "hdr": "",
+      "status": "linked",
+      "library": "red4/tv/The League"
+    },
+    {
+      "download": "red4/The.League.S02.1080p.DSNP.WEB-DL.DDP5.1.H.264-FLUX",
+      "type": "tv",
+      "title": "The League",
+      "seasons": [
+        2
+      ],
+      "resolution": "1080p",
+      "source": "WEB-DL",
+      "group": "FLUX",
+      "video": "x264",
+      "audio": "DD+",
+      "hdr": "",
+      "status": "linked",
+      "library": "red4/tv/The League"
+    },
+    {
+      "download": "red4/The.League.S04.1080p.DSNP.WEB-DL.DDP5.1.H.264-FLUX",
+      "type": "tv",
+      "title": "The League",
+      "seasons": [
+        4
+      ],
+      "resolution": "1080p",
+      "source": "WEB-DL",
+      "group": "FLUX",
+      "video": "x264",
+      "audio": "DD+",
+      "hdr": "",
+      "status": "linked",
+      "library": "red4/tv/The League"
+    },
+    {
+      "download": "red4/The.League.S03.1080p.DSNP.WEB-DL.DDP5.1.H.264-FLUX",
+      "type": "tv",
+      "title": "The League",
+      "seasons": [
+        3
+      ],
+      "resolution": "1080p",
+      "source": "WEB-DL",
+      "group": "FLUX",
+      "video": "x264",
+      "audio": "DD+",
+      "hdr": "",
+      "status": "linked",
+      "library": "red4/tv/The League"
+    },
+    {
+      "download": "red4/The.League.S06.1080p.DSNP.WEB-DL.DDP5.1.H.264-FLUX",
+      "type": "tv",
+      "title": "The League",
+      "seasons": [
+        6
+      ],
+      "resolution": "1080p",
+      "source": "WEB-DL",
+      "group": "FLUX",
+      "video": "x264",
+      "audio": "DD+",
+      "hdr": "",
+      "status": "linked",
+      "library": "red4/tv/The League"
+    },
+    {
+      "download": "red4/The.League.S05.1080p.DSNP.WEB-DL.DDP5.1.H.264-FLUX",
+      "type": "tv",
+      "title": "The League",
+      "seasons": [
+        5
+      ],
+      "resolution": "1080p",
+      "source": "WEB-DL",
+      "group": "FLUX",
+      "video": "x264",
+      "audio": "DD+",
+      "hdr": "",
+      "status": "linked",
+      "library": "red4/tv/The League"
     }
   ],
-  "updated_at": "2026-08-27 19:11:18"
+  "updated_at": "2026-08-28 00:35:29"
 }

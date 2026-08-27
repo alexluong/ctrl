@@ -1533,8 +1533,8 @@
       "download": "blue4/Shazam.2019.1080p.BluRay.Opus.7.1.AV1-KIMJI"
     },
     {
-      "torrent": "blue4/dc/WALL·E.2008.1080p.BluRay.Opus.5.1.AV1-KIMJI.torrent",
-      "download": "blue4/WALL·E.2008.1080p.BluRay.Opus.5.1.AV1-KIMJI"
+      "torrent": "blue4/dc/WALL\u00b7E.2008.1080p.BluRay.Opus.5.1.AV1-KIMJI.torrent",
+      "download": "blue4/WALL\u00b7E.2008.1080p.BluRay.Opus.5.1.AV1-KIMJI"
     },
     {
       "torrent": "blue4/dc/Spider-Man.Into.the.Spider-Verse.2018.2160p.UHD.BluRay.x265-TERMiNAL.torrent",
@@ -2886,15 +2886,15 @@
     },
     {
       "torrent": "red4/dc/The.League.S07.1080p.DSNP.WEB-DL.DDP5.1.H.264-FLUX.torrent",
-      "download": null
+      "download": "red4/The.League.S07.1080p.DSNP.WEB-DL.DDP5.1.H.264-FLUX"
     },
     {
       "torrent": "red4/dc/The.League.S02.1080p.DSNP.WEB-DL.DDP5.1.H.264-FLUX.torrent",
-      "download": null
+      "download": "red4/The.League.S02.1080p.DSNP.WEB-DL.DDP5.1.H.264-FLUX"
     },
     {
       "torrent": "red4/dc/The.League.S04.1080p.DSNP.WEB-DL.DDP5.1.H.264-FLUX.torrent",
-      "download": null
+      "download": "red4/The.League.S04.1080p.DSNP.WEB-DL.DDP5.1.H.264-FLUX"
     },
     {
       "torrent": "red4/dc/The.League.S01.1080p.DSNP.WEB-DL.DDP5.1.H.264-FLUX.torrent",
@@ -2902,16 +2902,16 @@
     },
     {
       "torrent": "red4/dc/The.League.S03.1080p.DSNP.WEB-DL.DDP5.1.H.264-FLUX.torrent",
-      "download": null
+      "download": "red4/The.League.S03.1080p.DSNP.WEB-DL.DDP5.1.H.264-FLUX"
     },
     {
       "torrent": "red4/dc/The.League.S06.1080p.DSNP.WEB-DL.DDP5.1.H.264-FLUX.torrent",
-      "download": null
+      "download": "red4/The.League.S06.1080p.DSNP.WEB-DL.DDP5.1.H.264-FLUX"
     },
     {
       "torrent": "red4/dc/The.League.S05.1080p.DSNP.WEB-DL.DDP5.1.H.264-FLUX.torrent",
-      "download": null
+      "download": "red4/The.League.S05.1080p.DSNP.WEB-DL.DDP5.1.H.264-FLUX"
     }
   ],
-  "updated_at": "2026-08-27 19:10:45"
+  "updated_at": "2026-08-28 00:35:08"
 }
