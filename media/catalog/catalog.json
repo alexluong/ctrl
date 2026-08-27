@@ -9743,7 +9743,23 @@
       "hdr": "",
       "status": "linked",
       "library": "red4/movies/57 Seconds (2023)"
+    },
+    {
+      "download": "red4/The.League.S01.1080p.DSNP.WEB-DL.DDP5.1.H.264-FLUX",
+      "type": "tv",
+      "title": "The League",
+      "seasons": [
+        1
+      ],
+      "resolution": "1080p",
+      "source": "WEB-DL",
+      "group": "FLUX",
+      "video": "x264",
+      "audio": "DD+",
+      "hdr": "",
+      "status": "linked",
+      "library": "red4/tv/The League"
     }
   ],
-  "updated_at": "2026-08-25 13:41:27"
+  "updated_at": "2026-08-27 19:11:18"
 }
