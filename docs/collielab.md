@@ -49,6 +49,8 @@ So a new public service needs three things, not one: a compose entry, a `cloudfl
 - **State backend is Cloudflare R2** — bucket `collielab-terraform`, key `terraform.tfstate`, S3-compatible endpoint on account `3f6713b6ee228d00951382a7f7d85fbe`. So R2 is already in production use here.
 - Credentials: `terraform/.env` (untracked) → `source scripts/export_env.sh`. Needs `AWS_ACCESS_KEY_ID`/`AWS_SECRET_ACCESS_KEY` (R2 API token keys, for state) plus `TF_VAR_cloudflare_api_token` and `TF_VAR_vultr_api_key`. Secrets live in Vaultwarden, never in the repo.
 - Zones managed: `alexluong.com`, `collie.studio`, `nhiluong.com`. Records are per-zone files.
+- **The `TF_VAR_cloudflare_api_token` also carries `workers:write`** — so it drives `wrangler` directly for one-off Worker deploys without a `wrangler login` (that OAuth token in `~/Library/Preferences/.wrangler/` is expired and won't refresh non-interactively). Use it: `export CLOUDFLARE_API_TOKEN="$TF_VAR_cloudflare_api_token"; export CLOUDFLARE_ACCOUNT_ID=3f6713b6ee228d00951382a7f7d85fbe`. Verified 2026-08-31 (Worker deploy + custom domain + DNS create/delete via API).
+- CF **accepts DNS-only A records pointing at reserved/link-local IPs** (`169.254.169.254`, `127.0.0.1`) — no rejection, useful to know for SSRF/egress test harnesses.
 
 ### The v4 → v5 migration (2026-08-11)
 
