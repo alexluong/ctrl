@@ -1533,8 +1533,8 @@
       "download": "blue4/Shazam.2019.1080p.BluRay.Opus.7.1.AV1-KIMJI"
     },
     {
-      "torrent": "blue4/dc/WALL\u00b7E.2008.1080p.BluRay.Opus.5.1.AV1-KIMJI.torrent",
-      "download": "blue4/WALL\u00b7E.2008.1080p.BluRay.Opus.5.1.AV1-KIMJI"
+      "torrent": "blue4/dc/WALL·E.2008.1080p.BluRay.Opus.5.1.AV1-KIMJI.torrent",
+      "download": "blue4/WALL·E.2008.1080p.BluRay.Opus.5.1.AV1-KIMJI"
     },
     {
       "torrent": "blue4/dc/Spider-Man.Into.the.Spider-Verse.2018.2160p.UHD.BluRay.x265-TERMiNAL.torrent",
@@ -2911,7 +2911,11 @@
     {
       "torrent": "red4/dc/The.League.S05.1080p.DSNP.WEB-DL.DDP5.1.H.264-FLUX.torrent",
       "download": "red4/The.League.S05.1080p.DSNP.WEB-DL.DDP5.1.H.264-FLUX"
+    },
+    {
+      "torrent": "red4/dc/Preacher.Complete.S01-S04.1080p.HEVC.x265-Crane.torrent",
+      "download": "red4/Preacher Complete S01-S04 [Amzn WebDL] 10Bit Hevc x265 1080p Ac3 2.0 - Cr"
     }
   ],
-  "updated_at": "2026-08-28 00:35:08"
+  "updated_at": "2026-09-01 03:10:40"
 }

@@ -9855,7 +9855,26 @@
       "hdr": "",
       "status": "linked",
       "library": "red4/tv/The League"
+    },
+    {
+      "download": "red4/Preacher Complete S01-S04 [Amzn WebDL] 10Bit Hevc x265 1080p Ac3 2.0 - Cr",
+      "type": "tv",
+      "title": "Preacher",
+      "seasons": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "resolution": "1080p",
+      "source": "WEB-DL",
+      "group": "Crane",
+      "video": "x265",
+      "audio": "AC3",
+      "hdr": "",
+      "status": "linked",
+      "library": "red4/tv/Preacher"
     }
   ],
-  "updated_at": "2026-08-28 00:35:29"
+  "updated_at": "2026-09-01 03:12:08"
 }
