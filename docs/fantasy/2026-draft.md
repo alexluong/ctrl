@@ -72,5 +72,5 @@ Notes: omarashour holds 3 QBs (Allen, Maye, Stroud) = trade partner for a QB3. s
 
 ## Trade log
 
-- 2026-09-07: omarashour offered Chase Brown + any WR for JT. Declined. Counter sent: JT + Pitts for Chase Brown + Bowers (+1.3 ppg/wk for Alex, ~even for Omar).
+- 2026-09-07: omarashour offered Chase Brown + any WR for JT. Declined. Counter sent: JT + Pitts for Chase Brown + Bowers (+2.2 ppg/wk for Alex on FantasyPros numbers). Omar agreed, then backed out. No trade.
 - 2026-09-07: rummoy floated Burrow + Henry for JT + Dart. Fair by value, bad fit (bye-6 pileup, no QB3). Parked.
