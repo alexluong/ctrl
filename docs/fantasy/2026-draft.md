@@ -50,7 +50,7 @@ How the room drafted: QB-heavy early (8 QBs gone by pick 30, 13 by 54). WRs fell
 
 Alabama haul: JT (no), Lamar (no) — Bama: DeVonta, Jameson. Missed Hurts (went 19), Henry (28), Waddle (49), Bryce (undrafted, streamable).
 
-Lessons: FFC 2QB ADP list underprices TEs and mid QBs vs Yahoo; use Yahoo ADP next year. CBS projections + custom scoring rescoring worked well for live pick decisions.
+Lessons: FFC 2QB ADP list underprices TEs and mid QBs vs Sleeper; use Sleeper ADP next year. CBS stat projections + custom-scoring rescoring worked well for RB/WR/TE live decisions, but CBS overrates rushing QBs (Dart, Willis, Shough) and flattens the QB middle — use FantasyPros consensus for QBs (Maye ~19.5 ppg QB3, Dart ~16.5 outside top 10).
 
 
 ## Full league draft (Sleeper, 16 rounds, FAAB $100)
@@ -72,4 +72,5 @@ Notes: omarashour holds 3 QBs (Allen, Maye, Stroud) = trade partner for a QB3. s
 
 ## Trade log
 
-- 2026-09-07: omarashour offered Chase Brown + any WR for JT. Declined-ish; counter = Chase Brown + Maye (or + Bowers). See analysis in session.
+- 2026-09-07: omarashour offered Chase Brown + any WR for JT. Declined. Counter sent: JT + Pitts for Chase Brown + Bowers (+1.3 ppg/wk for Alex, ~even for Omar).
+- 2026-09-07: rummoy floated Burrow + Henry for JT + Dart. Fair by value, bad fit (bye-6 pileup, no QB3). Parked.
