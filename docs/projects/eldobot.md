@@ -1,6 +1,6 @@
 # Project: eldobot
 
-Discord bot for Basketball GM (BBGM) fantasy leagues — loads BBGM export files and runs league operations in Discord: drafts, free agency, re-signings, trades, rosters, player stats/progression charts, plus a points/inventory economy. Live in 9 whitelisted servers (VBA, NABL, etc.). Repo: `hub/alexluong/eldobot`.
+Discord bot for Basketball GM (BBGM) fantasy leagues — loads BBGM export files and runs league operations in Discord: drafts, free agency, re-signings, trades, rosters, player stats/progression charts, plus a points/inventory economy. Live in 10 whitelisted servers (VBA, NABL, IBA, etc.). Repo: `hub/alexluong/eldobot`.
 
 **Status: live in production**, unlike most project docs here — this one is running with real users.
 
@@ -62,10 +62,12 @@ Discord bot for Basketball GM (BBGM) fantasy leagues — loads BBGM export files
   2. Talk to the IBA/ibabot owner about actually pruning on their side — the only real fix, needs their cooperation.
   3. Rotate the Dropbox app secret and cut them off. Safe to do unilaterally since eldobot moved to R2; would also break the UI until its `DROPBOX_*` secrets are updated to match.
 - Before sharing the UI beyond IBA, change `APP_PASSWORD` — the current value is a throwaway and the repo happens to be full of the word anyway. `cd dropbox-ui && npx wrangler secret put APP_PASSWORD` (this signs out all existing sessions by design).
+- **Whitelist edits on the VM:** `data/allowed_servers.txt` is root-owned (written by the container) and `alex` has no passwordless sudo — append via `docker exec eldobot sh -c 'echo "<id>  # name" >> /app/data/allowed_servers.txt'`, then `docker restart eldobot`; whitelist is read once at startup, so a restart is required. Log line `[WHITELIST] N server(s) whitelisted` confirms.
 - `allowed_servers.txt` has drifted from reality — `1401268831917310097` is labelled "Johannesburg Springboks HQ. IBA" but is now "Buenos Aires Falcons HQ. IBA"; 3 whitelisted guilds eldobot isn't in (Challenger BL, The Ball Pit, DBL-05); 5 joined guilds not whitelisted. Cosmetic (whitelist only gates commands), unreconciled.
 
 ## Status log
 
+- 2026-09-06 — **IBA whitelisted.** Bot had since been invited to `INTERNATIONAL BASKETBALL ASSOCIATION` (`1346036658616930338`, the main IBA server — previously 403). Appended to whitelist via docker exec (file is root-owned), restarted; 10 servers whitelisted, gateway reconnected. Bot had been up 3 weeks before restart.
 - 2026-08-22 (end of day) — UI finished: **copy permanent share link + download** replacing the temporary-link "Open" button, and the trash-retention note dropped from the page. Repo commits `9446d77` (+ `0c71210` domain move), pushed. Verified on the live site each time: login gate, wrong/tampered/expired cookie rejection, list, copy-link (URL fetched by plain GET returns the raw export JSON — i.e. it works in `-load`), download (`dl=1` → attachment), delete. **Open handover:** Alex still has to send the URL + password to whoever runs IBA — the tool exists but nobody outside has it yet.
 - 2026-08-22 (later still, cont.) — UI moved to **https://eldobot-dropbox.collie.studio** at Alex's request; the `dropbox.builders.so` binding was deleted (now 530s). Re-smoke-tested on the new host. Repo commit `0c71210`, pushed.
   - **ibabot has already resumed:** first post-wipe upload `1346036658616930338-export-20260822-175025.json`, 251 MB, 2026-08-22 17:50 UTC — ~12.7% of the account within a day of it being cleared. Confirms the refill projection; the UI lets IBA clear it themselves but changes nothing about the cause.
