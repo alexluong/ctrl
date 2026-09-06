@@ -1,4 +1,4 @@
-# Fantasy football 2026 draft
+# The Octagon Fantasy League — 2026 draft
 
 Board artifact: https://claude.ai/code/artifact/7e342284-cab6-48f6-b8d8-bc694030b4ac (built 2026-09-06, pre-draft)
 
