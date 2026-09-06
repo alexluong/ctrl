@@ -35,6 +35,19 @@ Board artifact: https://claude.ai/code/artifact/7e342284-cab6-48f6-b8d8-bc694030
 | Jalen Milroe | QB | SEA | - | avoid: QB3 |
 | Mac Jones | QB | SF | - | avoid: backup |
 
-## Post-draft
+## Post-draft (drafted 2026-09-07, ~00:15–01:15)
 
-(fill in roster + what actually happened)
+League: 8 teams, 2 QB (dedicated, not superflex), 2 FLEX (W/R/T), half PPR, +0.5 per first down (RB/WR/TE), no K slot seen. Alex = GMalex001, slot 6.
+
+Picks (overall): 6 JT · 11 Lamar · 22 Achane · 27 London · 38 Olave · 43 DeVonta · 54 Dart · 59 Pitts · 70 Judkins · 75 Jameson · 86 Sutton · 91 Tuten · 102 Kittle · 107 SEA DEF · 118 Corum · 123 Addison
+
+Roster: QB Lamar, Dart · RB JT, Achane, Judkins, Tuten · WR London, Olave, DeVonta, Jameson, Sutton, Addison · TE Pitts, Kittle · DEF SEA.
+No QB3 (stream for Dart bye 8, Lamar bye 13). Bye-13 stack: JT + Lamar. Bye 11: London + Pitts + Judkins. Bye 6: Achane + Jameson + Addison.
+
+Todo: drop Corum for Brian Thomas Jr. (waiver). Start Jameson over Tuten (QUES) Wk 1.
+
+How the room drafted: QB-heavy early (8 QBs gone by pick 30, 13 by 54). WRs fell (Lamb 17, Jefferson 28). Bowers 20, McBride 24, Loveland 50 — TEs went far earlier than the FFC ADP list. Real ADP source for this room: Yahoo.
+
+Alabama haul: JT (no), Lamar (no) — Bama: DeVonta, Jameson. Missed Hurts (went 19), Henry (28), Waddle (49), Bryce (undrafted, streamable).
+
+Lessons: FFC 2QB ADP list underprices TEs and mid QBs vs Yahoo; use Yahoo ADP next year. CBS projections + custom scoring rescoring worked well for live pick decisions.
