@@ -51,3 +51,25 @@ How the room drafted: QB-heavy early (8 QBs gone by pick 30, 13 by 54). WRs fell
 Alabama haul: JT (no), Lamar (no) — Bama: DeVonta, Jameson. Missed Hurts (went 19), Henry (28), Waddle (49), Bryce (undrafted, streamable).
 
 Lessons: FFC 2QB ADP list underprices TEs and mid QBs vs Yahoo; use Yahoo ADP next year. CBS projections + custom scoring rescoring worked well for live pick decisions.
+
+
+## Full league draft (Sleeper, 16 rounds, FAAB $100)
+
+Draft order: BuSalem, rummoy, shady90s, omarashour, alnaimimba, GMalex001 (Alex), khalifaalnaimi, aliabssi.
+
+| Team | QB | RB | WR | TE | DEF |
+|---|---|---|---|---|---|
+| BuSalem | Daniels, Herbert, Mayfield | Gibbs, Breece, Skattebo, Pollard, Harvey | Lamb, Nico, Waddle, Odunze, M.Wilson | Fannin, Ferguson | BAL |
+| rummoy | Burrow, Kyler | Bijan, Henry, Etienne, Dobbins | Nabers, McConkey, Burden, P.Washington, MHJ, Reed, Diggs | Loveland | DEN |
+| shady90s | Caleb, Hurts, Dak, Darnold, J.Love | Walker, Jeanty, Jacobs, Henderson, Stevenson, Brooks | Chase, McMillan, Evans, Watson | Warren | PHI |
+| omarashour | Allen, Maye, Stroud | Chase Brown, Jer. Love, Swift, J.Warren, Lloyd, Croskey-Merritt | Higgins, Egbuka, G.Wilson, Tate | Bowers, Kelce | HOU |
+| alnaimimba | Lawrence, Purdy, Willis | Barkley, Javonte, Montgomery, Price | Nacua, AJ Brown, Jefferson, Godwin, Pierce, Stribling | Kraft, J.Johnson | JAX |
+| **GMalex001** | Lamar, Dart | JT, Achane, Judkins, Tuten, Corum | London, Olave, DeVonta, Jameson, Sutton, Addison | Pitts, Kittle | SEA |
+| khalifaalnaimi | Nix, Stafford | Cook, Hampton, Irving, Hubbard, R.White | JSN, Pickens, Adams, Lemon, Concepcion, Pittman | LaPorta, Kincaid | LAR |
+| aliabssi | Mahomes, Goff | CMC, Kyren, Dowdle, J.Mason | Amon-Ra, Rice, Zay, McLaurin, DJ Moore, Metcalf, BTJ, Q.Johnston, Downs | McBride | — |
+
+Notes: omarashour holds 3 QBs (Allen, Maye, Stroud) = trade partner for a QB3. shady90s holds 5 QBs. Jeremiyah Love went 5.4 to omarashour (not Jordan Love; Jordan Love QB went 14.6 to shady90s).
+
+## Trade log
+
+- 2026-09-07: omarashour offered Chase Brown + any WR for JT. Declined-ish; counter = Chase Brown + Maye (or + Bowers). See analysis in session.
