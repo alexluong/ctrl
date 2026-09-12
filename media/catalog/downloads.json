@@ -1533,8 +1533,8 @@
       "download": "blue4/Shazam.2019.1080p.BluRay.Opus.7.1.AV1-KIMJI"
     },
     {
-      "torrent": "blue4/dc/WALL·E.2008.1080p.BluRay.Opus.5.1.AV1-KIMJI.torrent",
-      "download": "blue4/WALL·E.2008.1080p.BluRay.Opus.5.1.AV1-KIMJI"
+      "torrent": "blue4/dc/WALL\u00b7E.2008.1080p.BluRay.Opus.5.1.AV1-KIMJI.torrent",
+      "download": "blue4/WALL\u00b7E.2008.1080p.BluRay.Opus.5.1.AV1-KIMJI"
     },
     {
       "torrent": "blue4/dc/Spider-Man.Into.the.Spider-Verse.2018.2160p.UHD.BluRay.x265-TERMiNAL.torrent",
@@ -2915,7 +2915,23 @@
     {
       "torrent": "red4/dc/Preacher.Complete.S01-S04.1080p.HEVC.x265-Crane.torrent",
       "download": "red4/Preacher Complete S01-S04 [Amzn WebDL] 10Bit Hevc x265 1080p Ac3 2.0 - Cr"
+    },
+    {
+      "torrent": "red4/dc/The.Fall.Guy.2024.1080p.BluRay.DD7.1.x264-playHD.torrent",
+      "download": "red4/The Fall Guy 2024 1080p BluRay DD 7 1 x264-playHD.mkv"
+    },
+    {
+      "torrent": "red4/dc/Remember.the.Titans.2000.1080p.DSNP.WEB-DL.DDP5.1.H.264-BLOOM.torrent",
+      "download": "red4/Remember.the.Titans.2000.1080p.DSNP.WEB-DL.DDP5.1.H.264-BLOOM.mkv"
+    },
+    {
+      "torrent": "red4/dc/I.Am.Sam.2001.1080p.BluRay.x265.torrent",
+      "download": "red4/I.Am.Sam.2001.1080p.BluRay.x265"
+    },
+    {
+      "torrent": "red4/dc/V.For.Vendetta.2005.1080p.BluRay.DTS.x264-D-Z0N3.torrent",
+      "download": "red4/V.For.Vendetta.2005.1080p.BluRay.DTS.x264.D-Z0N3.mkv"
     }
   ],
-  "updated_at": "2026-09-01 03:10:40"
+  "updated_at": "2026-09-12 08:53:32"
 }

@@ -9874,7 +9874,63 @@
       "hdr": "",
       "status": "linked",
       "library": "red4/tv/Preacher"
+    },
+    {
+      "download": "red4/The Fall Guy 2024 1080p BluRay DD 7 1 x264-playHD.mkv",
+      "type": "movie",
+      "title": "The Fall Guy",
+      "year": 2024,
+      "resolution": "1080p",
+      "source": "BluRay",
+      "group": "playHD",
+      "video": "x264",
+      "audio": "DD 7.1",
+      "hdr": "",
+      "status": "linked",
+      "library": "red4/movies/The Fall Guy (2024)"
+    },
+    {
+      "download": "red4/Remember.the.Titans.2000.1080p.DSNP.WEB-DL.DDP5.1.H.264-BLOOM.mkv",
+      "type": "movie",
+      "title": "Remember the Titans",
+      "year": 2000,
+      "resolution": "1080p",
+      "source": "WEB-DL",
+      "group": "BLOOM",
+      "video": "x264",
+      "audio": "DD+",
+      "hdr": "",
+      "status": "linked",
+      "library": "red4/movies/Remember the Titans (2000)"
+    },
+    {
+      "download": "red4/I.Am.Sam.2001.1080p.BluRay.x265",
+      "type": "movie",
+      "title": "I Am Sam",
+      "year": 2001,
+      "resolution": "1080p",
+      "source": "BluRay",
+      "group": "unknown",
+      "video": "x265",
+      "audio": "",
+      "hdr": "",
+      "status": "linked",
+      "library": "red4/movies/I Am Sam (2001)"
+    },
+    {
+      "download": "red4/V.For.Vendetta.2005.1080p.BluRay.DTS.x264.D-Z0N3.mkv",
+      "type": "movie",
+      "title": "V For Vendetta",
+      "year": 2005,
+      "resolution": "1080p",
+      "source": "BluRay",
+      "group": "Z0N3",
+      "video": "x264",
+      "audio": "DTS",
+      "hdr": "",
+      "status": "linked",
+      "library": "red4/movies/V For Vendetta (2005)"
     }
   ],
-  "updated_at": "2026-09-01 03:12:08"
+  "updated_at": "2026-09-12 08:53:41"
 }
