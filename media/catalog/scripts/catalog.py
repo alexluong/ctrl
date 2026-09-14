@@ -7,7 +7,7 @@ Usage:
     ./catalog.py scan downloads [--source blue4|red4] [--dry-run]
     ./catalog.py import [--dry-run]
     ./catalog.py link [--type movies|movies4k|tv|tv4k|all] [--dry-run]
-    ./catalog.py refresh [--server plex|jellyfin|all] [--type movies|tv|all]
+    ./catalog.py refresh [--server plex|jellyfin|all] [--type movies|tv|all] [--no-heal]
     ./catalog.py status
     ./catalog.py prune [--dry-run]
 """
@@ -17,11 +17,12 @@ import json
 import os
 import re
 import sys
+import time
 import urllib.parse
 import urllib.request
 from pathlib import Path
 from datetime import datetime
-from typing import Optional, Dict, Any, List, Set
+from typing import Optional, Dict, Any, List, Set, Tuple
 
 # =============================================================================
 # Config
@@ -78,6 +79,10 @@ JELLYFIN_BASE = "http://localhost:8096"
 JELLYFIN_ENV = CATALOG_DIR.parent / ".env"  # media/.env, next to the compose files
 # CollectionType per content type, used to match VirtualFolders.
 JELLYFIN_COLLECTION_TYPES = {"movies": "movies", "tv": "tvshows"}
+# How the external drives are mounted *inside* the Jellyfin container (see compose).
+# Used to map a catalog `library` field (e.g. "red4/tv/Show") to the Path Jellyfin
+# reports for a series (e.g. "/Red4/media/tv/Show").
+JELLYFIN_CONTAINER_MOUNTS = {"blue4": "/Blue4", "red4": "/Red4"}
 
 # Patterns that indicate TV show
 TV_PATTERNS = [
@@ -1136,6 +1141,199 @@ def refresh_jellyfin(content_types: List[str]) -> None:
             print(f"  {RED}✗{NC} Jellyfin: {name} scan failed: {e}")
 
 
+# -----------------------------------------------------------------------------
+# Jellyfin fresh-series binding heal
+#
+# A library scan fired seconds after linking a new multi-episode series races the
+# file settle: Jellyfin creates the series shell ("Season Unknown" / "virtual
+# season null" churn) but binds ZERO (or too few) episodes -> "unable to find a
+# valid media source to play". This has bitten every multi-season add (Dirk
+# Gently, The League, Preacher, 11.22.63). The reliable manual fix — wait for all
+# scans to go idle, then a recursive FullRefresh on the series item, without
+# polling mid-rebuild — is automated here. See memory: project_media_infra,
+# and the jellyfin.md gotchas.
+# -----------------------------------------------------------------------------
+
+# Seconds to let a just-triggered scan register before we poll for idle (avoids
+# catching a stale "Idle" before the task flips to Running).
+_HEAL_SCAN_STARTUP = 8
+# Seconds to wait after a recursive refresh before re-checking. Binding is
+# disk-I/O-bound over virtiofs (~2s/file); poll-free wait dodges the 0->N->0 flip.
+_HEAL_REFRESH_WAIT = 90
+# Max recursive-refresh attempts per short series.
+_HEAL_MAX_ROUNDS = 2
+
+
+def _jellyfin_get(base: str, token: str, path: str, timeout: int = 30) -> Any:
+    req = urllib.request.Request(f"{base}{path}")
+    req.add_header("X-Emby-Token", token)
+    with urllib.request.urlopen(req, timeout=timeout) as resp:
+        return json.load(resp)
+
+
+def _jellyfin_post(base: str, token: str, path: str, timeout: int = 30) -> int:
+    req = urllib.request.Request(f"{base}{path}", data=b"", method="POST")
+    req.add_header("X-Emby-Token", token)
+    with urllib.request.urlopen(req, timeout=timeout) as resp:
+        return resp.getcode()
+
+
+def jellyfin_wait_idle(base: str, token: str, timeout: int = 420) -> bool:
+    """Block until no scheduled task is Running. Returns False on timeout."""
+    deadline = time.time() + timeout
+    while time.time() < deadline:
+        try:
+            tasks = _jellyfin_get(base, token, "/ScheduledTasks")
+        except Exception:
+            time.sleep(6)
+            continue
+        busy = [t.get("Name") for t in tasks if t.get("State") != "Idle"]
+        if not busy:
+            return True
+        time.sleep(6)
+    return False
+
+
+def _library_paths(library: str) -> Optional[Tuple[Path, str, str]]:
+    """Map a catalog `library` field to (disk_path, container_path, show_name).
+
+    e.g. "red4/tv/11.22.63" -> (/Volumes/Red4/arr/media/tv/11.22.63,
+                                "/Red4/media/tv/11.22.63", "11.22.63")
+    Returns None if the source/type is unknown.
+    """
+    parts = library.split("/")
+    if len(parts) < 3:
+        return None
+    source, ctype = parts[0], parts[1]
+    show = "/".join(parts[2:])
+    libs = LIBRARIES.get(source)
+    mount = JELLYFIN_CONTAINER_MOUNTS.get(source)
+    if not libs or ctype not in libs or not mount:
+        return None
+    return libs[ctype] / show, f"{mount}/media/{ctype}/{show}", show
+
+
+def _disk_episode_count(disk_path: Path) -> int:
+    """Count episode files on disk that carry a parseable SxxEyy code."""
+    return sum(1 for ep in find_episodes(disk_path) if parse_episode_code(ep.name))
+
+
+def _episode_bound_count(base: str, token: str, sid: str) -> int:
+    """Episodes of a series that have at least one playable media source."""
+    data = _jellyfin_get(base, token, f"/Shows/{sid}/Episodes?Fields=MediaSources")
+    return sum(1 for e in data.get("Items", []) if e.get("MediaSources"))
+
+
+def heal_jellyfin_tv(no_heal: bool = False) -> None:
+    """Verify every linked TV series has all its episodes bound in Jellyfin;
+    recursive-refresh the ones that come up short."""
+    if no_heal:
+        return
+
+    catalog = load_catalog()
+    tv = [
+        it for it in catalog.get("items", [])
+        if it.get("type") == "tv" and it.get("status") == "linked" and it.get("library")
+    ]
+    if not tv:
+        return
+
+    env = parse_env_file(JELLYFIN_ENV)
+    user, password = env.get("JELLYFIN_ADMIN_USER"), env.get("JELLYFIN_ADMIN_PASS")
+    if not user or not password:
+        print(f"  {YELLOW}?{NC} Heal: JELLYFIN_ADMIN_USER/PASS missing; skipping verify")
+        return
+    try:
+        token = jellyfin_authenticate(JELLYFIN_BASE, user, password)
+    except Exception as e:
+        print(f"  {RED}✗{NC} Heal: auth failed: {e}")
+        return
+
+    print(f"\n{BLUE}Verify (Jellyfin episode binding):{NC}")
+    print("  waiting for library scan to settle...")
+    time.sleep(_HEAL_SCAN_STARTUP)
+    if not jellyfin_wait_idle(JELLYFIN_BASE, token):
+        print(f"  {YELLOW}?{NC} scans still busy after timeout; verifying anyway")
+
+    # Build a container-path -> series item map (Path is most reliable; basename fallback).
+    try:
+        data = _jellyfin_get(
+            JELLYFIN_BASE, token,
+            "/Items?Recursive=true&IncludeItemTypes=Series&Fields=Path",
+        )
+    except Exception as e:
+        print(f"  {RED}✗{NC} Heal: could not list series: {e}")
+        return
+    by_path: Dict[str, Dict] = {}
+    by_base: Dict[str, Dict] = {}  # keyed lowercase for case-insensitive fallback
+    for it in data.get("Items", []):
+        p = it.get("Path")
+        if p:
+            by_path[p] = it
+            by_base[p.rstrip("/").split("/")[-1].lower()] = it
+
+    # Many catalog entries (one per season/download) point at the same library
+    # folder — dedup by container path so each series is checked once.
+    targets: Dict[str, Tuple[Path, str]] = {}  # container_path -> (disk_path, show)
+    for it in tv:
+        resolved = _library_paths(it["library"])
+        if not resolved:
+            continue
+        disk_path, container_path, show = resolved
+        targets.setdefault(container_path, (disk_path, show))
+
+    # Find short series (bound < on-disk episode count).
+    short: List[Tuple[str, str, int]] = []  # (title, series_id, expected)
+    checked = 0
+    for container_path, (disk_path, show) in sorted(targets.items()):
+        expected = _disk_episode_count(disk_path)
+        if expected == 0:
+            continue
+        checked += 1
+        series = by_path.get(container_path) or by_base.get(show.lower())
+        if not series or not series.get("Id"):
+            print(f"  {YELLOW}?{NC} {show}: not found in Jellyfin yet (expected {expected})")
+            continue
+        bound = _episode_bound_count(JELLYFIN_BASE, token, series["Id"])
+        if bound < expected:
+            print(f"  {YELLOW}○{NC} {show}: {bound}/{expected} bound — will refresh")
+            short.append((show, series["Id"], expected))
+        else:
+            print(f"  {GREEN}✓{NC} {show}: {bound}/{expected} bound")
+
+    if not short:
+        if checked:
+            print(f"  all {checked} TV series fully bound")
+        return
+
+    # Heal short series: recursive FullRefresh, poll-free wait, re-verify.
+    for show, sid, expected in short:
+        for attempt in range(1, _HEAL_MAX_ROUNDS + 1):
+            try:
+                _jellyfin_post(
+                    JELLYFIN_BASE, token,
+                    f"/Items/{sid}/Refresh?Recursive=true"
+                    "&MetadataRefreshMode=FullRefresh&ImageRefreshMode=FullRefresh"
+                    "&ReplaceAllMetadata=true",
+                )
+            except Exception as e:
+                print(f"  {RED}✗{NC} {show}: refresh failed: {e}")
+                break
+            print(f"  {show}: refresh {attempt}/{_HEAL_MAX_ROUNDS} sent; waiting {_HEAL_REFRESH_WAIT}s...")
+            time.sleep(_HEAL_REFRESH_WAIT)
+            try:
+                bound = _episode_bound_count(JELLYFIN_BASE, token, sid)
+            except Exception as e:
+                print(f"  {RED}✗{NC} {show}: re-check failed: {e}")
+                break
+            if bound >= expected:
+                print(f"  {GREEN}✓{NC} {show}: {bound}/{expected} bound")
+                break
+            print(f"  {YELLOW}○{NC} {show}: {bound}/{expected} after round {attempt}")
+        else:
+            print(f"  {RED}✗{NC} {show}: still short after {_HEAL_MAX_ROUNDS} rounds — check manually")
+
+
 def cmd_refresh(args):
     """Trigger Plex and/or Jellyfin library scans for movies and/or TV."""
 
@@ -1165,6 +1363,13 @@ def cmd_refresh(args):
             refresh_jellyfin(content_types)
         except Exception as e:
             print(f"  {RED}✗{NC} Jellyfin: unexpected error: {e}")
+
+        # Self-heal the fresh-series episode-binding race (TV only).
+        if "tv" in content_types and not getattr(args, "no_heal", False):
+            try:
+                heal_jellyfin_tv()
+            except Exception as e:
+                print(f"  {RED}✗{NC} Heal: unexpected error: {e}")
 
     print("=" * 50)
     return 0
@@ -1231,6 +1436,10 @@ def main():
     p_refresh = subparsers.add_parser("refresh", help="Trigger Plex/Jellyfin library scans")
     p_refresh.add_argument("--server", choices=["plex", "jellyfin", "all"], default="all")
     p_refresh.add_argument("--type", choices=["movies", "tv", "all"], default="all")
+    p_refresh.add_argument(
+        "--no-heal", action="store_true",
+        help="Skip the Jellyfin episode-binding verify/heal step (TV only)",
+    )
 
     # status
     subparsers.add_parser("status", help="Show status")

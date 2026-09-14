@@ -391,6 +391,16 @@ The `catalog.py` script in `catalog/scripts/` automates the tracking pipeline:
 ./catalog.py prune              # Remove entries for deleted torrents
 ```
 
+**`refresh --type tv` self-heals the Jellyfin fresh-series binding race.** A scan
+fired right after linking a new multi-episode series races the file settle:
+Jellyfin makes the series shell but binds zero/too-few episodes ("unable to find
+a valid media source to play" — hit on Dirk Gently, The League, Preacher, 11.22.63).
+After triggering the scan, `refresh` waits for *all* Jellyfin scheduled tasks to go
+idle, then checks every linked TV series' bound-episode count (with a media source)
+against the episode files on disk, and fires a recursive `FullRefresh` on any that
+come up short (up to 2 rounds, poll-free waits to dodge the 0→N→0 flip). Healthy
+series pass untouched. Pass `--no-heal` to skip. See `jellyfin.md` gotchas.
+
 **Important**: These scripts are helpers, not the source of truth. They parse metadata from filenames which can be wrong. Always verify the end state — files on disk must match what the tracking data says. When there's a discrepancy, investigate and fix whichever side is wrong.
 
 ## What Hannah can ask for
