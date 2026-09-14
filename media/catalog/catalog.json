@@ -970,20 +970,6 @@
       "library": "blue4/movies/The Shawshank Redemption (1994)"
     },
     {
-      "download": "blue4/Spider-Man.3.2007.Remastered.1080p.BluRay.x264-OFT",
-      "type": "movie",
-      "title": "Spider-Man 3",
-      "year": 2007,
-      "resolution": "1080p",
-      "source": "BluRay",
-      "group": "OFT",
-      "video": "x264",
-      "audio": "",
-      "hdr": "",
-      "status": "linked",
-      "library": "blue4/movies/Spider-Man 3 (2007)"
-    },
-    {
       "download": "blue4/The.Green.Mile.1999.1080p.DS4K.MA.WEBRip.DDP5.1.Atmos.AV1-KIMJI.mkv",
       "type": "movie",
       "title": "The Green Mile",
@@ -2575,20 +2561,6 @@
       "library": "blue4/movies/Captain America Civil War (2016)"
     },
     {
-      "download": "blue4/Spider-Man.2002.1080p.RM4K.BluRay.Opus.5.1.AV1-KIMJI.mkv",
-      "type": "movie",
-      "title": "Spider-Man",
-      "year": 2002,
-      "resolution": "1080p",
-      "source": "BluRay",
-      "group": "KIMJI",
-      "video": "AV1",
-      "audio": "Opus",
-      "hdr": "",
-      "status": "linked",
-      "library": "blue4/movies/Spider-Man (2002)"
-    },
-    {
       "download": "blue4/Contact.1997.1080p.BluRay.Opus.5.1.AV1-KIMJI.mkv",
       "type": "movie",
       "title": "Contact",
@@ -2866,20 +2838,6 @@
       "hdr": "",
       "status": "linked",
       "library": "blue4/tv/Parks And Recreation"
-    },
-    {
-      "download": "blue4/The.Terminator.1984.REMASTERED.1080p.BluRay.x265-LAMA",
-      "type": "movie",
-      "title": "The Terminator",
-      "year": 1984,
-      "resolution": "1080p",
-      "source": "BluRay",
-      "group": "LAMA",
-      "video": "x265",
-      "audio": "",
-      "hdr": "",
-      "status": "linked",
-      "library": "blue4/movies/The Terminator (1984)"
     },
     {
       "download": "blue4/American.Psycho.2000.1080p.BluRay.OPUS.5.1.AV1-KIMJI",
@@ -3168,20 +3126,6 @@
       "hdr": "",
       "status": "linked",
       "library": "blue4/movies/Airplane (1980)"
-    },
-    {
-      "download": "blue4/Inception.2010.1080p.DS4K.MA.WEBRip.DDP5.1.AV1-KIMJI.mkv",
-      "type": "movie",
-      "title": "Inception",
-      "year": 2010,
-      "resolution": "1080p",
-      "source": "WEBRip",
-      "group": "KIMJI",
-      "video": "AV1",
-      "audio": "DD+",
-      "hdr": "",
-      "status": "linked",
-      "library": "blue4/movies/Inception (2010)"
     },
     {
       "download": "blue4/Now.You.See.Me.Now.You.Dont.2025.1080p.AMZN.WEB-DL.DDP5.1.Atmos.H.264-BYNDR.mkv",
@@ -3620,20 +3564,6 @@
       "library": "blue4/movies/Snatch (2000)"
     },
     {
-      "download": "blue4/How.the.Grinch.Stole.Christmas.2000.BluRay.1080p.DD.5.1.x264-BHDStudio.mp4",
-      "type": "movie",
-      "title": "How the Grinch Stole Christmas",
-      "year": 2000,
-      "resolution": "1080p",
-      "source": "BluRay",
-      "group": "BHDStudio",
-      "video": "x264",
-      "audio": "",
-      "hdr": "",
-      "status": "linked",
-      "library": "blue4/movies/How the Grinch Stole Christmas (2000)"
-    },
-    {
       "download": "blue4/The.Social.Network.2010.1080p.BluRay.x265-LAMA",
       "type": "movie",
       "title": "The Social Network",
@@ -3920,20 +3850,6 @@
       "hdr": "",
       "status": "linked",
       "library": "blue4/movies/Ron's Gone Wrong (2021)"
-    },
-    {
-      "download": "blue4/Terminator.2.Judgment.Day.1991.Extended.1080p.BluRay.x264-OFT",
-      "type": "movie",
-      "title": "Terminator 2 Judgment Day",
-      "year": 1991,
-      "resolution": "1080p",
-      "source": "BluRay",
-      "group": "OFT",
-      "video": "x264",
-      "audio": "",
-      "hdr": "",
-      "status": "linked",
-      "library": "blue4/movies/Terminator 2 Judgment Day (1991)"
     },
     {
       "download": "blue4/National.Treasure.2004.1080p.BluRay.OPUS.5.1.AV1-KIMJI",
@@ -5577,20 +5493,6 @@
       "hdr": "",
       "status": "linked",
       "library": "blue4/movies/Star Trek III The Search for Spock (1984)"
-    },
-    {
-      "download": "blue4/Office.Space.1999.BluRay.1080p.DDP.5.1.x264-hallowed.mkv",
-      "type": "movie",
-      "title": "Office Space",
-      "year": 1999,
-      "resolution": "1080p",
-      "source": "BluRay",
-      "group": "hallowed",
-      "video": "x264",
-      "audio": "DD+",
-      "hdr": "",
-      "status": "linked",
-      "library": "blue4/movies/Office Space (1999)"
     },
     {
       "download": "blue4/Toy.Story.3.2010.1080p.BluRay.OPUS.7.1.AV1-KIMJI",
