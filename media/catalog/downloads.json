@@ -2931,7 +2931,11 @@
     {
       "torrent": "red4/dc/V.For.Vendetta.2005.1080p.BluRay.DTS.x264-D-Z0N3.torrent",
       "download": "red4/V.For.Vendetta.2005.1080p.BluRay.DTS.x264.D-Z0N3.mkv"
+    },
+    {
+      "torrent": "red4/dc/11.22.63.S01.1080p.AMZN.WEB-DL.DDP5.1.H.264-playWEB.torrent",
+      "download": null
     }
   ],
-  "updated_at": "2026-09-12 08:53:32"
+  "updated_at": "2026-09-14 08:12:52"
 }

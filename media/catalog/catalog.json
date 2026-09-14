@@ -9930,7 +9930,23 @@
       "hdr": "",
       "status": "linked",
       "library": "red4/movies/V For Vendetta (2005)"
+    },
+    {
+      "download": "red4/11.22.63.S01.1080p.AMZN.WEB-DL.DD+5.1.H.264-playWEB",
+      "type": "tv",
+      "title": "11.22.63",
+      "seasons": [
+        1
+      ],
+      "resolution": "1080p",
+      "source": "WEB-DL",
+      "group": "playWEB",
+      "video": "x264",
+      "audio": "DD+",
+      "hdr": "",
+      "status": "linked",
+      "library": "red4/tv/11.22.63"
     }
   ],
-  "updated_at": "2026-09-12 08:53:41"
+  "updated_at": "2026-09-14 08:13:16"
 }
