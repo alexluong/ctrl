@@ -1819,7 +1819,7 @@
     {
       "download": "blue4/Review.With.Forrest.MacNeil.S03.1080p.WEB.x264-SCENE",
       "type": "tv",
-      "title": "Review With Forrest MacNeil",
+      "title": "Review with Forrest MacNeil",
       "seasons": [
         3
       ],
@@ -1830,7 +1830,7 @@
       "audio": "",
       "hdr": "",
       "status": "linked",
-      "library": "blue4/tv/Review With Forrest MacNeil"
+      "library": "blue4/tv/Review with Forrest MacNeil"
     },
     {
       "download": "blue4/BoJack.Horseman.S04.1080p.NF.WEBRip.DD5.1.AV1-KIMJI",
@@ -5331,9 +5331,9 @@
       "library": "blue4/movies/Shazam (2019)"
     },
     {
-      "download": "blue4/WALL\u00b7E.2008.1080p.BluRay.Opus.5.1.AV1-KIMJI",
+      "download": "blue4/WALL·E.2008.1080p.BluRay.Opus.5.1.AV1-KIMJI",
       "type": "movie",
-      "title": "WALL\u00b7E",
+      "title": "WALL·E",
       "year": 2008,
       "resolution": "1080p",
       "source": "BluRay",
@@ -5342,7 +5342,7 @@
       "audio": "Opus",
       "hdr": "",
       "status": "linked",
-      "library": "blue4/movies/WALL\u00b7E (2008)"
+      "library": "blue4/movies/WALL·E (2008)"
     },
     {
       "download": "blue4/Spider-Man.Into.the.Spider-Verse.2018.2160p.UHD.BluRay.x265-TERMiNAL",
