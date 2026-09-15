@@ -59,7 +59,7 @@ had to justify deleting things that would immediately come back.
 |---|---|---|---|
 | `docker` | 70.9G | **120G** | Deliberately generous, not baseline-derived. Primary dev runtime, and the baseline was measured right after a full prune, so it understates the working peak. |
 | `repos` | 70.6G | **100G** | Headroom for a few fresh worktree installs. |
-| `system` | 44.0G | **50G** | Shouldn't move much. Growth means a new runtime or tool VM — worth knowing about, rarely worth pruning. |
+| `system` | 44.0G | **70G** | Raised 50 → 70 on 2026-09-16: over budget three audits running (58.1 / 57.8 / 66.2) and still ~59G after a genuine prune. Go caches, pnpm store, and `~/Library/Caches` all grow with normal dev. Growth past 70 means a new runtime or tool VM — worth knowing about, rarely worth pruning. |
 | `apps` | 71.3G | **80G** | Moves only when something is installed. |
 | `personal` | 30.6G | **40G** | Moves only by decision. |
 | `other` | 58.2G | **70G** | Unclassified remainder; drifts with OS churn. |
@@ -124,14 +124,20 @@ didn't, the growth is somewhere unexpected and worth a real look.
 du -sh ~/git/hub/*/*/ | sort -rh | head -8
 ```
 
-| Tree | 2026-08-25 | Expect | What it is |
-|---|---|---|---|
-| `ebutler-qa/workspace` | 19G (11 wt) | `6.5G + ~1.2G/worktree` | worktrees, each with its own `node_modules` |
-| `alexluong/hookdeck-workspace` | 15G (6 wt) | 10–18G | `core-workspace` alone is 7.4G |
-| `alexluong/hookdeck` | 9.3G (14 wt) | 8–12G | pnpm; separate tree from `hookdeck-workspace` |
-| `ebutler-qa/workspace.git` | 6.0G | ~6G | bare mirror backing the worktrees |
-| `alexluong/hookdeck-workspace.git` | 5.1G | ~5G | bare mirror backing the worktrees |
-| everything else | ~30G | ~30G | ~60 repos, none over 5.1G (`ebutler-qa/odoo`) |
+| Tree | 2026-08-25 | 2026-09-16 | Expect | What it is |
+|---|---|---|---|---|
+| `alexluong/hookdeck` | 9.3G (14 wt) | 36G (37 dirs) | `~4G + ~1.8G/core worktree` | separate tree from `hookdeck-workspace`; `core-wt-*` worktrees are ~1.8G each and **not** hardlinked (du -c of three = sum) |
+| `ebutler-qa/workspace` | 19G (11 wt) | 16G (13 wt) | `6.5G + ~1.2G/worktree` | worktrees, each with its own `node_modules` |
+| `alexluong/hookdeck-workspace` | 15G (6 wt) | 15G (6 wt) | 10–18G | `core-workspace` alone is 7.4G |
+| `alexluong/hookdeck-workspace.git` | 5.1G | 5.1G | ~5G | bare mirror backing the worktrees |
+| `ebutler-qa/workspace.git` | 6.0G | 1.9G | ~2–6G | bare mirror backing the worktrees; shrank on its own (gc/re-clone) |
+| everything else | ~30G | ~30G | ~30G | ~60 repos, none over 5.1G (`ebutler-qa/odoo`) |
+
+`alexluong/hookdeck` became the biggest tree on 2026-09-16: 18 `core-wt-*`
+worktrees, 13 of them with a full ~1.8G `node_modules`, all touched within the
+prior two weeks. Same per-worktree duplication as `ebutler-qa/workspace`. When
+this tree is over ~20G, the cheap win is `node_modules` in worktrees whose
+branch has merged — check `git branch --merged` in `core/` first.
 
 **Size the two workspace trees by worktree count, not by the absolute number
 above.** They are actively managed and swing hard: during this audit
@@ -201,6 +207,8 @@ All values in GiB (see units note above).
 | 2026-08-17 | 421.8 | 15.1 | 128.7 | 70.9 | 58.1 | 71.9 | 28.7 | 63.6 |
 | 2026-08-25 | 416.0 | 3.4 | 116.4 | 104.4 | 57.8 | 72.3 | 28.9 | 36.2 |
 | 2026-08-25 | 376.6 | 42.8 | 77.9 | 90.3 | 57.8 | 72.3 | 28.9 | 49.4 |
+| 2026-09-16 | 425.4 | 8.4 | 116.3 | 104.0 | 66.2 | 72.8 | 29.5 | 36.6 |
+| 2026-09-16 | 364.3 | 69.6 | 61.2 | 88.1 | 58.7 | 70.7 | 29.5 | 56.1 |
 
 The brief `caches`/`system` split on 2026-08-03 was folded back before any
 snapshot depended on it, so every row above is directly comparable.
@@ -257,6 +265,24 @@ Moving files into iCloud Drive frees nothing on its own (same volume) — space
 only returns once iCloud uploads and macOS evicts the local copies.
 
 ## History
+
+- **2026-09-16** — Free space hit **8.4G**. Three weeks since the last audit.
+  Docker was the mover again (+38.4G to 116.3, just under budget): 64G of
+  images older than 30 days, 22.8G build cache. `repos` +13.7 to 104.0 (over
+  budget), all of it `alexluong/hookdeck` going 9.3 → 36G on 18 `core-wt-*`
+  worktrees — every one active in the last two weeks, so left alone. `system`
+  +8.4 to 66.2: `~/Library/Caches` 4.7 → 16G (go-build 4.4, Homebrew 3.3,
+  ms-playwright 3.1, Google 3.0), pnpm store 11 → 14, go mod 11 → 13.
+  Safe-tier cleanup only: Docker build cache (22.8G) + images >30d (41.7G) +
+  anonymous volumes (2MB, 92 empties), 73 `node_modules` dirs untouched 90+
+  days (16.3G by `du`), `brew cleanup --prune=all` (3.5G), `pnpm store prune`
+  (3.3G). **8.4 → 69.6G free.** Not touched, needs a by-name decision: 143
+  named Docker volumes, 36.7G, all inactive — biggest are `server_gocache` 5.3G,
+  `df-build-vol` 3.1G, `outpost_go_build_cache` + `outpost_go_mod_cache` +
+  `server_gomodcache` ~7G, and ~15 `enable-*_node_modules` + 16
+  `enable-*_mongo_data` at ~0.2–0.5G each. Raised `system` budget 50 → 70
+  (over three audits running, ~59 post-prune — the budget was wrong).
+  Two rows below: pre- and post-clean.
 
 - **2026-08-25** — Free space hit **3.4G**. Docker was over again (116.4G, +45.5
   from baseline, having been pruned down from 128.7 on 08-17) and `repos` jumped

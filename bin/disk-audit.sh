@@ -24,7 +24,7 @@ VOL="/System/Volumes/Data"
 # cannot all be at ceiling at once. That's expected: FREE_FLOOR is the real guard.
 BUDGET_DOCKER=120   # deliberately generous — primary dev runtime, baseline post-prune
 BUDGET_REPOS=100    # baseline 70.6 + headroom for fresh worktree installs
-BUDGET_SYSTEM=50    # baseline 43.9 — shouldn't move much
+BUDGET_SYSTEM=70    # raised from 50 on 2026-09-16 — sat at 58-66 for three audits, ~59 post-prune
 BUDGET_APPS=80      # baseline 71.3
 BUDGET_PERSONAL=40  # baseline 30.6
 BUDGET_OTHER=70     # baseline 58.2 — drifts on its own
