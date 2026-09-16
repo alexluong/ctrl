@@ -139,6 +139,20 @@
       "seasons": 2,
       "network": "Amazon",
       "notes": "Julia Roberts; DC only has dead Polish 2160p rips, no English 1080p pack"
+    },
+    {
+      "title": "Wayne",
+      "year": 2019,
+      "seasons": 1,
+      "network": "YouTube Premium",
+      "notes": "Not on DC (WAYNE hits are a release group, not the show)"
+    },
+    {
+      "title": "Most Dangerous Game",
+      "year": 2020,
+      "seasons": 2,
+      "network": "Quibi",
+      "notes": "Liam Hemsworth; DC only has dead S02 single-eps, no seeded pack"
     }
   ],
   "movies": [
@@ -151,6 +165,16 @@
       "title": "No Country for Old Men",
       "year": 2007,
       "notes": "Want 4K UHD/HDR"
+    },
+    {
+      "title": "Goal! The Dream Begins",
+      "year": 2005,
+      "notes": "Soccer film; not on DC in 1080p"
+    },
+    {
+      "title": "My One and Only",
+      "year": 2009,
+      "notes": "Renee Zellweger; not on DC"
     }
   ]
 }
