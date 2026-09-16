@@ -153,6 +153,13 @@
       "seasons": 2,
       "network": "Quibi",
       "notes": "Liam Hemsworth; DC only has dead S02 single-eps, no seeded pack"
+    },
+    {
+      "title": "Slow Horses",
+      "year": 2022,
+      "seasons": "S03-S04 only",
+      "network": "Apple TV+",
+      "notes": "Have S01/S02/S05 in 1080p; S03+S04 only on DC as 2160p DV/HDR (~50GB ea) - want 1080p, recheck DC/other"
     }
   ],
   "movies": [
