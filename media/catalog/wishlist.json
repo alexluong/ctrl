@@ -125,6 +125,20 @@
       "title": "Modern Family",
       "year": 2009,
       "seasons": 11
+    },
+    {
+      "title": "Legion",
+      "year": 2017,
+      "seasons": 3,
+      "network": "FX",
+      "notes": "DC only has scattered dead single-eps (0 seeders), no seeded season pack; check other sources"
+    },
+    {
+      "title": "Homecoming",
+      "year": 2018,
+      "seasons": 2,
+      "network": "Amazon",
+      "notes": "Julia Roberts; DC only has dead Polish 2160p rips, no English 1080p pack"
     }
   ],
   "movies": [
