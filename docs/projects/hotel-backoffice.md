@@ -13,7 +13,10 @@ Naming: product/hotel name is **SoLex** (keep that casing in prose/UI). Folders,
 
 - **Event sourcing** architecture — bookings/reservations as an event log, state derived from projections
 - **Simple full-stack app**, probably deployed on **Cloudflare** (Workers/Pages + D1/R2/Durable Objects TBD)
-- _Maybe_ **Hookdeck** for events/queue (Alex has Hookdeck repos locally — see `docs/machine.md`)
+- **Hookdeck** as the event system / source-of-truth-ish (Alex's intent, 2026-09-19; Hookdeck repos local — see `docs/machine.md`)
+  - Open concern: ES needs a permanent, per-aggregate-ordered, replayable log. Hookdeck is retention-bound + ordered per connection → natural fit as **bus** (ingest, fan-out to projections, retries, replay-in-window). As **permanent store** only if long retention/export is available (internal knowledge?).
+  - Candidate shape: Hookdeck = transport + short-term replay; Postgres/R2 = archive log fed by an "archive" destination; projections rebuild from archive.
+  - Q for Alex: stock SaaS retention, or something that makes retention a non-issue?
 - **Constraints (2026-09-19):** wants Go, wants to ship, does **not** want to run/deploy on a VM. Cloudflare = "simple, no hosting to worry about." Supersedes the collielab-VM assumption in `docs/stack.md` for this project.
 - Go-on-Cloudflare options to evaluate (not decided):
   - **Cloudflare Containers** — plain Go binary in a container, fronted by a Worker; closest to "just Go," no VM. Storage via Hyperdrive→Postgres (Neon/Supabase) or D1 through the Worker.
