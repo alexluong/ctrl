@@ -10,3 +10,5 @@ Format: `- [ ] Q (asked by, date) → for: Alex | client`. Check off + answer in
 - [ ] OTA channels; channel manager or manual entry; commission rates per OTA? (architect, 2026-09-19) → client
 - [ ] Seasonal / per-night rate changes? VAT / red invoice? (architect, 2026-09-19) → client
 - [ ] Timeline / urgency? (architect, 2026-07-10) → Alex
+- [ ] `wrangler login` expired on MBP — Alex to run in solex-dev session. (dev, 2026-09-19) → Alex
+- [ ] Cloudflare Containers needs Workers Paid (~$5/mo). OK? Else fallback = Go→WASM Workers on free tier. (dev, 2026-09-19) → Alex

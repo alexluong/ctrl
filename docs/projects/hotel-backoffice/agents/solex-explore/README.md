@@ -6,6 +6,8 @@
 
 **Access:** `ctrl/secrets/hotel-backoffice.md` (URL + login, MBP-local). Never copy into tracked files or messages.
 
+**Tooling:** expect to drive the site in a browser — Playwright (MCP or `npx playwright`, headed, screenshots into your `notes/`), plus `curl` for API sniffing. Check what's available in-session before starting; ask Alex to install if missing. Model: Opus (exploratory, likely janky Vietnamese SPA).
+
 ## Current objective (2026-09-19)
 
 1. Read `requirements.md` — it's Excel-shaped. First question to Alex: does that workbook exist? Get it (→ `client/`, dated filename, untouched).
