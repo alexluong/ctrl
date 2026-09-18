@@ -13,7 +13,7 @@ Naming: product/hotel name is **SoLex** (keep that casing in prose/UI). Folders,
 | `existing-system.md` | WS2: what the current `:99` system is, feature inventory, entities, what staff use | WS2 |
 | `product.md` | WS3: domain discovery — bounded contexts, aggregates, events, user roles, scope | WS3 |
 | `discovery.md` | Alex's brain-dump answers to open questions (input to WS2/WS3) | Alex→Claude |
-| `agents/<name>/` | per-agent: `README.md` profile (role, owned files, current objective, log) + `notes.md` personal scratch — **read yours at session start** | that agent (profile objective: architect) |
+| `agents/<name>/` | per-agent: `README.md` profile (role, owned files, current objective, log) + `notes/YYYY-MM-DD-HHMM-<slug>.md` personal journal, one file per entry — **read yours at session start** | that agent (profile objective: architect) |
 | `team/` | shared: `decisions.md`, `questions.md`, `log.md` — any agent appends, dated + signed | all |
 | `requirements.md` | client's initial requirements (2026-09-19), EN translation + structure + first read | cockpit |
 | `client/` | raw client inputs, untouched, dated filenames (`2026-09-19-requirements-raw.md`) | frozen — never edit |
