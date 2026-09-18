@@ -20,3 +20,4 @@ Message architect when (1)–(2) resolved and when the file is ready for product
 ## Log
 
 - 2026-09-19 — session created.
+- 2026-09-19 — caught up; tooling ok (curl, npx playwright; no Playwright MCP). Waiting on Alex re `:99` + workbook.
