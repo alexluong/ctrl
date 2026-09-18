@@ -13,7 +13,8 @@ Naming: product/hotel name is **SoLex** (keep that casing in prose/UI). Folders,
 | `existing-system.md` | WS2: what the current `:99` system is, feature inventory, entities, what staff use | WS2 |
 | `product.md` | WS3: domain discovery — bounded contexts, aggregates, events, user roles, scope | WS3 |
 | `discovery.md` | Alex's brain-dump answers to open questions (input to WS2/WS3) | Alex→Claude |
-| `agents/` | agent roster + one profile per session (role, owned files, current objective, log) — **read yours at session start** | architect |
+| `agents/<name>/` | per-agent: `README.md` profile (role, owned files, current objective, log) + `notes.md` personal scratch — **read yours at session start** | that agent (profile objective: architect) |
+| `team/` | shared: `decisions.md`, `questions.md`, `log.md` — any agent appends, dated + signed | all |
 | `requirements.md` | client's initial requirements (2026-09-19), EN translation + structure + first read | cockpit |
 | `client/` | raw client inputs, untouched, dated filenames (`2026-09-19-requirements-raw.md`) | frozen — never edit |
 
@@ -72,18 +73,18 @@ Later WS (not now): event-store design — Hookdeck-as-log vs bus + archive. Nee
 
 ### WS1 · `solex-dev` — repo + hello-world spike → `stack.md`
 
-> You are `solex-dev`. Read `~/git/hub/alexluong/ctrl/docs/projects/hotel-backoffice/agents/solex-dev.md`, then `../README.md` and `ctrl/docs/workflow.md`. You own `stack.md` only.
+> You are `solex-dev`. Read `~/git/hub/alexluong/ctrl/docs/projects/hotel-backoffice/agents/solex-dev/README.md`, then `../README.md` and `ctrl/docs/workflow.md`. You own `stack.md` only.
 > Goal: a *spike*, not scaffolding. Prove Go on Cloudflare with no VM: hello-world Go HTTP service deployed on **Cloudflare Containers** fronted by a Worker, talking to Postgres via Hyperdrive (Neon or similar free tier). Fall back to Go→WASM Workers (`syumai/workers`) only if Containers is blocked; record why.
 > Bootstrap repo `solex` with `/new-project` (private). Deliver: deployed URL, `fix`/`check` commands, cold-start + request latency numbers, dev loop (local run vs deploy), cost notes, and a stack recommendation with the tradeoffs. Ask Alex before creating paid resources.
 
 ### WS2 · `solex-explore` — analyze existing system → `existing-system.md`
 
-> You are `solex-explore`. Read `~/git/hub/alexluong/ctrl/docs/projects/hotel-backoffice/agents/solex-explore.md`, then `../README.md`. You own `existing-system.md` only. Access details in `ctrl/secrets/hotel-backoffice.md` (never copy them into tracked files).
+> You are `solex-explore`. Read `~/git/hub/alexluong/ctrl/docs/projects/hotel-backoffice/agents/solex-explore/README.md`, then `../README.md`. You own `existing-system.md` only. Access details in `ctrl/secrets/hotel-backoffice.md` (never copy them into tracked files).
 > Goal: understand the system the hotel uses today. Read `requirements.md` first — it's Excel-shaped; confirm whether such a workbook exists. Start by asking Alex what the `:99` system is. Try `curl` w/ the login; if it's a SPA or non-scrapable, drive the analysis via Alex's screenshots / screen-by-screen walkthrough / any export. Deliver: feature inventory, screens, data entities + fields, reports, integrations (OTA/channel manager/payments), what staff actually use vs ignore, pain points, and a "For other WSs" section (entities/events WS3 should model; anything WS1's stack must support, e.g. LAN/offline).
 
 ### WS3 · `solex-product` — domain discovery → `product.md`
 
-> You are `solex-product`. Read `~/git/hub/alexluong/ctrl/docs/projects/hotel-backoffice/agents/solex-product.md`, then `../README.md` and `requirements.md` (client's own list — primary input), + `discovery.md` and `existing-system.md` if present. You own `product.md` only. No code.
+> You are `solex-product`. Read `~/git/hub/alexluong/ctrl/docs/projects/hotel-backoffice/agents/solex-product/README.md`, then `../README.md` and `requirements.md` (client's own list — primary input), + `discovery.md` and `existing-system.md` if present. You own `product.md` only. No code.
 > Goal: model the product. Interview Alex on the open questions first. Deliver: users + roles, jobs-to-be-done, bounded contexts, aggregates (Booking, Room, Rate, Guest, …) with their events and invariants (double-booking, date-range overlap, tz), core vs later scope, and what "semi-professional" means operationally. Write event names as the ES vocabulary. Flag where the model depends on WS2 findings; plan a second pass after WS2.
 
 ## Status
