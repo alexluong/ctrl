@@ -35,7 +35,7 @@ Same DX, different UI, across unrelated products:
 - **ENABLE** (work, EButler-QA) — this is the actual POC target. `enable-frontend`
   is a pnpm monorepo, ~5 React apps (main / callcenter / operations / passes /
   public) deployed on Cloudflare via wrangler.
-- **Hotel back office** — Alex's own project (`ctrl/docs/projects/hotel-backoffice.md`),
+- **Hotel back office** — Alex's own project (`ctrl/docs/projects/hotel-backoffice/README.md`),
   the Go-at-scale learning project: Go backend, web back office, no mobile.
   **NOT TenX / not an EButler product** (corrected 2026-08-23). Same DX, different
   UI. **Open: is its frontend React, or server-rendered Go/templ?** Alex has

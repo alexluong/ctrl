@@ -17,7 +17,7 @@ Answers so far (2026-07-10):
 The 3 projects (each has a file in `docs/projects/`):
 1. [fitJournal](projects/fitjournal.md) — fitness/body tracking, friction-free capture (successor to 9-year-old weightJournal)
 2. [feed](projects/feed.md) — 2-person shared social feed (Alex + Hannah)
-3. [SoLex / hotel-backoffice](projects/hotel-backoffice.md) — semi-professional hotel booking back office
+3. [SoLex / hotel-backoffice](projects/hotel-backoffice/README.md) — semi-professional hotel booking back office
 
 Cross-cutting: bootstrap stack candidate — Go + docker-compose deploy to collielab VM; Alex has `template-go-templ-tailwindcss` repo as prior art.
 

@@ -4,6 +4,18 @@ Semi-professional (not full professional). Booking/reservation management back-o
 
 Naming: product/hotel name is **SoLex** (keep that casing in prose/UI). Folders, repos, package names use local casing conventions (`solex`, `solex-backoffice`, etc.).
 
+**Doc map** — this project's notes are a directory (see `docs/workflow.md`). Each parallel workstream owns one file; commit only your own.
+
+| file | holds | owner |
+|---|---|---|
+| `README.md` | what/why, direction, decisions, open questions, status, session prompts | cockpit session |
+| `stack.md` | WS1: repo + Go-on-Cloudflare spike, stack decision, deploy shape | WS1 |
+| `existing-system.md` | WS2: what the current `:99` system is, feature inventory, entities, what staff use | WS2 |
+| `product.md` | WS3: domain discovery — bounded contexts, aggregates, events, user roles, scope | WS3 |
+| `discovery.md` | Alex's brain-dump answers to open questions (input to WS2/WS3) | Alex→Claude |
+
+Secrets (existing-system URL/login): `ctrl/secrets/hotel-backoffice.md` (gitignored, MBP only).
+
 ## Core idea
 
 - Back-office tool: manage bookings for a hotel
@@ -46,6 +58,30 @@ Naming: product/hotel name is **SoLex** (keep that casing in prose/UI). Folders,
 ## Plan (agreed 2026-07-10)
 
 This is the **Go-at-scale learning project**: backend-heavy, web back office, no mobile. Discovery (questions above) comes before any scoping — Alex to brain-dump, Claude structures it.
+
+## Workstreams (kicked off 2026-09-19)
+
+Three parallel sessions. Rules: each writes only its own file (above), commits in ctrl with `docs(hotel-backoffice/<ws>): …`, pulls before committing. Cross-WS findings go in the WS's own file under a "For other WSs" section; cockpit session merges into README.
+
+Ordering: WS1 + WS3 can start now. WS2 needs Alex to say what the `:99` system is and walk through it (curl alone won't get far if it's a SPA / Vietnamese PMS). WS3 does a second pass after WS2 lands.
+
+Later WS (not now): event-store design — Hookdeck-as-log vs bus + archive. Needs WS1 spike result + Hookdeck retention answer.
+
+### WS1 — repo + hello-world spike → `stack.md`
+
+> Read `~/git/hub/alexluong/ctrl/docs/projects/hotel-backoffice/README.md` and `ctrl/docs/workflow.md`. You own `stack.md` only.
+> Goal: a *spike*, not scaffolding. Prove Go on Cloudflare with no VM: hello-world Go HTTP service deployed on **Cloudflare Containers** fronted by a Worker, talking to Postgres via Hyperdrive (Neon or similar free tier). Fall back to Go→WASM Workers (`syumai/workers`) only if Containers is blocked; record why.
+> Bootstrap repo `solex` with `/new-project` (private). Deliver: deployed URL, `fix`/`check` commands, cold-start + request latency numbers, dev loop (local run vs deploy), cost notes, and a stack recommendation with the tradeoffs. Ask Alex before creating paid resources.
+
+### WS2 — analyze existing system → `existing-system.md`
+
+> Read `~/git/hub/alexluong/ctrl/docs/projects/hotel-backoffice/README.md`. You own `existing-system.md` only. Access details in `ctrl/secrets/hotel-backoffice.md` (never copy them into tracked files).
+> Goal: understand the system the hotel uses today. Start by asking Alex what it is. Try `curl` w/ the login; if it's a SPA or non-scrapable, drive the analysis via Alex's screenshots / screen-by-screen walkthrough / any export. Deliver: feature inventory, screens, data entities + fields, reports, integrations (OTA/channel manager/payments), what staff actually use vs ignore, pain points, and a "For other WSs" section (entities/events WS3 should model; anything WS1's stack must support, e.g. LAN/offline).
+
+### WS3 — domain discovery → `product.md`
+
+> Read `~/git/hub/alexluong/ctrl/docs/projects/hotel-backoffice/README.md` (+ `discovery.md` and `existing-system.md` if present). You own `product.md` only. No code.
+> Goal: model the product. Interview Alex on the open questions first. Deliver: users + roles, jobs-to-be-done, bounded contexts, aggregates (Booking, Room, Rate, Guest, …) with their events and invariants (double-booking, date-range overlap, tz), core vs later scope, and what "semi-professional" means operationally. Write event names as the ES vocabulary. Flag where the model depends on WS2 findings; plan a second pass after WS2.
 
 ## Status
 
