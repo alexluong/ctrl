@@ -13,6 +13,7 @@ Naming: product/hotel name is **SoLex** (keep that casing in prose/UI). Folders,
 | `existing-system.md` | WS2: what the current `:99` system is, feature inventory, entities, what staff use | WS2 |
 | `product.md` | WS3: domain discovery — bounded contexts, aggregates, events, user roles, scope | WS3 |
 | `discovery.md` | Alex's brain-dump answers to open questions (input to WS2/WS3) | Alex→Claude |
+| `requirements.md` | client's initial requirements (2026-09-19), VN original + EN translation + first read | cockpit (frozen input) |
 
 Secrets (existing-system URL/login): `ctrl/secrets/hotel-backoffice.md` (gitignored, MBP only).
 
@@ -76,14 +77,15 @@ Later WS (not now): event-store design — Hookdeck-as-log vs bus + archive. Nee
 ### WS2 — analyze existing system → `existing-system.md`
 
 > Read `~/git/hub/alexluong/ctrl/docs/projects/hotel-backoffice/README.md`. You own `existing-system.md` only. Access details in `ctrl/secrets/hotel-backoffice.md` (never copy them into tracked files).
-> Goal: understand the system the hotel uses today. Start by asking Alex what it is. Try `curl` w/ the login; if it's a SPA or non-scrapable, drive the analysis via Alex's screenshots / screen-by-screen walkthrough / any export. Deliver: feature inventory, screens, data entities + fields, reports, integrations (OTA/channel manager/payments), what staff actually use vs ignore, pain points, and a "For other WSs" section (entities/events WS3 should model; anything WS1's stack must support, e.g. LAN/offline).
+> Goal: understand the system the hotel uses today. Read `requirements.md` first — it's Excel-shaped; confirm whether such a workbook exists. Start by asking Alex what the `:99` system is. Try `curl` w/ the login; if it's a SPA or non-scrapable, drive the analysis via Alex's screenshots / screen-by-screen walkthrough / any export. Deliver: feature inventory, screens, data entities + fields, reports, integrations (OTA/channel manager/payments), what staff actually use vs ignore, pain points, and a "For other WSs" section (entities/events WS3 should model; anything WS1's stack must support, e.g. LAN/offline).
 
 ### WS3 — domain discovery → `product.md`
 
-> Read `~/git/hub/alexluong/ctrl/docs/projects/hotel-backoffice/README.md` (+ `discovery.md` and `existing-system.md` if present). You own `product.md` only. No code.
+> Read `~/git/hub/alexluong/ctrl/docs/projects/hotel-backoffice/README.md`, then `requirements.md` (client's own list — primary input), + `discovery.md` and `existing-system.md` if present. You own `product.md` only. No code.
 > Goal: model the product. Interview Alex on the open questions first. Deliver: users + roles, jobs-to-be-done, bounded contexts, aggregates (Booking, Room, Rate, Guest, …) with their events and invariants (double-booking, date-range overlap, tz), core vs later scope, and what "semi-professional" means operationally. Write event names as the ES vocabulary. Flag where the model depends on WS2 findings; plan a second pass after WS2.
 
 ## Status
 
 - 2026-07-10 — plan agreed, awaiting discovery brain-dump.
+- 2026-09-19 — client's initial requirements received → `requirements.md`. Excel-shaped; confirms spreadsheet mental model. Owner/reception/housekeeping roles, money-heavy, expenses in scope.
 - 2026-09-19 — named SoLex; early direction: event sourcing, simple full-stack on Cloudflare, maybe Hookdeck. Constraint: Go, no VM. Scope elaboration pending. Creds moved out of git (temporary creds, env is fine).
