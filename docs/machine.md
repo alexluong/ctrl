@@ -58,3 +58,7 @@ snapshot to find what grew instead of re-deriving everything.
 
 - iCloud holds binary docs (RE property PDFs etc.) — see `re/notes.md`
 - No submodules anywhere — everything is colocated under `hub/alexluong/`, referenced by sibling path when needed.
+
+## Secrets
+
+`ctrl/secrets/` is gitignored — machine-local credentials/URLs Claude needs at hand (one file per project). Canonical copy of every secret lives in Vaultwarden; a fresh machine repopulates `secrets/` from there. Never paste creds into tracked docs (2a4bf60 incident, scrubbed 2026-09-19).

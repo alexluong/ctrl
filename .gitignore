@@ -1,1 +1,3 @@
 .DS_Store
+# machine-local secrets; canonical copy in Vaultwarden. See docs/machine.md.
+secrets/
