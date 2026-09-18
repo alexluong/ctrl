@@ -14,7 +14,12 @@ Naming: product/hotel name is **SoLex** (keep that casing in prose/UI). Folders,
 - **Event sourcing** architecture — bookings/reservations as an event log, state derived from projections
 - **Simple full-stack app**, probably deployed on **Cloudflare** (Workers/Pages + D1/R2/Durable Objects TBD)
 - _Maybe_ **Hookdeck** for events/queue (Alex has Hookdeck repos locally — see `docs/machine.md`)
-- Tension to resolve: `docs/stack.md` frames this as the Go-on-collielab-VM learning project; Cloudflare-native pushes toward TS/Workers. Decide before scoping.
+- **Constraints (2026-09-19):** wants Go, wants to ship, does **not** want to run/deploy on a VM. Cloudflare = "simple, no hosting to worry about." Supersedes the collielab-VM assumption in `docs/stack.md` for this project.
+- Go-on-Cloudflare options to evaluate (not decided):
+  - **Cloudflare Containers** — plain Go binary in a container, fronted by a Worker; closest to "just Go," no VM. Storage via Hyperdrive→Postgres (Neon/Supabase) or D1 through the Worker.
+  - **Workers via Go→WASM** (`syumai/workers`, TinyGo) — Workers-native (D1/KV/DO bindings) but rough edges, limited stdlib, cold starts.
+  - **TS Worker + Go elsewhere** — fallback if Go-on-CF fights back; keeps Go for domain/ES core.
+- Secrets: env/gitignored is fine for now — existing-system creds are temporary.
 
 ## Notes
 
@@ -42,4 +47,4 @@ This is the **Go-at-scale learning project**: backend-heavy, web back office, no
 ## Status
 
 - 2026-07-10 — plan agreed, awaiting discovery brain-dump.
-- 2026-09-19 — named SoLex; early direction: event sourcing, simple full-stack on Cloudflare, maybe Hookdeck. Scope elaboration pending. Creds moved out of git.
+- 2026-09-19 — named SoLex; early direction: event sourcing, simple full-stack on Cloudflare, maybe Hookdeck. Constraint: Go, no VM. Scope elaboration pending. Creds moved out of git (temporary creds, env is fine).
