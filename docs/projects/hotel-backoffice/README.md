@@ -25,7 +25,10 @@ Secrets (existing-system URL/login): `ctrl/secrets/hotel-backoffice.md` (gitigno
 - Back-office tool: manage bookings for a hotel
 - Scope beyond that TBD — Alex to elaborate on scope + how to proceed (pending as of 2026-09-19)
 
-## Direction (2026-09-19, early thinking — not decided)
+## Direction (2026-09-19)
+
+**Decided (D-3):** TypeScript on plain Cloudflare Workers. Go dropped — simplicity wins. See `team/decisions.md`. Older Go notes below kept for context.
+
 
 - **Event sourcing** architecture — bookings/reservations as an event log, state derived from projections
 - **Simple full-stack app**, probably deployed on **Cloudflare** (Workers/Pages + D1/R2/Durable Objects TBD)
@@ -33,7 +36,7 @@ Secrets (existing-system URL/login): `ctrl/secrets/hotel-backoffice.md` (gitigno
   - Open concern: ES needs a permanent, per-aggregate-ordered, replayable log. Hookdeck is retention-bound + ordered per connection → natural fit as **bus** (ingest, fan-out to projections, retries, replay-in-window). As **permanent store** only if long retention/export is available (internal knowledge?).
   - Candidate shape: Hookdeck = transport + short-term replay; Postgres/R2 = archive log fed by an "archive" destination; projections rebuild from archive.
   - Q for Alex: stock SaaS retention, or something that makes retention a non-issue?
-- **Constraints (2026-09-19):** wants Go, wants to ship, does **not** want to run/deploy on a VM. Cloudflare = "simple, no hosting to worry about." Supersedes the collielab-VM assumption in `docs/stack.md` for this project.
+- ~~**Constraints (2026-09-19):** wants Go~~ (superseded by D-3 — TS), wants to ship, does **not** want to run/deploy on a VM. Cloudflare = "simple, no hosting to worry about." Supersedes the collielab-VM assumption in `docs/stack.md` for this project.
 - Go-on-Cloudflare options to evaluate (not decided):
   - **Cloudflare Containers** — plain Go binary in a container, fronted by a Worker; closest to "just Go," no VM. Storage via Hyperdrive→Postgres (Neon/Supabase) or D1 through the Worker.
   - **Workers via Go→WASM** (`syumai/workers`, TinyGo) — Workers-native (D1/KV/DO bindings) but rough edges, limited stdlib, cold starts.
@@ -71,10 +74,10 @@ Ordering: WS1 + WS3 can start now. WS2 needs Alex to say what the `:99` system i
 
 Later WS (not now): event-store design — Hookdeck-as-log vs bus + archive. Needs WS1 spike result + Hookdeck retention answer.
 
-### WS1 · `solex-dev` — repo + hello-world spike → `stack.md`
+### WS1 · `solex-dev` — repo + Workers/TS hello-world spike → `stack.md`
 
 > You are `solex-dev`. Read `~/git/hub/alexluong/ctrl/docs/projects/hotel-backoffice/agents/solex-dev/README.md`, then `../README.md` and `ctrl/docs/workflow.md`. You own `stack.md` only.
-> Goal: a *spike*, not scaffolding. Prove Go on Cloudflare with no VM: hello-world Go HTTP service deployed on **Cloudflare Containers** fronted by a Worker, talking to Postgres via Hyperdrive (Neon or similar free tier). Fall back to Go→WASM Workers (`syumai/workers`) only if Containers is blocked; record why.
+> Goal: a *spike*, not scaffolding. Objective is in your profile (rev 2, D-3): TS Worker + D1 hello-world, UI plumbing, dev loop, deploy.
 > Bootstrap repo `solex` with `/new-project` (private). Deliver: deployed URL, `fix`/`check` commands, cold-start + request latency numbers, dev loop (local run vs deploy), cost notes, and a stack recommendation with the tradeoffs. Ask Alex before creating paid resources.
 
 ### WS2 · `solex-explore` — analyze existing system → `existing-system.md`
@@ -90,5 +93,6 @@ Later WS (not now): event-store design — Hookdeck-as-log vs bus + archive. Nee
 ## Status
 
 - 2026-07-10 — plan agreed, awaiting discovery brain-dump.
+- 2026-09-19 — **D-3: TS on plain Workers, Go dropped.** Dev spike rescoped.
 - 2026-09-19 — client's initial requirements received → `requirements.md`. Excel-shaped; confirms spreadsheet mental model. Owner/reception/housekeeping roles, money-heavy, expenses in scope.
 - 2026-09-19 — named SoLex; early direction: event sourcing, simple full-stack on Cloudflare, maybe Hookdeck. Constraint: Go, no VM. Scope elaboration pending. Creds moved out of git (temporary creds, env is fine).
