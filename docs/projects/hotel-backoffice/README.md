@@ -13,7 +13,8 @@ Naming: product/hotel name is **SoLex** (keep that casing in prose/UI). Folders,
 | `existing-system.md` | WS2: what the current `:99` system is, feature inventory, entities, what staff use | WS2 |
 | `product.md` | WS3: domain discovery — bounded contexts, aggregates, events, user roles, scope | WS3 |
 | `discovery.md` | Alex's brain-dump answers to open questions (input to WS2/WS3) | Alex→Claude |
-| `requirements.md` | client's initial requirements (2026-09-19), VN original + EN translation + first read | cockpit (frozen input) |
+| `requirements.md` | client's initial requirements (2026-09-19), EN translation + structure + first read | cockpit |
+| `client/` | raw client inputs, untouched, dated filenames (`2026-09-19-requirements-raw.md`) | frozen — never edit |
 
 Secrets (existing-system URL/login): `ctrl/secrets/hotel-backoffice.md` (gitignored, MBP only).
 
