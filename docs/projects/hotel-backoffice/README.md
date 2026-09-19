@@ -27,7 +27,9 @@ Secrets (existing-system URL/login): `ctrl/secrets/hotel-backoffice.md` (gitigno
 
 ## Direction (2026-09-19)
 
-**Decided (D-3):** TypeScript on plain Cloudflare Workers. Go dropped — simplicity wins. See `team/decisions.md`. Older Go notes below kept for context.
+**Decided (D-3):** TypeScript on plain Cloudflare Workers. Go dropped — simplicity wins.
+**Decided (D-4):** client already has a PMS (the `:99` system). SoLex = rebuild driven by **data ownership**; core subset + enhancements, not feature parity. WS2 maps the PMS first via slow walkthrough w/ Alex.
+See `team/decisions.md`. Older Go notes below kept for context.
 
 
 - **Event sourcing** architecture — bookings/reservations as an event log, state derived from projections
@@ -54,7 +56,7 @@ Secrets (existing-system URL/login): `ctrl/secrets/hotel-backoffice.md` (gitigno
 
 - Which hotel / whose? Relationship, and who are the actual users (front desk? owner?)
 - Size: rooms, bookings/day?
-- Current process: paper? Excel? existing PMS (the system at the URLs above)?
+- ~~Current process~~ → existing PMS (`:99`). Which parts do staff actually use? What data must be owned/migrated?
 - OTA channels (Booking.com, Agoda, Airbnb)? Channel-manager integration or manual entry?
 - Just reservations, or also check-in/out, housekeeping, payments/invoicing, reporting?
 - Timeline/urgency? Anyone waiting on this?
@@ -93,6 +95,7 @@ Later WS (not now): event-store design — Hookdeck-as-log vs bus + archive. Nee
 ## Status
 
 - 2026-07-10 — plan agreed, awaiting discovery brain-dump.
+- 2026-09-19 — **D-4: `:99` = current PMS; rebuild for data ownership, core subset + enhancements.** All 3 agents caught up, waiting on Alex.
 - 2026-09-19 — **D-3: TS on plain Workers, Go dropped.** Dev spike rescoped.
 - 2026-09-19 — client's initial requirements received → `requirements.md`. Excel-shaped; confirms spreadsheet mental model. Owner/reception/housekeeping roles, money-heavy, expenses in scope.
 - 2026-09-19 — named SoLex; early direction: event sourcing, simple full-stack on Cloudflare, maybe Hookdeck. Constraint: Go, no VM. Scope elaboration pending. Creds moved out of git (temporary creds, env is fine).

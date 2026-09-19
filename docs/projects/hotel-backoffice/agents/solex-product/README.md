@@ -8,6 +8,7 @@
 
 ## Current objective (2026-09-19)
 
+0. **D-4 framing:** client has a PMS today; SoLex is a rebuild for data ownership, core subset + enhancements. Model the *core* they actually use + the enhancements in `requirements.md`; don't model the whole PMS. Add "data to own / migrate" as an explicit section.
 1. Read `requirements.md` closely. Interview Alex on README open questions + gaps flagged in requirements §5 (OTA commission rates, seasonal rates, VAT/red invoice, channel-manager vs manual).
 2. Deliver in `product.md`:
    - Users + roles (owner / reception / housekeeping — confirm)
@@ -23,3 +24,4 @@ Message architect with proposed aggregate list early (before polishing) so dev's
 ## Log
 
 - 2026-09-19 — session created.
+- 2026-09-19 — objective +D-4 framing (existing PMS, data ownership, core subset).
