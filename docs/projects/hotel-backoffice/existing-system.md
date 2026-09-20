@@ -212,7 +212,19 @@ Bad captures (2):
 ## Visual flow board (FigJam)
 
 https://www.figma.com/board/9450fwvpLCLPmAmt4FBsQU — "SoLex — ezFolio user flow (existing system)" (Collie Studio drafts, 2026-09-20).
-18 screenshots laid out in five phase sections (booking → arrival → during stay → departure & settlement → owner's view), connected in flow order, captioned, with a sticky column of the findings that matter for the rebuild. Built via the Figma MCP plugin; screenshots contain live guest data (Alex: acceptable). Regenerate/extend from `../screens/` + `../tools/`.
+
+18 screenshots in five phase sections (booking → arrival → during the stay → departure & settlement →
+owner's view), each frame sized to its own image, captioned underneath, connected left→right within a
+phase, with a column of rebuild-relevant findings on the right.
+
+Rebuilt 2026-09-20 after the visual pass. Changes: every frame was a uniform 460×420 crop of a
+~1280×1270 screenshot — now each is 520 wide at its true aspect ratio. Four weak images were swapped
+out: the empty unassigned-bookings list → vacancy forecast, the failed housekeeping map capture →
+breakfast list, the 15,000px receivables ledger → hotel revenue (charge buckets × payment method),
+the empty departures list → deposits. Wrap-around arrows between phases were dropped (phases read
+top→bottom) and connectors straightened.
+
+Screenshots contain live guest data (Alex: acceptable). Regenerate/extend from `../screens/` + `../tools/`.
 
 ## Screen index
 | slug | screen |
