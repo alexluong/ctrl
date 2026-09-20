@@ -123,7 +123,91 @@ Data-quality observations: many rows have guest gender defaulted (Nữ), blank D
 - **Cancellation and no-show are statuses, not deletions** — keep them as events on the room-stay (matters for OTA no-show charging and for honest occupancy history).
 - **Breakfast is counted per stay** (vouchers, adults, children) and printed daily — small but load-bearing for the restaurant handoff.
 - **Migration is deferred — the rebuild starts fresh** (Alex, 2026-09-20). Broken export is not a blocker; data import gets figured out after the fact. WS1/WS3: design the schema for the domain, not for an import. Scraping stays available as a fallback (every screen is server-rendered) and the option to ask ezCloud for a DB export stays open but is not on the critical path.
+- **Identity capture is broken in practice, not just thin** (visual pass, 2026-09-20): ID number is `?` on
+  every row of the daily revenue report, DOB blank, gender defaulted. PA18 is a legal export built on data
+  nobody enters. WS3: decide whether the rebuild enforces identity at check-in.
+- **Channel + external booking reference already exist per booking**, encoded as company + "Mã hiển thị"
+  (real OTA refs: CTRIP / Traveloka / Agoda / Expedia). Promote both to first-class fields — the data is
+  there, the model isn't.
 - Open, parked: *which* of the ~60 booking-editor fields reception actually uses daily. Worth answering before scoping the booking form; not a blocker now (Alex, 2026-09-20).
+
+## Visual pass over every screenshot (2026-09-20)
+
+Until now most screens were mapped from *extracted text* (headings, table headers, controls) rather than
+from the image. This pass opened all 41 PNGs in `../screens/` visually. Two outputs: capture quality
+(which images are usable), and facts that only the rendering revealed.
+
+### Facts that only the images showed
+
+- **The app surfaces raw DB connection errors to reception.** `fd-booking-list-inhouse` carries a red
+  banner: `Error: Lỗi kết nối Database` sitting on top of a fully-rendered list. Staff are trained to
+  ignore it. Reliability of the current system is worse than the feature map suggests.
+- **Guest identity data is essentially not captured.** On `rpt-room-revenue-daily` (51 rooms), the
+  ID-number column is `?` for every row, DOB is blank, and gender is defaulted. PA18 is a legal
+  obligation and the data behind it is not there. The rebuild should decide whether identity capture is
+  enforced at check-in or stays optional — it is a product decision, not a schema detail.
+- **The folio's revenue buckets are fixed and visible** (`rpt-fd-revenue` column groups):
+  room · room surcharge · minibar · laundry · compensation/damages · extended service · telephone ·
+  SoLex Restaurant. Settlement splits into cash VND · cash USD · card VND · card USD · bank transfer ·
+  complimentary · debt. Refunds appear as negative rows (`-425,000`, note "Hoàn lại tiền").
+  This is the charge/settlement model to mirror.
+- **Deposits are per reservation, pre-arrival, with a payment method** (`rpt-deposit`): cash / bank
+  transfer / card, status BOOKED → CHECKIN → CHECKOUT, ~167M VND collected in September. Some rows carry
+  an OTA reference (`VNTRIP2026C8SG`).
+- **OTA identity *is* in the data, just not as a field.** `rpt-debit-detail` groups receivables by
+  `CTRIP / TVLK (Traveloka) / AGD (Agoda) / EXP (Expedia) / WELDCOM / HNH`, and the "Mã hiển thị" column
+  holds real OTA reference numbers (`20261123657918`, `1128150653526780`, `1770008125`).
+  `sales-companies` lists Booking.com, Asiabooking etc. as Agent/Company rows with a `Nguồn` of OTA/TA/CORP.
+  So the manual process Alex described still produces a per-booking channel + external reference —
+  the rebuild should promote both to first-class fields rather than invent them.
+- **Housekeeping status vocabulary, confirmed from the legend** on `hk-employee-schedule`:
+  `OD` occupied dirty · `OC` occupied clean · `VD` vacant dirty · `VC` vacant clean ·
+  `VCI` vacant clean inspected · `OOO` out of order. The same report carries arrive/depart clock times
+  and free-text room notes ("14H OUT", "phòng sếp", "RỂ Ở").
+- **Room-map colour legend**: green = ready · grey = dirty · orange = occupied & dirty · white = occupied
+  & clean · black = under repair.
+- **Restaurant module is dormant, not just out of scope.** All 30 tables on `rest-table-map` are empty and
+  `rest-revenue-by-item` returns zero rows for the day — yet `rpt-fd-revenue` still reserves a
+  "SoLex Restaurant" column on every folio. Confirms: skip the POS, keep a restaurant charge line.
+- **Breakfast is derived, not booked** (`fd-breakfast`): one row per occupied room for the date, split
+  into actual (50 rooms / 50 guests / 38 adults) and expected (`Dự kiến ăn sáng`, 4 rooms / 8 guests),
+  with a nationality roll-up at the bottom (VN 31 / other 19). Nationality is tracked for breakfast
+  and PA18, and nowhere else.
+- **Concrete config values** from `sys-settings` › Thông tin khách sạn: default check-in 14:00,
+  check-out 12:00, Sunday and Saturday surcharge fields (both 0), bank fee 0, rounding to 2 decimals,
+  payment difference under 500 VND ignored, day-cut window `[00:00-23:59]`, default walk-in group code
+  `Walk -n`, shift-close/night-audit toggle **off**, IP allowlist `[192.168.9.]`, currency VND.
+  Property: SOLEX HOTEL, 31 Núi Thành, P.13, Q. Tân Bình, TP HCM. Other config tabs exist but are
+  permission-blocked: reception config · accounts · tax & service · software functions · PA18 ·
+  interface · templates.
+- **Occupancy runs high and is seasonal-lumpy** (`fd-occupancy-over-time`, September): 8.77% to 108.77%
+  daily occupancy (>100% = same-day turnover), 57 sellable rooms, 1 permanently out of order,
+  month total 767M VND room revenue, ADR ~800k, 149 cancellations in the month.
+
+### Capture quality
+
+Usable as-is (26): `fd-room-map`, `fd-room-situation`, `fd-booking-list-inhouse`, `fd-room-detail-panel`,
+`fd-arrivals-today`, `fd-cancellations`, `fd-guest-history`, `fd-traveller-list`, `fd-reservation-summary`,
+`fd-group-availability`, `fd-extra-service`, `fd-minibar-invoice`, `fd-laundry-invoice`, `fd-breakfast`,
+`fd-forecast-by-type`, `fd-occupancy-over-time`, `hk-room-status`, `hk-employee-schedule`,
+`rest-table-map`, `rpt-room-revenue-daily`, `rpt-debit-detail`, `rpt-deposit`, `rpt-fd-revenue`,
+`rpt-revenue-by-invoice`, `sales-companies`, `sys-settings`.
+
+Empty — the screen rendered correctly but had **zero rows** on 20/09 (9):
+`fd-departures-today`, `fd-waiting-list`, `fd-noshow`, `fd-pickup-seeoff`, `hk-lost-found`,
+`rest-revenue-by-item`, `rpt-debit-summary`, `rpt-room-transfer`, `rpt-room-discount`.
+Useful as evidence of *what the hotel doesn't do*; misleading if presented as a flow step.
+Re-capture over a wider date range if they're needed on the board.
+
+Blank forms — correct, but nothing is filled in (4):
+`fd-booking-detail` (the folio editor renders with all fields empty — the read-only guard blocks the
+`create_routing=1` POST that loads live values; this is our limitation, not the app's),
+`fd-change-room`, `fd-pa18-export` (five action buttons, no output), `audit-night-audit`
+(useful anyway: it prints the seven-point audit checklist).
+
+Bad captures (2):
+- `hk-room-map` — only the "Thao tác" sidebar rendered; the room grid never painted. **Re-capture.**
+- `rpt-debit-update` — 1265 × 14,965 px, ~419 rows. Illegible at any board scale. Crop or skip.
 
 ## Visual flow board (FigJam)
 
@@ -167,3 +251,4 @@ https://www.figma.com/board/9450fwvpLCLPmAmt4FBsQU — "SoLex — ezFolio user f
 - 2026-09-19 — scope confirmed w/ Alex; logged in, identified ezHotel/ezFolio, nav mapped.
 - 2026-09-20 — walked front-desk trio: room map, room situation, in-house list. Tooling committed to `tools/`.
 - 2026-09-20 — room detail modal + booking/folio editor mapped; entity chain reservation → reservation_room → traveller; screen naming convention adopted.
+- 2026-09-20 — visual pass over all 41 screenshots: capture quality triaged, folio revenue/settlement buckets, HK status vocabulary, config values and the identity-data gap recorded.
