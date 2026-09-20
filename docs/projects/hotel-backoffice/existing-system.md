@@ -90,6 +90,83 @@ Data-quality observations: many rows have guest gender defaulted (Nữ), blank D
 - Backend looks like **Oracle** (date tooltips `18-SEP-26`, `NVL(...)` in sort links). Sort links put raw SQL `ORDER BY` in the query string.
 - Money is VND with a USD/exchange-rate secondary; commission is per booking.
 
+## The group booking flow, properly (2026-09-20)
+
+Correcting an earlier mistake: I had presented the *vacancy forecast report*
+(`empty_room_forecast`) as the screen reception quotes from. It isn't. It's a report.
+The real quoting path is an availability **engine built into the booking form itself**,
+and it produces the same numbers — verified: forecast for 21/09 (VIP 1 · STD2 4 · SUPT 6 ·
+SUPD 6 · DLX5 16 · DLXT 2 · DLX6 5 · SUI 0) matches the engine's 21/09 column exactly.
+
+### Two different entry points, and they are not variations of one screen
+
+| Menu | URL | What it is |
+|---|---|---|
+| **Khách lẻ** (individual) | `?page=reservation&cmd=add&status=CHECKIN&reservation_type_id=2` | Straight into an empty folio editor, already `CHECKIN`. The walk-in path. No availability step at all. |
+| **Khách đoàn** (group) | `?page=reservation&cmd=check_availability` | The availability engine + the booking form, one screen. |
+
+So "check availability" is not an optional lookup — for group/company business it *is* the
+booking screen. WS3: these are two distinct use cases, not one form with a toggle.
+
+### The engine — `cmd=check_availability`
+
+A room-type × night matrix. `arrival_time` / `departure_time` / `night` drive it, and they work
+as GET params (`&arrival_time=21/09/2026&departure_time=28/09/2026&night=7`), so it can be
+queried read-only — no form POST needed. See `../tools/availprobe.mjs`.
+
+For each of the 8 room types it returns free rooms **per night** across the whole range, plus
+per-night totals: rooms used, rooms free, occupancy %. Weekend columns are highlighted red.
+A cell reading `1(1)` = 1 available, 1 out of order (VIP has 2 rooms; 101 is permanently under
+repair). Reception reads down a column and quotes against the **tightest night** in the range —
+e.g. for 21–28/09, SUPT/TWN runs 6 · 3 · 3 · 4 · 2 · 2 · 2, so only 2 twins are sellable for the
+whole week even though night one has 6.
+
+The left half of the same table is the booking entry: per room type, a row of
+`adult · child · price VND · price USD · room_quantity · note`. Field names are
+`adult_<room_type_id>_<bed_type_id>` — VIP=16, STD2=9, SUPT=10, SUPD=11, DLX5=12, DLX6=13,
+DLXT=14, SUI=15; bed type 1=DBL, 2=TWN. **Confirms the aggregate**: a group booking is
+`(company, contact, saler, source, deposit, display code/colour)` + N × `(room type, bed type,
+qty, adults, children, rate)`. No room numbers anywhere on this screen.
+
+Header fields: from/to with times (14:00 / 12:00 defaults), nights, company (lookup),
+saler, contact person, deposit, display code, phone, email, account number, and
+`Nguồn` = OTA(21) · TA(1) · WALK-IN(61) · CORP(161). Then two buttons:
+**Kiểm tra phòng trống** (recompute) and **Đặt phòng** (create). Same form, same POST target —
+only the submit button name differs. We never pressed the second one.
+
+### Group folio routing — the piece I had missed entirely
+
+Inside a room that belongs to a group (`?page=reservation&cmd=edit&id=<res>&r_r_id=<room>`)
+there is a nine-checkbox matrix deciding **which charge categories settle on the group's master
+bill** rather than the guest's own folio:
+
+`HĐ phòng` (room) · `HĐ buồng` (housekeeping) · `HĐ nhà hàng` (restaurant) ·
+`HĐ DV mở rộng` (extended services) · `HĐ điện thoại` (phone) · `Hóa đơn Massage` ·
+`HĐ phụ` (sub-invoice) · `Tiền đặt cọc` (deposits) · `Các khoản khác` (other amounts)
+
+On the 31-room MR TÙNG group all nine are on — one bill for everything. This is what the
+`create_routing=1` call builds, and it's why that booking renders blank under our read-only
+guard. **This is a core group-billing concept and it belongs in the rebuild**: a room-stay's
+charges route either to its own folio or to a master folio, per charge category. The company
+being billed for rooms while guests pay their own minibar is the normal corporate case.
+
+Related per-room flags found on the same form: `paybygroup`, `foc_all` (whole stay
+complimentary), `is_net` (net ++ vs gross rate), `lock_reservation_room`, `close`,
+`color-display-of-team` (the group's colour on the room calendar), `roomrate` (a rate-plan
+dropdown, set to `---` — again, no rate plans in use), `traveller_level_id` (guest class),
+`method_payment`, and `Ghép đoàn` = merge this room into an existing group.
+
+Room-stay statuses, from the `T.Thái` control: `Checkin · Checkout · Khách đặt (booked) ·
+Hủy bỏ (cancelled) · Đóng (closed)`.
+
+### Also seen
+
+`?page=reservation&cmd=edit&id=4589` without `r_r_id` returns a raw Oracle error to the browser:
+`ORA-00936: missing expression — select block_id from reservation_room where id=`.
+Unparameterised SQL built by string concatenation, echoed to the user. Consistent with the
+PHP errors already noted on `?page=employee`. Not our problem to fix, but it says something
+about what the client is running today.
+
 ## For other WSs
 - **No card data. Ever.** (Alex, 2026-09-20) ezFolio stores card holder / number / expiry / CVV on the booking. The rebuild deliberately does not — no PCI surface. WS3: leave card capture out of the model; WS1: no card fields in the schema.
 - **Group / company bookings are a large share of business** (Alex, 2026-09-20; ~2/3 of in-house rooms today are group or company). Model Company, group booking, "merge into group", and receivables by debtor type as core, not later.
@@ -111,7 +188,9 @@ Data-quality observations: many rows have guest gender defaulted (Nữ), blank D
 - **Housekeeping module is unused** (no staff assigned, no shifts). Rebuild: keep room status changes (clean/dirty/OOO + reason) on the reception-facing map; skip staff scheduling until someone asks.
 - **Status vocabulary to reuse**: VC / VD / OC / OD / OOO (+ expected-arrival, expected-departure as derived views).
 - **Guest history already exists** with a repeat-stay count and guest class (normal/VIP) — cheap to carry over, and it covers the client's "Guest History" step.
-- **Group booking shape**: company + contact + saler + deposit + display code/colour, then *per room type*: quantity, adults, children, rate (VND/USD), note — per night. Rooms assigned later. This is the aggregate WS3 must get right: `Booking(company, dates, [RoomTypeRequest(type, qty, pax, rate)])` → N `RoomStay`s → assigned `Room`s.
+- **Group booking shape**: company + contact + saler + source + deposit + display code/colour, then *per room type × bed type*: quantity, adults, children, rate (VND/USD), note. Rooms assigned later. This is the aggregate WS3 must get right: `Booking(company, dates, [RoomTypeRequest(type, bedType, qty, pax, rate)])` → N `RoomStay`s → assigned `Room`s.
+- **Group folio routing is core, not a nicety** (2026-09-20): each room-stay carries nine switches deciding which charge categories settle on the group's master bill vs the guest's own folio (room · housekeeping · restaurant · extended services · phone · massage · sub-invoice · deposits · other). The corporate case — company pays rooms, guest pays incidentals — depends on it. WS3: model `charge.routedTo = ownFolio | masterFolio` per category.
+- **Availability is a per-night, per-room-type matrix, and it is part of the booking form** — not a report reception consults first. Quoting means reading down the columns and taking the tightest night. WS3: the booking screen must show availability for the whole requested range, per type, inline.
 - **Booking can exist without a room** (waiting list) — model room assignment as a separate step from booking; room *class* is bookable.
 - **Discounts carry an approval trail** (requested / edited / approved, with users). If the owner wants control over discounting, that's a real feature, not decoration.
 - **Every mutation is attributed** (created-by / edited-by / checked-in-by, per-booking "Show log"). An event-sourced rebuild gets this for free and should keep it visible.
@@ -264,3 +343,4 @@ Screenshots contain live guest data (Alex: acceptable). Regenerate/extend from `
 - 2026-09-20 — walked front-desk trio: room map, room situation, in-house list. Tooling committed to `tools/`.
 - 2026-09-20 — room detail modal + booking/folio editor mapped; entity chain reservation → reservation_room → traveller; screen naming convention adopted.
 - 2026-09-20 — visual pass over all 41 screenshots: capture quality triaged, folio revenue/settlement buckets, HK status vocabulary, config values and the identity-data gap recorded.
+- 2026-09-20 — group booking flow dug out properly: `cmd=check_availability` engine (GET-drivable), the room-type x night matrix, and the nine-way group folio routing matrix.
