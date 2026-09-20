@@ -108,6 +108,9 @@ Data-quality observations: many rows have guest gender defaulted (Nữ), blank D
   Housekeeping, restaurant and the rest operate **off-system** (paper/verbal) and ask reception to make changes. WS3: model two roles, not seven; housekeeping screens are reception-facing, not staff-facing.
 - **Stay rules (check-in/out times, charge roll-over, surcharges) are a change target**, not a spec — Alex flagged 2026-09-20; decide later, map first.
 - **Channel-manager capability exists but is unused** (ezCMS: Siteminder/Staah). If the client ever wants OTA sync, that's a separate integration, not a port.
+- **Housekeeping module is unused** (no staff assigned, no shifts). Rebuild: keep room status changes (clean/dirty/OOO + reason) on the reception-facing map; skip staff scheduling until someone asks.
+- **Status vocabulary to reuse**: VC / VD / OC / OD / OOO (+ expected-arrival, expected-departure as derived views).
+- **Guest history already exists** with a repeat-stay count and guest class (normal/VIP) — cheap to carry over, and it covers the client's "Guest History" step.
 - Open, parked: *which* of the ~60 booking-editor fields reception actually uses daily. Worth answering before scoping the booking form; not a blocker now (Alex, 2026-09-20).
 
 ## Screen index
@@ -122,6 +125,10 @@ Data-quality observations: many rows have guest gender defaulted (Nữ), blank D
 | `rpt-debit-summary` | receivables summary |
 | `rpt-room-revenue-daily` | daily room revenue |
 | `sys-settings` | system settings |
+| `hk-room-map` | housekeeping room map |
+| `hk-room-status` | housekeeping room status calendar |
+| `hk-employee-schedule` | daily room assignment |
+| `fd-guest-history` | guest history |
 
 ## Status
 
