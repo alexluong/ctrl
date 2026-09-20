@@ -28,7 +28,8 @@ Secrets (existing-system URL/login): `ctrl/secrets/hotel-backoffice.md` (gitigno
 ## Direction (2026-09-19)
 
 **Decided (D-3):** TypeScript on plain Cloudflare Workers. Go dropped — simplicity wins.
-**Decided (D-4):** client already has a PMS (the `:99` system). SoLex = rebuild driven by **data ownership**; core subset + enhancements, not feature parity. WS2 maps the PMS first via slow walkthrough w/ Alex.
+**Decided (D-4):** client already has a PMS (**ezFolio** by ezCloud, the `:99` system). SoLex = rebuild driven by **data ownership**; core subset + enhancements, not feature parity. WS2 maps the PMS first via slow walkthrough w/ Alex.
+**Decided (D-5):** fresh start, migration deferred — ezFolio has no working export. Schema for the domain, not for an import.
 See `team/decisions.md`. Older Go notes below kept for context.
 
 
@@ -95,6 +96,7 @@ Later WS (not now): event-store design — Hookdeck-as-log vs bus + archive. Nee
 ## Status
 
 - 2026-07-10 — plan agreed, awaiting discovery brain-dump.
+- 2026-09-20 — **D-5: fresh start, migration deferred.** `existing-system.md` landed: ~30-screen ezFolio map, group-booking flow, candidate core, hard constraints (no card data; personas manager + receptionist; group/company bookings core; key cards out). Product second pass unblocked.
 - 2026-09-19 — **D-4: `:99` = current PMS; rebuild for data ownership, core subset + enhancements.** All 3 agents caught up, waiting on Alex.
 - 2026-09-19 — **D-3: TS on plain Workers, Go dropped.** Dev spike rescoped.
 - 2026-09-19 — client's initial requirements received → `requirements.md`. Excel-shaped; confirms spreadsheet mental model. Owner/reception/housekeeping roles, money-heavy, expenses in scope.
