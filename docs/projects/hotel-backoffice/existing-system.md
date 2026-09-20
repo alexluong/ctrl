@@ -111,6 +111,12 @@ Data-quality observations: many rows have guest gender defaulted (Nữ), blank D
 - **Housekeeping module is unused** (no staff assigned, no shifts). Rebuild: keep room status changes (clean/dirty/OOO + reason) on the reception-facing map; skip staff scheduling until someone asks.
 - **Status vocabulary to reuse**: VC / VD / OC / OD / OOO (+ expected-arrival, expected-departure as derived views).
 - **Guest history already exists** with a repeat-stay count and guest class (normal/VIP) — cheap to carry over, and it covers the client's "Guest History" step.
+- **Booking can exist without a room** (waiting list) — model room assignment as a separate step from booking; room *class* is bookable.
+- **Discounts carry an approval trail** (requested / edited / approved, with users). If the owner wants control over discounting, that's a real feature, not decoration.
+- **Every mutation is attributed** (created-by / edited-by / checked-in-by, per-booking "Show log"). An event-sourced rebuild gets this for free and should keep it visible.
+- **Extra-service catalogue to carry over**: breakfast, early check-in, late check-out, airport transfer, laundry, minibar, damages, other — each with qty, price, discount, tax, service fee.
+- **~11–13 user accounts exist** but only two personas matter (above); several accounts are vendor/admin (`administrator`, `itezcloud`).
+- **Night audit is the formal day-close and it is switched off** — so "today's revenue" is computed ad-hoc from reports. The rebuild's day-boundary rule (charge roll at 23:59) needs an explicit decision.
 - Open, parked: *which* of the ~60 booking-editor fields reception actually uses daily. Worth answering before scoping the booking form; not a blocker now (Alex, 2026-09-20).
 
 ## Screen index
@@ -129,6 +135,17 @@ Data-quality observations: many rows have guest gender defaulted (Nữ), blank D
 | `hk-room-status` | housekeeping room status calendar |
 | `hk-employee-schedule` | daily room assignment |
 | `fd-guest-history` | guest history |
+| `fd-arrivals-today` / `fd-departures-today` | arrivals / departures lists |
+| `fd-waiting-list` | unassigned bookings |
+| `fd-reservation-summary` | booking summary by source/user |
+| `rpt-deposit` / `rpt-fd-revenue` / `rpt-revenue-by-invoice` | deposits, hotel revenue, revenue by folio |
+| `rpt-debit-update` | receivables ledger (419 rows) |
+| `rpt-room-discount` / `rpt-room-transfer` | discounts (w/ approval trail), room moves |
+| `audit-night-audit` | night audit |
+| `sales-companies` / `fd-traveller-list` / `fd-pa18-export` | companies, in-house persons, PA18 |
+| `fd-minibar-invoice` / `fd-laundry-invoice` / `fd-extra-service` | incidental charges |
+| `fd-forecast-by-type` | vacancy forecast by room type |
+| `rest-table-map` / `rest-revenue-by-item` | restaurant (out of scope) |
 
 ## Status
 
