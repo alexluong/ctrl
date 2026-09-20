@@ -111,6 +111,7 @@ Data-quality observations: many rows have guest gender defaulted (Nữ), blank D
 - **Housekeeping module is unused** (no staff assigned, no shifts). Rebuild: keep room status changes (clean/dirty/OOO + reason) on the reception-facing map; skip staff scheduling until someone asks.
 - **Status vocabulary to reuse**: VC / VD / OC / OD / OOO (+ expected-arrival, expected-departure as derived views).
 - **Guest history already exists** with a repeat-stay count and guest class (normal/VIP) — cheap to carry over, and it covers the client's "Guest History" step.
+- **Group booking shape**: company + contact + saler + deposit + display code/colour, then *per room type*: quantity, adults, children, rate (VND/USD), note — per night. Rooms assigned later. This is the aggregate WS3 must get right: `Booking(company, dates, [RoomTypeRequest(type, qty, pax, rate)])` → N `RoomStay`s → assigned `Room`s.
 - **Booking can exist without a room** (waiting list) — model room assignment as a separate step from booking; room *class* is bookable.
 - **Discounts carry an approval trail** (requested / edited / approved, with users). If the owner wants control over discounting, that's a real feature, not decoration.
 - **Every mutation is attributed** (created-by / edited-by / checked-in-by, per-booking "Show log"). An event-sourced rebuild gets this for free and should keep it visible.
@@ -147,6 +148,7 @@ Data-quality observations: many rows have guest gender defaulted (Nữ), blank D
 | `sales-companies` / `fd-traveller-list` / `fd-pa18-export` | companies, in-house persons, PA18 |
 | `fd-minibar-invoice` / `fd-laundry-invoice` / `fd-extra-service` | incidental charges |
 | `fd-forecast-by-type` | vacancy forecast by room type |
+| `fd-group-availability` | group booking / availability grid |
 | `rest-table-map` / `rest-revenue-by-item` | restaurant (out of scope) |
 
 ## Status
