@@ -125,6 +125,11 @@ Data-quality observations: many rows have guest gender defaulted (Nữ), blank D
 - **Migration is deferred — the rebuild starts fresh** (Alex, 2026-09-20). Broken export is not a blocker; data import gets figured out after the fact. WS1/WS3: design the schema for the domain, not for an import. Scraping stays available as a fallback (every screen is server-rendered) and the option to ask ezCloud for a DB export stays open but is not on the critical path.
 - Open, parked: *which* of the ~60 booking-editor fields reception actually uses daily. Worth answering before scoping the booking form; not a blocker now (Alex, 2026-09-20).
 
+## Visual flow board (FigJam)
+
+https://www.figma.com/board/9450fwvpLCLPmAmt4FBsQU — "SoLex — ezFolio user flow (existing system)" (Collie Studio drafts, 2026-09-20).
+18 screenshots laid out in five phase sections (booking → arrival → during stay → departure & settlement → owner's view), connected in flow order, captioned, with a sticky column of the findings that matter for the rebuild. Built via the Figma MCP plugin; screenshots contain live guest data (Alex: acceptable). Regenerate/extend from `../screens/` + `../tools/`.
+
 ## Screen index
 | slug | screen |
 |---|---|
