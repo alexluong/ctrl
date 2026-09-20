@@ -20,4 +20,5 @@ Message architect when (1)–(2) resolved and when the file is ready for product
 ## Log
 
 - 2026-09-19 — session created.
+- 2026-09-20 — ezFolio walkthrough with Alex: ~30 screens mapped, `existing-system.md` complete incl. group-booking flow, experience map, candidate core, "For other WSs". Export broken → start fresh (migration deferred). Ready for product handoff.
 - 2026-09-19 — caught up; tooling ok (curl, npx playwright; no Playwright MCP). Waiting on Alex re `:99` + workbook.
