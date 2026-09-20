@@ -1,3 +1,5 @@
 .DS_Store
 # machine-local secrets; canonical copy in Vaultwarden. See docs/machine.md.
 secrets/
+docs/projects/hotel-backoffice/screens/
+docs/projects/hotel-backoffice/tools/node_modules/

@@ -1,0 +1,16 @@
+{
+  "name": "solex-explore-tools",
+  "version": "1.0.0",
+  "description": "Read-only walkthrough tooling for the hotel's current PMS. Owner: solex-explore.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "private": "true",
+  "dependencies": {
+    "playwright-core": "^1.63.0"
+  }
+}
