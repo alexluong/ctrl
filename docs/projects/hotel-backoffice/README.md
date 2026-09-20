@@ -46,6 +46,19 @@ See `team/decisions.md`. Older Go notes below kept for context.
   - **TS Worker + Go elsewhere** — fallback if Go-on-CF fights back; keeps Go for domain/ES core.
 - Secrets: env/gitignored is fine for now — existing-system creds are temporary.
 
+## Existing system — ezFolio (WS2 done 2026-09-20, full map in `existing-system.md`)
+
+- ezCloud **ezFolio**: vendor-hosted Windows/PHP/Oracle, LAN allowlist, plain HTTP. Multi-property hotel+restaurant+golf product; SoLex uses a narrow slice. 58 rooms, ~96% occupancy, rates 750k–1,026k VND.
+- **Group/company bookings ≈ 2/3 of in-house rooms.** Shape: company + contact + saler + deposit, then per room type qty/pax/rate; rooms assigned later (waiting list). Booking exists without a room; room *class* is bookable. → the hard aggregate.
+- **No rate plans** — rates typed per booking. Client's "auto rate" = new capability (rate table room type × season), not a port.
+- **Channel typed into guest names** (AGD/CTRIP/TVLK/EXP). Improvement target: first-class Channel + commission. Channel-manager integration exists, unused.
+- **Night audit off** → no day close; "today's revenue" is ad-hoc. Day-boundary rule needs a decision (charge roll 23:59 in config).
+- Everything attributed (created/edited/checked-in-by, per-booking log); discounts have request→edit→approve trail. ES gets this free.
+- Personas: **manager** (read) + **receptionist** (everything). Housekeeping/restaurant off-system. Status vocab VC/VD/OC/OD/OOO. Source taxonomy OTA/TA/WALK-IN/CORP.
+- Hard constraints: **no card data ever**; key cards out; stay rules are a change target.
+- Candidate core: bookings incl. group + waiting list · room assignment/status · check-in/out · folio + extras · payments/deposits · receivables by debtor · guest profiles/history · revenue/occupancy reports · PA18 export · audit. **Out**: restaurant, HK scheduling, key cards, golf, multi-property, CM sync (later), cards (never).
+- Parked: admin/config screens (reception-level login), which of ~60 booking fields are used daily, data volume/history.
+
 ## Notes
 
 - Best fit for the **"Go at larger scope/scale" learning goal** — real domain modeling (reservations, room inventory, rates, calendars), real users, real data integrity concerns. (Revisit if Cloudflare/TS wins.)
@@ -73,7 +86,7 @@ This is the **Go-at-scale learning project**: backend-heavy, web back office, no
 
 Three parallel sessions, named agents: `solex-dev` (WS1), `solex-explore` (WS2), `solex-product` (WS3); `solex-architect` = cockpit. Profiles + protocol in `agents/`. Rules: each writes only its own file (above), commits in ctrl with `docs(hotel-backoffice/<ws>): …`, pulls before committing. Cross-WS findings go in the WS's own file under a "For other WSs" section; cockpit session merges into README.
 
-Ordering: WS1 + WS3 can start now. WS2 needs Alex to say what the `:99` system is and walk through it (curl alone won't get far if it's a SPA / Vietnamese PMS). WS3 does a second pass after WS2 lands.
+Ordering: ~~WS1 + WS3 can start now. WS2 needs Alex…~~ **WS2 complete 2026-09-20.** WS3 now reconciling against it. WS1 blocked on `wrangler login`.
 
 Later WS (not now): event-store design — Hookdeck-as-log vs bus + archive. Needs WS1 spike result + Hookdeck retention answer.
 
@@ -96,6 +109,7 @@ Later WS (not now): event-store design — Hookdeck-as-log vs bus + archive. Nee
 ## Status
 
 - 2026-07-10 — plan agreed, awaiting discovery brain-dump.
+- 2026-09-20 — **WS2 complete** (explore). Summary above. Explore on standby for re-reads / admin screens.
 - 2026-09-20 — **D-5: fresh start, migration deferred.** `existing-system.md` landed: ~30-screen ezFolio map, group-booking flow, candidate core, hard constraints (no card data; personas manager + receptionist; group/company bookings core; key cards out). Product second pass unblocked.
 - 2026-09-19 — **D-4: `:99` = current PMS; rebuild for data ownership, core subset + enhancements.** All 3 agents caught up, waiting on Alex.
 - 2026-09-19 — **D-3: TS on plain Workers, Go dropped.** Dev spike rescoped.

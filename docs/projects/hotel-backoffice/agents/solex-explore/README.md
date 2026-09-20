@@ -8,17 +8,20 @@
 
 **Tooling:** expect to drive the site in a browser — Playwright (MCP or `npx playwright`, headed, screenshots into your `notes/`), plus `curl` for API sniffing. Check what's available in-session before starting; ask Alex to install if missing. Model: Opus (exploratory, likely janky Vietnamese SPA).
 
-## Current objective (2026-09-19)
+## Current objective (2026-09-20, rev 2 — WS2 delivered)
 
-1. Read `requirements.md` — it's Excel-shaped. First question to Alex: does that workbook exist? Get it (→ `client/`, dated filename, untouched).
-2. Ask Alex what the `:99` system is. Then try `curl` w/ login. If SPA / non-scrapable, switch to Alex-driven: screenshots, screen-by-screen walkthrough, exports.
-3. Deliver in `existing-system.md`: what it is; feature inventory; screens; data entities + fields; reports; integrations (OTA, channel manager, payments); what staff actually use vs ignore; pain points; data volume (rooms, bookings/day, history depth).
-4. **"For other WSs" section**: entities/events product should model; migration/import needs; anything dev's stack must support (LAN-only? offline? printing?).
+**Standby / on-call.** `existing-system.md` is complete and merged into README. Now:
 
-Message architect when (1)–(2) resolved and when the file is ready for product's second pass.
+1. Answer re-read requests from solex-product (specific screens, field lists, flows) — reply by message, add facts to `existing-system.md`.
+2. When Alex gets an admin login: document masters (rooms, room types, rates, services, users/permissions) → new section.
+3. If asked: the "which booking fields are used daily" question — observe from real bookings rather than the form.
+4. Keep `tools/` working (Playwright scrapers) as the fallback data path; `.profile/`, `node_modules/`, `screens/`, `exports/` stay gitignored.
+
+Done (WS2 v1): ~30-screen map, group-booking flow, candidate core, hard constraints, broken-export finding → D-5.
 
 ## Log
 
 - 2026-09-19 — session created.
+- 2026-09-20 — WS2 delivered (02c02c8). Objective rev 2: standby / on-call for product + admin screens.
 - 2026-09-20 — ezFolio walkthrough with Alex: ~30 screens mapped, `existing-system.md` complete incl. group-booking flow, experience map, candidate core, "For other WSs". Export broken → start fresh (migration deferred). Ready for product handoff.
 - 2026-09-19 — caught up; tooling ok (curl, npx playwright; no Playwright MCP). Waiting on Alex re `:99` + workbook.
