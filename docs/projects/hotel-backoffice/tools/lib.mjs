@@ -15,7 +15,7 @@ export const log = (...a) => console.log(redact(a.join(' ')));
 
 // read-only guard: nothing but GET/HEAD ever leaves the browser
 export async function connect() {
-  const b = await chromium.connectOverCDP('http://localhost:9333');
+  const b = await chromium.connectOverCDP('http://localhost:9334');
   const ctx = b.contexts()[0];
   await ctx.route('**/*', r => {
     const m = r.request().method();
