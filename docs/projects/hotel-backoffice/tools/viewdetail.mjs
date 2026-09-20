@@ -1,0 +1,18 @@
+import { connect, url, describe, redact } from './lib.mjs';
+const room = process.argv[2] || '110';
+const { b, p } = await connect();
+await p.goto(await url('page=room_map'), { waitUntil: 'domcontentloaded' });
+await p.waitForTimeout(3500);
+await p.locator('div[ng-click^="showDetail"]:visible').filter({ hasText: new RegExp('\\b' + room + '\\b') }).first().click();
+await p.waitForTimeout(2000);
+const ctx = p.context();
+const before = ctx.pages().length;
+await p.getByText('XEM CHI TIẾT').first().click();
+await p.waitForTimeout(4000);
+const pages = ctx.pages();
+const target = pages.length > before ? pages[pages.length - 1] : p;
+console.error('opened new tab:', pages.length > before, '| url:', redact(target.url()));
+await target.waitForLoadState('domcontentloaded').catch(()=>{});
+await target.waitForTimeout(2500);
+await describe(target, 'fd-booking-detail');
+await b.close().catch(() => {});

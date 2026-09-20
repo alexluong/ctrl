@@ -25,7 +25,8 @@ export async function connect() {
     // but never anything that looks like a write.
     const u = r.request().url(), body = r.request().postData() || '';
     const writeish = /(cmd=(add|save|edit|update|delete|del|cancel|insert|remove|checkin|checkout|post|confirm|merge|audit)|action=(save|delete|update))/i;
-    if (/[?&]json=1/.test(u) && !writeish.test(u) && !writeish.test(body)) {
+    const readish = /[?&](json=1|(list|get|load|view|search|check)_[a-z_]+=)/i;
+    if (readish.test(u) && !writeish.test(u) && !writeish.test(body)) {
       console.error('[allowed read-POST]', redact(u), redact(body).slice(0, 200));
       return r.continue();
     }

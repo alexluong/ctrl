@@ -1,0 +1,12 @@
+import { connect, url, describe, redact } from './lib.mjs';
+const room = process.argv[2] || '110';
+const { b, p } = await connect();
+await p.goto(await url('page=room_map'), { waitUntil: 'domcontentloaded' });
+await p.waitForTimeout(3500);
+const tiles = p.locator('div[ng-click^="showDetail"]:visible').filter({ hasText: new RegExp('\\b' + room + '\\b') });
+const n = await tiles.count();
+console.error('visible tiles matching', room, '=', n);
+await tiles.first().click();
+await p.waitForTimeout(2500);
+await describe(p, 'fd-room-detail-panel');
+await b.close().catch(() => {});
