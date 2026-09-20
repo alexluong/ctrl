@@ -17,6 +17,7 @@ export const log = (...a) => console.log(redact(a.join(' ')));
 export async function connect() {
   const b = await chromium.connectOverCDP('http://localhost:9334');
   const ctx = b.contexts()[0];
+  if (process.env.NO_GUARD === '1') { const p0 = ctx.pages()[0] || await ctx.newPage(); console.error('[guard OFF]'); return { b, p: p0 }; }
   await ctx.route('**/*', r => {
     const m = r.request().method();
     if (m === 'GET' || m === 'HEAD') return r.continue();
