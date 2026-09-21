@@ -355,9 +355,10 @@ The settings page has **26 tabs**, not the 8 recorded earlier. The relevant ones
   people doing the work, and the extra-service list shows what happens without curation.
 - **Tax and service charge are per charge type, and currently all zero.** Keep the capability
   (VN hotels commonly run 5% service + 8–10% VAT) but do not assume they use it.
-- **Two overlapping mechanisms for early/late fees** — pick one. A surcharge with a reason is
-  probably right, computed from the rate rather than typed as a catalogue item.
-- **Day-use / hourly stays exist and are priced** (`1 gio`, `2 gio`). Ask whether SoLex sells them.
+- **Early/late fees are charged as catalogue items in practice** (Alex, 2026-09-21) — the extra-service
+  entries, not the booking-form multipliers. The multipliers are unused. Rebuild: early check-in /
+  late check-out are ordinary catalogue charges.
+- **Day-use / hourly stays are configured but not used** (Alex, 2026-09-21: SoLex sells daily only). The `1 gio` / `2 gio` policies are leftover config. Out of scope for the rebuild.
 - **Overbooking is allowed today** (`allow_over_room`), and the tape chart sells >100% occupancy
   on turnover days. The rebuild needs an explicit stance.
 
@@ -390,7 +391,7 @@ The settings page has **26 tabs**, not the 8 recorded earlier. The relevant ones
 - **The tape chart is a receptionist tool, not an owner's report**: the room x date grid with draggable stay bars is where moves and extensions happen. Industry name: tape chart / rack chart; generic pattern: **resource timeline** (FullCalendar `resourceTimeline`, Bryntum, vis-timeline). Treat as a core interactive screen.
 - **Role differs by density and default action, not by screen.** Both personas want the same two surfaces; the receptionist needs click-to-act, the manager needs the totals. Build one screen with role-aware defaults rather than two screens.
 - **Per-night rates already exist by hand** — the price-chart tab holds one rate row per night of a stay. The client needs date-varying pricing today; a rate table would formalise what they already do manually.
-- **Early check-in / late check-out are rate multipliers** (+0.3 / +0.5 / +1 of a night), chosen per booking. That is the concrete mechanic behind the stay rules Alex wants to change.
+- **Early check-in / late check-out**: the booking form offers rate multipliers (+0.3 / +0.5 / +1 of a night), but in practice they are charged as extra-service catalogue items (Alex, 2026-09-21).
 - **Commission is captured per booking** (% or absolute), not per channel - another reason a first-class Channel with its own commission is an improvement, not a port.
 - **Several travellers per room-stay** - the guest table on the booking form takes N people, each with their own identity fields. Model RoomStay -> many Guests, not one.
 - **Booking can exist without a room** (waiting list) — model room assignment as a separate step from booking; room *class* is bookable.
@@ -402,8 +403,8 @@ The settings page has **26 tabs**, not the 8 recorded earlier. The relevant ones
 - **The config flow is split in two** (2026-09-21): *item masters* (`room`, `room_type`, `product`, `minibar`, `minibar_product`, `laundry`, `service`, `extra_service`, `category`, `package`, `currency`, `restaurant_product`) are separate pages, all permission-blocked; *charge behaviour* (tax %, service charge %, net/gross, express rate, breakfast price, hourly price policy, booking rules) is in Settings and reception can see it. WS3: the item catalogue is the config surface the client actually needs.
 - **A charge has one shape across all types**: `(room-stay, date, item, qty, unit price, bucket, note, who)`. ezFolio has four near-identical screens (minibar / laundry / damages / extended service); build one posting flow with an item type, entered from the room.
 - **Posting happens from the room map tile**, not the invoice pages — the tile modal footer is DIRTY / MINIBAR / LAUNDRY / COMPENSATION / EXTRA SERVICE. The `*_invoice` pages are registers.
-- **Early/late fees exist twice** — as rate multipliers on the booking *and* as extra-service catalogue items. Pick one for the rebuild.
-- **Day-use / hourly stays are configured and priced** (`Nghỉ giờ`: 1 hour 400k, 2 hours 500k) — the only real price table in the system. Ask whether SoLex sells them.
+- **Early/late fees are catalogue items** (Alex, 2026-09-21). The booking-form multipliers (+0.3 / +0.5 / +1) exist but aren't used. Rebuild: model early check-in / late check-out as ordinary catalogue charges; drop the multiplier mechanic.
+- **Day-use / hourly stays: configured, not used** (`Nghỉ giờ`: 1 hour 400k, 2 hours 500k). Alex, 2026-09-21: SoLex is daily only. Out of scope.
 - **Overbooking is switched on** (`allow_over_room`), and the day boundary is `time_next_date = 23:59`. Both need an explicit decision.
 - **Child age threshold is 6** (`min_tre_em`), adults/children auto-counted from the guest list.
 - **All tax and service charges are 0 and everything is net** — they charge gross with no VAT line. Keep the capability, don't assume the usage.
@@ -563,3 +564,4 @@ Screenshots contain live guest data (Alex: acceptable). Regenerate/extend from `
 - 2026-09-21 — individual booking flow mapped (one form, two exits); tape chart named and reclassified as a receptionist screen.
 - 2026-09-21 — board restructured: hub section for the room map + tape chart, then receptionist vs manager tracks.
 - 2026-09-21 — charges flow mapped (8 buckets, posting from the room tile, catalogues recovered from data); config flow located: masters blocked, charge behaviour visible in Settings' 26 tabs.
+- 2026-09-21 — Alex: hourly stays not used (daily only); early/late charged as catalogue items, not multipliers.
