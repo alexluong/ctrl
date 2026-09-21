@@ -90,6 +90,31 @@ Data-quality observations: many rows have guest gender defaulted (Nữ), blank D
 - Backend looks like **Oracle** (date tooltips `18-SEP-26`, `NVL(...)` in sort links). Sort links put raw SQL `ORDER BY` in the query string.
 - Money is VND with a USD/exchange-rate secondary; commission is per booking.
 
+## The two hub screens (2026-09-21)
+
+Alex's call, and it reframes the map: **the room map and the tape chart are the two screens that
+matter most**, because they are the only two that answer "what is the state of the hotel" — one
+for *now*, one *over time*. Everything else in this document is a detour off one of them.
+Every role uses both; they use them differently.
+
+| | **Room map** (`room_map`) | **Tape chart** (`monthly_room_report`) |
+|---|---|---|
+| Answers | state of the hotel **right now** | state of the hotel **over time** |
+| Shape | tiles by floor, colour = status | room x date grid, one bar per stay |
+| Receptionist | the default screen. Click a tile to check in, see the balance, post a charge | move a stay, extend it, find a gap that fits a caller |
+| Manager / owner | glance answer to "how full are we today" (58 / 50 in-house / 5 arriving / 2 ready) | the forward book: occupancy % and rooms sold per night, weeks out |
+| Housekeeping (off-system) | which rooms are dirty, read out to them by reception | not used |
+
+Names for the second one: **tape chart** is the PMS term (Opera, Cloudbeds; Mews says Timeline;
+older systems "room rack" / "rack chart"). The generic UI pattern is a **resource timeline** —
+rows are resources, x-axis is time, bars are bookings, drag to move or resize. That is the phrase
+to search when looking for implementations: FullCalendar `resourceTimeline`, Bryntum Scheduler,
+vis-timeline, DHTMLX Scheduler.
+
+**For the rebuild**: these two are the home screens, not reports. If only two screens shipped,
+these are the two. Both need to be role-aware rather than role-specific — same data, different
+default actions and different density per role.
+
 ## The group booking flow, properly (2026-09-20)
 
 Correcting an earlier mistake: I had presented the *vacancy forecast report*
@@ -261,7 +286,9 @@ interactive screen, not a chart.
 - **Group folio routing is core, not a nicety** (2026-09-20): each room-stay carries nine switches deciding which charge categories settle on the group's master bill vs the guest's own folio (room · housekeeping · restaurant · extended services · phone · massage · sub-invoice · deposits · other). The corporate case — company pays rooms, guest pays incidentals — depends on it. WS3: model `charge.routedTo = ownFolio | masterFolio` per category.
 - **Availability is a per-night, per-room-type matrix, and it is part of the booking form** — not a report reception consults first. Quoting means reading down the columns and taking the tightest night. WS3: the booking screen must show availability for the whole requested range, per type, inline.
 - **Two booking use cases, not one** (2026-09-21): *individual* picks a specific room and can commit straight to CHECKIN (walk-in) or BOOKED; *group* picks room types with quantities and always defers assignment. Same `reservation_room` underneath; opposite capture order. An individual booking can be merged into a group afterwards.
-- **The tape chart is a receptionist tool, not an owner's report** (Alex, 2026-09-21): the room x date grid with draggable stay bars is where moves and extensions happen. Industry name: tape chart / rack chart; generic pattern: **resource timeline** (FullCalendar `resourceTimeline`, Bryntum, vis-timeline). Treat as a core interactive screen in the rebuild.
+- **The room map and the tape chart are the two most important screens** (Alex, 2026-09-21) — the only two that answer "what is the state of the hotel", one for now and one over time. Every role uses both, differently (see *The two hub screens*). They are the rebuild's home screens; if only two screens shipped, these are the two.
+- **The tape chart is a receptionist tool, not an owner's report**: the room x date grid with draggable stay bars is where moves and extensions happen. Industry name: tape chart / rack chart; generic pattern: **resource timeline** (FullCalendar `resourceTimeline`, Bryntum, vis-timeline). Treat as a core interactive screen.
+- **Role differs by density and default action, not by screen.** Both personas want the same two surfaces; the receptionist needs click-to-act, the manager needs the totals. Build one screen with role-aware defaults rather than two screens.
 - **Per-night rates already exist by hand** — the price-chart tab holds one rate row per night of a stay. The client needs date-varying pricing today; a rate table would formalise what they already do manually.
 - **Early check-in / late check-out are rate multipliers** (+0.3 / +0.5 / +1 of a night), chosen per booking. That is the concrete mechanic behind the stay rules Alex wants to change.
 - **Commission is captured per booking** (% or absolute), not per channel - another reason a first-class Channel with its own commission is an improvement, not a port.
@@ -367,9 +394,11 @@ Bad captures (2):
 
 https://www.figma.com/board/9450fwvpLCLPmAmt4FBsQU — "SoLex — ezFolio user flow (existing system)" (Collie Studio drafts, 2026-09-20).
 
-18 screenshots in five phase sections (booking → arrival → during the stay → departure & settlement →
-owner's view), each frame sized to its own image, captioned underneath, connected left→right within a
-phase, with a column of rebuild-relevant findings on the right.
+Structure (rev 2, 2026-09-21): a **hub section at the top** holding the two screens that matter most —
+room map and tape chart — at large size, each captioned per role (receptionist / manager / housekeeping).
+Below it the flow splits into role tracks: **RECEPTIONIST** phases 1–4 (booking → arrival → during the
+stay → departure & settlement) and **MANAGER / OWNER** phase 5 (how the hotel is doing). Each frame is
+sized to its own image and captioned underneath; a column of rebuild-relevant findings runs down the right.
 
 Rebuilt 2026-09-20 after the visual pass. Changes: every frame was a uniform 460×420 crop of a
 ~1280×1270 screenshot — now each is 520 wide at its true aspect ratio. Four weak images were swapped
@@ -421,3 +450,4 @@ Screenshots contain live guest data (Alex: acceptable). Regenerate/extend from `
 - 2026-09-20 — visual pass over all 41 screenshots: capture quality triaged, folio revenue/settlement buckets, HK status vocabulary, config values and the identity-data gap recorded.
 - 2026-09-20 — group booking flow dug out properly: `cmd=check_availability` engine (GET-drivable), the room-type x night matrix, and the nine-way group folio routing matrix.
 - 2026-09-21 — individual booking flow mapped (one form, two exits); tape chart named and reclassified as a receptionist screen.
+- 2026-09-21 — board restructured: hub section for the room map + tape chart, then receptionist vs manager tracks.
