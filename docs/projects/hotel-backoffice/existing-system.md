@@ -167,6 +167,75 @@ Unparameterised SQL built by string concatenation, echoed to the user. Consisten
 PHP errors already noted on `?page=employee`. Not our problem to fix, but it says something
 about what the client is running today.
 
+## The individual booking flow (2026-09-21)
+
+`Khách lẻ` → `?page=reservation&cmd=add&status=<STATUS>&reservation_type_id=2`.
+Screenshot: `fd-walkin-form`.
+
+**There is no availability step and no separate check-in screen.** One form, 95 fields across
+12 tabs, ending in one of two buttons in the top right:
+
+- **Đặt phòng** → the room-stay is created `BOOKED` (a future reservation)
+- **Checkin** → created and immediately `CHECKIN` (the walk-in case)
+
+The `status=` in the URL makes no difference to what renders — both buttons are always there.
+The status is decided by which button reception presses. WS3: this is *one* use case with two
+exits, not two screens.
+
+### How it differs from the group flow
+
+| | Individual | Group |
+|---|---|---|
+| Availability | none — reception already knows | room-type × night matrix, inline |
+| What's picked | **a specific room**, from a `Phòng` dropdown | room **type** + quantity |
+| Assignment | immediate | deferred (waiting list) |
+| Quantity | always 1 | N per type |
+| Commit | `Đặt phòng` **or** `Checkin` | `Đặt phòng` only |
+
+So room assignment is early-bound for individuals and late-bound for groups. Same underlying
+`reservation_room`; different capture order. A booking made here can be pulled into a group
+later — `Ghép đoàn` (merge) and the `block_id` dropdown are both on this form.
+
+### Things on this form that matter for the rebuild
+
+- **Per-night rate override.** The `Lược đồ giá` (price chart) tab holds one row per night
+  (`date_1`, `date_2`, …). So a single stay can carry a different rate each night, by hand —
+  the closest thing to a rate plan in the system, and evidence the client already needs
+  date-varying pricing.
+- **Early check-in / late check-out are rate multipliers, not flags**: `0 / +0.3 / +0.5 / +1`
+  of a night's rate. This is the concrete mechanic behind the "stay rules" Alex flagged as a
+  change target — it's a surcharge fraction, decided per booking.
+- **Guest class** `traveller_level_id`: individual · VIP 1 · VIP 2 · Guest return. Separately
+  `card_vip_type`: SILVER · GOLD · DIAMOND · PLATIUM · COMPANY.
+- **Card data, in full, including CVV** — `card_holder_name`, `card_number`,
+  `card_exprire_date`, `card_type_id` (bank list: Agribank, Maritime, Vietcombank, BIDV,
+  Bắc Á, Sacombank, VISA), `cvs_code`. Confirms the PCI surface we are deliberately not
+  rebuilding.
+- **Flight details** (`Chuyến bay` tab): inbound/outbound flight number, date and time.
+  This is what feeds the airport pickup / see-off list.
+- **Full ISO nationality list** (`nationality_id`) — required by PA18 and by the breakfast
+  nationality roll-up, and empty on almost every real booking.
+- Money controls: `FOC` / `foc_all` (complimentary), `discount_percent`, `discount_money`,
+  `discount_vip`, a discount **reason** field, tax, service fee, and `Hoa hồng` (commission,
+  % or absolute) — commission is per booking, not per channel.
+- `is_net` (net ++ vs gross), `lock_reservation_room`, `Package` dropdown (empty),
+  `roomrate` (empty — no rate plans), source = CORP · WALK-IN · OTA · TA.
+- A guest table at the bottom: **several travellers per room-stay** (`Thêm khách`), each with
+  their own name, gender, DOB, ID, nationality and dates.
+
+### The tape chart
+
+`fd-room-situation` / `hk-room-status` (`monthly_room_report`) is a **tape chart** — the standard
+PMS name for a room × date grid with stay bars (Opera and Cloudbeds both use it; Mews calls it
+Timeline, older systems "room rack" / "rack chart"). Generic UI pattern: a **resource timeline**
+(rows = resources, x = time, bars = bookings, drag to move/extend) — the term to search for
+implementations, e.g. FullCalendar `resourceTimeline`, Bryntum Scheduler, vis-timeline, DHTMLX.
+
+It is **not just an owner's report** (Alex, 2026-09-21): dragging a bar moves or extends a
+reservation, which makes it a primary receptionist surface — arguably *the* one, since it shows
+availability, assignment and length-of-stay in one view. The rebuild should treat it as a core
+interactive screen, not a chart.
+
 ## For other WSs
 - **No card data. Ever.** (Alex, 2026-09-20) ezFolio stores card holder / number / expiry / CVV on the booking. The rebuild deliberately does not — no PCI surface. WS3: leave card capture out of the model; WS1: no card fields in the schema.
 - **Group / company bookings are a large share of business** (Alex, 2026-09-20; ~2/3 of in-house rooms today are group or company). Model Company, group booking, "merge into group", and receivables by debtor type as core, not later.
@@ -191,6 +260,12 @@ about what the client is running today.
 - **Group booking shape**: company + contact + saler + source + deposit + display code/colour, then *per room type × bed type*: quantity, adults, children, rate (VND/USD), note. Rooms assigned later. This is the aggregate WS3 must get right: `Booking(company, dates, [RoomTypeRequest(type, bedType, qty, pax, rate)])` → N `RoomStay`s → assigned `Room`s.
 - **Group folio routing is core, not a nicety** (2026-09-20): each room-stay carries nine switches deciding which charge categories settle on the group's master bill vs the guest's own folio (room · housekeeping · restaurant · extended services · phone · massage · sub-invoice · deposits · other). The corporate case — company pays rooms, guest pays incidentals — depends on it. WS3: model `charge.routedTo = ownFolio | masterFolio` per category.
 - **Availability is a per-night, per-room-type matrix, and it is part of the booking form** — not a report reception consults first. Quoting means reading down the columns and taking the tightest night. WS3: the booking screen must show availability for the whole requested range, per type, inline.
+- **Two booking use cases, not one** (2026-09-21): *individual* picks a specific room and can commit straight to CHECKIN (walk-in) or BOOKED; *group* picks room types with quantities and always defers assignment. Same `reservation_room` underneath; opposite capture order. An individual booking can be merged into a group afterwards.
+- **The tape chart is a receptionist tool, not an owner's report** (Alex, 2026-09-21): the room x date grid with draggable stay bars is where moves and extensions happen. Industry name: tape chart / rack chart; generic pattern: **resource timeline** (FullCalendar `resourceTimeline`, Bryntum, vis-timeline). Treat as a core interactive screen in the rebuild.
+- **Per-night rates already exist by hand** — the price-chart tab holds one rate row per night of a stay. The client needs date-varying pricing today; a rate table would formalise what they already do manually.
+- **Early check-in / late check-out are rate multipliers** (+0.3 / +0.5 / +1 of a night), chosen per booking. That is the concrete mechanic behind the stay rules Alex wants to change.
+- **Commission is captured per booking** (% or absolute), not per channel - another reason a first-class Channel with its own commission is an improvement, not a port.
+- **Several travellers per room-stay** - the guest table on the booking form takes N people, each with their own identity fields. Model RoomStay -> many Guests, not one.
 - **Booking can exist without a room** (waiting list) — model room assignment as a separate step from booking; room *class* is bookable.
 - **Discounts carry an approval trail** (requested / edited / approved, with users). If the owner wants control over discounting, that's a real feature, not decoration.
 - **Every mutation is attributed** (created-by / edited-by / checked-in-by, per-booking "Show log"). An event-sourced rebuild gets this for free and should keep it visible.
@@ -312,7 +387,8 @@ Screenshots contain live guest data (Alex: acceptable). Regenerate/extend from `
 | `fd-room-situation` | room × date availability calendar |
 | `fd-booking-list-inhouse` | booking list, in-house filter |
 | `fd-room-detail-panel` | room map tile modal |
-| `fd-booking-detail` | booking / folio editor |
+| `fd-booking-detail` | booking / folio editor (blank) |
+| `fd-walkin-form` | individual booking form — Đặt phòng / Checkin |
 | `rpt-debit-detail` | receivables detail |
 | `rpt-debit-summary` | receivables summary |
 | `rpt-room-revenue-daily` | daily room revenue |
@@ -344,3 +420,4 @@ Screenshots contain live guest data (Alex: acceptable). Regenerate/extend from `
 - 2026-09-20 — room detail modal + booking/folio editor mapped; entity chain reservation → reservation_room → traveller; screen naming convention adopted.
 - 2026-09-20 — visual pass over all 41 screenshots: capture quality triaged, folio revenue/settlement buckets, HK status vocabulary, config values and the identity-data gap recorded.
 - 2026-09-20 — group booking flow dug out properly: `cmd=check_availability` engine (GET-drivable), the room-type x night matrix, and the nine-way group folio routing matrix.
+- 2026-09-21 — individual booking flow mapped (one form, two exits); tape chart named and reclassified as a receptionist screen.
