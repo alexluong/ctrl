@@ -261,6 +261,106 @@ reservation, which makes it a primary receptionist surface — arguably *the* on
 availability, assignment and length-of-stay in one view. The rebuild should treat it as a core
 interactive screen, not a chart.
 
+## Charges and the config behind them (2026-09-21)
+
+### The charge types
+
+Eight buckets, and they are fixed — they are the columns of the hotel revenue report
+(`rpt-fd-revenue`) and the nine switches of the group routing matrix:
+
+| Bucket | Posted from | List screen |
+|---|---|---|
+| Room | the booking itself (rate x nights) | `rpt-room-revenue-daily` |
+| Room surcharge | early check-in / late check-out multipliers on the booking | — |
+| Minibar | room tile → MINIBAR | `minibar_invoice` |
+| Laundry | room tile → LAUNDRY | `laundry_invoice` |
+| Compensation / damages | room tile → COMPENSATION | `equipment_invoice` |
+| Extended service (DV mở rộng) | room tile → EXTRA SERVICE | `extra_service_invoice` |
+| Telephone | PBX integration (`Số giây / block` in settings) | — |
+| Restaurant | restaurant POS (dormant) | `restaurant_*` |
+
+**The posting entry point is the room map tile**, not the invoice pages. Clicking a tile opens
+the detail modal (`fd-room-detail-panel`) whose footer is exactly:
+`DIRTY · MINIBAR · LAUNDRY · COMPENSATION · EXTRA SERVICE`. The `*_invoice` pages are the
+*registers* — search/filter/see what's been posted — and their `cmd=add` route is permission-denied
+for our reception account, which suggests posting really is meant to happen from the room.
+
+Charges carry: room, date, item(s) + quantity, unit price, total, the booking's RE code, who
+created it, who last edited it, and a free-text note. Minibar and laundry lines are itemised
+(a single invoice can hold several items with quantities); extra services are one line each.
+
+### The item catalogues — recovered from the data, since the masters are locked
+
+- **Minibar** is modelled as **one minibar per room** (`minibar_id` = `Minibar101`, `Minibar103`,
+  … 58 of them), not as a single product list. So it's a stock location per room, which is why
+  "unlimited import" is a setting. Items seen: Nước Suối, Bò Húc, Mì Ly, Cocacola, Bia Tiger.
+- **Laundry** items are per-garment: Quần Tây, Áo Sơ Mi, Quần Đùi, Vớ, Áo Lót, Quần Bò, Quần Lót,
+  Quần Ngắn, Áo Thun. There is an express-laundry surcharge rate in settings.
+- **Extended services** — 19 items in two groups (`ROOM`, `EXTRA_SERVICE`). The list is a mess
+  and worth seeing, because it is the argument for a managed catalogue:
+  `Card Fee` · `Phí thẻ` (the same thing, twice) · `Check out lately` · `Checkout Later`
+  (again, twice) · `Check in early` · `Ô tô sân bay/Taxi airport` · `Taxi` · `Transportation`
+  (three overlapping) · `dịch vụ` ("service") · `Cái Mới` ("new thing") · `Ăn Sáng` ·
+  `Business center` · `Vé máy bay/ Air ticket` · `Restaurant` · `Refund` ·
+  `Giam tru tien dien thoai` · `Dịch vụ khác / Other`.
+- **Note the overlap**: early check-in / late check-out exist *both* as rate multipliers on the
+  booking form (+0.3 / +0.5 / +1 of a night) *and* as extra-service catalogue items. Two ways to
+  charge the same thing, which is why the same fee shows up in different buckets.
+
+### The config flow — it exists, and it is split in two
+
+**1. Item masters — separate pages, all permission-blocked for reception.**
+Probing confirms these pages exist (they return "Bạn không có quyền truy nhập phần này" rather
+than an empty shell — see `../tools/pageprobe.mjs`):
+
+`room` · `room_type` · `product` · `minibar` · `minibar_product` · `laundry` · `service` ·
+`extra_service` · `category` · `package` · `currency` · `restaurant_product`
+
+These are where rooms, room types, minibar items, laundry items and service items with their
+prices are maintained. **We cannot see any of them** on a reception account. Getting an admin
+login is the only way to document their fields — worth asking the client for.
+
+**2. Charge behaviour — in Settings (`?page=setting`), and reception *can* see it.**
+The settings page has **26 tabs**, not the 8 recorded earlier. The relevant ones:
+
+- **Thuế - Dịch vụ** (`sys-charge-config`) — per charge type: service charge %, tax %, and a
+  net/gross flag. One row each for reception/room, minibar, laundry, extended service, tour,
+  karaoke, restaurant, SPA, VIP card, breakfast. **Every tax and service charge is 0** and
+  everything is `is_net=1` — they charge gross, with no VAT line. Also holds
+  `laundry_express_rate` (express surcharge) and breakfast adult/child default price + serve time.
+- **Nghỉ giờ** (`sys-hourly-pricing`) — **the only genuine price table in the system**: an
+  hourly/day-use policy list, `1 gio = 400,000` and `2 gio = 500,000` VND, with "add price policy".
+  Day-use stays are a product line nobody has mentioned yet.
+- **Cấu hình đặt phòng** (`sys-booking-rules`) — the booking rules, and several are decisions the
+  rebuild has to make explicitly:
+  `time_next_date = 23:59` (the day boundary — when room charge rolls),
+  `auto_count_adult` / `auto_count_children` with `min_tre_em = 6` (under 6 is a child),
+  **`allow_over_room` = on (overbooking is permitted)**, `send_email_when_checkout` (thank-you
+  mail), `lay_phong_can_ngay` (auto-assign the room needed soonest), `room_view_by_time`.
+- **Chức năng phần mềm** — module switches: minibar, restaurant, karaoke, SPA, tour, tennis, golf,
+  pool, gym, football, badminton, warehouse, VAT, passport reader, card module, lock connector,
+  auto-lock. Confirms how much of ezFolio is switched off here.
+- Per-type tabs also exist for Minibar, Giặt là, DV mở rộng, Tour/nhóm, Karaoke, Nhà hàng, SPA,
+  Thẻ vip, Breakfast, plus Sơ đồ phòng / Sơ đồ buồng (map colours), Thông tin mặc định khi nhập
+  khách (guest-entry defaults: gender, ID type, nationality), ezHotel booking-engine connection,
+  Golf config, ezCMS channel-manager config, PA18, Giao diện, Biểu mẫu (print templates).
+
+### What this means for the rebuild
+
+- **A charge is `(room-stay, date, item, qty, unit price, bucket, note, who)`** — one shape across
+  minibar / laundry / damages / services. ezFolio has four near-identical screens for it; the
+  rebuild needs one posting flow with an item type, reachable from the room.
+- **The item catalogue is the config surface the client actually needs**: rooms + room types with
+  prices, minibar items, laundry items, service items. Today it is admin-only and invisible to the
+  people doing the work, and the extra-service list shows what happens without curation.
+- **Tax and service charge are per charge type, and currently all zero.** Keep the capability
+  (VN hotels commonly run 5% service + 8–10% VAT) but do not assume they use it.
+- **Two overlapping mechanisms for early/late fees** — pick one. A surcharge with a reason is
+  probably right, computed from the rate rather than typed as a catalogue item.
+- **Day-use / hourly stays exist and are priced** (`1 gio`, `2 gio`). Ask whether SoLex sells them.
+- **Overbooking is allowed today** (`allow_over_room`), and the tape chart sells >100% occupancy
+  on turnover days. The rebuild needs an explicit stance.
+
 ## For other WSs
 - **No card data. Ever.** (Alex, 2026-09-20) ezFolio stores card holder / number / expiry / CVV on the booking. The rebuild deliberately does not — no PCI surface. WS3: leave card capture out of the model; WS1: no card fields in the schema.
 - **Group / company bookings are a large share of business** (Alex, 2026-09-20; ~2/3 of in-house rooms today are group or company). Model Company, group booking, "merge into group", and receivables by debtor type as core, not later.
@@ -299,6 +399,14 @@ interactive screen, not a chart.
 - **Extra-service catalogue to carry over**: breakfast, early check-in, late check-out, airport transfer, laundry, minibar, damages, other — each with qty, price, discount, tax, service fee.
 - **~11–13 user accounts exist** but only two personas matter (above); several accounts are vendor/admin (`administrator`, `itezcloud`).
 - **Night audit is the formal day-close and it is switched off** — so "today's revenue" is computed ad-hoc from reports. The rebuild's day-boundary rule (charge roll at 23:59) needs an explicit decision.
+- **The config flow is split in two** (2026-09-21): *item masters* (`room`, `room_type`, `product`, `minibar`, `minibar_product`, `laundry`, `service`, `extra_service`, `category`, `package`, `currency`, `restaurant_product`) are separate pages, all permission-blocked; *charge behaviour* (tax %, service charge %, net/gross, express rate, breakfast price, hourly price policy, booking rules) is in Settings and reception can see it. WS3: the item catalogue is the config surface the client actually needs.
+- **A charge has one shape across all types**: `(room-stay, date, item, qty, unit price, bucket, note, who)`. ezFolio has four near-identical screens (minibar / laundry / damages / extended service); build one posting flow with an item type, entered from the room.
+- **Posting happens from the room map tile**, not the invoice pages — the tile modal footer is DIRTY / MINIBAR / LAUNDRY / COMPENSATION / EXTRA SERVICE. The `*_invoice` pages are registers.
+- **Early/late fees exist twice** — as rate multipliers on the booking *and* as extra-service catalogue items. Pick one for the rebuild.
+- **Day-use / hourly stays are configured and priced** (`Nghỉ giờ`: 1 hour 400k, 2 hours 500k) — the only real price table in the system. Ask whether SoLex sells them.
+- **Overbooking is switched on** (`allow_over_room`), and the day boundary is `time_next_date = 23:59`. Both need an explicit decision.
+- **Child age threshold is 6** (`min_tre_em`), adults/children auto-counted from the guest list.
+- **All tax and service charges are 0 and everything is net** — they charge gross with no VAT line. Keep the capability, don't assume the usage.
 - **Admin/config screens are permission-blocked for our account** — room, room type, service and product masters (and presumably users/permissions) are invisible. Need an admin login to document them; masters are currently inferred from dropdowns.
 - **Candidate core for the rebuild** (WS3 decides; this is WS2's read of what is actually used): bookings incl. group/company + waiting list · room assignment & room status · check-in / check-out · folio with extras (minibar, laundry, extra bed, breakfast, late/early, transfer, damages) · payments incl. deposits · receivables by debtor · guest profiles w/ history · revenue + occupancy reporting · PA18 export · user attribution/audit. **Out**: restaurant POS, housekeeping scheduling, key cards, golf, multi-property, channel-manager sync (later), card storage (never).
 - **Cancellation and no-show are statuses, not deletions** — keep them as events on the room-stay (matters for OTA no-show charging and for honest occupancy history).
@@ -421,7 +529,10 @@ Screenshots contain live guest data (Alex: acceptable). Regenerate/extend from `
 | `rpt-debit-detail` | receivables detail |
 | `rpt-debit-summary` | receivables summary |
 | `rpt-room-revenue-daily` | daily room revenue |
-| `sys-settings` | system settings |
+| `sys-settings` | system settings (26 tabs) |
+| `sys-charge-config` | tax / service charge / net, per charge type |
+| `sys-hourly-pricing` | day-use price policies — the only price table |
+| `sys-booking-rules` | day boundary, overbooking, child age, auto-assign |
 | `hk-room-map` | housekeeping room map |
 | `hk-room-status` | housekeeping room status calendar |
 | `hk-employee-schedule` | daily room assignment |
@@ -451,3 +562,4 @@ Screenshots contain live guest data (Alex: acceptable). Regenerate/extend from `
 - 2026-09-20 — group booking flow dug out properly: `cmd=check_availability` engine (GET-drivable), the room-type x night matrix, and the nine-way group folio routing matrix.
 - 2026-09-21 — individual booking flow mapped (one form, two exits); tape chart named and reclassified as a receptionist screen.
 - 2026-09-21 — board restructured: hub section for the room map + tape chart, then receptionist vs manager tracks.
+- 2026-09-21 — charges flow mapped (8 buckets, posting from the room tile, catalogues recovered from data); config flow located: masters blocked, charge behaviour visible in Settings' 26 tabs.
