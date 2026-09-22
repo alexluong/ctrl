@@ -1,0 +1,28 @@
+{
+  "title": "SoLex — Excalidraw test board",
+  "subtitle": "Checking the loop: screenshots, captions, arrows and frames generated from a spec. Move anything, save, and I can read your changes back from the file.",
+  "imageWidth": 600,
+  "maxImageHeight": 900,
+  "sections": [
+    {
+      "name": "THE TWO HUB SCREENS",
+      "note": "Every role lives here, for different reasons.",
+      "arrows": false,
+      "items": [
+        {"screen": "fd-room-map", "caption": "Room map: the hotel right now. Receptionist acts from the tiles; manager reads the counts."},
+        {"screen": "fd-room-situation", "caption": "Tape chart: the hotel over time. Drag a stay to move or extend it."}
+      ]
+    },
+    {
+      "name": "WALK-IN — individual booking",
+      "note": "Room tile → one form, two exits (Đặt phòng or Checkin).",
+      "arrows": true,
+      "items": [
+        {"screen": "fd-room-detail-panel", "caption": "Room tile modal: the starting point."},
+        {"screen": "fd-walkin-form", "caption": "Individual booking form: pick one room, commit as BOOKED or straight to CHECKIN."}
+      ],
+      "panel": "TEST NOTE\n\nIf this renders with both screenshots, the arrow between them, and the text readable, the generator works.\n\nTry: drag this note somewhere, save (Cmd+S), and tell me. I'll read the file and confirm I can see the move.",
+      "panelWidth": 460
+    }
+  ]
+}

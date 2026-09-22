@@ -2,6 +2,8 @@
 # machine-local secrets; canonical copy in Vaultwarden. See docs/machine.md.
 secrets/
 docs/projects/hotel-backoffice/screens/
+# Excalidraw boards embed the screenshots (live guest data) - keep out of git
+docs/projects/hotel-backoffice/board/
 docs/projects/hotel-backoffice/tools/node_modules/
 docs/projects/hotel-backoffice/exports/
 docs/projects/hotel-backoffice/tools/.profile/
