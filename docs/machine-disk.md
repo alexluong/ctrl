@@ -209,6 +209,7 @@ All values in GiB (see units note above).
 | 2026-08-25 | 376.6 | 42.8 | 77.9 | 90.3 | 57.8 | 72.3 | 28.9 | 49.4 |
 | 2026-09-16 | 425.4 | 8.4 | 116.3 | 104.0 | 66.2 | 72.8 | 29.5 | 36.6 |
 | 2026-09-16 | 364.3 | 69.6 | 61.2 | 88.1 | 58.7 | 70.7 | 29.5 | 56.1 |
+| 2026-09-22 | 419.6 | 13.3 | 116.7 | 75.2 | 70.9 | 71.0 | 29.7 | 56.0 |
 
 The brief `caches`/`system` split on 2026-08-03 was folded back before any
 snapshot depended on it, so every row above is directly comparable.
@@ -265,6 +266,23 @@ Moving files into iCloud Drive frees nothing on its own (same volume) — space
 only returns once iCloud uploads and macOS evicts the local copies.
 
 ## History
+
+- **2026-09-22** — Free space hit **12.3G** six days after the last clean, then
+  **167M** mid-audit when Docker Desktop crashed during another session's build
+  and wedged (`docker ps` hung; AppleScript quit didn't stop
+  `com.docker.backend`, needed `kill -9`). Mover: `docker` +55.5 to 116.7.
+  Volumes 36.7 → 63.2G, 27.3G of it **one anonymous Postgres 17 volume**
+  (`8f8f43e9…`, created 09-21, `max_wal_size=8GB`, probably a release/load-test
+  stack), which Alex chose to **keep**. Anonymous but not disposable: check what's inside an
+  anonymous volume before `docker volume prune`. `system` +11.3 to 70.0 (right at the
+  budget): go-build 4.4 → 11G. `repos` −12.9. Cleanup: `go clean -cache`
+  (~11G), ms-playwright (3G), `pnpm store prune` (1.65G), Docker build cache
+  (22G), `df-build-vol` (3.1G). Image prune >30d reclaimed only 82MB (old
+  layers shared with newer images). Kept the `server*`/`outpost_go_*`
+  go-cache volumes: the amp sessions were running live stacks against them.
+  **167M → 25G free**, still under the floor. `Docker.raw` stayed at 117G on the host
+  right after pruning. Either TRIM lags behind or the raw file holds the
+  crash's garbage. Recheck next audit.
 
 - **2026-09-16** — Free space hit **8.4G**. Three weeks since the last audit.
   Docker was the mover again (+38.4G to 116.3, just under budget): 64G of
