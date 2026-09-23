@@ -4,7 +4,8 @@ Owner: `solex-dev`. Repo: `alexluong/solex` (private), local at `~/git/hub/alexl
 
 ## Status
 
-- 2026-09-23 — **spike done and deployed**. https://solex-stg.collie.studio is live, server-rendered, writing to D1. Repo bootstrapped, `fix`/`check` green, GitHub remote pushed.
+- 2026-09-23 — **event-sourcing skeleton built and deployed**. Event store, first aggregate (Room), projections, and a system console for browsing the log and the database. All of it live on https://solex-stg.collie.studio, keyed by hotel per D-9.
+- 2026-09-23 — spike done and deployed. Repo bootstrapped, `fix`/`check` green, GitHub remote pushed.
 
 ## The stack (D-3 + Alex, 2026-09-23)
 
@@ -67,6 +68,39 @@ pnpm deploy                      # build + ship
 ```
 
 Compose (`mise run up`) runs the same dev server in a container for worktrees that want it.
+
+## The ES skeleton as built (2026-09-23)
+
+Alex asked to see event-driven architecture working, to browse the events, and to have a system-admin tool for the database. All three are deployed. D-8's shape is what got built, so the desk exercise below is now also a description of the code.
+
+**Event store** (`src/server/events/`):
+
+- One `events` table. `seq` is the global order for replay; `version` is the position within a stream.
+- `UNIQUE (stream_id, version)` is the concurrency control. A writer working from stale state loses the insert and retries from a fresh read. No Durable Object, no lock, no single-writer runtime.
+- `handleCommand` is the only write path: load stream → fold to state → decide → append.
+- Projections are written **in the same atomic batch** as the event. D1 has no interactive transactions; a batch is atomic, which is enough. A test proves the event does not land when its projection fails.
+- `rebuildProjections` drops derived tables and replays the log. A test proves replay reproduces byte-for-byte what live writes produced. On staging it replayed in ~500 ms over D1.
+
+**First aggregate: Room.** Events: `RoomDefined`, `RoomMarkedDirty/Clean/Inspected`, `RoomTakenOutOfOrder`, `RoomReturnedToService`, `RoomNoteSet`. The invariant that earns its keep already: housekeeping cannot change while a room is out of order. `product.md` §6 has Room's real vocabulary; this matches it. Occupancy is deliberately absent — it derives from stays, which do not exist yet.
+
+**Multi-tenancy (D-9)** is in from the first line of schema: stream ids are `<hotel>/room:101`, `events.hotel_id` and every projection row carry the hotel, and `rooms` is keyed by `(hotel_id, id)`. A test proves two hotels with the same room number do not share history. The current hotel comes from config (`SOLEX_HOTEL_ID`, default `solex`) until Setup and real users exist.
+
+**System console** at `/system` — operator-facing, not the hotel's admin persona:
+
+- Event log browser, filterable by stream or type, newest first, with payloads.
+- Every table, read-only, paginated, including `events` itself.
+- Replay button that rebuilds all projections from the log.
+- Each room's own stream is also shown on its detail screen, so the fold is visible where it matters.
+
+**Console access**: a token compared in constant time, held in a cookie. Locally, with no token configured, the console is open. Deployed, a missing token means **closed** — fail closed, never guess. The staging token is set and recorded in `ctrl/secrets/hotel-backoffice.md`.
+
+**Also browsable outside the app**: `pnpm db:studio` (local file) and `pnpm db:studio:remote` (deployed D1, needs a Cloudflare API token with D1 rights — not created, and it belongs in Vaultwarden). `wrangler d1 execute` covers ad-hoc SQL.
+
+### What I'd want before calling this production-shaped
+
+- **Authentication.** The room board is public on staging and the console is only as strong as one shared token. Real auth is a decision for architect + `docs/stack.md`'s auth stance.
+- **Event versioning.** Payloads are unversioned JSON. Fine now; a rename of a field later needs an upcaster, and deciding that early is cheaper.
+- **A second aggregate** will tell us whether the store's shape holds. Booking is the real test, because of the cross-aggregate availability rule.
 
 ## Storage shape for event sourcing (desk exercise for architect, 2026-09-23)
 
