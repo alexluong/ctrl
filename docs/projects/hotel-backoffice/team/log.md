@@ -865,5 +865,10 @@ After landing 3: **5.2 cron entry + HotelProfile** (D-7 zone + roll hour, replac
 overbooking override, plus architect's two deferred items (N22 `nothingToChange` everywhere, N21
 history grouped by correlationId).
 
-Still waiting on Alex, neither blocking: the Vietnamese pass (now including the group and routing
-screens, which are live with my placeholder wording), and whether a receptionist may refund at all.
+Still waiting on Alex, not blocking: the Vietnamese pass (now including the group and routing
+screens, which are live with my placeholder wording).
+
+**Correction (architect):** "whether a receptionist may refund" was never open — it is settled in
+`product.md:45`, where `folio.void/refund`, `receivable.write_off` and `expense.void` are in the
+owner bundle (D-17 role split). The code has always matched it. I had been carrying it in this log
+as an open question for Alex; it is not one, and should not be raised again unless he reopens it.
