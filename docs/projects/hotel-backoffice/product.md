@@ -99,9 +99,11 @@ Rules: arrive < depart · every request qty ≥ 1 · cancel cascades to all stay
 
 **Deferred from Booking (later tickets):** OTA support (commission, gross/net, channel sync, external confirmation ref) · sales rep / "saler" · group label + color on tape chart · merge stay into group.
 
-### Stay — one room for one span (settled w/ Alex 2026-09-23; ezFolio `reservation_room`, Opera "room stay")
+### Stay — one guest visit, night by night (settled w/ Alex 2026-09-23; ezFolio `reservation_room`, Opera "room stay")
 
-Naming: **Booking / Stay** (not Reservation / Stay). Streams `booking:*`, `stay:*`.
+Naming: **Booking / Stay** (not Reservation / RoomStay). Streams `booking:*`, `stay:*`.
+
+**The night is the unit.** A Stay is a list of nights; each night carries its room and its rate. A room move does *not* split the Stay (guest sees one visit, one bill, one checkout); it changes the room on the remaining nights.
 
 ```ts
 type Stay = {
@@ -110,10 +112,13 @@ type Stay = {
   bookingId: BookingId
   roomTypeId: RoomTypeId
   bedType: BedType
-  roomId?: RoomId              // empty until assigned
-  arrive: LocalDate
-  depart: LocalDate            // exclusive; the plan — actual nights derive from timestamps (D-7)
-  ratePerNight: Array<{ date: LocalDate; amount: Money }>   // per-night; one night can be discounted
+  nights: Array<{
+    date: LocalDate            // business date (D-7)
+    roomId?: RoomId            // empty until assigned; may differ night to night after a move
+    rate: Money
+    posted: boolean            // room charge already on the folio → night immutable
+  }>
+  // arrive = first night, depart = last night + 1 — derived, not stored
   adults: number
   children: number             // < childAgeThreshold (Setup, default 6)
   guests: GuestId[]
@@ -123,26 +128,35 @@ type Stay = {
   checkedOutAt?: Instant
 }
 ```
-Events: `stay.created` · `stay.room_assigned` · `stay.room_unassigned` · `stay.room_changed(from, to)` · `stay.dates_changed` · `stay.rate_set(date, amount)` · `stay.guest_added` · `stay.guest_removed` · `stay.routing_set(bucket, target)` · `stay.checked_in` · `stay.checked_out` · `stay.cancelled(reason)` · `stay.marked_no_show`.
-Rules: check-in needs an assigned room that is not out of order · check-out needs own folio at 0 or moved to a receivable · dates change only before check-out · `rate_set` cannot target an already-posted night · no-show only from `booked`, after arrival date · cancel only if not checked in, reason required, charges moved off first (ezFolio guards).
+Events: `stay.created` · `stay.room_assigned(roomId, fromDate?)` · `stay.room_unassigned` · `stay.room_changed(fromDate, roomId)` · `stay.nights_changed(added[], removed[])` · `stay.rate_set(date, amount)` · `stay.guest_added` · `stay.guest_removed` · `stay.routing_set(bucket, target)` · `stay.checked_in` · `stay.checked_out` · `stay.cancelled(reason)` · `stay.marked_no_show` · `stay.overbooking_overridden`.
+Rules: check-in needs tonight's room assigned and not out of order · check-out needs own folio at 0 or moved to a receivable · nights change only before check-out · posted nights are immutable (no rate/room change) · no-show only from `booked`, after arrival date · cancel only if not checked in, reason required, charges moved off first (ezFolio guards).
 
 Assumptions (Alex 2026-09-23: business calls, not system-breaking; adjust later):
-- **Room move mid-stay**: same stay, `room_changed`, price unchanged by default; unposted nights editable after. Different room type → UI warns, no auto-reprice.
-- **Extend**: same stay, `dates_changed`; new nights pre-filled from the rate table, editable before they post.
+- **Room move mid-stay**: `room_changed` rewrites `roomId` on unposted nights from that date; rate unchanged by default, editable. Different room type → UI warns, no auto-reprice.
+- **Extend**: `nights_changed` appends nights, pre-filled from the rate table, editable before they post.
 
 Dropped from v0: ezFolio flags `foc` (= rate 0), `isNet` (OTA, deferred), `locked` (no clear use).
 
 ### Availability (cross-aggregate rule, Reservations context)
-- **Per-room**: a room may not have two stays with overlapping `[arrive, depart)` unless one is cancelled/no-show. Checked on `RoomAssigned` / `RoomChanged` / `StayDatesChanged`.
-- **Per-type**: for each night, `stays of type (assigned or not, not cancelled) ≤ rooms of type in service` — unless overbooking policy allows an explicit receptionist override (`OverbookingOverridden` on the stay). Checked on `StayCreated` / `StayDatesChanged`.
-- Same-day turnover (depart = arrive of next) is allowed by construction.
-- **For dev/architect**: this is the one place ES needs a consistency boundary bigger than one aggregate. Options: (a) an `Inventory` aggregate per room (stream per room, assignment = event there); (b) single-writer per hotel (one DO) serialises all reservation commands — at 58 rooms and human write rates, (b) is fine and simplest. Recommend (b).
+- **Per room**: no two stays may hold the same `(roomId, date)` (cancelled / no-show don't count). One rule, per night, no interval math. Same-day turnover is free by construction.
+- **Per type**: for each night, `stays of that type (assigned or not, not cancelled) ≤ rooms of that type in service`. Overbooking policy = **warn + explicit override** (`stay.overbooking_overridden`), assumed because high occupancy means they sell to the edge.
+- **Enforcement (D-8)**: one `availability:<hotel>` stream; every command that changes supply or demand versions it in the same batch — room assign/change/unassign, nights change, check-in with assignment, room out-of-order / back in service, room retire or type change (Setup), overbooking override.
 
-### Room — physical
-Fields: number, floor, roomType, bedType; hk state `clean | dirty | inspected`; `ooo {reason}?`; note. Occupied/vacant + expected arrival/departure are *derived* from stays, never stored.
-Events: `RoomDefined` · `RoomMarkedDirty` · `RoomMarkedClean` · `RoomMarkedInspected` · `RoomTakenOutOfOrder(reason)` · `RoomReturnedToService` · `RoomNoteSet`.
-Auto: `StayCheckedOut` → `RoomMarkedDirty` (policy/projection reaction).
-Derived status vocabulary for the map: VC · VD · VCI · OC · OD · OOO, + expected-arrival / expected-departure overlays.
+### Room — physical (settled w/ Alex 2026-09-23)
+
+```ts
+type Room = {
+  id: RoomId; hotelId: HotelId
+  number: string; floor: string; roomTypeId: RoomTypeId; bedType: BedType   // definition from Setup
+  housekeeping: 'clean' | 'dirty'    // 'inspected' → later
+  outOfOrder?: { reason: string; since: Instant }
+  note?: string
+}
+// occupied / vacant / arriving / departing are DERIVED from stays' nights, never stored
+```
+Events: `room.marked_dirty` · `room.marked_clean` · `room.taken_out_of_order(reason)` · `room.returned_to_service` · `room.note_set`. (Definition events live in Setup: `room.defined/updated/retired`.)
+Auto: `stay.checked_out` → `room.marked_dirty` (policy reaction).
+Map vocabulary (derived): vacant clean · vacant dirty · occupied clean · occupied dirty · out of order, + arriving / departing overlays.
 
 ### Folio — charges and payments
 One folio per Stay (own) + one **master folio per group Booking**. A charge is posted *against a stay*; the stay's routing for that bucket decides which folio it lands on.
