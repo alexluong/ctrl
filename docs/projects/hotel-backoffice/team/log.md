@@ -930,3 +930,16 @@ minibar" answerable. Only master *payments and transfers* have none, because tho
 booking. No change needed; noting it so nobody "fixes" it later.
 
 Two i18n keys for the refusals are still mine, to be written with the landing.
+
+**Landing 3 scope, settled (architect).** Five things, no more:
+
+1. Individual bookings emit `booking.closed` in the batch of the last stay's `checked_out` /
+   `cancelled` — a reaction, no guard.
+2. Explicit `CloseBooking` for groups, `booking.staysOpen` + `booking.masterNotSettled`, both read
+   inside the plan under the master stream's version.
+3. `company.inUse` reads live stays or master balance > 0, replacing the `booking.status` query.
+4. A `booking.closed` case in `projectBooking` — confirmed keep: a row contradicting its own log is a
+   bug regardless of who reads it.
+5. Two i18n keys for the refusals.
+
+Booking detail shows "ready to close" and the button (group only). Check-out stays unchanged.
