@@ -1,4 +1,5 @@
 # Team log
+- 2026-09-24 — product: ExpenseCategory v1 fixed in code aligned (b7e73f3): §5/§6 clause, ids groceries/incidental/hk_overtime/advance/other + system writeOff, dropped from §11 Define/Update/Retire.
 - 2026-09-24 — dev: slice 3 done — expenses (35d6db9) + form sweep N10/N11/N12 (9fd031b), staging 98e73650, 255 unit + 27 e2e. Architect: fixed expense category list accepted for v1, ids to match product's client list; slice 4 next, cron stays pre-go-live.
 - 2026-09-24 — solex-qa: landing 6 run green (receivables S3-15/19–23, bootstrap S2-9 automated, void double-click S3-25); known reds S3-14/S3-24/S2-16 await dev's form sweep. Staging smoke stays Alex's (needs a signed-in session; no agent types credentials).
 - 2026-09-24 — dev: staging wiped (events, projections, tier b gone; auth + migrations kept), on dba5704/81fdef66. D-26 recorded by dev (48e931d). Architect: drop unused `spike_items` via a migration; QA warned first sign-in on empty staging becomes owner (bootstrap).
