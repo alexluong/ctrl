@@ -97,6 +97,21 @@ Alex asked to see event-driven architecture working, to browse the events, and t
 
 **Also browsable outside the app**: `pnpm db:studio` (local file) and `pnpm db:studio:remote` (deployed D1, needs a Cloudflare API token with D1 rights — not created, and it belongs in Vaultwarden). `wrangler d1 execute` covers ad-hoc SQL.
 
+### Where the code is, in one screen
+
+```
+src/routes/            file routes; index = room board, system.* = operator console
+src/server/events/     store.ts (append/read/replay), stream.ts (ids), types.ts
+src/server/rooms/      domain.ts (pure rules), projection.ts, commands.ts
+src/server/system/     access.ts (token gate), queries.ts, api.ts
+src/server/runtime/    node.ts | cloudflare.ts — the ONLY Cloudflare-aware files
+src/server/tenant.ts   current hotel (server-only; never import from a route)
+src/i18n/              messages.ts (en source + vi typed against it), context, format
+drizzle/migrations/    one SQL set, applied to local SQLite and to D1
+```
+
+Commands: `mise run setup` · `mise run dev` · `pnpm check` (biome + tsc + vitest) · `pnpm deploy` · `pnpm db:studio` · `pnpm db:generate` / `db:migrate` / `db:migrate:remote`.
+
 **Internationalisation (Alex, 2026-09-23)**: Vietnamese + English, Vietnamese as default. Resolved on the server (cookie, else `Accept-Language`) and passed down, so SSR and hydration agree — picking locale in the browser would guarantee a mismatch. English is the source dictionary and Vietnamese is typed against it: a missing key is a build error, not a blank label.
 
 The part that matters architecturally: **domain rules now fail with a code, not a sentence** (`room.isOutOfOrder`, not "room is out of order"). The server cannot know the reader's language, so any message baked into an aggregate is untranslatable by definition. Anything product adds later should keep this shape. Adding a third language = one dictionary file.
@@ -104,6 +119,14 @@ The part that matters architecturally: **domain rules now fail with a code, not 
 Vietnamese wording is my own and worth a native pass — Alex can check it. Terms used: Trống sạch (vacant clean), Bẩn (dirty), Đã kiểm tra (inspected), Ngừng sử dụng (out of order). Money (VND) formatting is not done yet; it lands with the first charge.
 
 The console stays English on purpose: operator tool, code's vocabulary.
+
+### The system console, and whether it should have been built
+
+Alex asked whether it was all hand-built. It was: ~350 lines, four routes and two server modules. The honest split:
+
+- The **generic table browser duplicates Drizzle Studio** (`pnpm db:studio`, already wired). If this grows, that part should go and Studio should own table browsing.
+- The **event log, stream/type filters and the replay button** are not duplicative — no general-purpose database tool knows what an event stream is, or that projections are disposable.
+- Console access is one shared token, constant-time compared, open locally and **closed when deployed unless configured**. Stopgap until D-11.
 
 ### What I'd want before calling this production-shaped
 
