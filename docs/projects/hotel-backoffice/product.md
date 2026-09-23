@@ -349,7 +349,7 @@ Reference data, retire-not-delete, seeded by admin SDK (D-9). Each has `<name>.d
 - `ChargeCategory` — seeded room · roomSurcharge · minibar · laundry · compensation · extraService · restaurant; `room` reserved
 - `ChargeItem` — category, VN + EN name, unitPrice, active
 - `BookingSource` — walk-in, phone, Agoda, … (lookup only)
-- `ExpenseCategory` — **v1: fixed in code, not Setup data; Setup screen if the client asks** (D-21). Ids: `groceries`, `incidental`, `hk_overtime`, `advance`, `other`, + system-only `writeOff` (written-off receivables land there; not pickable by hand)
+- `ExpenseCategory` — **v1: fixed in code, not Setup data; Setup screen if the client asks** (D-21). Ids: `groceries`, `incidental`, `hkOvertime`, `advance`, `other`, + system-only `writeOff` (written-off receivables land there; not pickable by hand)
 - `Company` — name, contact, kind, default group routing `{category → own | master}`; commission/terms → later
 - `BookingRules` — childAgeThreshold 6, overbooking `warn` (override allowed), autoDirtyOnCheckout true, idEnforcement optional
 Rules: unique room numbers per hotel; retired items not selectable; can't retire a room with future nights; **can't retire a room type while any non-retired room references it** (refuse `roomType.inUse`; retire or re-type the rooms first — mirrors the room rule, and a retired type with live rooms would break availability counts); room type id = slug of name (`phong-doi`); rate ranges half-open `[from, to)`.
@@ -357,7 +357,7 @@ Rules: unique room numbers per hotel; retired items not selectable; can't retire
 ### Expense — owner's cash-out (settled w/ Alex 2026-09-23; posts to Ledger)
 
 ```ts
-type ExpenseCommand = { businessDate: LocalDate; categoryId: ExpenseCategoryId; amount: Money; method: 'cash' | 'bankTransfer'; payee?: string; note?: string }
+type ExpenseCommand = { businessDate: LocalDate; categoryId: ExpenseCategoryId; amount: Money; method: 'cash' | 'bankTransfer'; description: string; reference?: string }   // description required (payee goes here — an unnamed advance is unauditable)
 ```
 Events: `expense.recorded` · `expense.voided(reason)` → ledger entries. Projection: expenses by category / period.
 
@@ -468,7 +468,7 @@ Command = one intent. `needs` = capability. `checks` = rules beyond "hotel match
 |---|---|---|
 | `CreateGuest / UpdateGuest / EraseGuest` | `booking.edit` (erase: `guests.erase`, owner only) | `guest.created` / `updated` / `erased` |
 | `CreateContact / UpdateContact / EraseContact` | `booking.edit` (erase: `guests.erase`, owner only) | `contact.created` / `updated` / `erased` |
-| `RecordExpense {businessDate, categoryId, amount, method, payee?, note?}` / `VoidExpense` | `expense.record` / `expense.void` | `expense.recorded` / `voided` → entry |
+| `RecordExpense {businessDate, categoryId, amount, method, description, reference?}` / `VoidExpense` | `expense.record` / `expense.void` | `expense.recorded` / `voided` → entry |
 | `Define / Update / Retire <SetupItem>` (Floor, RoomType, Room, RateTable, ChargeCategory, ChargeItem, BookingSource, Company), `SetHotelProfile`, `SetBookingRules` | `setup.edit` | `<item>.defined / updated / retired`; Room retire/type change also versions availability |
 | `CreateUser / UpdateUser / ResetPassword` | `users.manage` | `user.created / updated / password_reset` (identity) |
 | `AddStaff {userId, role}` / `ChangeStaffRole {userId, role}` / `DeactivateStaff` / `ReactivateStaff` | `users.manage` | `staff.added / role_changed {role, from} / deactivated / reactivated` — refuse `staff.lastOwner`, `staff.alreadyStaff` |
