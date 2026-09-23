@@ -902,3 +902,30 @@ for one stay and a master folio that was never opened (balance 0), so one comman
 Waiting on the ruling before building either way.
 
 No code change yet; still paused for compaction. Nothing pending in either repo.
+
+### Addendum (architect) — landing 3 spec revised by N23. **Build from this, not from 004a199.**
+
+- **(a) Individual bookings close automatically**: `booking.closed` is emitted **in the batch of the
+  last stay's `checked_out` / `cancelled`** — same commit, a reaction and not a click. No guard: there
+  is no master folio, and the own-folio guard has already fired at check-out.
+- **(b) Group bookings close only via the explicit CloseBooking**, with `booking.staysOpen` and
+  `booking.masterNotSettled` as specced in 004a199.
+- **(c) `company.inUse` must read live stays, or master balance > 0 — not `booking.status`.** This
+  **supersedes** `bookingsOfCompany` as written (`store/projections.ts:409`, currently
+  `status = 'booked'`). The guard should ask what is actually outstanding, not what a status column
+  happens to say.
+
+So landing 3 is three things, not one: the automatic close on the last stay, the explicit
+CloseBooking for groups, and rewriting the company guard's query.
+
+**The projection case is still needed** — `projectBooking` has no `booking.closed` branch, so without
+one the row would keep saying `booked` after the event says otherwise. It is no longer what
+`company.inUse` depends on (that is (c) now), but a status column that contradicts its own log is its
+own bug, and the booking list reads it.
+
+Also confirmed by architect, and it is correct as built: **charges routed to a master folio keep
+their `stay_id`** — the charge really did come from a room, and that is what makes "who drank the
+minibar" answerable. Only master *payments and transfers* have none, because those belong to the
+booking. No change needed; noting it so nobody "fixes" it later.
+
+Two i18n keys for the refusals are still mine, to be written with the landing.
