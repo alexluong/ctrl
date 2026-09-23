@@ -2,6 +2,7 @@
 
 Newest first. `YYYY-MM-DD — <agent>: what`.
 
+- 2026-09-23 — product: D-25 folded into §10 row 1, §11 PostNightlyRoomCharges, §7 NightRollStatus projection (8b1aaf3).
 - 2026-09-23 — architect: slice 2 closed (landing D accepted). **D-25** night posting = cron + lazy, idempotent. Dev → slice 3 money. Alex asked for staging pass on slices 1–2.
 - 2026-09-23 — product: §12 gains staff.* (stream `<hotel>/staff:<userId>`), user.* = identity only; staff.lastOwner/alreadyStaff rules in §2 (453770b).
 - 2026-09-23 — architect: slice 2C (staff/roles/capabilities) accepted; bootstrap rule flagged for Alex; script must emit staff.added.
