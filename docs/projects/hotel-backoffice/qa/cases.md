@@ -82,4 +82,4 @@ Seeded 2026-09-24 by architect from the walkthroughs in `../team/qa.md`. `last r
 | S3-21 | receivable double-click | double-click a payment that settles the debt | posted once, not refused | e2e (todo, landing 6) + scenario | — |
 | S3-22 | write-off owner-only, reason required | receptionist opens /receivables; owner writes off with blank/whitespace reason | receptionist sees a note, no form; blank reason refused on page | e2e (todo, landing 6) | — |
 | S3-23 | N10 on receivables forms | submit empty company / amount / reason | message on page (forms are noValidate) | e2e (todo, landing 6) | — |
-| S3-24 | N11 pre-hydration submit | submit any form before hydration | no native GET with fields in the URL (guest name/phone would land in the query string + access logs) | e2e (todo, after dev's call) | 624ac57 **fail** (seen) |
+| S3-24 | N11 no GET fallback (**blocking**, D-20; architect 2026-09-24) | every form on /, /rooms/:id, /bookings, /stays/:id, /setup, /guests | `method="post"` in server markup, so a pre-hydration submit never puts fields (guest name/phone) in the URL/access log | e2e:no-get-forms.spec (6 screens) | 624ac57 **fail** 6/6 |
