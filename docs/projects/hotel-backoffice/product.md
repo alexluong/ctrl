@@ -339,26 +339,33 @@ type ExpenseCommand = { businessDate: LocalDate; categoryId: ExpenseCategoryId; 
 ```
 Events: `expense.recorded` · `expense.voided(reason)` → ledger entries. Projection: expenses by category / period.
 
-## 7. The "Need" cascade (requirements §1) → events → projections
+## 7. Projections / queries (read side)
 
-| step | trigger event | projection |
-|---|---|---|
-| room status change | `StayCheckedIn` / `StayCheckedOut` / `RoomMarked*` / `RoomTakenOutOfOrder` | **RoomMap** (per-room derived status + color) |
-| dashboard updates | same + `StayCreated` | **DashboardToday** (vacant, arrivals, departures, in-house, unpaid) |
-| occupancy % | stay events + room service events | **Occupancy** per night (used / sellable) |
-| revenue forecast | stay events + `StayRateSet` | **ForwardBook** (rooms sold × rate per night, by type) |
-| housekeeping knows checkout date | stay events | **HKSheet** (per room: state, depart date, notes) |
-| reception knows room money | `ChargePosted` / `PaymentReceived` / `DiscountApproved` | **FolioBalance** (deposit / paid / outstanding per stay + master) |
-| guest history | `StayCheckedOut` + guest events | **GuestHistory** (visits, nights, spend, class) |
-| OTA commission | `StayCheckedOut` / `FolioClosed` | **CommissionByChannel** (rate × room revenue) |
+Every screen reads a projection; projections are rebuilt from events (§12). Synchronous, same batch as the append (D-8).
 
-Other projections: **TapeChart** (stays × rooms × dates + per-type availability), **Arrivals/Departures**, **WaitingList** (unassigned stays), **Revenue** by day/month/year × bucket × payment method × channel, **ReceivablesByDebtorType** (+ overdue), **Deposits**, **Breakfast list** (per occupied room, adults/children, nationality), **PA18 export** (in-house guests' ID data), **Expenses** by category/period, **AuditLog** per booking (all events with actor).
+| projection | rows | fed by | serves |
+|---|---|---|---|
+| **RoomMap** | per room: hk state, OOO, occupied?, arriving?, departing?, balance | `stay.*`, `room.*`, `folio.*` | Front Desk home |
+| **StayNights** | `(roomId, date) → stayId, rate, posted` | `stay.*` | tape chart, availability, occupancy |
+| **Availability** | per type per night: sellable, booked, free | StayNights + `room.*` + Setup | quoting, overbooking check |
+| **ArrivalsDepartures** | today's arriving / departing stays | `stay.*` | daily lists |
+| **BookingList** | bookings + stays + party + status; searchable by guest / phone / company | `booking.*`, `stay.*`, guests | search, booking page |
+| **FolioView** | per folio: lines (charges, payments), balance | `folio.*` | folio screen, print |
+| **Receivables** | per company: open amount, age, payments | `receivable.*` | Back Office |
+| **DashboardToday** | occupancy %, arrivals, departures, in-house, revenue posted, cash in, unpaid | StayNights, `ledger.*` | Back Office home |
+| **ForwardBook** | per future night: rooms sold × rate, by type | StayNights | forecast |
+| **Revenue** | by business date × category × source × payment method | `ledger.*` + Setup lookups | reports |
+| **Expenses** | by category × period | `expense.*` | Back Office |
+| **GuestHistory** | per guest: visits, nights, spend | `stay.*`, `ledger.*` | guest page |
+| **History** | per room / stay / folio: events with actor + time | all | "Show log" tabs (audit) |
 
-## 8. Core vs later
+Later: WaitingList (unassigned stays), Breakfast list, PA18 export, CommissionByChannel, Deposits ledger.
 
-**Core (v1):** Setup context (onboarding + prices + rules) · individual + group booking with inline availability · waiting list + assignment · tape chart + room map · check-in/out · guests per stay (ID optional per §10) · one charge flow, 8 buckets, catalogue · folio own/master + routing · payments cash/transfer/card-method + deposits + refunds · receivables by debtor · discount approval trail · room hk state + OOO · dashboard + revenue/occupancy/receivables reports · expenses · audit log · Excel export of lists.
-**Later:** PA18 export (if legally needed, §10) · breakfast list · airport pickup list · thank-you email · channel-manager sync · red invoice/VAT lines · multi-currency beyond USD display.
-**Never:** card data · restaurant POS · hk staff scheduling · key cards · hourly/day-use · multi-property.
+## 8. Scope
+
+**v1:** Setup (onboarding, prices, catalogues, rules, users/roles) · individual + group booking with inline availability · assignment now or later · tape chart + room map · check-in/out · guests per stay (ID optional) · one charge flow over Setup-defined categories · folio own/master + routing · payments cash / transfer / card-method, deposits, refunds · receivables by company · room hk state + OOO · dashboard, revenue / occupancy / receivables reports · expenses · history/audit tabs · folio print · search.
+**Later:** OTA support (commission, gross/net, sync) · discount approvals · VAT / red invoice · receivable due dates · group label/color · registration card print · PA18 export · breakfast / pickup lists · thank-you email · merge stay into group · inspected hk state · custom roles · per-staff activity report · multi-currency beyond USD display.
+**Never:** card data · restaurant POS · hk staff scheduling · key cards · hourly / day-use.
 
 ## 9. Dependencies on WS2 / for other WSs
 
