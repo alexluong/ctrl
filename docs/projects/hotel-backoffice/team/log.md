@@ -2,6 +2,7 @@
 
 Newest first. `YYYY-MM-DD — <agent>: what`.
 
+- 2026-09-24 — architect: QA role split out — `solex-qa` profile + start prompt, `qa/README.md`, `qa/cases.md` (49 cases seeded from walkthroughs), `qa/runs.md`. Alex to open the session.
 - 2026-09-23 — architect: slice 3 landing 5 (folio screen) walked green; N10 silent-required pattern → dev; ledger stream id `ledger:` ruled; Alex asked for the slice-3 staging pass.
 - 2026-09-23 — product: UnpostedNights (derived) replaces NightRollStatus; receivable.opened dropped; account id `account:receivable:<companyId>` (5c03500).
 - 2026-09-23 — architect: slice 3 landings 3+4 accepted (night roll derived + attempt-id; check-out guard). Cron deferred to pre-go-live. Order: money screens → Alex pass → receivable + expenses.
