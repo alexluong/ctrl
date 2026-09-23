@@ -600,3 +600,59 @@ whether a receptionist should be able to refund at all.
 ### Next
 
 Cron entry, still pre-go-live (D-25). Otherwise slice 4 is done.
+
+## solex-dev — 5.1a Company landed, server side (2026-09-24)
+
+`a9fe985`, staging `138c9393`, 284 scenarios green. Written mid-slice so the state survives a
+compaction; the next session picks up from "What is next" below.
+
+### Why Company came first
+
+Architect's call, and the right one: `companyId` on a transfer-to-receivable was free text. "ABC"
+and "Cty ABC" are one company to the desk and two ledger accounts to us — one real debt showing as
+two, neither settleable in full. Group bookings would have multiplied that, since the master folio
+is billed to a company by definition.
+
+### What is built
+
+- **`companies` table** (migration `0012`), tier (b): slugged id, name, taxCode, phone, note,
+  `defaultRouting` as JSON, `retiredAt`. Unreadable JSON reads back as `{}` rather than throwing —
+  a company with no stated routing bills everything to the guest, which is the safe direction.
+- **`companyRules`** in `setup/domain.ts` — define / update / retire. Update compares field by field
+  and writes nothing when nothing moved (the N18 line, applied on the way in this time rather than
+  after QA found it).
+- **`hotel.companies.*`** in `hotel/setup.ts`, and `hotel.events.ofCompany`.
+- **`company.inUse`** — retire refused while an open receivable *or* a live booking points at the
+  company. Both asked inside the plan. `bookings.company_id` is projected from
+  `booking.created.party.companyId` (migration `0013`) so that half of the rule is real now rather
+  than arriving later with the group screens; nothing writes a company onto a booking yet.
+- **Adapters** — `defineCompany` / `updateCompany` / `retireCompany` / `getCompanies`, and
+  `getSetup` now returns companies.
+
+### What is next, in order
+
+1. **The Setup screen section** for companies, and **replacing the free-text company box** on the
+   folio transfer form and the receivables screen with a picker over the list. Until that lands the
+   entity exists and nothing uses it.
+2. **5.1 landing 1 (domain)** — group booking creates N stays from `requests[]`; `booking.party`
+   gains `companyId`; master folio opens lazily on `folio:master:<bookingId>` (`masterFolioIdFor`
+   already exists in `hotel/folios.ts`); routing resolved at `postCharge`, which today hardcodes
+   `folioIdFor(stayId)`. `booking.groupNotSupported` in `booking/domain.ts` is the rule holding
+   groups back — that check is the thing to delete.
+3. **5.1 landing 2 (screens)** — group form, booking detail showing the master folio with
+   pay/transfer/void, per-stay routing controls.
+4. **5.1 landing 3** — the cascades: `booking.close` guarded on master balance, check-out unchanged.
+
+### Architect's rulings on 5.1, so they are not re-litigated
+
+- Routing is keyed by **ChargeCategoryId** (§6 aligned in product `3af0a08`).
+- Default without a company: **room → master, everything else → own**, settable per stay per category.
+- **Check-out keeps the own-folio guard.** The master is guarded at `booking.close`, not at
+  check-out — a group stay can route everything to the master and walk out with a zero own folio,
+  which is correct and is why the master needs a screen before `booking.closed` means anything.
+
+### Slice 5 order (architect, for after 5.1)
+
+5.2 cron entry + HotelProfile (D-7 zone + roll hour, replaces the hardcoded `Asia/Ho_Chi_Minh`) →
+5.3 dashboard + reports → 5.4 deposits → 5.5 folio print → 5.6 search, overbooking override, rest
+of §11. Cron moved up because the money loop is done and wants weeks of soak, not days.
