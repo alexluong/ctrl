@@ -53,7 +53,7 @@ Seeded 2026-09-24 by architect from the walkthroughs in `../team/qa.md`. `last r
 | S2-13 | §2 re-add staff | add a user already on staff | refused `staff.alreadyStaff` | scenario (todo verify) | — |
 | S2-14 | §2 last owner demote | demote the only active owner to receptionist | refused `staff.lastOwner` (deactivate is S2-8) | scenario (todo verify) | — |
 | S2-15 | D-20 contact erase owner-only | receptionist erases a contact | refused (`guests.erase`); owner: row blanked, `contact.erased {}` | scenario (todo verify) | — |
-| S2-16 | N12 no PII in URL (non-blocking, before go-live; dev latest slice 5) | search people by name on /guests | term sent in a server-fn body, results in client state; URL has no query | e2e:no-pii-in-url.spec "S2-16" | 624ac57 **fail** (`?q=<name>`) |
+| S2-16 | N12 no PII in URL (non-blocking, before go-live; dev latest slice 5) | search people by name on /guests | term sent in a server-fn body, results in client state; URL has no query | e2e:no-pii-in-url.spec "S2-16" | 9fd031b pass |
 | S2-11 | script emits event | `create-user.mjs --role` | `staff.added` beside the row, actor `system:bootstrap` | manual | f5591d1 pass |
 
 ## Slice 3 — money
@@ -73,7 +73,7 @@ Seeded 2026-09-24 by architect from the walkthroughs in `../team/qa.md`. `last r
 | S3-11 | voided night re-posts | void tonight's room charge, roll again | charge re-posted (attempt id) | scenario:"becomes owed again, and the roll posts it next time" | b3c7597 pass |
 | S3-12 | §10 check-out guard | check out with balance | refused "Hoá đơn chưa thanh toán. Hãy thu tiền hoặc chuyển sang công nợ công ty"; credit balance passes; race with a landing charge re-runs | scenario + manual | 624ac57 pass |
 | S3-13 | money loop on screen | category list → rate → book → check-in → minibar → refused → cash → check-out | bill correct at each step, forms removed after close | e2e:money-loop.spec "S3-13" | ef6d242 pass |
-| S3-14 | N10 no silent block | submit any form with an invalid/empty required field or an empty select | message on the page, never a silent no-op (`step`, `required`, empty options) | e2e:no-silent-block.spec (14 forms) + empty-hotel.setup (empty select) | ef6d242 **fail** 15/15 (N10) |
+| S3-14 | N10 no silent block | submit any form with an invalid/empty required field or an empty select | message on the page, never a silent no-op (`step`, `required`, empty options) | e2e:no-silent-block.spec (14 forms) + empty-hotel.setup (empty select) | 9fd031b pass |
 | S3-15 | receivable transfer | checked-in stay with balance → "Chuyển công nợ công ty" → check out | folio at zero, check-out allowed, company listed on /receivables with the amount | scenario:(receivables.test) + e2e:receivables.spec "S3-15" | dba5704 pass |
 | S3-16 | D-25 businessDayStart | receptionist changes it; owner changes it while tonight unposted | both refused; owner after roll allowed | scenario (todo verify) | — |
 | S3-17 | §6 folio lazy open | book, don't check in | no `ledger.account_opened`/folio stream until first charge/payment; bill shows "Đã thanh toán" | scenario (todo verify) + e2e:money-loop (balance before check-in) | ef6d242 pass (screen half) |
@@ -83,5 +83,19 @@ Seeded 2026-09-24 by architect from the walkthroughs in `../team/qa.md`. `last r
 | S3-21 | receivable double-click | double-click a payment that settles the debt | posted once, not refused | scenario:(receivables.test) "is posted once when the button is double-clicked" + e2e:receivables.spec "S3-21" (two requestSubmit in one tick) | dba5704 pass |
 | S3-22 | write-off owner-only, reason required | receptionist opens /receivables; owner writes off with blank/whitespace reason | receptionist sees a note, no form; blank reason refused on page | e2e:receivables.spec "S3-22" + receptionist.last.spec | dba5704 pass |
 | S3-23 | N10 on receivables forms | submit empty company / amount / reason | message on page (forms are noValidate) | e2e:receivables.spec "S3-23" (transfer, payment; reason in S3-22) | dba5704 pass |
-| S3-24 | N11 no GET fallback (**blocking**, D-20; architect 2026-09-24) | every form on /, /rooms/:id, /bookings, /stays/:id, /setup, /guests, /receivables | `method="post"` in server markup, so a pre-hydration submit never puts fields (guest name/phone) in the URL/access log | e2e:no-get-forms.spec (7 screens incl. /receivables) | dba5704 **fail** 7/7 |
+| S3-24 | N11 no GET fallback (**blocking**, D-20; architect 2026-09-24) | every form on /, /rooms/:id, /bookings, /stays/:id, /setup, /guests, /receivables | `method="post"` in server markup, so a pre-hydration submit never puts fields (guest name/phone) in the URL/access log | e2e:no-get-forms.spec (7 screens incl. /receivables) | 9fd031b pass |
 | S3-25 | D-12 (f) double-clicked void | owner voids, same commandId twice | one reversal, same answer twice, never "already voided" | scenario:(folios.test) "voids once when the button is double-clicked" | dba5704 pass |
+
+## Slice 3 — expenses (landing 7, 9fd031b)
+
+Category ids change once more to the client's list (groceries, incidental, hk_overtime, advance, other) — e2e uses only the form default and the reserved `writeOff`.
+
+| ID | rule | steps | expected | automated by | last run |
+|---|---|---|---|---|---|
+| S3-26 | desk records an expense | record description + amount | listed with amount; period total up | e2e:expenses.spec "S3-26" | 9fd031b pass |
+| S3-27 | `writeOff` category reserved | category not offered; forced via tampered select | refused "Khoản mục này chỉ dành cho công nợ đã xoá." rendered, nothing listed | e2e:expenses.spec "S3-27" | 9fd031b pass |
+| S3-28 | void = reversal, row stays | owner voids with reason | row struck through with reason, no void button, period total back to before | e2e:expenses.spec "S3-28" | 9fd031b pass |
+| S3-28b | void reversal dated today; owner-only | void an expense from an earlier day; receptionist voids | reversal's business date = today (not the expense's); receptionist refused / no button | scenario (todo verify) | — |
+| S3-29 | void needs a reason, said on the page | answer the prompt with blank / empty | refused `expense.reasonRequired`, rendered | e2e:expenses.spec "S3-29" ×2 | 9fd031b **fail** (N15 blank → "network"; N14 empty → silent) |
+| S3-30 | D-12 (f) void double-click | two clicks in one tick | voided once, no refusal | e2e:expenses.spec "S3-30" | 9fd031b pass |
+| S3-31 | write-off lands in expenses | write off a receivable | /expenses by-category has the "Công nợ đã xoá" line | e2e:expenses.spec "S3-31" | 9fd031b pass |
