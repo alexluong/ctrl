@@ -110,7 +110,7 @@ This is the **Go-at-scale learning project**: backend-heavy, web back office, no
 
 Three parallel sessions, named agents: `solex-dev` (WS1), `solex-explore` (WS2), `solex-product` (WS3); `solex-architect` = cockpit. Profiles + protocol in `agents/`. Rules: each writes only its own file (above), commits in ctrl with `docs(hotel-backoffice/<ws>): …`, pulls before committing. Cross-WS findings go in the WS's own file under a "For other WSs" section; cockpit session merges into README.
 
-Ordering: ~~WS1 + WS3 can start now. WS2 needs Alex…~~ **WS2 complete 2026-09-20. WS3 v0 complete 2026-09-23** (`product.md`: 7 aggregates, event vocabulary, 8 policy points). **WS1 spike + ES skeleton shipped 2026-09-23.** **WS3 v1 complete 2026-09-23** (D-12…D-19, §10 rules, §11 command catalogue, §12 event index). Next: dev flips Room to CRUD+events (D-22), adds D-12 envelope columns, then Booking/Stay from §11; **D-11 auth landed 2026-09-23** (Better Auth, staging signs in).
+Ordering: ~~WS1 + WS3 can start now. WS2 needs Alex…~~ **WS2 complete 2026-09-20. WS3 v0 complete 2026-09-23** (`product.md`: 7 aggregates, event vocabulary, 8 policy points). **WS1 spike + ES skeleton shipped 2026-09-23.** **WS3 v1 complete 2026-09-23** (D-12…D-19, §10 rules, §11 command catalogue, §12 event index). Next: dev flips Room to CRUD+events (D-22), adds D-12 envelope columns, then Booking/Stay from §11; **D-11 auth landed 2026-09-23** (Better Auth, staging signs in). **Alex green light 2026-09-23 for the rough end-to-end**: slices 0 foundation → 1 occupancy loop → 2 setup → 3 money → 4 roles/audit → 5 long tail (`agents/solex-dev/README.md` rev 6).
 
 ~~Later WS (not now): event-store design — Hookdeck-as-log vs bus + archive.~~ Collapsed into D-8 (2026-09-23) if accepted.
 

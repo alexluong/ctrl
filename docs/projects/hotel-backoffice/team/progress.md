@@ -9,7 +9,7 @@ Narrative record of what the team (and Alex) has done, by day. `log.md` is the t
 | WS | agent | state |
 |---|---|---|
 | Cockpit | solex-architect | active — merging, deciding, routing |
-| WS1 stack → ES skeleton | solex-dev | **skeleton live** — events + projections + replay, Room aggregate, `/system` console; **auth live on staging (D-11, Better Auth)**; next: D-22 Room → CRUD+events (+ staging log wipe), D-12 envelope columns, then Booking/Stay from §11 |
+| WS1 stack → ES skeleton | solex-dev | **skeleton live** — events + projections + replay, Room aggregate, `/system` console; **auth live (D-11)**; building rough end-to-end in slices (dev profile rev 6): 0 foundation (Room flip + wipe + envelope + commandId) → 1 occupancy loop → 2 setup min → 3 money → 4 roles/audit → 5 long tail. Alex reviews staging after 1 and 3 |
 | WS2 existing system | solex-explore | **delivered** (map, flow board, lifecycle & money); on standby for 5 Alex-walkthrough items |
 | WS3 product | solex-product | **v1 delivered** (D-12…D-19, §10–12); standby, spec owner |
 

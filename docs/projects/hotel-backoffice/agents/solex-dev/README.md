@@ -6,9 +6,27 @@
 
 **Constraints (from Alex):** TypeScript on plain Cloudflare Workers (D-3, 2026-09-19 — Go dropped). No VM. Free tier where possible; ask before paid. Ship > purity.
 
-## Current objective (2026-09-23, rev 5 — build Booking/Stay)
+## Current objective (2026-09-23, rev 6 — build the rough end-to-end, slice by slice)
+
+Alex: "green light, let's implement a rough version of the overall design." Auth already live. Each slice = commands + projections + one screen + unit tests on `decide` + deployed to staging + projections rebuildable via `/system`. Rough = one receptionist can do the flow in a browser; no polish/i18n/mobile.
+
+| # | Slice | Commands (product.md §11) | Screen |
+|---|---|---|---|
+| 0 | Foundation (in flight) | Room flip → CRUD+events, staging wipe (Alex ok'd), D-12 envelope + `schema_version`/upcaster hook, `command_id` UNIQUE (idempotency) | `/system` |
+| 1 | **Occupancy loop** | `booking.create` (walk-in, one room type, nights, contactId) → `stay.create` → `stay.assign_room` → `stay.check_in` → `stay.check_out` (no balance check yet) + `room.mark_dirty` reaction + `stay.cancel`. Every supply/demand command versions `availability:<hotel>` (D-8). | Front Desk room grid (dates × rooms), booking list, one stay page |
+| 2 | Setup minimum (tier b) | RoomType, RateType, Guest/Contact CRUD + events; `hotel_staff` so `requireUser()` returns hotelId+role | plain Setup forms |
+| 3 | Money | `folio.post_charge`, `payment.record`, night posting on business-date roll (D-7), transfer to company receivable, checkout blocked with balance (§10); Ledger = truth, folio = projection (D-16/17) | folio tab on stay, payment form |
+| 4 | Roles + audit | owner-only guards on money commands; history tab (events per stream) on room/stay/folio | history tab |
+| 5 | Long tail | OOO, overbooking override, group routing, reports, rest of §11 | as needed |
+
+Alex reviews staging after slice 1 and slice 3. Product owns the spec: a gap goes into `product.md` first, then code. Ask architect only for breaking calls; ping architect with a one-liner per slice landed.
+
+<details><summary>rev 5 (build Booking/Stay, superseded same day)</summary>
 
 All blockers cleared (D-11, D-20, D-21, D-22 accepted; product v1 = spec). Order: **(1) D-22** flip Room from ES aggregate to CRUD table + `room.*` events appended in the same batch (tier b: table is truth, no fold, no version guard beyond the row); keep the log path. **(2) D-12** envelope columns + `schema_version` + upcaster hook `(type, from) → payload` at load. **(3) Booking → Stay** from `product.md` §11, every supply/demand command versions `availability:<hotel>` in-batch (D-8). **(4) D-11** app-owned username/password behind `requireUser()`; must land before staging holds real data. Product owns the spec — a gap goes into `product.md` first, then code. Ask architect only for breaking calls.
+
+
+</details>
 
 <details><summary>rev 4 (ES skeleton live, superseded same day)</summary>
 
@@ -47,6 +65,7 @@ Do **not** yet: domain code, ES infra, Hookdeck. Those wait on product + archite
 - Frontend: TS → React likely; coordinate w/ `collie-ui` (see README cross-ref).
 
 ## Log
+- 2026-09-23 — architect: rev 6, slice plan 0–5; Alex green light for rough end-to-end.
 - 2026-09-23 — architect: auth landed ahead of order (fine). Answers: User/staff tier b, library owns row; system_operator ok; wipe staging log at Room flip; D-23 redaction.
 - 2026-09-23 — architect: rev 5. D-22 (two tiers) accepted by Alex; Room → CRUD+events first, then envelope, Booking/Stay, auth.
 
