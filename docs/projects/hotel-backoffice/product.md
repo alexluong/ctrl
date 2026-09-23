@@ -36,7 +36,8 @@ type Capability =
 type Role = { id: RoleId; hotelId: HotelId; name: string; capabilities: Capability[] }
 // role hangs off the (hotel, user) membership pair, not the user: a person can be owner at one hotel and receptionist at another later (D-9)
 type User = { id: UserId; hotelId: HotelId; name: string; username: string; email?: string; roleId: RoleId; status: 'active' | 'disabled' }
-// identity (password, sessions) lives in Better Auth's mutable tables (D-11), NOT in the event log; membership + role changes are events (`user.*`). Sign-in by username for all roles, email optional; password reset by owner. Deactivated users stay in history, render as "(former)".
+// identity (password, sessions) lives in Better Auth's mutable tables (D-11), NOT in the event log; identity-level changes are `user.*` events; membership + role per (hotel, user) are `staff.*` events on `<hotelId>/staff:<userId>` (D-22 addendum). Sign-in by username for all roles, email optional; password reset by owner. Deactivated staff stay in history, render as "(former)".
+// staff rules: the last active owner cannot be demoted or deactivated (`staff.lastOwner`) — the one lockout in the system; re-adding a former member is refused (`staff.alreadyStaff`), use Reactivate so one person has one history. `room.set_out_of_order` stays a receptionist capability: AC dies at 23:00, desk pulls the room, nobody wakes the owner; it is the only receptionist power that moves supply, by design.
 ```
 - Every command declares the capability it needs; the handler checks it against the actor. Audit = event `actor` + capability.
 - **v1 ships two fixed bundles**: `receptionist` (Front Desk ops + receivable payments + expense record, assumed) and `owner` (all). Sensitive ones — void, refund, write-off, setup, users — sit in `owner` by default.
@@ -459,7 +460,8 @@ Command = one intent. `needs` = capability. `checks` = rules beyond "hotel match
 | `CreateContact / UpdateContact / EraseContact` | `booking.edit` (erase: `guests.erase`, owner only) | `contact.created` / `updated` / `erased` |
 | `RecordExpense {businessDate, categoryId, amount, method, payee?, note?}` / `VoidExpense` | `expense.record` / `expense.void` | `expense.recorded` / `voided` → entry |
 | `Define / Update / Retire <SetupItem>` (Floor, RoomType, Room, RateTable, ChargeCategory, ChargeItem, BookingSource, ExpenseCategory, Company), `SetHotelProfile`, `SetBookingRules` | `setup.edit` | `<item>.defined / updated / retired`; Room retire/type change also versions availability |
-| `CreateUser / UpdateUser / DisableUser`, `SetUserRole` | `users.manage` | `user.created / updated / disabled / role_set` |
+| `CreateUser / UpdateUser / ResetPassword` | `users.manage` | `user.created / updated / password_reset` (identity) |
+| `AddStaff {userId, role}` / `ChangeStaffRole {userId, role}` / `DeactivateStaff` / `ReactivateStaff` | `users.manage` | `staff.added / role_changed {role, from} / deactivated / reactivated` — refuse `staff.lastOwner`, `staff.alreadyStaff` |
 
 ~40 commands. Screens (§3) are compositions of these; nothing in the UI does what a command can't.
 
@@ -532,7 +534,7 @@ Rules active in slice 1: arrive < depart · room free on every night `[arrive, d
 
 ## 12. Event index
 
-Envelope + naming per §6 conventions (D-12). **Two tiers (D-22)**: `booking.*` `stay.*` `ledger.*` (+ `folio.*` `receivable.*` `expense.*` as Ledger-derived) are state — folded on replay. `room.*` `guest.*` `setup.*` `user.*` are **notifications**: emitted on every CRUD write for history tabs and projections, never folded; the row is truth. Streams: `booking:*` `stay:*` `room:*` `folio:*` `receivable:*` `ledger:*` `guest:*` `expense:*` `setup:*` `user:*` + `availability:all` (serialisation only, D-8; its sole event `availability.changed {cause}` is never folded). **Stream ids are hotel-first per D-9: `<hotelId>/booking:<id>`, `<hotelId>/availability:all`.**
+Envelope + naming per §6 conventions (D-12). **Two tiers (D-22)**: `booking.*` `stay.*` `ledger.*` (+ `folio.*` `receivable.*` `expense.*` as Ledger-derived) are state — folded on replay. `room.*` `guest.*` `contact.*` `setup.*` `user.*` `staff.*` are **notifications**: emitted on every CRUD write for history tabs and projections, never folded; the row is truth. Streams: `booking:*` `stay:*` `room:*` `folio:*` `receivable:*` `ledger:*` `guest:*` `contact:*` `expense:*` `setup:*` `user:*` `staff:*` + `availability:all` (serialisation only, D-8; its sole event `availability.changed {cause}` is never folded). **Stream ids are hotel-first per D-9: `<hotelId>/booking:<id>`, `<hotelId>/availability:all`.**
 
 `booking.` created · requests_changed · party_changed · notes_changed · cancelled · closed · stay_merged_in (reserved)
 `stay.` created · room_assigned · room_unassigned · room_changed · nights_changed · rate_set · guest_added · guest_removed · routing_set · checked_in · checked_out · cancelled · marked_no_show · overbooking_overridden
@@ -545,7 +547,8 @@ Envelope + naming per §6 conventions (D-12). **Two tiers (D-22)**: `booking.*` 
 `contact.` created · updated · erased — same shape as guest; booker ≠ sleeper, kept separate
 `expense.` recorded · voided
 `setup.` `<item>.defined / updated / retired` · hotel_profile_set · booking_rules_set
-`user.` created · updated · disabled · role_set · password_reset(byUserId) — access events; visible in History to owner only
+`user.` created · updated · password_reset(byUserId) — identity events; visible in History to owner only
+`staff.` added {userId, role} · role_changed {userId, role, from} · deactivated · reactivated — membership per (hotel, user), stream `<hotelId>/staff:<userId>`; no names in payloads
 
 ## Status
 
