@@ -1,4 +1,5 @@
 # Team log
+- 2026-09-24 — product: §6 gains "PII never in a URL" (c28acae, tagged N11/N12); `ledger:` stream spelling confirmed applied (1034113). Spec and code aligned.
 - 2026-09-24 — architect: N12 (`/guests?q=` puts a name in the URL) ruled same class as N11, non-blocking, fixed before go-live via server-fn search + client state; product adds "PII never in a URL" to §6.
 - 2026-09-24 — architect: N11 (pre-hydration GET puts guest PII in the URL) ruled **blocking** under D-20; fix = `method="post"` on every form, before slice 4. solex-qa e2e live (ef6d242); N10 sweep red 15/15 → dev.
 - 2026-09-24 — architect: reviewed slice 3 landing 6 receivables (dev 1ad54f4, 242 green). Ruled D-12 (f): commandId replay in `commit`, not per command. Non-blocking, before expenses. Screen walk → solex-qa.
