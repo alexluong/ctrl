@@ -16,9 +16,16 @@ Format: `- [ ] Q (asked by, date) → for: Alex | client`. Check off + answer in
 - [ ] Timeline / urgency? (architect, 2026-07-10) → Alex
 - [x] ~~Containers paid~~ moot — D-3 TS Workers, free tier.
 - [ ] `wrangler login` expired on MBP — Alex to run in solex-dev session. (dev, 2026-09-19) → Alex
-- [ ] **Day-boundary rule**: night audit is off in ezFolio; charge roll 23:59. What is "today" for revenue/occupancy in SoLex? (explore→architect, 2026-09-20) → Alex/client — decision needed before reports
+## Decisions needed (Alex) — surfaced by explore, 2026-09-23
+
+- [ ] **Day boundary**: ezFolio rolls charges at 23:59, night audit off, days never formally closed. SoLex: hotel-local calendar day w/ implicit roll at a fixed time? or explicit day-close? (needed before reports)
+- [ ] **Overbooking**: allowed today (`allow_over_room` ON; >100% on turnover days). Keep as a receptionist override, or hard-block?
+- [ ] **Guest identity**: ID missing on all revenue rows; PA18 export legally depends on it. Enforce ID at check-in, or keep optional?
+
+## Open questions
+
 - [ ] PA18 / guest declaration export — legally required to keep? (explore, 2026-09-20) → Alex/client
-- [ ] Admin login for ezFolio to document room/rate/service masters? (explore, 2026-09-20) → Alex/client
+- [ ] **Admin login for ezFolio** — biggest remaining gap; all item masters + pricing config invisible without it. (explore, 2026-09-20, re-raised 2026-09-23) → Alex/client
 - [ ] Which of the ~60 booking-editor fields does reception use daily? (explore, 2026-09-20) → client — before booking form scope
 - [ ] Staff internet reliability at the hotel (Cloudflare-hosted = no LAN fallback)? (explore, 2026-09-20) → Alex
 - [ ] Ask ezCloud for a DB export? Parked, not critical path (D-5). (explore, 2026-09-20) → Alex
