@@ -37,7 +37,7 @@ Everything else hangs off these two.
 
 | context | aggregates | notes |
 |---|---|---|
-| **Reservations** | Booking, RoomStay | commercial + stay lifecycle; availability check lives here |
+| **Reservations** | Booking, Stay | commercial + stay lifecycle; availability check lives here |
 | **Rooms** | Room | physical + housekeeping state (definitions come from Setup) |
 | **Billing** | Folio, Receivable | charges, payments, routing, debt |
 | **Guests** | Guest | profiles, merge, history, ID data for PA18 |
@@ -76,7 +76,7 @@ No `metadata` grab-bag; no `aggregateType` (in `stream`).
 
 ### Booking — the commercial envelope (settled w/ Alex 2026-09-23)
 
-A group = one Booking holding N RoomStays (company, contact, requested types × qty; rooms assigned later or now). An individual = one Booking with one RoomStay, room picked at creation. Same shape, no special case. Two-level on purpose: master folio, group cancel, "20 adults across 15 rooms not yet assigned" all need the envelope.
+A group = one Booking holding N Stays (company, contact, requested types × qty; rooms assigned later or now). An individual = one Booking with one Stay, room picked at creation. Same shape, no special case. Two-level on purpose: master folio, group cancel, "20 adults across 15 rooms not yet assigned" all need the envelope.
 
 ```ts
 type Booking = {
@@ -99,14 +99,42 @@ Rules: arrive < depart · every request qty ≥ 1 · cancel cascades to all stay
 
 **Deferred from Booking (later tickets):** OTA support (commission, gross/net, channel sync, external confirmation ref) · sales rep / "saler" · group label + color on tape chart · merge stay into group.
 
-### RoomStay — one physical room for one span (ezFolio `reservation_room`)
-Fields: bookingId; roomType + bedType; roomId? (null = waiting list); arrive/depart; ratePerNight `[ {date, amount} ]` (per-night override is a thing today); adults/children (child < 6, policy); guests `[guestId]`; routing `{bucket → own | master}` (group stays only); flags `foc`, `isNet`, `locked`; status `booked → checkedIn → checkedOut | cancelled | noShow`.
-Events: `RoomStayCreated` · `RoomAssigned(roomId)` · `RoomUnassigned` · `RoomChanged(from, to)` · `StayDatesChanged` · `StayRateSet(date, amount)` · `GuestAddedToStay` · `GuestRemovedFromStay` · `ChargeRoutingSet(bucket, target)` · `StayCheckedIn` · `StayCheckedOut` · `StayCancelled(reason)` · `StayMarkedNoShow` · `StayLocked/Unlocked`.
-Invariants: check-in requires an assigned room and room not OOO; check-out requires own folio balance 0 (or transferred to Receivable); dates change only while not checked-out; routing only on group stays; no-show only from `booked` after arrive date.
+### Stay — one room for one span (settled w/ Alex 2026-09-23; ezFolio `reservation_room`, Opera "room stay")
+
+Naming: **Booking / Stay** (not Reservation / Stay). Streams `booking:*`, `stay:*`.
+
+```ts
+type Stay = {
+  id: StayId
+  hotelId: HotelId
+  bookingId: BookingId
+  roomTypeId: RoomTypeId
+  bedType: BedType
+  roomId?: RoomId              // empty until assigned
+  arrive: LocalDate
+  depart: LocalDate            // exclusive; the plan — actual nights derive from timestamps (D-7)
+  ratePerNight: Array<{ date: LocalDate; amount: Money }>   // per-night; one night can be discounted
+  adults: number
+  children: number             // < childAgeThreshold (Setup, default 6)
+  guests: GuestId[]
+  routing?: Partial<Record<Bucket, 'own' | 'master'>>       // group stays only; default from Booking's company
+  status: 'booked' | 'checkedIn' | 'checkedOut' | 'cancelled' | 'noShow'
+  checkedInAt?: Instant
+  checkedOutAt?: Instant
+}
+```
+Events: `stay.created` · `stay.room_assigned` · `stay.room_unassigned` · `stay.room_changed(from, to)` · `stay.dates_changed` · `stay.rate_set(date, amount)` · `stay.guest_added` · `stay.guest_removed` · `stay.routing_set(bucket, target)` · `stay.checked_in` · `stay.checked_out` · `stay.cancelled(reason)` · `stay.marked_no_show`.
+Rules: check-in needs an assigned room that is not out of order · check-out needs own folio at 0 or moved to a receivable · dates change only before check-out · `rate_set` cannot target an already-posted night · no-show only from `booked`, after arrival date · cancel only if not checked in, reason required, charges moved off first (ezFolio guards).
+
+Assumptions (Alex 2026-09-23: business calls, not system-breaking; adjust later):
+- **Room move mid-stay**: same stay, `room_changed`, price unchanged by default; unposted nights editable after. Different room type → UI warns, no auto-reprice.
+- **Extend**: same stay, `dates_changed`; new nights pre-filled from the rate table, editable before they post.
+
+Dropped from v0: ezFolio flags `foc` (= rate 0), `isNet` (OTA, deferred), `locked` (no clear use).
 
 ### Availability (cross-aggregate rule, Reservations context)
 - **Per-room**: a room may not have two stays with overlapping `[arrive, depart)` unless one is cancelled/no-show. Checked on `RoomAssigned` / `RoomChanged` / `StayDatesChanged`.
-- **Per-type**: for each night, `stays of type (assigned or not, not cancelled) ≤ rooms of type in service` — unless overbooking policy allows an explicit receptionist override (`OverbookingOverridden` on the stay). Checked on `RoomStayCreated` / `StayDatesChanged`.
+- **Per-type**: for each night, `stays of type (assigned or not, not cancelled) ≤ rooms of type in service` — unless overbooking policy allows an explicit receptionist override (`OverbookingOverridden` on the stay). Checked on `StayCreated` / `StayDatesChanged`.
 - Same-day turnover (depart = arrive of next) is allowed by construction.
 - **For dev/architect**: this is the one place ES needs a consistency boundary bigger than one aggregate. Options: (a) an `Inventory` aggregate per room (stream per room, assignment = event there); (b) single-writer per hotel (one DO) serialises all reservation commands — at 58 rooms and human write rates, (b) is fine and simplest. Recommend (b).
 
@@ -117,7 +145,7 @@ Auto: `StayCheckedOut` → `RoomMarkedDirty` (policy/projection reaction).
 Derived status vocabulary for the map: VC · VD · VCI · OC · OD · OOO, + expected-arrival / expected-departure overlays.
 
 ### Folio — charges and payments
-One folio per RoomStay (own) + one **master folio per group Booking**. A charge is posted *against a stay*; the stay's routing for that bucket decides which folio it lands on.
+One folio per Stay (own) + one **master folio per group Booking**. A charge is posted *against a stay*; the stay's routing for that bucket decides which folio it lands on.
 Charge shape (one, for all types): `{stayId, date, bucket, itemId?, description, qty, unitPrice, discount?, tax?, serviceFee?, note, actor}`.
 Buckets (one enum, also = revenue report columns, folio tabs, routing switches): `room · roomSurcharge · minibar · laundry · compensation · extraService · telephone · restaurant`. Room charges are posted per night from the stay's rate (by the day-boundary reaction, §10). Early check-in / late check-out / breakfast / transfer / extra bed = `extraService` catalogue items (no multipliers).
 Payment: `{date, method cash | bankTransfer | card | complimentary, amount, kind deposit | settlement | refund, ref?, actor}`. **Card = method only; no card data ever.**
@@ -139,7 +167,7 @@ Invariants: merge is one-way; ID number uniqueness is soft (warn, don't block) u
 Persona: setup/admin. Small, low-frequency event streams; every operational aggregate reads its definitions from here. Designed from explore's checklist of what actually carries values in ezFolio, not from its masters.
 - `HotelProfile`: name, address, currency VND, USD display rate, default check-in/out times (14:00 / 12:00), print/signature names. Events `HotelProfileSet`.
 - `Floor`, `RoomType` (code, name, bedTypes DBL|TWN, default pax), `Room` (number, floor, type, bedType) — `RoomDefined` lives here; hk state stays on Room in the Rooms context. Events `FloorDefined` · `RoomTypeDefined/Updated/Retired` · `RoomDefined/Updated/Retired` (retire, don't delete — history references it).
-- `RateTable` (enhancement, replaces per-booking typed rates): `{roomType, bedType, dateRange | dayOfWeek, ratePerNight}` with a base rate per type as fallback. Resolves default `ratePerNight` on `RoomStayCreated`; per-night override stays allowed. Events `RateDefined/Retired`.
+- `RateTable` (enhancement, replaces per-booking typed rates): `{roomType, bedType, dateRange | dayOfWeek, ratePerNight}` with a base rate per type as fallback. Resolves default `ratePerNight` on `StayCreated`; per-night override stays allowed. Events `RateDefined/Retired`.
 - `ChargeItem`: bucket (the 8-bucket enum), name (VN + EN), unitPrice, active. Seeded list: breakfast adult/child, early check-in, late check-out, extra bed, airport transfer, laundry per garment, minibar items, damage (free-price), other. Events `ChargeItemDefined/Updated/Archived`. One list, curated — no free-text item names on posting.
 - `ChargeBehaviour` per bucket: taxPct, serviceFeePct, netOrGross. All 0 / gross today; capability kept for VAT + 5% service. Events `ChargeBehaviourSet(bucket, …)`.
 - `Company` (= channel/agent/corporate/debtor): name, kind `OTA | TA | CORP`, contact, defaultCommission (% or amount), commissionBasis (§10.5), paymentTerms (days), defaultGroupRouting (§10.8). Events `CompanyRegistered/Updated/Archived`.
@@ -154,7 +182,7 @@ Fields: date, category `groceries | incidental | hkOvertime | advance | other`, 
 | step | trigger event | projection |
 |---|---|---|
 | room status change | `StayCheckedIn` / `StayCheckedOut` / `RoomMarked*` / `RoomTakenOutOfOrder` | **RoomMap** (per-room derived status + color) |
-| dashboard updates | same + `RoomStayCreated` | **DashboardToday** (vacant, arrivals, departures, in-house, unpaid) |
+| dashboard updates | same + `StayCreated` | **DashboardToday** (vacant, arrivals, departures, in-house, unpaid) |
 | occupancy % | stay events + room service events | **Occupancy** per night (used / sellable) |
 | revenue forecast | stay events + `StayRateSet` | **ForwardBook** (rooms sold × rate per night, by type) |
 | housekeeping knows checkout date | stay events | **HKSheet** (per room: state, depart date, notes) |
