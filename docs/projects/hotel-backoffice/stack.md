@@ -101,10 +101,17 @@ Alex asked to see event-driven architecture working, to browse the events, and t
 
 ```
 src/routes/            file routes; index = room board, system.* = operator console
-src/server/events/     store.ts (append/read/replay), stream.ts (ids), types.ts
-src/server/rooms/      domain.ts (pure rules, tier b), table.ts, commands.ts
+src/server/hotel/      THE application layer: index.ts (the Hotel object), rooms/bookings/stays,
+                       current.ts (composition root — the only caller of getDatabase)
+src/server/store/      the Store port: index.ts (interface + sqliteStore), log, projections,
+                       people, rooms — the ONLY place drizzle is imported (biome-enforced)
+src/server/api/        server fns, adapters only: result.ts (the one catch), rooms.ts, booking.ts
+src/server/testkit/    testHotel, memoryStore, fixedClock, countingIds, given.*, rejects.rule
+src/server/rules.ts    RuleError base — one catch covers every aggregate
+src/server/events/     stream.ts (ids), types.ts, upcast.ts
+src/server/rooms/      domain.ts (pure rules, tier b)
 src/server/auth/       options.ts (static) + index.ts (lazy instance), session.ts, api.ts, directory.ts
-src/server/booking/    domain.ts (pure) · dates.ts · input.ts (zod) · commands.ts · projection.ts · people.ts
+src/server/booking/    domain.ts (pure) · dates.ts · input.ts (zod)
 src/server/stay/       domain.ts (pure aggregate: check-in/out, cancel, nights)
 src/ui/command.tsx     useCommand + CommandError — one way to run a command and show a refusal
 src/server/system/     access.ts (operator gate), queries.ts, api.ts
@@ -172,11 +179,57 @@ attempt, so a retry re-reads and re-decides rather than re-appending.
 
 ### What an integration test is for here
 
-`src/server/booking/occupancy.test.ts` exists because the pure rules cannot
-prove the thing that matters. The case worth keeping: **a stale availability
-read rejected even where the room calendar would have said yes.** That is the
-only failure the calendar cannot catch alone, and it is the whole reason the
-guard exists.
+The pure rules cannot prove the thing that matters. Three layers, each for what
+the one below it cannot reach:
+
+1. `*/domain.test.ts` — fold and decide, pure and synchronous.
+2. `src/server/hotel/scenarios.test.ts` — the **main suite**. Scenarios against
+   the real `Hotel` methods the screens call, on an in-memory database. Reads
+   like the rule: "refuses a check-in into a room that is out of order", "gives
+   the last room to exactly one of them", "early check-out frees the remaining
+   nights".
+3. `src/server/store/guard.test.ts` and `log.test.ts` — the interleavings a
+   scenario cannot express, because they need one command's read held open
+   across another's write. The case worth keeping: **a stale availability read
+   rejected even where the room calendar would have said yes.** That is the
+   only failure the calendar cannot catch alone, and it is the whole reason the
+   guard exists.
+
+The test store is the real `SqliteStore` on an in-memory database with the
+deployed migrations — deliberately not a hand-written fake. A fake would need
+its own `roomFree`, which is a second implementation of the exact query whose
+bugs cost this slice; one that is subtly right where SQL is wrong makes the
+suite pass while production breaks. The UNIQUE indexes the race tests lean on
+are therefore the real indexes.
+
+## One Hotel object, and why the commands left the server functions (D-24)
+
+The commands used to be server functions with the domain inlined. Every test
+then either drove the transport or rebuilt the command beside it — and the
+rebuilt copy drifts. `occupancy.test.ts` had its own `book()` reimplementing
+createBooking, and could have gone on passing against a command that no longer
+existed.
+
+`hotel.stays.checkIn({stayId, guests})` is now the application layer. A server
+function parses, authenticates, calls the method, maps a rule failure to a
+code, and contains no domain logic. Tests call the same method with no
+transport in the way.
+
+Three things fell out of it that are worth keeping separately in mind:
+
+- **`Store` is a port, and it is wide on purpose.** It covers the reads —
+  `roomFree`, the rooms row, the stays under a booking — because those are what
+  the commands decide against. A port that covers the append but not the read
+  it was decided under is a hole, not a boundary. A biome rule keeps drizzle
+  imports inside `src/server/store`.
+- **Three write paths became one.** `handleCommand` and `recordChange` were
+  `handleAcross` with fewer options, and each had to get the retry right
+  independently. A single stream is now a plan with one entry. The thunk stays:
+  it is the whole safety property.
+- **Every rule error extends `RuleError`.** The adapter catches the base rather
+  than a list of classes. The list version meant a new aggregate's failures
+  silently became "something went wrong" to the receptionist who was supposed
+  to read them.
 
 ## Authentication (D-11 / D-18, built 2026-09-23)
 

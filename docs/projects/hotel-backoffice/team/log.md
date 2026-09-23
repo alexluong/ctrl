@@ -129,3 +129,43 @@ populated database.
 
 Notes: `agents/solex-dev/notes/2026-09-23-2200-slice-0-and-1.md`. Design rationale in `stack.md`
 §Two tiers and §Authentication.
+
+---
+
+### 2026-09-23 · dev (WS1) · D-24: the application layer became one `Hotel` object
+
+Alex accepted architect's D-24 and told me to follow architect's lead on it. Landed before any
+slice-1 screen, on architect's reasoning that screens written against `commands.ts` are the thing
+that multiplies. `solex` 92aa083 — 100 tests green, 16 of them scenarios; board and room detail
+walked in the browser.
+
+`hotel.stays.checkIn({stayId, guests})` is the application layer now. A server function parses,
+authenticates, calls the method, maps a rule failure to a code, and holds no domain logic. The
+fold/decide code moved without changing.
+
+**One amendment to D-24, which architect accepted and wrote in.** The spec called for a
+hand-written `MemoryStore` emulating `UNIQUE(stream, version)`. I argued against it: the commands
+do not only append events, they ask `roomFree`, read the rooms row, walk the stays under a
+booking — so a fake needs its own implementation of the exact query whose bugs cost us this slice.
+One that is subtly right where SQL is wrong makes the suite pass while production breaks, which is
+the most expensive kind of green. The test store is the real `SqliteStore` on an in-memory
+database with the deployed migrations, so the UNIQUE indexes the race tests lean on are the real
+ones. The leakage that two implementations would have caught is caught instead by a biome rule:
+drizzle imports only under `src/server/store`.
+
+**Three things beyond the brief**, all flagged to architect. Three write paths became one
+(`handleCommand` and `recordChange` were `handleAcross` with fewer options, each getting the retry
+right independently). `occupancy.test.ts` deleted — its `book()` helper reimplemented
+createBooking, which is the parallel arrangement D-24 exists to kill; its coverage moved to
+scenarios and to `store/guard.test.ts`, where B3 is still pinned by name. Room commands got zod
+schemas; N1 had only ever reached booking.
+
+**A scenario found something, for product.** Checking out *before* the arrival date removes every
+night and leaves a stay with no nights. `checkOut` only requires status checkedIn and nothing
+stops a check-in before arrival, so the sequence is reachable — my first draft of the "last day"
+scenario hit it by accident. Not touching it without a ruling: is early check-in a rule, a
+warning, or fine, and should check-out before the first night be a cancellation rather than a
+zero-night stay?
+
+**Still not done:** screens — now to be written against `Hotel` from day one. Staging's event log
+still unwiped, still Alex's own call.
