@@ -195,7 +195,7 @@ type Stay = {
 }
 ```
 Events: `stay.created` · `stay.room_assigned(roomId, fromDate?)` · `stay.room_unassigned` · `stay.room_changed(fromDate, roomId)` · `stay.nights_changed(added[], removed[])` · `stay.rate_set(date, amount)` · `stay.guest_added` · `stay.guest_removed` · `stay.routing_set(bucket, target)` · `stay.checked_in` · `stay.checked_out` · `stay.cancelled(reason)` · `stay.marked_no_show` · `stay.overbooking_overridden`.
-Rules: check-in needs tonight's room assigned and not out of order · check-out needs own folio at 0 or moved to a receivable · nights change only before check-out · posted nights are immutable (no rate/room change) · no-show only from `booked`, after arrival date · cancel only if not checked in, reason required, charges moved off first (ezFolio guards).
+Rules: check-in needs tonight's room assigned and not out of order · check-out needs own folio at 0 or moved to a receivable · **early check-out** (before last night) drops every unposted night after the current business date in the same batch (`stay.nights_changed {removed}` then `stay.checked_out`) so they go back on sale — never implicit in `checked_out` · nights change only before check-out · posted nights are immutable (no rate/room change) · no-show only from `booked`, after arrival date · cancel only if not checked in, reason required, charges moved off first (ezFolio guards).
 
 Assumptions (Alex 2026-09-23: business calls, not system-breaking; adjust later):
 - **Room move mid-stay**: `room_changed` rewrites `roomId` on unposted nights from that date; rate unchanged by default, editable. Different room type → UI warns, no auto-reprice.
@@ -206,7 +206,8 @@ Dropped from v0: ezFolio flags `foc` (= rate 0), `isNet` (OTA, deferred), `locke
 ### Availability (cross-aggregate rule, Reservations context)
 - **Per room**: no two stays may hold the same `(roomId, date)` (cancelled / no-show don't count). One rule, per night, no interval math. Same-day turnover is free by construction.
 - **Per type**: for each night, `stays of that type (assigned or not, not cancelled) ≤ rooms of that type in service`. Overbooking policy = **warn + explicit override** (`stay.overbooking_overridden`), assumed because high occupancy means they sell to the edge.
-- **Enforcement (D-8)**: one `availability:<hotel>` stream; every command that changes supply or demand versions it in the same batch — room assign/change/unassign, nights change, check-in with assignment, room out-of-order / back in service, room retire or type change (Setup), overbooking override.
+- **Enforcement (D-8)**: one `<hotelId>/availability:all` stream; every command that changes supply or demand versions it in the same batch — room assign/change/unassign, nights change, early check-out, check-in with assignment, room out-of-order / back in service, room retire or type change (Setup), overbooking override. Its only event is `availability.changed {cause}` — serialisation only, nothing folds it.
+- **Out-of-order rooms**: OOO is supply, not a lock. Assigning an OOO room to future nights → **warn, allow** (it may be back by then); `TakeOutOfOrder` under assigned nights → warn, allow. Hard stop is **check-in** only: tonight's room must be in service. Overbooking count treats OOO rooms as out of supply.
 
 ### Room — physical (settled w/ Alex 2026-09-23)
 
@@ -388,7 +389,9 @@ Later: WaitingList (unassigned stays), Breakfast list, PA18 export, CommissionBy
 | 3 | Cancellation / no-show | no automatic charge. Receptionist posts a compensation charge by hand if agreed. Deposit forfeit = explicit `ForfeitDeposit`. Cancel guards: not if checked in; reason required; charges moved off first. |
 | 4 | Guest ID | optional; PA18 export later |
 | 5 | Children | under `childAgeThreshold` (6) free, not counted against capacity |
-| 6 | Room after checkout | auto `room.marked_dirty` |
+| 6 | Room after checkout | auto `room.marked_dirty {cause: checkout, stayId}` (reaction, in-batch) |
+| 6a | Early check-out | shortens the stay: unposted nights after today's business date removed (`stay.nights_changed`) and freed for sale; current night stays charged. Explicit event, not implied by `checked_out`. |
+| 6b | Out-of-order room | assign to future nights: warn + allow. Check-in: refuse. Taking a room OOO under assigned nights: warn + allow. |
 | 7 | Check-out with balance | blocked unless remainder transferred to a company receivable |
 | 8 | Group billing default | routing from `Company.defaultRouting` (room → master, rest → own); editable per stay |
 | 9 | Rates | prefilled from `RateTable`; editable until the night posts; posted nights immutable |
@@ -407,7 +410,7 @@ Command = one intent. `needs` = capability. `checks` = rules beyond "hotel match
 | `ChangeBookingParty / Notes / Requests` | `booking.edit` | open · requests: availability | `booking.party_changed` / `notes_changed` / `requests_changed` (+ `stay.created`/`stay.cancelled`) |
 | `CancelBooking {reason}` | `booking.cancel` | no stay checked in | `booking.cancelled`, `stay.cancelled`×N |
 | `CloseBooking` | `booking.edit` | all stays terminal · master folio 0 or transferred | `booking.closed`, `folio.closed` |
-| `AssignRoom {stayId, roomId, fromDate?}` | `stay.assign` | room type matches (warn) · room free those nights · not OOO · versions availability | `stay.room_assigned` |
+| `AssignRoom {stayId, roomId, fromDate?}` | `stay.assign` | room type matches (warn) · room free those nights · OOO (warn) · versions availability | `stay.room_assigned` |
 | `UnassignRoom {stayId}` | `stay.assign` | status booked | `stay.room_unassigned` |
 | `MoveStay {stayId, fromDate, roomId}` | `stay.move` | not checked out · unposted nights only · room free · versions availability | `stay.room_changed` |
 | `ChangeNights {stayId, add[], remove[]}` | `stay.assign` | not checked out · removed nights unposted · availability | `stay.nights_changed` |
@@ -415,7 +418,7 @@ Command = one intent. `needs` = capability. `checks` = rules beyond "hotel match
 | `AddGuest / RemoveGuest {stayId, guestId}` | `booking.edit` | not checked out | `stay.guest_added` / `guest_removed` |
 | `SetRouting {stayId, categoryId, target}` | `booking.edit` | group stay | `stay.routing_set` |
 | `CheckIn {stayId, guests[]?}` | `stay.check_in` | booked · tonight's room assigned, not OOO | `stay.checked_in`, `folio.charge_posted` (tonight's room) |
-| `CheckOut {stayId}` | `stay.check_out` | checkedIn · own folio 0 or transferred | `stay.checked_out`, `folio.closed`, `room.marked_dirty` |
+| `CheckOut {stayId}` | `stay.check_out` | checkedIn · own folio 0 or transferred | `stay.nights_changed {removed}` if leaving early (versions availability), `stay.checked_out`, `folio.closed`, `room.marked_dirty` |
 | `CancelStay {stayId, reason}` | `stay.cancel` | booked · folio has no unmoved charges | `stay.cancelled` |
 | `MarkNoShow {stayId}` | `stay.cancel` | booked · after arrival date | `stay.marked_no_show` |
 | `OverrideOverbooking {stayId}` | `stay.assign` (owner by default) | – | `stay.overbooking_overridden` |
@@ -453,6 +456,8 @@ Command = one intent. `needs` = capability. `checks` = rules beyond "hotel match
 ~40 commands. Screens (§3) are compositions of these; nothing in the UI does what a command can't.
 
 ## 11a. Slice 1 payloads — occupancy loop (pinned 2026-09-23 for dev; walk-in individual only)
+
+**Frozen 92cefea.** Amendment 2026-09-23 (additive only): `StayNightsChanged` added for early check-out; `TakeOutOfOrder` stream line; OOO-at-assign = warn. No existing shape changed.
 
 Exact shapes for the first slice. **Frozen 2026-09-23** after last pass. Group bookings, money, and Setup come in later slices; payload *types* already admit them (unions, arrays) so no schemaVersion bump is needed — slice 1 restricts by *rule*, not by type. Ids are ulids as strings. `LocalDate` = `'YYYY-MM-DD'` in hotel-local calendar; `Instant` = ISO-8601 UTC; `Money` = integer VND. Stream ids are hotel-first: `<hotelId>/<type>:<id>`, availability = `<hotelId>/availability:all`.
 
@@ -496,6 +501,7 @@ type StayCreated = {
 }
 type StayRoomAssigned  = { stayId: string; roomId: string; fromDate: LocalDate }
 type StayCheckedIn     = { stayId: string; at: Instant; roomId: string; guestIds: string[] }
+type StayNightsChanged = { stayId: string; added: Array<{ date: LocalDate; roomId?: string; rate: number }>; removed: LocalDate[] }   // early check-out emits removed only
 type StayCheckedOut    = { stayId: string; at: Instant }
 type StayCancelled     = { stayId: string; reason: string }
 type BookingCancelled  = { bookingId: string; reason: string }
@@ -507,20 +513,22 @@ type RoomMarkedClean   = { roomId: string }
 // CreateBooking : booking:<id> (booking.created) · stay:<id> (stay.created) · availability:all (version++ if roomId given)
 // AssignRoom    : stay:<id> · availability:all
 // CheckIn       : stay:<id> · (slice 3 adds folio charge)
-// CheckOut      : stay:<id> · rooms row update + room.marked_dirty (reaction, in-batch, not on replay)
+// CheckOut      : stay:<id> (stay.nights_changed {added: [], removed: [dates > businessDate(at)]} if any, then stay.checked_out) · availability:all if nights removed · rooms row update + room.marked_dirty {cause:'checkout', stayId} (reaction, in-batch, not on replay)
+// TakeOutOfOrder: rooms row + room.taken_out_of_order · availability:all (supply change; warn if a stay holds the room)
 // CancelStay    : stay:<id> · availability:all
 // CancelBooking : booking:<id> · stay:<id> ×N · availability:all
 ```
 
-Rules active in slice 1: arrive < depart · room free on every night `[arrive, depart)` · room not OOO at check-in · cancel only from `booked` · check-out only from `checkedIn`. Overbooking per type: warn only (override event in slice 2).
+Rules active in slice 1: arrive < depart · room free on every night `[arrive, depart)` · room not OOO at check-in (OOO at assign = warn only) · cancel only from `booked` · check-out only from `checkedIn` · early check-out frees nights after today's business date (`stay.nights_changed`, all nights unposted in slice 1). Overbooking per type: warn only (override event in slice 2).
 
 ## 12. Event index
 
-Envelope + naming per §6 conventions (D-12). **Two tiers (D-22)**: `booking.*` `stay.*` `ledger.*` (+ `folio.*` `receivable.*` `expense.*` as Ledger-derived) are state — folded on replay. `room.*` `guest.*` `setup.*` `user.*` are **notifications**: emitted on every CRUD write for history tabs and projections, never folded; the row is truth. Streams: `booking:*` `stay:*` `room:*` `folio:*` `receivable:*` `ledger:*` `guest:*` `expense:*` `setup:*` `user:*` + `availability:all` (serialisation only, D-8). **Stream ids are hotel-first per D-9: `<hotelId>/booking:<id>`, `<hotelId>/availability:all`.**
+Envelope + naming per §6 conventions (D-12). **Two tiers (D-22)**: `booking.*` `stay.*` `ledger.*` (+ `folio.*` `receivable.*` `expense.*` as Ledger-derived) are state — folded on replay. `room.*` `guest.*` `setup.*` `user.*` are **notifications**: emitted on every CRUD write for history tabs and projections, never folded; the row is truth. Streams: `booking:*` `stay:*` `room:*` `folio:*` `receivable:*` `ledger:*` `guest:*` `expense:*` `setup:*` `user:*` + `availability:all` (serialisation only, D-8; its sole event `availability.changed {cause}` is never folded). **Stream ids are hotel-first per D-9: `<hotelId>/booking:<id>`, `<hotelId>/availability:all`.**
 
 `booking.` created · requests_changed · party_changed · notes_changed · cancelled · closed · stay_merged_in (reserved)
 `stay.` created · room_assigned · room_unassigned · room_changed · nights_changed · rate_set · guest_added · guest_removed · routing_set · checked_in · checked_out · cancelled · marked_no_show · overbooking_overridden
 `room.` defined · updated · retired · marked_clean · marked_dirty · taken_out_of_order · returned_to_service · note_set
+`availability.` changed {cause} — version bump only
 `folio.` opened · charge_posted · charge_voided · charge_moved · payment_received · payment_refunded · deposit_forfeited · transferred_to_receivable · closed
 `receivable.` opened · payment_received · settled · written_off
 `ledger.` account_opened · entry_posted · entry_reversed · account_closed
