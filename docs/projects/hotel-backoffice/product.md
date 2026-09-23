@@ -1,6 +1,6 @@
 # SoLex — Product / Domain Model (WS3)
 
-Owner: `solex-product`. **v1, 2026-09-23** — walked with Alex section by section (D-9…D-19 Proposed in `team/decisions.md`). Built from `requirements.md` + `existing-system.md` + D-4..D-8. Types in §6, commands in §11, events in §12 are the contract; dev should not invent others. Later-scope items are listed inline as "Later"/"Deferred".
+Owner: `solex-product`. **v1, 2026-09-23** — walked with Alex section by section (D-9…D-19 Proposed in `team/decisions.md`). Built from `requirements.md` + `existing-system.md` + D-4..D-8. Types in §6, commands in §11, events in §12 are the contract; dev should not invent others. Later-scope items are listed inline as "Later"/"Deferred". **Review page** (same content, tabbed): https://claude.ai/artifact/R42cHB8apsv7UuT7MGAnNg — regenerate from this file when it changes.
 
 ## 1. Framing
 
