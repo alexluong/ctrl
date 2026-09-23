@@ -2,6 +2,8 @@
 
 Newest first. `date · commit · staging · cases · result · findings · blocking?`
 
+- 2026-09-24 · b364ccd (+ e2e aa34fd7) · d006aa47 (not walked) · full e2e 78: all pass except S4-21 · **N17** hyphen usernames created but never able to sign in (Better Auth default validator; fixed 7b9a923) · **N18** untouched account save wrote `user.updated` (fixed b364ccd) · **N19** contact created by a booking has a row and no `contact.created` event (S4-21 red; same class as guests-at-check-in) · N17 Y (fixed), N18 Y (fixed), N19 open
+
 - 2026-09-24 · 2cd38a8 (+ e2e) · acf36ff1 (not walked) · full e2e 56: all pass except S3-33 · new sweep S3-32: on 3cafabc 601-char text threw on room add, OOO, cancel stay, transfer, room type, guest, contact, write-off + both void prompts (N15, now closed); green on 2cd38a8 · **N16** refund form substitutes "Hoàn tiền" when reference is blank → `folio.reasonRequired` unreachable from the screen (screen inventing an answer to a rule); also `error.folio.reasonRequired` reads "lý do huỷ" on a refund (wording → product) · N
 
 - 2026-09-24 · 9fd031b (+ e2e) · 98e73650 (not walked) · full e2e 43: S3-14 ×15, S3-24 ×7, S2-16 now **pass** (N10, N11, N12 closed); expenses S3-26..28, S3-30, S3-31 pass; S3-29 ×2 **fail** · **N14** a void `prompt()` answered empty returns silently (expenses + folio void) — N10 class; **N15** blank/whitespace reason fails the API adapter's zod (`reason.trim().min(1)`, expenses/folio void+refund) → thrown, rendered as "Không kết nối được máy chủ…" (wrong reason, and the commandId is kept for a retry that can't succeed) — should be a rule code · N
