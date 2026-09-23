@@ -192,14 +192,14 @@ type Stay = {
   adults: number
   children: number             // < childAgeThreshold (Setup, default 6)
   guests: GuestId[]
-  routing?: Partial<Record<Bucket, 'own' | 'master'>>       // group stays only; default from Booking's company
+  routing?: Partial<Record<ChargeCategoryId, 'own' | 'master'>>   // group stays only; keyed by charge category; default from Company.defaultRouting, else room → master, rest → own
   status: 'booked' | 'checkedIn' | 'checkedOut' | 'cancelled' | 'noShow'
   checkedInAt?: Instant
   checkedOutAt?: Instant
 }
 ```
-Events: `stay.created` · `stay.room_assigned(roomId, fromDate?)` · `stay.room_unassigned` · `stay.room_changed(fromDate, roomId)` · `stay.nights_changed(added[], removed[])` · `stay.rate_set(date, amount)` · `stay.guest_added` · `stay.guest_removed` · `stay.routing_set(bucket, target)` · `stay.checked_in` · `stay.checked_out` · `stay.cancelled(reason)` · `stay.marked_no_show` · `stay.overbooking_overridden`.
-Rules: **check-in normalizes the stay to today**: tonight (current business date) must be a night of the stay — early arrival (before `arrive`) adds nights `[today, arrive)` at the first night's rate, room must be free for them, availability versioned, warn + allow; late arrival drops unposted nights before today (posted ones stay). Emitted as `stay.nights_changed` before `stay.checked_in`. So a checked-in stay always holds ≥ 1 night and same-day in/out still charges tonight · check-in needs tonight's room assigned and not out of order · check-out needs own folio at 0 or moved to a receivable · **early check-out** (before last night) drops every unposted night after the current business date in the same batch (`stay.nights_changed {removed}` then `stay.checked_out`) so they go back on sale — never implicit in `checked_out` · nights change only before check-out · posted nights are immutable (no rate/room change) · no-show only from `booked`, after arrival date · cancel only if not checked in, reason required, charges moved off first (ezFolio guards).
+Events: `stay.created` · `stay.room_assigned(roomId, fromDate?)` · `stay.room_unassigned` · `stay.room_changed(fromDate, roomId)` · `stay.nights_changed(added[], removed[])` · `stay.rate_set(date, amount)` · `stay.guest_added` · `stay.guest_removed` · `stay.routing_set(categoryId, target)` · `stay.checked_in` · `stay.checked_out` · `stay.cancelled(reason)` · `stay.marked_no_show` · `stay.overbooking_overridden`.
+Rules: **check-in normalizes the stay to today**: tonight (current business date) must be a night of the stay — early arrival (before `arrive`) adds nights `[today, arrive)` at the first night's rate, room must be free for them, availability versioned, warn + allow; late arrival drops unposted nights before today (posted ones stay). Emitted as `stay.nights_changed` before `stay.checked_in`. So a checked-in stay always holds ≥ 1 night and same-day in/out still charges tonight · check-in needs tonight's room assigned and not out of order · check-out guards the stay's **own** folio only (0 or moved to a receivable); the master folio is guarded at `CloseBooking`, seen and settled on the booking page · **early check-out** (before last night) drops every unposted night after the current business date in the same batch (`stay.nights_changed {removed}` then `stay.checked_out`) so they go back on sale — never implicit in `checked_out` · nights change only before check-out · posted nights are immutable (no rate/room change) · no-show only from `booked`, after arrival date · cancel only if not checked in, reason required, charges moved off first (ezFolio guards).
 
 Assumptions (Alex 2026-09-23: business calls, not system-breaking; adjust later):
 - **Room move mid-stay**: `room_changed` rewrites `roomId` on unposted nights from that date; rate unchanged by default, editable. Different room type → UI warns, no auto-reprice.
@@ -350,7 +350,7 @@ Reference data, retire-not-delete, seeded by admin SDK (D-9). Each has `<name>.d
 - `ChargeItem` — category, VN + EN name, unitPrice, active
 - `BookingSource` — walk-in, phone, Agoda, … (lookup only)
 - `ExpenseCategory` — **v1: fixed in code, not Setup data; Setup screen if the client asks** (D-21). Ids: `groceries`, `incidental`, `hkOvertime`, `advance`, `other`, + system-only `writeOff` (written-off receivables land there; not pickable by hand)
-- `Company` — name, contact, kind, default group routing `{category → own | master}`; commission/terms → later
+- `Company` — tier b Setup entity, built first in slice 5: `{ id: CompanyId; hotelId; name: string; defaultRouting?: Partial<Record<ChargeCategoryId, 'own' | 'master'>> }`. `companyId` on Booking.party, Contact and transfer-to-receivable references it; no free-text company names. Kind/contact/commission/terms → later
 - `BookingRules` — childAgeThreshold 6, overbooking `warn` (override allowed), autoDirtyOnCheckout true, idEnforcement optional
 Rules: unique room numbers per hotel; retired items not selectable; can't retire a room with future nights; **can't retire a room type while any non-retired room references it** (refuse `roomType.inUse`; retire or re-type the rooms first — mirrors the room rule, and a retired type with live rooms would break availability counts); room type id = slug of name (`phong-doi`); rate ranges half-open `[from, to)`.
 
@@ -410,8 +410,9 @@ Later: WaitingList (unassigned stays), Breakfast list, PA18 export, CommissionBy
 | 6a | Early check-out | shortens the stay: unposted nights after today's business date removed (`stay.nights_changed`) and freed for sale; current night stays charged. Explicit event, not implied by `checked_out`. |
 | 6c | Early / late check-in | Check-in makes today the first unposted night: early arrival adds nights `[today, arrive)` (warn + allow, room must be free), late arrival drops unposted nights before today. A checked-in stay never has zero nights; check-out before the first night cannot happen (tonight is always held and charged). Guest who leaves same day still pays tonight; day-use is out of scope. |
 | 6b | Out-of-order room | assign to future nights: warn + allow. Check-in: refuse. Taking a room OOO under assigned nights: warn + allow. |
-| 7 | Check-out with balance | blocked unless remainder transferred to a company receivable |
-| 8 | Group billing default | routing from `Company.defaultRouting` (room → master, rest → own); editable per stay |
+| 7 | Check-out with balance | stay's own folio: blocked unless 0 or remainder transferred to a company receivable. Master folio not checked here. |
+| 7a | Close booking | `CloseBooking` refused while the master folio balance > 0 (settle or transfer on the booking page); all stays terminal |
+| 8 | Group billing default | routing keyed by `ChargeCategoryId`: `Company.defaultRouting` if set, else room → master, everything else → own; settable per stay per category (`SetRouting`) |
 | 9 | Rates | prefilled from `RateTable` (ranges half-open `[from, to)`); no table rate and no desk-typed price → **refuse** `rate.notFound`, never silently 0 (D-21); 0 only when typed (FOC); editable until the night posts; posted nights immutable. Day-of-week rates later. |
 | 10 | Sensitive money actions | void, refund, write-off, transfer = `owner` capabilities by default |
 
@@ -469,7 +470,8 @@ Command = one intent. `needs` = capability. `checks` = rules beyond "hotel match
 | `CreateGuest / UpdateGuest / EraseGuest` | `booking.edit` (erase: `guests.erase`, owner only) | `guest.created` / `updated` / `erased` |
 | `CreateContact / UpdateContact / EraseContact` | `booking.edit` (erase: `guests.erase`, owner only) | `contact.created` / `updated` / `erased` |
 | `RecordExpense {businessDate, categoryId, amount, method, description, reference?}` / `VoidExpense` | `expense.record` / `expense.void` | `expense.recorded` / `voided` → entry |
-| `Define / Update / Retire <SetupItem>` (Floor, RoomType, Room, RateTable, ChargeCategory, ChargeItem, BookingSource, Company), `SetHotelProfile`, `SetBookingRules` | `setup.edit` | `<item>.defined / updated / retired`; Room retire/type change also versions availability |
+| `Define / Update / Retire <SetupItem>` (Floor, RoomType, Room, RateTable, ChargeCategory, ChargeItem, BookingSource), `SetHotelProfile`, `SetBookingRules` | `setup.edit` | `<item>.defined / updated / retired`; Room retire/type change also versions availability |
+| `DefineCompany {name, defaultRouting?} / UpdateCompany / RetireCompany` | `setup.edit` | `company.defined / updated / retired`; retire refused while open receivable or open booking references it |
 | `CreateUser / UpdateUser / ResetPassword` | `users.manage` | `user.created / updated / password_reset` on `<hotelId>/user:<id>`; `user.created` carries the username, never the name (D-20); ResetPassword ends the person's live sessions |
 | ~~`DisableUser`~~ **deferred** | – | identity ≠ access: `DeactivateStaff` ends the position and live sessions, so an account with no membership signing in to an empty shell is harmless. If a lock is ever needed: `disabledAt` on the account checked at sign-in, never a delete (D-18 built note). |
 | `AddStaff {userId, role}` / `ChangeStaffRole {userId, role}` / `DeactivateStaff` / `ReactivateStaff` | `users.manage` | `staff.added / role_changed {role, from} / deactivated / reactivated` — refuse `staff.lastOwner`, `staff.alreadyStaff` |
