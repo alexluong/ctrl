@@ -101,3 +101,13 @@ Category ids change once more to the client's list (groceries, incidental, hk_ov
 | S3-31 | write-off lands in expenses | write off a receivable | /expenses by-category has the "Công nợ đã xoá" line | e2e:expenses.spec "S3-31" | 9fd031b pass |
 | S3-32 | D-24 (b), N15: input is never "network" | every form, fresh screen per form × variant: blank, 601-char text, 1e21/-5 numbers; void prompts blank/oversize | no 5xx, never "Không kết nối được máy chủ…"; shape failures = `input.invalid` | e2e:no-network-for-input.spec (10 screens) | 2cd38a8 pass (3cafabc: 9 forms + 2 prompts fail) |
 | S3-33 | D-24 (b) refund reason (hole found by N15) | owner refunds with no reason typed | refused `folio.reasonRequired` by name, before the ceiling check; nothing refunded | e2e:money-loop.spec "S3-33" + scenario (todo verify) | 2cd38a8 **fail** (N16: screen sends "Hoàn tiền") |
+
+## Slice 4 — users, roles, history (prepared ahead of the landings)
+
+| ID | rule | steps | expected | automated by | last run |
+|---|---|---|---|---|---|
+| S4-1 | D-18 receptionist sees no owner controls | sign in as receptionist; visit setup, stay (void/refund), receivables (write-off), expenses (void), guests (erase) | owner-only controls absent or replaced by a note; the commands still refuse when called directly | e2e (todo; receptionist pass) + scenario | — |
+| S4-2 | disabled user cannot sign in | owner disables a user; that user's live session and a new sign-in | session ends / sign-in refused with a message; stub user path included | e2e (todo) | — |
+| S4-3 | history: one correlationId per click | any money command from the screen (charge, payment, void, check-out) | history tab groups every event of one click under one correlationId; no event outside a group | e2e (todo) | — |
+| S4-4 | account screens are owner-only | receptionist opens user create/edit/disable | refused / hidden; last active owner cannot be disabled (S2-8 via the new screen) | e2e (todo) + scenario | — |
+| S4-5 | no PII in URLs on the new screens | user search/edit links | ids only (N12 rule, product §6) | e2e:extend no-pii-in-url + no-get-forms + no-network-for-input sweeps | — |
