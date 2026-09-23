@@ -249,7 +249,7 @@ type Entry = {
   memo?: string
 }
 // balance(account) = Σ its lines, never folded/stored · entries immutable; undo = reversal entry · account closes only at 0
-// streams are per account: <hotelId>/account:<id>. An entry touching N accounts is appended to all N streams
+// streams are per account: <hotelId>/ledger:<kind>:<id> (ledger:folio:<stayId>, ledger:receivable:<companyId>, ledger:cash…). An entry touching N accounts is appended to all N streams
 // (same entryId + correlationId, full entry in each payload); projections dedupe by entryId.
 ```
 Events: `ledger.account_opened` · `ledger.entry_posted` · `ledger.entry_reversed(entryId, reason)` · `ledger.account_closed`.
@@ -300,7 +300,7 @@ type Payment = {
   ref?: string                 // transfer reference
 }
 ```
-Folio accounts open **lazily** on the first charge or payment, with derived ids — own `folio:<stayId>`, master `folio:master:<bookingId>` — never at CreateBooking (empty = zero to every reader; derived ids make retry safe). As built (slice 3): `room` category posts only via the night roll · refunds capped at payments received on that folio, not at the credit balance · deposit = a payment before any charge, allowed.
+Folio accounts open **lazily** on the first charge or payment, with derived ids — own `ledger:folio:<stayId>`, master `ledger:folio:master:<bookingId>` — never at CreateBooking (empty = zero to every reader; derived ids make retry safe). As built (slice 3): `room` category posts only via the night roll · refunds capped at payments received on that folio, not at the credit balance · deposit = a payment before any charge, allowed.
 
 Events: `folio.opened` (first line, lazy) · `folio.charge_posted` · `folio.charge_voided(reason)` · `folio.charge_moved(chargeId, toFolioId)` (ezFolio "Chuyển dịch vụ") · `folio.payment_received` · `folio.payment_refunded` · `folio.transferred_to_receivable(companyId, amount)` · `folio.closed`.
 Rules: never edit a charge — void and repost · a night's room charge posts once, at the roll (D-7), or at check-in for the current night · move charges only while both folios open · close only at 0 or after transfer · deposit = payment of kind `deposit` (master folio for groups, stay folio for individuals); forfeit = `folio.deposit_forfeited` posts a compensation charge against it.
@@ -319,7 +319,7 @@ type Receivable = {
   // no due date in v1 (ezFolio has none; overdue = age)
 }
 ```
-Receivable accounts open lazily like folios: first transfer emits `ledger.account_opened` on `<hotelId>/account:receivable:<companyId>`; no separate `receivable.opened`.
+Receivable accounts open lazily like folios: first transfer emits `ledger.account_opened` on `<hotelId>/ledger:receivable:<companyId>`; no separate `receivable.opened`.
 
 Events: `receivable.payment_received(method, amount, ref?)` · `receivable.settled` · `receivable.written_off(reason)`.
 Rules: opened only from a folio transfer · payments ≤ amount · settled when paid in full.
@@ -544,7 +544,7 @@ Rules active in slice 1: arrive < depart · room free on every night `[arrive, d
 
 ## 12. Event index
 
-Envelope + naming per §6 conventions (D-12). **Two tiers (D-22)**: `booking.*` `stay.*` `ledger.*` (+ `folio.*` `receivable.*` `expense.*` as Ledger-derived) are state — folded on replay. `room.*` `guest.*` `contact.*` `setup.*` `user.*` `staff.*` are **notifications**: emitted on every CRUD write for history tabs and projections, never folded; the row is truth. Streams: `booking:*` `stay:*` `room:*` `folio:*` `receivable:*` `account:*` (one per ledger account; an entry is appended to every account stream it touches, deduped by entryId) `guest:*` `contact:*` `expense:*` `setup:*` `user:*` `staff:*` + `availability:all` (serialisation only, D-8; its sole event `availability.changed {cause}` is never folded). **Stream ids are hotel-first per D-9: `<hotelId>/booking:<id>`, `<hotelId>/availability:all`.**
+Envelope + naming per §6 conventions (D-12). **Two tiers (D-22)**: `booking.*` `stay.*` `ledger.*` (+ `folio.*` `receivable.*` `expense.*` as Ledger-derived) are state — folded on replay. `room.*` `guest.*` `contact.*` `setup.*` `user.*` `staff.*` are **notifications**: emitted on every CRUD write for history tabs and projections, never folded; the row is truth. Streams: `booking:*` `stay:*` `room:*` `ledger:<kind>:<id>` (one per ledger account — folio, receivable, cash, bank, revenue, expense; an entry is appended to every account stream it touches, deduped by entryId) `guest:*` `contact:*` `expense:*` `setup:*` `user:*` `staff:*` + `availability:all` (serialisation only, D-8; its sole event `availability.changed {cause}` is never folded). **Stream ids are hotel-first per D-9: `<hotelId>/booking:<id>`, `<hotelId>/availability:all`.**
 
 `booking.` created · requests_changed · party_changed · notes_changed · cancelled · closed · stay_merged_in (reserved)
 `stay.` created · room_assigned · room_unassigned · room_changed · nights_changed · rate_set · guest_added · guest_removed · routing_set · checked_in · checked_out · cancelled · marked_no_show · overbooking_overridden
@@ -552,7 +552,7 @@ Envelope + naming per §6 conventions (D-12). **Two tiers (D-22)**: `booking.*` 
 `availability.` changed {cause} — version bump only
 `folio.` opened · charge_posted · charge_voided · charge_moved · payment_received · payment_refunded · deposit_forfeited · transferred_to_receivable · closed
 `receivable.` payment_received · settled · written_off — account opens via `ledger.account_opened`, lazily
-`ledger.` account_opened · entry_posted · entry_reversed · account_closed — on `<hotelId>/account:<id>`; entry events carry the full entry, appear once per touched account
+`ledger.` account_opened · entry_posted · entry_reversed · account_closed — on `<hotelId>/ledger:<kind>:<id>`; entry events carry the full entry, appear once per touched account
 `guest.` created · updated · erased (tombstone, D-20)
 `contact.` created · updated · erased — same shape as guest; booker ≠ sleeper, kept separate
 `expense.` recorded · voided
