@@ -366,6 +366,7 @@ Every screen reads a projection; projections are rebuilt from events (§12). Syn
 | **FolioView** | per folio: lines (charges, payments), balance | `folio.*` | folio screen, print |
 | **Receivables** | per company: open amount, age, payments | `receivable.*` | Back Office |
 | **DashboardToday** | occupancy %, arrivals, departures, in-house, revenue posted, cash in, unpaid | StayNights, `ledger.*` | Back Office home |
+| **NightRollStatus** | per hotel: `lastRolledDate`, unposted nights for today | `folio.charge_posted`, `stay.*` | lazy roll check on first request after `businessDayStart` (D-25); Setup guard on `businessDayStart` change |
 | **ForwardBook** | per future night: rooms sold × rate, by type | StayNights | forecast |
 | **Revenue** | by business date × category × source × payment method | `ledger.*` + Setup lookups | reports |
 | **Expenses** | by category × period | `expense.*` | Back Office |
@@ -391,7 +392,7 @@ Later: WaitingList (unassigned stays), Breakfast list, PA18 export, CommissionBy
 
 | # | rule | v1 |
 |---|---|---|
-| 1 | Hotel day | D-7. Business date rolls at `businessDayStart` 02:00. Room charge posts at the roll, or at check-in for the current night. Check-in before `checkInTime` 14:00 → optional early check-in item; checkout after `checkOutTime` 12:00 → optional late checkout item; after next roll → extra night (`stay.nights_changed`). Actual instants decide; typed dates are the plan. |
+| 1 | Hotel day | D-7 + D-25. Business date rolls at `businessDayStart` 02:00. Room charge posts via `PostNightlyRoomCharges` (actor `system:night_roll`), idempotent per `(stayId, businessDate)`, fired **both** by cron at the roll and lazily on the first request after it (local dev: lazy only); check-in posts tonight through the same command. Changing `businessDayStart` is owner-only and refused while any night of the current business date is unposted. Check-in before `checkInTime` 14:00 → optional early check-in item; checkout after `checkOutTime` 12:00 → optional late checkout item; after next roll → extra night (`stay.nights_changed`). Actual instants decide; typed dates are the plan. |
 | 2 | Overbooking | warn + explicit override (D-15) |
 | 3 | Cancellation / no-show | no automatic charge. Receptionist posts a compensation charge by hand if agreed. Deposit forfeit = explicit `ForfeitDeposit`. Cancel guards: not if checked in; reason required; charges moved off first. |
 | 4 | Guest ID | optional; PA18 export later |
@@ -451,7 +452,7 @@ Command = one intent. `needs` = capability. `checks` = rules beyond "hotel match
 | `CloseFolio {folioId}` | `folio.take_payment` | balance 0 | `folio.closed`, `ledger.account_closed` |
 | `RecordReceivablePayment {receivableId, method, amount, ref?}` | `receivable.record_payment` | open/partial · ≤ remaining | `receivable.payment_received` (+ `settled`) → entry |
 | `WriteOffReceivable {receivableId, reason}` | `receivable.write_off` | open/partial | `receivable.written_off` → entry |
-| `PostNightlyRoomCharges` (system, at roll) | system | per checked-in stay, tonight unposted | `folio.charge_posted`×N, night.posted = true |
+| `PostNightlyRoomCharges {businessDate}` (system: cron at roll + lazy on first request after; also called by CheckIn for tonight) | system | idempotent per (stayId, businessDate) · per checked-in stay, tonight unposted (D-25) | `folio.charge_posted`×N, night.posted = true |
 
 ### Guests · Expenses · Setup · Users — Guests, Setup, Users tier **b**; Expenses tier **a** via Ledger (the expense *is* an entry; `expense.*` rides on the ledger stream)
 | command | needs | emits |
