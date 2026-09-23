@@ -2,6 +2,8 @@
 
 Newest first. `date · commit · staging · cases · result · findings · blocking?`
 
+- 2026-09-24 · 4cb9908 (e2e aa34fd7) · be0647d5 (not walked) · full e2e 78/78 pass; S4-21 **pass** (N19 closed) · code read for S4-22..26: guest/contact/room type unchanged saves write nothing; **N20** an unchanged rate update still writes `setup.rate.updated` (`setup/domain.ts` rate update has no diff check; there is no rate edit screen yet, so only the command can hit it). Same class as N18 · N
+
 - 2026-09-24 · b364ccd (+ e2e aa34fd7) · d006aa47 (not walked) · full e2e 78: all pass except S4-21 · **N17** hyphen usernames created but never able to sign in (Better Auth default validator; fixed 7b9a923) · **N18** untouched account save wrote `user.updated` (fixed b364ccd) · **N19** contact created by a booking has a row and no `contact.created` event (S4-21 red; same class as guests-at-check-in) · N17 Y (fixed), N18 Y (fixed), N19 open
 
 - 2026-09-24 · 2cd38a8 (+ e2e) · acf36ff1 (not walked) · full e2e 56: all pass except S3-33 · new sweep S3-32: on 3cafabc 601-char text threw on room add, OOO, cancel stay, transfer, room type, guest, contact, write-off + both void prompts (N15, now closed); green on 2cd38a8 · **N16** refund form substitutes "Hoàn tiền" when reference is blank → `folio.reasonRequired` unreachable from the screen (screen inventing an answer to a rule); also `error.folio.reasonRequired` reads "lý do huỷ" on a refund (wording → product) · N

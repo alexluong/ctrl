@@ -26,7 +26,7 @@ An empty hotel treats a system operator as owner (first-owner bootstrap, D-11); 
 
 ## Finding numbers
 
-`N<n>` ids are minted here, by solex-qa only (architect ruling 2026-09-24); others describe a finding and ask for a number. Never reuse. **Next free: N20.** (N12 = guest search in URL, N13 = mise re-applies `.env` over exported env.)
+`N<n>` ids are minted here, by solex-qa only (architect ruling 2026-09-24); others describe a finding and ask for a number. Never reuse. **Next free: N21.** (N12 = guest search in URL, N13 = mise re-applies `.env` over exported env.)
 
 ## Blocking vs non-blocking
 

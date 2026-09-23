@@ -102,12 +102,35 @@ Category ids change once more to the client's list (groceries, incidental, hk_ov
 | S3-32 | D-24 (b), N15: input is never "network" | every form, fresh screen per form × variant: blank, 601-char text, 1e21/-5 numbers; void prompts blank/oversize | no 5xx, never "Không kết nối được máy chủ…"; shape failures = `input.invalid` | e2e:no-network-for-input.spec (10 screens) | 2cd38a8 pass (3cafabc: 9 forms + 2 prompts fail) |
 | S3-33 | D-24 (b) refund reason (hole found by N15) | owner refunds with no reason typed | refused `folio.reasonRequired` by name, before the ceiling check; nothing refunded | e2e:money-loop.spec "S3-33" + scenario (todo verify) | 2cd38a8 **fail** (N16: screen sends "Hoàn tiền") |
 
-## Slice 4 — users, roles, history (prepared ahead of the landings)
+## Slice 4 — accounts, roles, history
 
-| ID | rule | steps | expected | automated by | last run |
+**How to read this block (Alex).** Each row is one thing the app must do. *Who / what they do* is the walk. *What they should see* is the pass condition; quoted text is the exact Vietnamese message on screen. *Rule* is the decision or finding it proves. "Signed out" means the other browser is sent to the sign-in page on its next page load, not instantly. An **event** is one line in a record's history table ("Lịch sử…"). A record "born with an event" has a first line that says it was created. **e2e** = checked by the automated browser suite on a fresh database. **scenario** = checked by dev's unit tests. **code** = checked by reading the code only; no test yet.
+
+| ID | who / what they do | what they should see | rule | automated by | last run |
 |---|---|---|---|---|---|
-| S4-1 | D-18 receptionist sees no owner controls | sign in as receptionist; visit setup, stay (void/refund), receivables (write-off), expenses (void), guests (erase) | owner-only controls absent or replaced by a note; the commands still refuse when called directly | e2e (todo; receptionist pass) + scenario | — |
-| S4-2 | disabled user cannot sign in | owner disables a user; that user's live session and a new sign-in | session ends / sign-in refused with a message; stub user path included | e2e (todo) | — |
-| S4-3 | history: one correlationId per click | any money command from the screen (charge, payment, void, check-out) | history tab groups every event of one click under one correlationId; no event outside a group | e2e (todo) | — |
-| S4-4 | account screens are owner-only | receptionist opens user create/edit/disable | refused / hidden; last active owner cannot be disabled (S2-8 via the new screen) | e2e (todo) + scenario | — |
-| S4-5 | no PII in URLs on the new screens | user search/edit links | ids only (N12 rule, product §6) | e2e:extend no-pii-in-url + no-get-forms + no-network-for-input sweeps | — |
+| S4-6 | Owner opens **Tài khoản** (/accounts), fills name, username and a 12+ character password, leaves position empty, creates | new row listed as "Không giữ vị trí nào", 0 sessions | accounts exist without a position | e2e:accounts.spec "S4-6" | 4cb9908 pass |
+| S4-7 | Owner creates `lan`, then another account `LAN` | second one refused: "Tên đăng nhập này đã có người dùng." | usernames are case-blind | e2e "S4-7" | 4cb9908 pass |
+| S4-8 | Owner tries usernames `e2e lan` (space), `e2e!lan`, `ab` (2 characters), 33 characters | each refused: "Tên đăng nhập viết thường, 3–32 ký tự, chữ và số cùng . _ hoặc -" | username rule: 3–32 characters, letters, digits, `.` `_` `-` | e2e "S4-8" ×4 | 4cb9908 pass |
+| S4-17 | Owner creates `e2e-hyphen-…` (hyphens); that person signs in in another browser | sign-in works; session count on /accounts becomes 1 | N17: a hyphen accepted at creation must also sign in | e2e "S4-17" | 4cb9908 pass |
+| S4-9 | Owner creates an account with an 11-character password | "Tối thiểu 12 ký tự." | password ≥ 12 | e2e "S4-9" | 4cb9908 pass |
+| S4-10 | Owner opens an account, changes nothing, presses Save | "Không có thay đổi nào."; no new history line | N18: an unchanged save records nothing | e2e "S4-10" | 4cb9908 pass |
+| S4-11 | Staff member is signed in in another browser; owner presses **Đặt lại mật khẩu** and types a new 12+ password | session count 1 → 0; the other browser is signed out on reload | a password reset ends every session | e2e "S4-11" | 4cb9908 pass |
+| S4-12 | Owner resets a password to `short` | "Tối thiểu 12 ký tự." | same password rule on reset | e2e "S4-12" | 4cb9908 pass |
+| S4-15 | Receptionist is signed in elsewhere; owner presses **Đánh dấu đã nghỉ** | row shows "đã nghỉ", sessions 0; the other browser is signed out on reload | deactivating ends sessions in the same request | e2e:accounts.last.spec "S4-15" | 4cb9908 pass |
+| S4-18 | Receptionist is signed in elsewhere; owner changes their position to owner | sessions 0; signed out on reload | a role change ends sessions (new rights on the next sign-in) | e2e "S4-18" | 4cb9908 pass |
+| S4-16 | A receptionist signs in and opens /accounts, then /setup | /accounts: "Tài khoản thuộc quyền chủ khách sạn.", no create button. /setup: "Chỉ dành cho chủ khách sạn" | D-18: account and setup screens are owner-only | e2e "S4-16" (+ S3-22 for receivables) | 4cb9908 pass |
+| S4-13 | Someone with no position signs in | lands on **Sơ đồ phòng** (room board); no server error | no position ≠ broken screen | e2e "S4-13" | 4cb9908 pass |
+| S4-14 | Owner creates an account, then the event log is inspected | the creation line carries the username; no event anywhere contains the person's name or password | D-20: no personal data in events | e2e "S4-14" | 4cb9908 pass |
+| S4-19 | Desk books a stay, types a guest name at check-in, then opens that guest in **Khách & liên hệ** (/guests) | history starts with "Đã thêm khách" | a guest named at check-in is born with an event | e2e:people.spec "S4-19" | 4cb9908 pass |
+| S4-20 | Owner erases that guest (**Xoá dữ liệu**), then opens the guest's page | "Đã xoá thông tin"; history shows "Đã thêm khách" then "Đã xoá dữ liệu khách"; the name appears nowhere | D-20: erasure admits itself and keeps the history | e2e "S4-20" | 4cb9908 pass |
+| S4-21 | Checklist. Guest, room, room type, rate, staff, account and a contact typed on the booking form are all made through the screens, then the database is inspected | every row has a creating event; none has an empty history | D-22: every tier (b) row is born with an event | e2e "S4-21" (whole-DB check) | 4cb9908 pass (b364ccd **fail** N19) |
+| S4-22 | Checklist: the sign-in library checks the username with the same rule as account creation | a username that creation accepts signs in; one it refuses cannot exist | library re-validation = domain rule (N17 root cause) | e2e S4-17 + code (`auth/options.ts` calls `isUsername`) | 4cb9908 pass |
+| S4-23 | Desk opens a guest, changes nothing, saves | no new history line | unchanged save records nothing (as S4-10) | code (`people/domain.ts` update); test todo | 4cb9908 code pass |
+| S4-24 | Desk opens a contact, changes nothing, saves | no new history line | same | code; test todo | 4cb9908 code pass |
+| S4-25 | Owner edits a room type, changes nothing, saves | no new history line | same | code (`setup/domain.ts`); test todo | 4cb9908 code pass |
+| S4-26 | A rate is saved with nothing changed (no edit screen yet; command only) | no new history line | same | code | 4cb9908 **fail** (N20: writes `setup.rate.updated`) |
+| S4-3 | Any click that writes more than one line (check-out, void, payment) | every line from one click shares one correlationId; no line outside a group | one click = one group | scenario (folios.test void); e2e todo (DB check). The history table shows no correlationId column today | — |
+| S4-1 | A receptionist visits stay (void/refund), receivables (write-off), expenses (void), guests (erase) | owner-only buttons absent or replaced by a note; the commands still refuse if called directly | D-18 | partial: S4-16, S3-22; rest todo | — |
+| S4-2 | A deactivated person's session and a new sign-in attempt | session ended; sign-in refused | — | covered by S4-15 (session); refused sign-in todo | — |
+| S4-4 | Receptionist opens account create/edit/disable; the last owner tries to step down | refused / hidden; the last owner cannot step down (`staff.lastOwner`) | D-18, S2-8 | S4-16 + scenario | 4cb9908 pass |
+| S4-5 | Links and forms on /accounts and /guests | ids only in URLs; forms POST | N11, N12 | e2e no-get-forms, no-network-for-input include /accounts; no-pii-in-url covers /guests | 4cb9908 pass |
