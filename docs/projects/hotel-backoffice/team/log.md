@@ -50,3 +50,33 @@ Still open (need Alex's walkthrough, not probes): room-status transitions, how g
 assigned, whether the OTA receivable is net of commission.
 
 Board: fixed the TWO/THREE personas contradiction, added three money findings, rebuilt.
+
+## 2026-09-23 · WS1 — authentication shipped (Better Auth), console token retired
+Alex picked **Better Auth 1.7.5**, self-hosted, **username + password**. Built and deployed the
+same session; `solex-stg.collie.studio` now signs in. Architect accepted under D-21, product's
+D-18/D-20 answers arrived mid-build and changed one thing in flight (username sign-in for *all*
+roles, email optional, no email dependency anywhere).
+
+Shape: identity (`user`/`session`/`account`/`verification`) is **not** event-sourced — a password
+hash must never reach an append-only log. Staff roles *will* be, once the staff aggregate lands,
+because who-granted-whom-what is what an audit trail is for. `/system` gates on a
+`system_operator` flag rather than a hotel role: system admin, not admin personas.
+
+**`events.actor` is real now** — `user:<id>`, resolved to a display name at read time so history
+stays true when a name changes. Events written before today still say `"reception"` and were left
+alone. That was the point of the column.
+
+Retired: the shared console token (`SYSTEM_CONSOLE_TOKEN` deleted from the Worker) and
+`SYSTEM_CONSOLE_FALLBACK`, which made the console open locally and locked when deployed — a
+dev/prod difference on an access-control path.
+
+**Found and fixed a bug I introduced**: the console's table browser was printing live session
+tokens and password hashes, which would have let an operator become another user. Redaction is by
+column name so future tables are covered by default; `queries.test.ts` guards it. It is also the
+strongest argument yet for dropping the generic table browser in favour of Drizzle Studio.
+
+Worth knowing: Better Auth's scrypt costs ~80ms CPU, which **exceeds the Workers free tier's 10ms
+limit entirely**. We are on paid, so it works. Checked before recommending, not after.
+
+15 tests green (was 7). Notes: `agents/solex-dev/notes/2026-09-23-2130-auth.md`; design rationale
+in `stack.md` §Authentication. Next per D-22: Room → CRUD tier, then D-12 envelope, then Booking.

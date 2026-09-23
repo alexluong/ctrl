@@ -103,7 +103,8 @@ Alex asked to see event-driven architecture working, to browse the events, and t
 src/routes/            file routes; index = room board, system.* = operator console
 src/server/events/     store.ts (append/read/replay), stream.ts (ids), types.ts
 src/server/rooms/      domain.ts (pure rules), projection.ts, commands.ts
-src/server/system/     access.ts (token gate), queries.ts, api.ts
+src/server/auth/       options.ts (static) + index.ts (lazy instance), session.ts, api.ts, directory.ts
+src/server/system/     access.ts (operator gate), queries.ts, api.ts
 src/server/runtime/    node.ts | cloudflare.ts — the ONLY Cloudflare-aware files
 src/server/tenant.ts   current hotel (server-only; never import from a route)
 src/i18n/              messages.ts (en source + vi typed against it), context, format
@@ -118,7 +119,7 @@ The part that matters architecturally: **domain rules now fail with a code, not 
 
 Vietnamese wording is my own and worth a native pass — Alex can check it. Terms used: Trống sạch (vacant clean), Bẩn (dirty), Đã kiểm tra (inspected), Ngừng sử dụng (out of order). Money (VND) formatting is not done yet; it lands with the first charge.
 
-The console stays English on purpose: operator tool, code's vocabulary.
+Everything on screen is translated, **including the console**. Leaving it in English was a deliberate call I got wrong: because the header and language picker follow the locale, console pages rendered half in one language and half in the other, which reads as unfinished rather than as a choice. Identifiers stay literal — table names, stream ids, column names, event payloads. Those are not prose.
 
 ### The system console, and whether it should have been built
 
@@ -126,13 +127,45 @@ Alex asked whether it was all hand-built. It was: ~350 lines, four routes and tw
 
 - The **generic table browser duplicates Drizzle Studio** (`pnpm db:studio`, already wired). If this grows, that part should go and Studio should own table browsing.
 - The **event log, stream/type filters and the replay button** are not duplicative — no general-purpose database tool knows what an event stream is, or that projections are disposable.
-- Console access is one shared token, constant-time compared, open locally and **closed when deployed unless configured**. Stopgap until D-11.
 
-### What I'd want before calling this production-shaped
+**The table browser also turned out to carry a cost.** Adding authentication put password hashes and live session tokens in the same database as the room board, and a browser that shows any table it finds showed those too. A session token on screen is not a record of a credential, it *is* the credential. Fixed by redacting on column name rather than table name, so a future table with a `token` column is covered the day it is added; `src/server/system/queries.test.ts` is the test that has to keep passing. Worth noting as an argument for the smaller console: the fewer generic surfaces, the fewer of these.
 
-- **Authentication.** The room board is public on staging and the console is only as strong as one shared token. Real auth is a decision for architect + `docs/stack.md`'s auth stance.
-- **Event versioning.** Payloads are unversioned JSON. Fine now; a rename of a field later needs an upcaster, and deciding that early is cheaper.
-- **A second aggregate** will tell us whether the store's shape holds. Booking is the real test, because of the cross-aggregate availability rule.
+## Authentication (D-11 / D-18, built 2026-09-23)
+
+**Better Auth 1.7.5**, self-hosted, username + password. Alex's call; architect accepted under D-21.
+
+Why not the alternatives: Auth.js treats credentials as second-class (JWT-only sessions, no password lifecycle); Lucia is sunset as a library; hosted providers (Clerk, WorkOS) add a third-party hop from a Worker for accounts an owner creates by hand anyway.
+
+**The Workers gotcha, for whoever hits it next.** Better Auth hashes with pure-JS scrypt (`@noble/hashes`), roughly 80ms of CPU. The Workers *free* tier allows 10ms per request, so sign-up and sign-in fail outright there. We are on a paid plan (30s), so the default stands and staging signs in fine. If that ever changes, the fix is a custom `emailAndPassword.password.hash/verify` using `node:crypto.scryptSync` — `nodejs_compat` is already on. Upstream: better-auth#8860, #8456.
+
+### The three decisions inside it
+
+**Usernames, not emails.** Product's D-18 #2: housekeeping is not a user at all, and a small hotel's receptionists may have no work address, so an email requirement would block onboarding. Better Auth still wants a unique email per user, so we mint `<username>@staff.invalid`. `.invalid` is reserved by RFC 2606 and can never resolve — if a stray code path ever tries to mail a user it fails loudly rather than quietly reaching a stranger. A real address, when someone has one, lives in `contactEmail` and carries no auth meaning. There is no email dependency anywhere: no verification, no self-service reset. An owner sets a new password.
+
+**Identity is not event-sourced; roles will be.** Better Auth's four tables (`user`, `session`, `account`, `verification`) are ordinary mutable state. A password hash must never reach an append-only log — there would be no way to take it back. But *who granted whom access, and when* is exactly what an audit trail is for, so staff membership and roles belong in the log as events once the staff aggregate lands. Better Auth's organization plugin is deliberately unused for that reason, and because `hotel_id` is already our own convention.
+
+**Operator access is a flag, not a role.** `/system` is gated on `user.system_operator`, not on `owner`. Alex's framing: system admin, not admin personas. `owner` and `receptionist` are positions inside a hotel; reading the raw log and rebuilding projections is a property of whoever runs the servers, and neither implies the other. It is set by a database write, never by a request (`input: false`), which is the friction we want. It is also the one piece of access deliberately outside the event log — infrastructure, not hotel history.
+
+### What this replaced, and what it bought
+
+The shared console token is gone, and `SYSTEM_CONSOLE_TOKEN` is deleted from the Worker. No credential to rotate, paste into a chat, or leave going stale in a password manager.
+
+`SYSTEM_CONSOLE_FALLBACK` went with it — the flag that made the console open locally and locked when deployed. Convenient, but it was a behavioural difference between dev and prod sitting on exactly the code path where such a difference costs most. Developers make an account like everyone else.
+
+The real gain is the audit trail. `events.actor` had been the literal string `"reception"` since the store was written. It now records `user:<id>` — an id, never a name, because the log is permanent and a name is not (people marry, get corrected, leave). Display names resolve at read time in `server/auth/directory.ts`, so history stays true when a name changes; an id with no matching row renders as the raw id rather than "unknown", because a deleted account should look odd enough to ask about. Events written before this keep saying `"reception"`, which is correct — the log is not rewritten to flatter the new design.
+
+### Shape
+
+One gate, in the root route's `beforeLoad`: everything reads hotel data and there is no public page to fall back to, except `/sign-in` itself. Sign-in is a server function rather than Better Auth's browser client — every other mutation in the app returns `{ ok }` with a code the screen translates, and the auth library stays out of the browser bundle entirely (verified: no `better-auth` in `dist/client`). "No such user" and "wrong password" give the same message, so nobody can enumerate who works at the hotel.
+
+Accounts are created by `scripts/create-user.mjs`, which reads the password from stdin (not a flag, so it stays out of shell history and the process list) and has a `--sql` mode that emits statements for `wrangler d1 execute` against deployed D1.
+
+### Still open
+
+- **No change-password screen.** Changing one today means recreating the account. Lands with the staff screen.
+- **No staff aggregate yet**, so no hotel roles and no per-command capabilities — product's D-18 #1 defines them (`owner`, `receptionist`, capability-based). Until then every signed-in user can run every command.
+- **No rate limiting** on sign-in.
+- Architect's `requireUser()` contract (D-21) wants `{id, username, name, hotelId, role}`; we have the first three. `hotelId` and `role` arrive with the staff aggregate.
 
 ## Storage shape for event sourcing (desk exercise for architect, 2026-09-23)
 
