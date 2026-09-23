@@ -4,6 +4,7 @@ Owner: `solex-dev`. Repo: `alexluong/solex` (private), local at `~/git/hub/alexl
 
 ## Status
 
+- 2026-09-23 — **i18n in** (VN + EN, Vietnamese default, server-resolved; rule failures carry codes so they can be translated).
 - 2026-09-23 — **event-sourcing skeleton built and deployed**. Event store, first aggregate (Room), projections, and a system console for browsing the log and the database. All of it live on https://solex-stg.collie.studio, keyed by hotel per D-9.
 - 2026-09-23 — spike done and deployed. Repo bootstrapped, `fix`/`check` green, GitHub remote pushed.
 
@@ -95,6 +96,14 @@ Alex asked to see event-driven architecture working, to browse the events, and t
 **Console access**: a token compared in constant time, held in a cookie. Locally, with no token configured, the console is open. Deployed, a missing token means **closed** — fail closed, never guess. The staging token is set and recorded in `ctrl/secrets/hotel-backoffice.md`.
 
 **Also browsable outside the app**: `pnpm db:studio` (local file) and `pnpm db:studio:remote` (deployed D1, needs a Cloudflare API token with D1 rights — not created, and it belongs in Vaultwarden). `wrangler d1 execute` covers ad-hoc SQL.
+
+**Internationalisation (Alex, 2026-09-23)**: Vietnamese + English, Vietnamese as default. Resolved on the server (cookie, else `Accept-Language`) and passed down, so SSR and hydration agree — picking locale in the browser would guarantee a mismatch. English is the source dictionary and Vietnamese is typed against it: a missing key is a build error, not a blank label.
+
+The part that matters architecturally: **domain rules now fail with a code, not a sentence** (`room.isOutOfOrder`, not "room is out of order"). The server cannot know the reader's language, so any message baked into an aggregate is untranslatable by definition. Anything product adds later should keep this shape. Adding a third language = one dictionary file.
+
+Vietnamese wording is my own and worth a native pass — Alex can check it. Terms used: Trống sạch (vacant clean), Bẩn (dirty), Đã kiểm tra (inspected), Ngừng sử dụng (out of order). Money (VND) formatting is not done yet; it lands with the first charge.
+
+The console stays English on purpose: operator tool, code's vocabulary.
 
 ### What I'd want before calling this production-shaped
 
