@@ -467,4 +467,4 @@ Envelope + naming per §6 conventions (D-12). Streams: `booking:*` `stay:*` `roo
 - 2026-09-19 — not started.
 - 2026-09-23 — v0 draft from requirements + explore's ezFolio map. Aggregate list sent to architect.
 - 2026-09-23 — v0.1: D-6 folded — setup/admin persona, Catalogue → Setup context (HotelProfile, Room/Type/Floor defs, RateTable, ChargeItem, ChargeBehaviour, Company, BookingRules). Awaiting Alex on §10.
-- 2026-09-23 · **v1** — full session w/ Alex: multi-tenant (D-9), naming/envelope (D-12), Booking (D-13), Stay+nights (D-14/13), money + Ledger (D-16/15), roles/authz (D-18), screens (D-19), rules §10, command catalogue §11, event index §12.
+- 2026-09-23 · **v1** — full session w/ Alex: multi-tenant (D-9), naming/envelope (D-12), Booking (D-13), Stay+nights (D-14/15), money + Ledger (D-16/17), roles/authz (D-18), screens (D-19), rules §10, command catalogue §11, event index §12.
