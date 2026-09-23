@@ -1,4 +1,5 @@
 # Team log
+- 2026-09-24 — architect: N12 (`/guests?q=` puts a name in the URL) ruled same class as N11, non-blocking, fixed before go-live via server-fn search + client state; product adds "PII never in a URL" to §6.
 - 2026-09-24 — architect: N11 (pre-hydration GET puts guest PII in the URL) ruled **blocking** under D-20; fix = `method="post"` on every form, before slice 4. solex-qa e2e live (ef6d242); N10 sweep red 15/15 → dev.
 - 2026-09-24 — architect: reviewed slice 3 landing 6 receivables (dev 1ad54f4, 242 green). Ruled D-12 (f): commandId replay in `commit`, not per command. Non-blocking, before expenses. Screen walk → solex-qa.
 - 2026-09-24 — Worktree swap: `../solex-qa` handed to the solex-qa session (name matches agent, Alex's ask); architect now reviews in `../solex-architect`. Alex: dev should keep asking architect questions, not wait for him.
