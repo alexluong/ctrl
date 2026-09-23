@@ -317,8 +317,10 @@ than an empty shell — see `../tools/pageprobe.mjs`):
 `extra_service` · `category` · `package` · `currency` · `restaurant_product`
 
 These are where rooms, room types, minibar items, laundry items and service items with their
-prices are maintained. **We cannot see any of them** on a reception account. Getting an admin
-login is the only way to document their fields — worth asking the client for.
+prices are maintained. **We cannot see any of them** on a reception account, and we are not going
+to chase an admin login for it (Alex, 2026-09-23). The masters are inferrable from the data and the
+posting dropdowns, and the rebuild is designing its own setup surface anyway — see
+*Setup / configuration is its own scope* below.
 
 **2. Charge behaviour — in Settings (`?page=setting`), and reception *can* see it.**
 The settings page has **26 tabs**, not the 8 recorded earlier. The relevant ones:
@@ -352,7 +354,9 @@ The settings page has **26 tabs**, not the 8 recorded earlier. The relevant ones
   rebuild needs one posting flow with an item type, reachable from the room.
 - **The item catalogue is the config surface the client actually needs**: rooms + room types with
   prices, minibar items, laundry items, service items. Today it is admin-only and invisible to the
-  people doing the work, and the extra-service list shows what happens without curation.
+  people doing the work, and the extra-service list shows what happens without curation. The rebuild
+  designs this fresh rather than copying ezFolio's version — see *Setup / configuration is its own
+  scope*.
 - **Tax and service charge are per charge type, and currently all zero.** Keep the capability
   (VN hotels commonly run 5% service + 8–10% VAT) but do not assume they use it.
 - **Early/late fees are charged as catalogue items in practice** (Alex, 2026-09-21) — the extra-service
@@ -408,7 +412,11 @@ The settings page has **26 tabs**, not the 8 recorded earlier. The relevant ones
 - **Overbooking is switched on** (`allow_over_room`), and the day boundary is `time_next_date = 23:59`. Both need an explicit decision.
 - **Child age threshold is 6** (`min_tre_em`), adults/children auto-counted from the guest list.
 - **All tax and service charges are 0 and everything is net** — they charge gross with no VAT line. Keep the capability, don't assume the usage.
-- **Admin/config screens are permission-blocked for our account** — room, room type, service and product masters (and presumably users/permissions) are invisible. Need an admin login to document them; masters are currently inferred from dropdowns.
+- **Setup / configuration is its own scope, with its own persona** (Alex, 2026-09-23). ezFolio's masters are permission-blocked and we are *not* pursuing an admin login: the rebuild builds this surface itself. That adds a third persona to the two operational ones:
+  - **Manager/owner** — reads how the hotel is doing.
+  - **Receptionist** — runs the day.
+  - **Setup/admin** — defines what the system is made of: rooms and room types with their prices, the minibar / laundry / extra-service catalogues with prices, tax and service-charge behaviour, and the booking rules (day boundary, overbooking, child age). Used rarely, mostly at onboarding and when prices change; likely the owner rather than a separate person.
+  Everything WS2 could observe about this surface is in *Charges and the config behind them*: the split between item masters and charge behaviour, the eight buckets, and the settings that actually carry values. The ezFolio screens are a reference for *what needs configuring*, not a design to copy — their extra-service catalogue is the argument against copying it.
 - **Candidate core for the rebuild** (WS3 decides; this is WS2's read of what is actually used): bookings incl. group/company + waiting list · room assignment & room status · check-in / check-out · folio with extras (minibar, laundry, extra bed, breakfast, late/early, transfer, damages) · payments incl. deposits · receivables by debtor · guest profiles w/ history · revenue + occupancy reporting · PA18 export · user attribution/audit. **Out**: restaurant POS, housekeeping scheduling, key cards, golf, multi-property, channel-manager sync (later), card storage (never).
 - **Cancellation and no-show are statuses, not deletions** — keep them as events on the room-stay (matters for OTA no-show charging and for honest occupancy history).
 - **Breakfast is counted per stay** (vouchers, adults, children) and printed daily — small but load-bearing for the restaurant handoff.
@@ -519,7 +527,7 @@ that are genuinely sequential, and text panels carrying the modelling notes:
 | 5 | Receptionist · 3b · Charges | tile modal → minibar → laundry → revenue buckets | the eight buckets, the catalogue mess, the one charge shape |
 | 6 | Receptionist · 4 · Departure & settlement | deposits → folio → receivables | group folio routing (nine switches) |
 | 7 | Manager / owner | occupancy trend · daily room revenue · guest history | — |
-| 8 | Admin · config | charge config · booking rules · hotel info | the locked item masters |
+| 8 | Setup / admin · config | charge config · booking rules · hotel info | what setup has to cover, and why not to copy theirs |
 | 9 | What matters for the rebuild | — | core vs out, and the hard findings |
 
 Sections 5 and 8 exist only here — the FigJam board never got them.
@@ -589,3 +597,4 @@ revived on a paid seat. Treat the Excalidraw file as the source of truth.
 - 2026-09-21 — charges flow mapped (8 buckets, posting from the room tile, catalogues recovered from data); config flow located: masters blocked, charge behaviour visible in Settings' 26 tabs.
 - 2026-09-21 — Alex: hourly stays not used (daily only); early/late charged as catalogue items, not multipliers.
 - 2026-09-23 — board moved to Excalidraw (file-based, no API cap); regenerated in full incl. the charges and config sections FigJam never got.
+- 2026-09-23 — admin-login question closed by Alex: setup/configuration becomes its own scope with a third persona, designed rather than reverse-engineered.

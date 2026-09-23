@@ -13,7 +13,7 @@
 **Standby / on-call.** `existing-system.md` is complete and merged into README. Now:
 
 1. Answer re-read requests from solex-product (specific screens, field lists, flows) — reply by message, add facts to `existing-system.md`.
-2. When Alex gets an admin login: document masters (rooms, room types, rates, services, users/permissions) → new section.
+2. ~~Admin login → masters~~ **closed 2026-09-23**: not pursuing. Setup/config is WS3's to design; the ezFolio masters stay permission-blocked and inferred.
 3. If asked: the "which booking fields are used daily" question — observe from real bookings rather than the form.
 4. Keep `tools/` working (Playwright scrapers) as the fallback data path; `.profile/`, `node_modules/`, `screens/`, `exports/`, `board/` stay gitignored.
 5. Keep the flow board current: `tools/excalidraw/build.py flow.json ../../board/solex-flow.excalidraw`. Regenerating overwrites Alex's own edits — only rebuild when he has saved, and say so.

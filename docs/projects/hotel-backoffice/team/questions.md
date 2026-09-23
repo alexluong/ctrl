@@ -5,7 +5,7 @@ Format: `- [ ] Q (asked by, date) → for: Alex | client`. Check off + answer in
 - [ ] Which booking-editor fields does reception actually use daily? Parked, not blocking (explore, 2026-09-20) → Alex/client
 - [ ] Must the rebuild keep the PA18 guest declaration export? (explore, 2026-09-20) → Alex/client
 - [ ] (deferred) Ask ezCloud for a **database export** of history — only when migration comes up; rebuild starts fresh. (explore, 2026-09-20) → Alex/client
-- [ ] Admin account for ezFolio config screens? Parked, not blocking (explore, 2026-09-20) → Alex/client
+- [x] Admin account for ezFolio config screens? **Closed 2026-09-23** — not pursuing. Setup/config is a scope the rebuild owns, not something to reverse-engineer (Alex).
 - [ ] Hookdeck: stock SaaS retention, or something making long retention a non-issue? Decides log vs bus. (architect, 2026-09-19) → Alex
 - [x] What is the system at `:99`? → **The PMS the client uses today.** (answered by Alex via explore, 2026-09-19)
 - [ ] Does the Excel workbook implied by `requirements.md` exist? Can we get it? (architect, 2026-09-19) → Alex/client
@@ -30,7 +30,7 @@ Product's recommendations for each are in `product.md` §10 — Alex can just ac
 ## Open questions
 
 - [ ] PA18 / guest declaration export — legally required to keep? (explore, 2026-09-20) → Alex/client
-- [ ] **Admin login for ezFolio** — biggest remaining gap; all item masters + pricing config invisible without it. (explore, 2026-09-20, re-raised 2026-09-23) → Alex/client
+- [x] **Admin login for ezFolio** — **closed 2026-09-23 by Alex**: not worth chasing. The masters stay invisible; instead *setup/configuration becomes its own scope with its own persona* (rooms + prices, item catalogues + prices, tax/service behaviour, booking rules). WS3 designs it fresh; ezFolio's version is a checklist of what needs configuring, not a model to copy.
 - [ ] Which of the ~60 booking-editor fields does reception use daily? (explore, 2026-09-20) → client — before booking form scope
 - [ ] Staff internet reliability at the hotel (Cloudflare-hosted = no LAN fallback)? (explore, 2026-09-20) → Alex
 - [ ] Ask ezCloud for a DB export? Parked, not critical path (D-5). (explore, 2026-09-20) → Alex
