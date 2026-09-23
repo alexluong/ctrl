@@ -836,3 +836,34 @@ ruling — a group stay can walk out with a zero own folio, which is correct). T
 HotelProfile.
 
 QA has S5-6…S5-13 waiting for these screens; told them the affordance names.
+
+## solex-dev — paused for compaction; landing 3 spec (2026-09-24)
+
+Everything green and pushed at `db0c0e0` (solex), staging `68192888`. 309 scenarios, build clean.
+Nothing half-written.
+
+**Resume here — 5.1 landing 3, CloseBooking.** Architect's ruling, verbatim enough to build from:
+
+- A **new explicit command** `booking.close`, on the desk capability. `booking.closed` already exists
+  in `foldBooking` and nothing has ever emitted it — this is what emits it.
+- Refused unless **every stay is checked out or cancelled** (`booking.staysOpen`) **and the master
+  balance is ≤ 0** (`booking.masterNotSettled`).
+- Both read **inside the plan, under the master stream's version**, the same way the check-out guard
+  reads the folio balance — otherwise a charge landing mid-command closes a booking that owes money.
+- **Not automatic on the last check-out.** The money guard stays a visible act somebody performs.
+- Booking detail shows "ready to close" and the button.
+
+Check-out is unchanged (earlier ruling): a group stay walks out with a zero own folio, which is
+correct, and is why the master needed its own screen first.
+
+Two i18n keys will be needed for the refusals plus the button and the ready state; the
+`routing.*` / `master.*` / `booking.kind*` placeholders are still awaiting Alex's wording pass and
+should not be touched by this landing.
+
+After landing 3: **5.2 cron entry + HotelProfile** (D-7 zone + roll hour, replacing the hardcoded
+`Asia/Ho_Chi_Minh`), then 5.3 dashboard/reports → 5.4 deposits → 5.5 folio print → 5.6 search,
+overbooking override, plus architect's two deferred items (N22 `nothingToChange` everywhere, N21
+history grouped by correlationId).
+
+Still waiting on Alex, neither blocking: the Vietnamese pass (now including the group and routing
+screens, which are live with my placeholder wording), and whether a receptionist may refund at all.
