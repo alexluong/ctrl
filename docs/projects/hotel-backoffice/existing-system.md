@@ -507,9 +507,28 @@ screenshots and those carry live guest data. Generated from `tools/excalidraw/fl
 has the screenshots. Open it with the VS Code extension `pomdtr.excalidraw-editor` so edits save
 straight back into the file.
 
-Nine sections: the two hub screens (room map + tape chart) · receptionist phases 1, 2, 3, 3b
-charges, 4 · manager/owner · admin config · a findings panel. 22 screenshots, arrows inside the
-phases that are genuinely sequential, and text panels carrying the modelling notes.
+**What the board contains** — 9 framed sections, 22 screenshots, arrows only inside the phases
+that are genuinely sequential, and text panels carrying the modelling notes:
+
+| # | Section | Screens | The panel says |
+|---|---|---|---|
+| 1 | The two hub screens | room map · tape chart | why these two, and how each role reads them |
+| 2 | Receptionist · 1 · Booking | group availability · walk-in form · companies | the group vs individual aggregate shape |
+| 3 | Receptionist · 2 · Arrival | arrivals → tile modal → in-house | — |
+| 4 | Receptionist · 3 · During the stay | room move · breakfast · HK sheet | — |
+| 5 | Receptionist · 3b · Charges | tile modal → minibar → laundry → revenue buckets | the eight buckets, the catalogue mess, the one charge shape |
+| 6 | Receptionist · 4 · Departure & settlement | deposits → folio → receivables | group folio routing (nine switches) |
+| 7 | Manager / owner | occupancy trend · daily room revenue · guest history | — |
+| 8 | Admin · config | charge config · booking rules · hotel info | the locked item masters |
+| 9 | What matters for the rebuild | — | core vs out, and the hard findings |
+
+Sections 5 and 8 exist only here — the FigJam board never got them.
+
+**Status: this is the WS2 deliverable in visual form.** It is a map of the *existing* system, not a
+design. Nothing on it is a proposal. The flows are what the screens show plus what the field and
+permission probes proved; where a step could not be observed read-only (posting a charge, saving a
+booking) the board says so rather than inventing the click path.
+
 
 Rebuild it with:
 

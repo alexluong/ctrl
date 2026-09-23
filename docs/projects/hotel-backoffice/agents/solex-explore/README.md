@@ -15,12 +15,15 @@
 1. Answer re-read requests from solex-product (specific screens, field lists, flows) — reply by message, add facts to `existing-system.md`.
 2. When Alex gets an admin login: document masters (rooms, room types, rates, services, users/permissions) → new section.
 3. If asked: the "which booking fields are used daily" question — observe from real bookings rather than the form.
-4. Keep `tools/` working (Playwright scrapers) as the fallback data path; `.profile/`, `node_modules/`, `screens/`, `exports/` stay gitignored.
+4. Keep `tools/` working (Playwright scrapers) as the fallback data path; `.profile/`, `node_modules/`, `screens/`, `exports/`, `board/` stay gitignored.
+5. Keep the flow board current: `tools/excalidraw/build.py flow.json ../../board/solex-flow.excalidraw`. Regenerating overwrites Alex's own edits — only rebuild when he has saved, and say so.
 
 Done (WS2 v1): ~30-screen map, group-booking flow, candidate core, hard constraints, broken-export finding → D-5.
 
 ## Log
 
+- 2026-09-23 — flow board rebuilt in Excalidraw (`board/solex-flow.excalidraw`, generator in `tools/excalidraw/`). FigJam frozen: Starter plan = 20 MCP calls/month. Charges + config flows mapped; item masters confirmed permission-blocked. See `notes/2026-09-23-1647-board-excalidraw.md`.
+- 2026-09-21 — group + individual booking flows dug out properly; tape chart named; 41 screenshots reviewed by eye.
 - 2026-09-19 — session created.
 - 2026-09-20 — WS2 delivered (02c02c8). Objective rev 2: standby / on-call for product + admin screens.
 - 2026-09-20 — ezFolio walkthrough with Alex: ~30 screens mapped, `existing-system.md` complete incl. group-booking flow, experience map, candidate core, "For other WSs". Export broken → start fresh (migration deferred). Ready for product handoff.
