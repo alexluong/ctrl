@@ -687,3 +687,42 @@ older code left behind won't linger.
 
 **Next**, unchanged from the entry above: the Company Setup screen, then the transfer form's
 free-text company box becomes a picker over the list.
+
+## solex-dev — 5.1a finished: companies are pickable (2026-09-24)
+
+`d896f3c`, staging `eda576d9`. 285 green, build clean.
+
+Last commit defined the entity and nothing could use it. Now:
+
+- **Setup has a Companies section** — define (name, tax code, phone, note), list, retire. Retired
+  rows stay visible and greyed, like room types and rates.
+- **The folio's transfer form picks from the list.** That was the point of Company: "ABC" and
+  "Cty ABC" were one company to the desk and two ledger accounts to us.
+- **Receivables names the company** instead of printing its slug, reading the list with
+  `{ all: true }` — a debt outlives the decision to stop booking somebody — and falling back to the
+  id for a debt older than the list.
+
+Two silences, two answers (N10): an empty picker says `folio.noCompanies`, a picker nobody chose
+from says `folio.companyRequired` (reworded from "Say which company" to "Choose which company", and
+VN "Nhập" → "Chọn", now that it is a select). The select has **no default**: which company owes this
+is not the screen's to answer (N16), and the first name alphabetically is a wrong debt waiting.
+
+Verified in the browser end to end, not just in unit tests: define a company → charge a stay →
+transfer → the receivables page shows **the name** and the amount → retiring that company is refused
+with `company.inUse` in readable Vietnamese. That last one is the guard from the previous commit
+firing for real, on the receivable half. The booking half still can't fire — nothing writes
+`bookings.company_id` until groups land, which is expected and why the column went in early.
+
+**Deliberately not built: the routing control.** `Company.defaultRouting` decides own bill vs master
+folio, and neither the master folio nor Alex's words for it exist until 5.1. A box writing a field
+nothing reads, under a label still being translated, is not a head start. It arrives with landing 2,
+where the per-stay routing controls are.
+
+I touched **QA's e2e support file**: `companyOwesOneNight` now defines the company then
+`selectOption`s it instead of `fill`ing free text, and S3-23's "transfer with no company" defines one
+first so it still tests the silence it was written for rather than the new empty-list one. Mechanical
+adaptations to a control I changed — QA owns them and should overrule me freely.
+
+**Next: 5.1 landing 1 (domain)** — group booking creates N stays from `requests[]`, `booking.party`
+gains `companyId`, master folio opens lazily on `folio:master:<bookingId>`, routing resolved at
+`postCharge`. `booking.groupNotSupported` in `booking/domain.ts` is the check to delete.
