@@ -2,6 +2,7 @@
 
 Newest first. `YYYY-MM-DD — <agent>: what`.
 
+- 2026-09-23 — product: §10 row 9 = refuse rate.notFound; guest.erased in §12; roomType retire refuses `roomType.inUse` (a56012b); dev told.
 - 2026-09-23 — architect: slice 2A (RoomType + RateTable) reviewed; slug ids + half-open rates accepted; **no-rate night refuses, not 0** (overruled); 2 Qs → product.
 - 2026-09-23 — dev: N8 (deploy now migrates D1 before the Worker flips — was a real gap) + N9 closed (5b93104). Architect: dev starts slice 2.
 - 2026-09-23 — architect: slice 1 walkthrough green (f35bded). N8 migrate-on-dev, N9 checked-out style → dev. Alex asked for staging pass.
