@@ -300,7 +300,9 @@ type Payment = {
   ref?: string                 // transfer reference
 }
 ```
-Events: `folio.opened` · `folio.charge_posted` · `folio.charge_voided(reason)` · `folio.charge_moved(chargeId, toFolioId)` (ezFolio "Chuyển dịch vụ") · `folio.payment_received` · `folio.payment_refunded` · `folio.transferred_to_receivable(companyId, amount)` · `folio.closed`.
+Folio accounts open **lazily** on the first charge or payment, with derived ids — own `folio:<stayId>`, master `folio:master:<bookingId>` — never at CreateBooking (empty = zero to every reader; derived ids make retry safe). As built (slice 3): `room` category posts only via the night roll · refunds capped at payments received on that folio, not at the credit balance · deposit = a payment before any charge, allowed.
+
+Events: `folio.opened` (first line, lazy) · `folio.charge_posted` · `folio.charge_voided(reason)` · `folio.charge_moved(chargeId, toFolioId)` (ezFolio "Chuyển dịch vụ") · `folio.payment_received` · `folio.payment_refunded` · `folio.transferred_to_receivable(companyId, amount)` · `folio.closed`.
 Rules: never edit a charge — void and repost · a night's room charge posts once, at the roll (D-7), or at check-in for the current night · move charges only while both folios open · close only at 0 or after transfer · deposit = payment of kind `deposit` (master folio for groups, stay folio for individuals); forfeit = `folio.deposit_forfeited` posts a compensation charge against it.
 
 Simplifications vs ezFolio: dropped `telephone` category (dead) · discount = negative-priced line or void + repost, **no approval workflow in v1** (later ticket) · tax/service % not modelled as lines (VAT / red invoice → later) · FOC = rate 0, not a payment method · `debt` is not a payment method, it is the transfer-to-receivable action.
@@ -420,7 +422,7 @@ Command = one intent. `needs` = capability. `checks` = rules beyond "hotel match
 ### Reservations — tier **a** (Booking, Stay streams; availability stream)
 | command | needs | checks | emits |
 |---|---|---|---|
-| `CreateBooking {kind, party, sourceId?, arrive, depart, requests[], notes?}` | `booking.create` | arrive < depart · qty ≥ 1 · availability per type (warn/override) · individual: room given + free | `booking.created`, `stay.created`×N, `folio.opened` (master if group, own per stay) |
+| `CreateBooking {kind, party, sourceId?, arrive, depart, requests[], notes?}` | `booking.create` | arrive < depart · qty ≥ 1 · availability per type (warn/override) · individual: room given + free | `booking.created`, `stay.created`×N (folios open lazily on first line, derived ids) |
 | `ChangeBookingParty / Notes / Requests` | `booking.edit` | open · requests: availability | `booking.party_changed` / `notes_changed` / `requests_changed` (+ `stay.created`/`stay.cancelled`) |
 | `CancelBooking {reason}` | `booking.cancel` | no stay checked in | `booking.cancelled`, `stay.cancelled`×N |
 | `CloseBooking` | `booking.edit` | all stays terminal · master folio 0 or transferred | `booking.closed`, `folio.closed` |
