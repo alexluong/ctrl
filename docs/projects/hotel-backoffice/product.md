@@ -40,7 +40,10 @@ type User = { id: UserId; hotelId: HotelId; name: string; username: string; emai
 // staff rules: the last active owner cannot be demoted or deactivated (`staff.lastOwner`) — the one lockout in the system; re-adding a former member is refused (`staff.alreadyStaff`), use Reactivate so one person has one history. `room.set_out_of_order` stays a receptionist capability: AC dies at 23:00, desk pulls the room, nobody wakes the owner; it is the only receptionist power that moves supply, by design.
 ```
 - Every command declares the capability it needs; the handler checks it against the actor. Audit = event `actor` + capability.
-- **v1 ships two fixed bundles**: `receptionist` (Front Desk ops + receivable payments + expense record, assumed) and `owner` (all). Sensitive ones — void, refund, write-off, setup, users — sit in `owner` by default.
+- **v1 ships two fixed bundles** (as built, slice 3):
+  - `receptionist`: `booking.create/edit/cancel` · `stay.assign/check_in/check_out/move/cancel` · `room.set_status/set_out_of_order` · `folio.post_charge/move_line/take_payment/transfer_to_receivable` · `receivable.record_payment` · `expense.record` (petty cash: desk buys water, records it — client-flag assumption) · `guests.view`
+  - `owner`: everything above + `folio.void/refund` · `receivable.write_off` · `expense.void` · `reports.view` · `setup.edit` · `users.manage` · `guests.erase`
+  - No `ledger.*` capability: ledger ops are internal, reached only through folio / receivable / expense commands.
 - Custom roles / editing bundles in Setup → later; the model already allows it because a role *is* a capability list.
 - No approval workflows in v1 (discount approval → later ticket). Admin SDK (D-9) sits outside the apps, for seeding/tenant creation.
 
@@ -245,7 +248,9 @@ type Entry = {
   ref?: { stayId?; chargeId?; entryId? /* reversed */ }
   memo?: string
 }
-// balance(account) = Σ its lines · entries immutable; undo = reversal entry · account closes only at 0
+// balance(account) = Σ its lines, never folded/stored · entries immutable; undo = reversal entry · account closes only at 0
+// streams are per account: <hotelId>/account:<id>. An entry touching N accounts is appended to all N streams
+// (same entryId + correlationId, full entry in each payload); projections dedupe by entryId.
 ```
 Events: `ledger.account_opened` · `ledger.entry_posted` · `ledger.entry_reversed(entryId, reason)` · `ledger.account_closed`.
 
@@ -535,7 +540,7 @@ Rules active in slice 1: arrive < depart · room free on every night `[arrive, d
 
 ## 12. Event index
 
-Envelope + naming per §6 conventions (D-12). **Two tiers (D-22)**: `booking.*` `stay.*` `ledger.*` (+ `folio.*` `receivable.*` `expense.*` as Ledger-derived) are state — folded on replay. `room.*` `guest.*` `contact.*` `setup.*` `user.*` `staff.*` are **notifications**: emitted on every CRUD write for history tabs and projections, never folded; the row is truth. Streams: `booking:*` `stay:*` `room:*` `folio:*` `receivable:*` `ledger:*` `guest:*` `contact:*` `expense:*` `setup:*` `user:*` `staff:*` + `availability:all` (serialisation only, D-8; its sole event `availability.changed {cause}` is never folded). **Stream ids are hotel-first per D-9: `<hotelId>/booking:<id>`, `<hotelId>/availability:all`.**
+Envelope + naming per §6 conventions (D-12). **Two tiers (D-22)**: `booking.*` `stay.*` `ledger.*` (+ `folio.*` `receivable.*` `expense.*` as Ledger-derived) are state — folded on replay. `room.*` `guest.*` `contact.*` `setup.*` `user.*` `staff.*` are **notifications**: emitted on every CRUD write for history tabs and projections, never folded; the row is truth. Streams: `booking:*` `stay:*` `room:*` `folio:*` `receivable:*` `account:*` (one per ledger account; an entry is appended to every account stream it touches, deduped by entryId) `guest:*` `contact:*` `expense:*` `setup:*` `user:*` `staff:*` + `availability:all` (serialisation only, D-8; its sole event `availability.changed {cause}` is never folded). **Stream ids are hotel-first per D-9: `<hotelId>/booking:<id>`, `<hotelId>/availability:all`.**
 
 `booking.` created · requests_changed · party_changed · notes_changed · cancelled · closed · stay_merged_in (reserved)
 `stay.` created · room_assigned · room_unassigned · room_changed · nights_changed · rate_set · guest_added · guest_removed · routing_set · checked_in · checked_out · cancelled · marked_no_show · overbooking_overridden
@@ -543,7 +548,7 @@ Envelope + naming per §6 conventions (D-12). **Two tiers (D-22)**: `booking.*` 
 `availability.` changed {cause} — version bump only
 `folio.` opened · charge_posted · charge_voided · charge_moved · payment_received · payment_refunded · deposit_forfeited · transferred_to_receivable · closed
 `receivable.` opened · payment_received · settled · written_off
-`ledger.` account_opened · entry_posted · entry_reversed · account_closed
+`ledger.` account_opened · entry_posted · entry_reversed · account_closed — on `<hotelId>/account:<id>`; entry events carry the full entry, appear once per touched account
 `guest.` created · updated · erased (tombstone, D-20)
 `contact.` created · updated · erased — same shape as guest; booker ≠ sleeper, kept separate
 `expense.` recorded · voided
