@@ -781,3 +781,57 @@ correlationId, also 5.6.
 **Next: 5.1 landing 2 (screens)** — group booking form, booking detail showing the master folio with
 pay/transfer/void, per-stay routing controls. The routing controls need Alex's words for "own bill"
 vs "master folio" before they are worth translating.
+
+## solex-dev — 5.1 landing 2: group screens and the master folio (2026-09-24)
+
+`f6b68cc` (group form + routing controls) and `98f5009` (master folio panel). Staging `68192888`.
+309 green, build clean.
+
+### The booking form takes a group
+
+Whether it bills as a group is **said outright, not guessed from the room count**: a company block
+of one room is still a group and wants a master folio; a family taking three rooms on holiday is
+not. Choosing "a group" swaps the room picker for a room *count* and sends the desk to the booking
+afterwards rather than to a stay, because there is no single stay to go to. The company picker is
+offered on both kinds — an individual on company business still has one.
+
+### Per-stay routing
+
+New `stay.routing_set` / `stay.routing_cleared`, folded onto the stay, read by `postCharge`. **Two
+events, not one with a nullable target**: clearing an override means "back to whatever the company
+agreed", which is a different answer from overriding to the guest, and the control offers all three.
+
+The control only exists on a group, and `stay.notRoutable` is what makes that safe rather than
+cosmetic. This is N16 read the other way: the screen may not answer a rule for the user, and may not
+offer a choice the rules will refuse either.
+
+### The master folio
+
+Folio commands now take `{ stayId } | { bookingId }` — a union, not two optional fields, because
+optional fields can express "both" and "neither". The entry a master folio writes carries **no
+stayId**: a group's bill has twelve stays under it and naming one is a lie the reports repeat.
+
+**The panel deliberately has no way to post a charge.** Lines arrive by routing, from the room they
+belong to, which is what keeps "who drank the minibar" answerable. A box posting straight to the
+master would be a way to bill a company for something no room admits to. Pay, transfer, void only.
+
+### Verified through the real stack, not just scenarios
+
+Group of 3 booked against a company → 3 stays → minibar override set to `master` on one stay →
+charge posted there lands on the **group's** bill → transferred to the company → the receivables page
+shows **120.000 on one account**, being that transfer plus an earlier stay-level one. One company,
+one debt, whichever bill it came from. That is the thing Company was built for, working.
+
+### Wording
+
+"Own bill" / "master folio" and the `routing.*` and `master.*` keys are the developer's placeholder
+in both languages, marked in `messages.ts`. Nothing depends on the words — Alex's pass is a string
+swap.
+
+### Next
+
+**5.1 landing 3**: `booking.close` guarded on the master balance; check-out unchanged (architect's
+ruling — a group stay can walk out with a zero own folio, which is correct). Then 5.2 cron +
+HotelProfile.
+
+QA has S5-6…S5-13 waiting for these screens; told them the affordance names.
