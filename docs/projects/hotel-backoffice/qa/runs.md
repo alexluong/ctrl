@@ -2,6 +2,8 @@
 
 Newest first. `date · commit · staging · cases · result · findings · blocking?`
 
+- 2026-09-24 · dba5704 (+ e2e 2dc835f) · 81fdef66 (not walked) · full e2e: S0-5, S1-1, S1-2, S3-13, S3-15, S3-19..23, S2-9 (receptionist pass) **pass**; S3-14 ×15, S3-24 ×7, S2-16 **fail** (known: N10, N11, N12 — dev's sweep after expenses) · no new findings; receivable forms already N10-clean, but no `method="post"` (in N11 sweep) · N (N11 open, blocking before slice 4)
+
 - 2026-09-24 · 624ac57 (+ e2e S2-16) · — · S2-16 · **fail** (`/guests?q=<name>`) · N12 ruled non-blocking, fix before go-live (latest slice 5); rule to product §6: PII never in a URL · N
 
 - 2026-09-24 · 624ac57 (+ e2e S3-24 sweep) · — · S3-24 · **fail** 6/6 screens, every form has no method · N11 ruled **blocking** (architect): fix = `method="post"` on all forms before slice 4. Open question: /guests search navigates to `?q=<name>` by design — same PII-in-URL class · **Y**

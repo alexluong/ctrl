@@ -47,7 +47,7 @@ Seeded 2026-09-24 by architect from the walkthroughs in `../team/qa.md`. `last r
 | S2-6 | D-20 stream clean | stringify a guest's stream | no name/phone/ID number anywhere; updates carry field names only | scenario:"keeps the name in the row and out of the log" | cef9f36 pass |
 | S2-7 | D-18 capabilities | receptionist tries setup edit / erase / add staff | refused, told so | scenario:(staff.test ×4) | 71402c8 pass |
 | S2-8 | last owner | deactivate the only owner | refused `staff.lastOwner` | scenario | 71402c8 pass |
-| S2-9 | first-owner bootstrap | empty hotel, system operator | acts as owner with warning; adding first staff row closes it permanently | manual | b65acd2 pass |
+| S2-9 | first-owner bootstrap (D-11) | empty hotel, system operator; add first staff row (operator as receptionist) | acts as owner (all e2e setup runs this way); after the row, owner-only controls gone (write-off → note). Staging re-opens it after each wipe (D-26) | e2e:hotel.setup + receptionist.last.spec | 2dc835f pass |
 | S2-10 | roomType retire in use | retire a type a live room references | refused `roomType.inUse` | scenario (todo verify) | — |
 | S2-12 | §10 row 9 zero only when typed | book with rate field `0` | booked at 0 (FOC); blank field + no table rate → `rate.notFound` | scenario (todo verify) | — |
 | S2-13 | §2 re-add staff | add a user already on staff | refused `staff.alreadyStaff` | scenario (todo verify) | — |
@@ -74,13 +74,14 @@ Seeded 2026-09-24 by architect from the walkthroughs in `../team/qa.md`. `last r
 | S3-12 | §10 check-out guard | check out with balance | refused "Hoá đơn chưa thanh toán. Hãy thu tiền hoặc chuyển sang công nợ công ty"; credit balance passes; race with a landing charge re-runs | scenario + manual | 624ac57 pass |
 | S3-13 | money loop on screen | category list → rate → book → check-in → minibar → refused → cash → check-out | bill correct at each step, forms removed after close | e2e:money-loop.spec "S3-13" | ef6d242 pass |
 | S3-14 | N10 no silent block | submit any form with an invalid/empty required field or an empty select | message on the page, never a silent no-op (`step`, `required`, empty options) | e2e:no-silent-block.spec (14 forms) + empty-hotel.setup (empty select) | ef6d242 **fail** 15/15 (N10) |
-| S3-15 | receivable transfer | company booking, transfer remainder, check out | `ledger.account_opened` on `ledger:receivable:<companyId>`, folio at zero, check-out allowed | scenario (todo verify) | — |
+| S3-15 | receivable transfer | checked-in stay with balance → "Chuyển công nợ công ty" → check out | folio at zero, check-out allowed, company listed on /receivables with the amount | scenario:(receivables.test) + e2e:receivables.spec "S3-15" | dba5704 pass |
 | S3-16 | D-25 businessDayStart | receptionist changes it; owner changes it while tonight unposted | both refused; owner after roll allowed | scenario (todo verify) | — |
 | S3-17 | §6 folio lazy open | book, don't check in | no `ledger.account_opened`/folio stream until first charge/payment; bill shows "Đã thanh toán" | scenario (todo verify) + e2e:money-loop (balance before check-in) | ef6d242 pass (screen half) |
 | S3-18 | §6 deposit before charge | booked stay, take deposit | allowed; balance shows credit; check-in posts tonight against it | e2e (todo) | — |
-| S3-19 | receivable payment cap | pay a company more than it owes | refused "Vượt quá số công ty còn nợ", rendered | e2e (todo, landing 6) | — |
-| S3-20 | receivable settles | pay exactly the outstanding | company drops off /receivables; statement still opens with every line | e2e (todo, landing 6) | — |
-| S3-21 | receivable double-click | double-click a payment that settles the debt | posted once, not refused | e2e (todo, landing 6) + scenario | — |
-| S3-22 | write-off owner-only, reason required | receptionist opens /receivables; owner writes off with blank/whitespace reason | receptionist sees a note, no form; blank reason refused on page | e2e (todo, landing 6) | — |
-| S3-23 | N10 on receivables forms | submit empty company / amount / reason | message on page (forms are noValidate) | e2e (todo, landing 6) | — |
-| S3-24 | N11 no GET fallback (**blocking**, D-20; architect 2026-09-24) | every form on /, /rooms/:id, /bookings, /stays/:id, /setup, /guests | `method="post"` in server markup, so a pre-hydration submit never puts fields (guest name/phone) in the URL/access log | e2e:no-get-forms.spec (6 screens) | 624ac57 **fail** 6/6 |
+| S3-19 | receivable payment cap | pay a company more than it owes | refused "Vượt quá số công ty còn nợ", rendered | e2e:receivables.spec "S3-19" | dba5704 pass |
+| S3-20 | receivable settles | pay exactly the outstanding | company drops off /receivables; statement still opens with every line | e2e:receivables.spec "S3-20" | dba5704 pass |
+| S3-21 | receivable double-click | double-click a payment that settles the debt | posted once, not refused | scenario:(receivables.test) "is posted once when the button is double-clicked" + e2e:receivables.spec "S3-21" (two requestSubmit in one tick) | dba5704 pass |
+| S3-22 | write-off owner-only, reason required | receptionist opens /receivables; owner writes off with blank/whitespace reason | receptionist sees a note, no form; blank reason refused on page | e2e:receivables.spec "S3-22" + receptionist.last.spec | dba5704 pass |
+| S3-23 | N10 on receivables forms | submit empty company / amount / reason | message on page (forms are noValidate) | e2e:receivables.spec "S3-23" (transfer, payment; reason in S3-22) | dba5704 pass |
+| S3-24 | N11 no GET fallback (**blocking**, D-20; architect 2026-09-24) | every form on /, /rooms/:id, /bookings, /stays/:id, /setup, /guests, /receivables | `method="post"` in server markup, so a pre-hydration submit never puts fields (guest name/phone) in the URL/access log | e2e:no-get-forms.spec (7 screens incl. /receivables) | dba5704 **fail** 7/7 |
+| S3-25 | D-12 (f) double-clicked void | owner voids, same commandId twice | one reversal, same answer twice, never "already voided" | scenario:(folios.test) "voids once when the button is double-clicked" | dba5704 pass |
