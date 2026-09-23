@@ -19,7 +19,7 @@ Spec shape:
   ]
 }
 """
-import base64, hashlib, io, json, random, sys, textwrap, time
+import base64, hashlib, io, json, random, sys, time
 from pathlib import Path
 
 from PIL import Image
@@ -57,13 +57,45 @@ def base(kind, x, y, w, h, **kw):
     return el
 
 
+_font_cache = {}
+
+
+def _measure(line, size):
+    """Width of a line in px. Measured with the real font — estimating by character
+    count clips capitals, which Excalidraw then renders cut off."""
+    if size not in _font_cache:
+        try:
+            from PIL import ImageFont
+            _font_cache[size] = ImageFont.truetype('/System/Library/Fonts/Helvetica.ttc', size)
+        except Exception:
+            _font_cache[size] = None
+    font = _font_cache[size]
+    if font is None:
+        return len(line) * size * 0.62
+    return font.getlength(line)
+
+
+def _wrap(paragraph, size, width):
+    if not paragraph:
+        return ['']
+    out, line = [], ''
+    for word in paragraph.split(' '):
+        trial = f'{line} {word}'.strip()
+        if line and _measure(trial, size) > width:
+            out.append(line)
+            line = word
+        else:
+            line = trial
+    out.append(line)
+    return out
+
+
 def text(x, y, s, size=16, width=None, color=INK):
     """Pre-wrapped text; width only drives where the line breaks go."""
     if width:
-        per_line = max(10, int(width / (size * 0.52)))
-        s = '\n'.join(textwrap.fill(p, per_line) if p else '' for p in s.split('\n'))
+        s = '\n'.join('\n'.join(_wrap(p, size, width)) for p in s.split('\n'))
     lines = s.split('\n')
-    w = max(len(l) for l in lines) * size * 0.55
+    w = max(_measure(l, size) for l in lines) + size * 0.6   # trailing slack
     h = len(lines) * size * 1.25
     return base('text', x, y, w, h, text=s, originalText=s, fontSize=size,
                 fontFamily=FONT, textAlign='left', verticalAlign='top',
