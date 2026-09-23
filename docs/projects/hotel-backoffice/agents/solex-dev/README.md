@@ -17,7 +17,7 @@ Alex: "green light, let's implement a rough version of the overall design." Auth
 | 2 | Setup minimum (tier b) | RoomType, RateType, Guest/Contact CRUD + events; `hotel_staff` so `requireUser()` returns hotelId+role | plain Setup forms |
 | 3 | **Money — next (2026-09-23)** | `folio.post_charge`, `payment.record`, night posting on business-date roll (D-7), transfer to company receivable, checkout blocked with balance (§10); Ledger = truth, folio = projection (D-16/17) | folio tab on stay, payment form |
 | 4 | Roles + audit | owner-only guards on money commands; history tab (events per stream) on room/stay/folio | history tab |
-| 5 | Long tail | OOO, overbooking override, group routing, reports, rest of §11 | as needed |
+| 5 | Long tail | **order (architect 2026-09-24):** 5.1 group booking + master folio routing (§10/§11) → 5.2 Cloudflare cron entry for the night roll (D-25) + HotelProfile (D-7 zone, roll hour) → 5.3 dashboard + revenue/occupancy/receivables reports (owner, `reports.view`) → 5.4 deposits → 5.5 folio print → 5.6 search, overbooking override, rest of §11 | as needed |
 
 Alex reviews staging after slice 1 and slice 3. Product owns the spec: a gap goes into `product.md` first, then code. Ask architect only for breaking calls; ping architect with a one-liner per slice landed.
 

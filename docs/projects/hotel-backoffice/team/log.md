@@ -1,4 +1,5 @@
 # Team log
+- 2026-09-24 — dev: slice 4 done (booking history, N18; staging d006aa47, 276 green). Architect: slice 5 order set — group booking + master folio routing → cron entry + HotelProfile → reports/dashboard → deposits → folio print → search, overbooking override.
 - 2026-09-24 — dev: slice 4 landing 2 roles + histories (staging 41b8114c, 274 green); N17 fixed; guest-at-check-in had no event → fixed. Architect audited tier (b) writes: no other bare path. Alex: compacting dev; wants slice 4 test cases documented clearly → solex-qa.
 - 2026-09-24 — product: §11 DisableUser deferred, user stream/payload/session notes aligned (0b76254).
 - 2026-09-24 — dev: slice 4 landing 1 accounts (staging 5d3807df, 272 green); N16 closed. Architect accepted; ruled no account-level DisableUser in v1 (D-18 built note); product to mark §11 DisableUser deferred. Next: roles + history tabs.
