@@ -658,3 +658,31 @@ is billed to a company by definition.
 5.2 cron entry + HotelProfile (D-7 zone + roll hour, replaces the hardcoded `Asia/Ho_Chi_Minh`) →
 5.3 dashboard + reports → 5.4 deposits → 5.5 folio print → 5.6 search, overbooking override, rest
 of §11. Cron moved up because the money loop is done and wants weeks of soak, not days.
+
+## solex-dev — N19: a contact typed on the booking form is born with an event (2026-09-24)
+
+`4cb9908`, staging `be0647d5`. 285 scenarios green, build clean.
+
+QA's S4-21 reads the whole database and asks whether every tier (b) row has a creating event.
+Contacts *picked from the list* had one — the people CRUD path goes through `contactRules.create`.
+Contacts *typed into the booking form* did not: `upsertContact` in `store/people.ts` returned a row
+write and nothing else, so the contact was born mute. Same gap as guests-at-check-in, fixed the same
+way — `upsertContact` now returns a `StreamAppend` beside the `Write`, exactly as `upsertGuests`
+already did, and `bookings.create` lands it in the same batch. Payload stays empty: the id is in the
+stream id, the name is in the row where it can be erased (D-20).
+
+Worth naming as a pattern rather than a third one-off: **both halves of a tier (b) row's birth have
+to be returned by the same function**, because a caller that has to remember to append the event is
+a caller that will forget. `upsertGuests` got this right and `upsertContact` was written next to it
+and didn't. The store port's `people.contact` signature is now the thing that enforces it — it
+returns `{ id, write, stream }`, so a batch that drops the stream doesn't typecheck.
+
+Scenario: `"gives a contact minted by the booking form the same birth event"` in
+`hotel/people.test.ts`. Verified red before the fix (`expected [] to deeply equal ['contact.created']`).
+
+Not run here: QA's e2e. Port 7531 was already taken by another session's dev server, and killing it
+isn't mine to do. S4-21 should go green on a rebuilt e2e db — it rebuilds every run, so rows the
+older code left behind won't linger.
+
+**Next**, unchanged from the entry above: the Company Setup screen, then the transfer form's
+free-text company box becomes a picker over the list.
