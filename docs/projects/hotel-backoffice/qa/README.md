@@ -24,6 +24,10 @@ sqlite3 data/solex.db "insert into user (id,name,email,email_verified,username,d
 
 An empty hotel treats a system operator as owner (first-owner bootstrap, D-11); add a staff row through Thiết lập to exit that mode when testing receptionist vs owner. Never type a password; never use staging credentials.
 
+## Finding numbers
+
+`N<n>` ids are minted here, by solex-qa only (architect ruling 2026-09-24); others describe a finding and ask for a number. Never reuse. **Next free: N14.** (N12 = guest search in URL, N13 = mise re-applies `.env` over exported env.)
+
 ## Blocking vs non-blocking
 
 Blocking = violates an accepted decision (`team/decisions.md`), the spec (`product.md` §10–12) or data safety (PII in a payload, unredacted console column, money not one batch, missing availability versioning). Dev fixes before the next landing. Everything else: dev's call when.
