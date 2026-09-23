@@ -10,6 +10,7 @@
 
 0. **D-4 framing:** client has a PMS today; SoLex is a rebuild for data ownership, core subset + enhancements. Model the *core* they actually use + the enhancements in `requirements.md`; don't model the whole PMS. Per D-5 (2026-09-20): **no migration** — model the domain fresh; "data to own" = going forward only.
 0b. **`existing-system.md` has landed** (ezFolio map, group-booking flow, candidate core, hard constraints). Second pass is now: reconcile your aggregate sketch with explore's candidate core. Non-negotiables from explore: no card data ever; personas = manager + receptionist; **group/company bookings are core** (company + per-room-type qty/pax/rate, rooms assigned later → waiting list — model this, it's the hard aggregate); key cards out of scope.
+0c. **D-6 (2026-09-23):** third persona **setup/admin** + a Setup bounded context. Design from explore's checklist (rooms/types w/ prices · minibar/laundry/extra-service catalogues w/ prices · tax %/service % / net-gross per charge type · booking rules: day boundary, overbooking, child age, auto-assign · hotel identity). Your `Catalogue`/`HotelPolicy` aggregates probably become this context. Not a copy of ezFolio masters.
 1. Read `requirements.md` closely. Interview Alex on README open questions + gaps flagged in requirements §5 (OTA commission rates, seasonal rates, VAT/red invoice, channel-manager vs manual).
 2. Deliver in `product.md`:
    - Users + roles (owner / reception / housekeeping — confirm)
@@ -26,4 +27,5 @@ Message architect with proposed aggregate list early (before polishing) so dev's
 
 - 2026-09-19 — session created.
 - 2026-09-19 — objective +D-4 framing (existing PMS, data ownership, core subset).
+- 2026-09-23 — D-6: Setup context + setup/admin persona.
 - 2026-09-20 — D-5 (no migration); existing-system.md landed → second pass; group bookings core.

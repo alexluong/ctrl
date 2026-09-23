@@ -54,7 +54,7 @@ See `team/decisions.md`. Older Go notes below kept for context.
 - **Channel typed into guest names** (AGD/CTRIP/TVLK/EXP). Improvement target: first-class Channel + commission. Channel-manager integration exists, unused.
 - **Night audit off** → no day close; "today's revenue" is ad-hoc. Day-boundary rule needs a decision (charge roll 23:59 in config).
 - Everything attributed (created/edited/checked-in-by, per-booking log); discounts have request→edit→approve trail. ES gets this free.
-- Personas: **manager** (read) + **receptionist** (everything). Housekeeping/restaurant off-system. Status vocab VC/VD/OC/OD/OOO. Source taxonomy OTA/TA/WALK-IN/CORP.
+- Personas (D-6): **manager** (reads) · **receptionist** (runs the day) · **setup/admin** (rooms/types/prices, catalogues, tax/service %, booking rules, hotel identity — rare, owner in practice). Housekeeping/restaurant off-system. Status vocab VC/VD/OC/OD/OOO. Source taxonomy OTA/TA/WALK-IN/CORP.
 - Hard constraints: **no card data ever**; key cards out; stay rules are a change target.
 - Candidate core: bookings incl. group + waiting list · room assignment/status · check-in/out · folio + extras · payments/deposits · receivables by debtor · guest profiles/history · revenue/occupancy reports · PA18 export · audit. **Out**: restaurant, HK scheduling, key cards, golf, multi-property, CM sync (later), cards (never).
 - **Group folio routing** (2026-09-23): each room-stay in a group has per-category switches → charge settles on group **master** bill or guest's **own** folio (room · HK · restaurant · ext. services · phone · massage · sub-invoice · deposits · other). Corporate case = company pays room, guest pays incidentals. Model: `charge.routedTo = own | master`, per bucket.
@@ -64,7 +64,7 @@ See `team/decisions.md`. Older Go notes below kept for context.
 - **Settled by Alex (2026-09-23)**: room map + tape chart = the two home screens (tape chart = receptionist tool, drag to move/extend). Daily stays only, no hourly. Early/late = catalogue items; drop the +0.3/+0.5/+1 rate multipliers. Personas unchanged.
 - Facts: child age threshold 6, adults/children auto-counted from guest list. Overbooking ON today (tape chart sells >100% on turnover days). Guest ID field is "?" on all 51 revenue rows while PA18 depends on it.
 - Flow board: `board/solex-flow.excalidraw` (gitignored — live guest data), regenerate via `tools/excalidraw/build.py`. FigJam copy frozen (Figma plan caps MCP at 20 calls/month) — Excalidraw is source of truth.
-- Parked: admin login (blocks all pricing masters), which of ~60 booking fields are used daily, data volume/history.
+- ~~Admin login~~ closed (D-6): masters inferred from live data are enough; Setup is designed from a checklist, not copied. Parked: which of ~60 booking fields are used daily, data volume/history.
 
 ## Notes
 
@@ -116,6 +116,7 @@ Later WS (not now): event-store design — Hookdeck-as-log vs bus + archive. Nee
 ## Status
 
 - 2026-07-10 — plan agreed, awaiting discovery brain-dump.
+- 2026-09-23 — **D-6: Setup is its own scope + third persona; no admin login.** Product to add Setup context.
 - 2026-09-23 — **product.md v0** (product). Aggregates: Booking→RoomStay, Room, Folio (own+master), Receivable, Guest, Catalogue, Expense. Key architectural ask: availability is cross-aggregate → single-writer DO per hotel for Reservations, not per-room streams. 8 policy points → questions.md.
 - 2026-09-23 — explore: flow board + 4 model-changing findings (group folio routing, two booking use cases, one charge shape / 8 buckets, config split). 3 decisions queued for Alex.
 - 2026-09-20 — **WS2 complete** (explore). Summary above. Explore on standby for re-reads / admin screens.
