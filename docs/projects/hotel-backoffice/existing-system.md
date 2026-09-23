@@ -499,24 +499,28 @@ Bad captures (2):
 - `hk-room-map` — only the "Thao tác" sidebar rendered; the room grid never painted. **Re-capture.**
 - `rpt-debit-update` — 1265 × 14,965 px, ~419 rows. Illegible at any board scale. Crop or skip.
 
-## Visual flow board (FigJam)
+## Visual flow board
 
-https://www.figma.com/board/9450fwvpLCLPmAmt4FBsQU — "SoLex — ezFolio user flow (existing system)" (Collie Studio drafts, 2026-09-20).
+**Excalidraw (current):** `board/solex-flow.excalidraw` — gitignored, because the board embeds the
+screenshots and those carry live guest data. Generated from `tools/excalidraw/flow.json` by
+`tools/excalidraw/build.py`; both are committed, so the board can be rebuilt on any machine that
+has the screenshots. Open it with the VS Code extension `pomdtr.excalidraw-editor` so edits save
+straight back into the file.
 
-Structure (rev 2, 2026-09-21): a **hub section at the top** holding the two screens that matter most —
-room map and tape chart — at large size, each captioned per role (receptionist / manager / housekeeping).
-Below it the flow splits into role tracks: **RECEPTIONIST** phases 1–4 (booking → arrival → during the
-stay → departure & settlement) and **MANAGER / OWNER** phase 5 (how the hotel is doing). Each frame is
-sized to its own image and captioned underneath; a column of rebuild-relevant findings runs down the right.
+Nine sections: the two hub screens (room map + tape chart) · receptionist phases 1, 2, 3, 3b
+charges, 4 · manager/owner · admin config · a findings panel. 22 screenshots, arrows inside the
+phases that are genuinely sequential, and text panels carrying the modelling notes.
 
-Rebuilt 2026-09-20 after the visual pass. Changes: every frame was a uniform 460×420 crop of a
-~1280×1270 screenshot — now each is 520 wide at its true aspect ratio. Four weak images were swapped
-out: the empty unassigned-bookings list → vacancy forecast, the failed housekeeping map capture →
-breakfast list, the 15,000px receivables ledger → hotel revenue (charge buckets × payment method),
-the empty departures list → deposits. Wrap-around arrows between phases were dropped (phases read
-top→bottom) and connectors straightened.
+Rebuild it with:
 
-Screenshots contain live guest data (Alex: acceptable). Regenerate/extend from `../screens/` + `../tools/`.
+    cd docs/projects/hotel-backoffice/tools/excalidraw
+    python3 build.py flow.json ../../board/solex-flow.excalidraw
+
+**FigJam (frozen):** https://www.figma.com/board/9450fwvpLCLPmAmt4FBsQU — the earlier version of
+the same board. Abandoned mid-update: Figma's Starter plan caps the MCP at **20 tool calls per
+month**, which is about one editing session, so the charges and config sections were never added
+there. The pending script is kept at `tools/figjam/add-charges-config.js` if that board is ever
+revived on a paid seat. Treat the Excalidraw file as the source of truth.
 
 ## Screen index
 | slug | screen |
@@ -565,3 +569,4 @@ Screenshots contain live guest data (Alex: acceptable). Regenerate/extend from `
 - 2026-09-21 — board restructured: hub section for the room map + tape chart, then receptionist vs manager tracks.
 - 2026-09-21 — charges flow mapped (8 buckets, posting from the room tile, catalogues recovered from data); config flow located: masters blocked, charge behaviour visible in Settings' 26 tabs.
 - 2026-09-21 — Alex: hourly stays not used (daily only); early/late charged as catalogue items, not multipliers.
+- 2026-09-23 — board moved to Excalidraw (file-based, no API cap); regenerated in full incl. the charges and config sections FigJam never got.

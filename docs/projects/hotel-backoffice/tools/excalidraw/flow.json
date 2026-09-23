@@ -1,0 +1,114 @@
+{
+  "title": "SoLex — how the hotel runs today (ezCloud ezFolio)",
+  "subtitle": "Mapped read-only, 19–22 Sep 2026 · 58 rooms, 6 floors, 8 room types · 96.5% occupancy on the day captured. Every image is the live system, opened and verified by eye. Read left→right inside a section, top→bottom down the board. Full write-up: ctrl/docs/projects/hotel-backoffice/existing-system.md",
+  "imageWidth": 600,
+  "maxImageHeight": 820,
+  "sections": [
+    {
+      "name": "THE TWO HUB SCREENS",
+      "note": "The only two screens that answer \"what is the state of the hotel\" — one for now, one over time. Every role lives here. If only two screens shipped, these are the two.",
+      "arrows": false,
+      "items": [
+        {"screen": "fd-room-map", "caption": "ROOM MAP — the hotel right now. Tiles by floor, colour = status (green ready, grey dirty, orange occupied+dirty, white occupied+clean, black repair).\n\nReceptionist: the default screen; click a tile to check in, see the balance, post a charge.\nManager: the counts across the top.\nHousekeeping (off-system): which rooms are dirty, read out to them by reception."},
+        {"screen": "fd-room-situation", "caption": "TAPE CHART — the hotel over time. Room × date grid, one bar per stay.\n\nReceptionist: move a stay, extend it, find a gap that fits a caller. A working surface, not a report.\nManager: occupancy % and rooms sold per night, weeks out.\n\nGeneric UI pattern: a \"resource timeline\". Hotel term: tape chart / rack chart."}
+      ],
+      "panel": "WHY THESE TWO\n\nEverything else on this board is a detour off one of them.\n\nRole differs by density and default action, not by screen: the receptionist needs click-to-act, the manager needs the totals. Build one screen with role-aware defaults, not two screens.\n\nThe tape chart is where reservations get moved and extended — treat it as core interactive UI, not a chart.",
+      "panelWidth": 500
+    },
+
+    {
+      "name": "RECEPTIONIST · 1 · BOOKING — two different paths",
+      "note": "Group/company goes through an availability engine. Walk-ins skip it entirely. These are two use cases, not one form with a toggle.",
+      "arrows": false,
+      "items": [
+        {"screen": "fd-group-availability", "caption": "GROUP (Khách đoàn) — THE quoting screen. Availability as a room-type × night matrix; reception reads down the columns and quotes the tightest night. Left half is the booking: per room type × bed type — qty, adults, children, rate. No room numbers yet; rooms are assigned later."},
+        {"screen": "fd-walkin-form", "caption": "INDIVIDUAL (Khách lẻ) — no availability step. Pick one specific room, then commit with either \"Đặt phòng\" (future reservation) or \"Checkin\" (walk-in, straight to in-house). One form, two exits — the status is decided by which button is pressed."},
+        {"screen": "sales-companies", "caption": "COMPANIES & AGENTS — where the company on a group booking comes from. Each carries a source: OTA / TA / CORP. Booking.com, Agoda, Ctrip, Traveloka all sit here as agents."}
+      ],
+      "panel": "THE MODELLING SHAPE\n\nGroup booking =\n  company + contact + saler + source + deposit + display code/colour\n  + N × (room type, bed type, qty, adults, children, rate)\n  → rooms assigned later, from the waiting list\n\nIndividual booking =\n  guest + one room, assigned immediately\n  → BOOKED or CHECKIN\n\nSame reservation_room underneath; assignment is early-bound for individuals, late-bound for groups. An individual booking can be merged into a group afterwards (Ghép đoàn).\n\nNo rate plans: every rate is typed by hand (750k–1,026k VND). A per-night price chart exists on the booking form, filled in manually.",
+      "panelWidth": 520
+    },
+
+    {
+      "name": "RECEPTIONIST · 2 · ARRIVAL",
+      "note": "Check in from the arrivals worklist, or straight off the room map.",
+      "arrows": true,
+      "items": [
+        {"screen": "fd-arrivals-today", "caption": "Expected arrivals — the worklist for the day, split into individuals and groups."},
+        {"screen": "fd-room-detail-panel", "caption": "Room tile modal — check in, see the balance, and quick-post charges. Footer: DIRTY · MINIBAR · LAUNDRY · COMPENSATION · EXTRA SERVICE."},
+        {"screen": "fd-booking-list-inhouse", "caption": "In-house list — everyone currently staying, grouped by individual vs group. Note the red \"Error: Lỗi kết nối Database\" banner: the app shows reception raw DB errors and staff are trained to ignore them."}
+      ]
+    },
+
+    {
+      "name": "RECEPTIONIST · 3 · DURING THE STAY",
+      "note": "Rooms move, status changes, daily lists get printed.",
+      "arrows": false,
+      "items": [
+        {"screen": "fd-change-room", "caption": "Room move — from/to plus a mandatory reason, logged to the transfer report."},
+        {"screen": "fd-breakfast", "caption": "Breakfast list — derived per occupied room, actual vs expected, rolled up by nationality. Nationality is tracked here and for PA18, nowhere else."},
+        {"screen": "hk-employee-schedule", "caption": "Daily room assignment — the housekeeping sheet. Status vocabulary: OD occupied dirty · OC occupied clean · VD vacant dirty · VC vacant clean · VCI inspected · OOO out of order. No staff are ever assigned: the module is unused and reception reads it out."}
+      ]
+    },
+
+    {
+      "name": "RECEPTIONIST · 3b · CHARGES — posted from the room tile",
+      "note": "Eight fixed buckets. The invoice pages below are registers; the \"add\" route on them is closed to reception, so posting really happens from the room.",
+      "arrows": true,
+      "items": [
+        {"screen": "fd-room-detail-panel", "caption": "a · The posting entry point — the room tile modal."},
+        {"screen": "fd-minibar-invoice", "caption": "b · Minibar register — itemised per room per day. Each room has its OWN minibar (58 stock locations, not one product list)."},
+        {"screen": "fd-laundry-invoice", "caption": "c · Laundry register — itemised per garment with quantities, plus an express surcharge rate in settings."},
+        {"screen": "rpt-fd-revenue", "caption": "d · Where every charge lands — the eight buckets, settled by cash / card / transfer / comp / debt. Refunds appear as negative rows."}
+      ],
+      "panel": "THE EIGHT BUCKETS\n\nroom · room surcharge · minibar · laundry · compensation (damages) · extended service · telephone · restaurant\n\nThey are the same list in three places: the revenue report columns, the folio tabs, and the group routing switches.\n\n—\n\nEXTENDED-SERVICE CATALOGUE, as it stands (19 items)\n\nDuplicates:\n• Card Fee ↔ Phí thẻ\n• Check out lately ↔ Checkout Later\n• Taxi ↔ Transportation ↔ Ô tô sân bay/Taxi airport\n\nMeaningless names:\n• \"dịch vụ\" (= \"service\")\n• \"Cái Mới\" (= \"new thing\")\n\nEarly check-in / late check-out are charged from THIS list in practice. The booking form also offers +0.3 / +0.5 / +1 rate multipliers — unused.\n\n→ The argument for a curated catalogue.\n\n—\n\nA charge is always the same shape:\n(room-stay, date, item, qty, unit price, bucket, note, who)\n\nezFolio has four near-identical screens for it. The rebuild needs one posting flow with an item type.",
+      "panelWidth": 560
+    },
+
+    {
+      "name": "RECEPTIONIST · 4 · DEPARTURE & SETTLEMENT",
+      "note": "Checkout, then either paid now or into receivables.",
+      "arrows": true,
+      "items": [
+        {"screen": "rpt-deposit", "caption": "Deposits — collected before arrival: who, how much, cash / transfer / card. ~167M VND in September."},
+        {"screen": "rpt-revenue-by-invoice", "caption": "Revenue by folio — one line per folio closed today, with its charge breakdown."},
+        {"screen": "rpt-debit-detail", "caption": "Receivables by debtor — Agoda, Ctrip, Traveloka, Expedia, companies. Carries the real OTA reference numbers in \"Mã hiển thị\"."}
+      ],
+      "panel": "GROUP FOLIO ROUTING\n\nEach room-stay in a group carries nine switches deciding which charge categories settle on the group's MASTER bill rather than the guest's own folio:\n\nroom · housekeeping · restaurant · extended services · phone · massage · sub-invoice · deposits · other amounts\n\nOn the 31-room group all nine are on — one bill for everything.\n\nThe normal corporate case (company pays rooms, guest pays their own minibar) depends on this. Core for the rebuild, not a nicety.\n\nModel it as: charge.routedTo = ownFolio | masterFolio, per category.",
+      "panelWidth": 500
+    },
+
+    {
+      "name": "MANAGER / OWNER — how the hotel is doing",
+      "note": "Read-only in practice. There is no formal day close: night audit is switched off, so \"revenue today\" is computed ad-hoc.",
+      "arrows": false,
+      "items": [
+        {"screen": "fd-occupancy-over-time", "caption": "Occupancy & revenue by day — the month at a glance. September ran 8.8% to 108.8% (>100% = same-day turnover), 767M VND room revenue, ADR ~800k, 149 cancellations."},
+        {"screen": "rpt-room-revenue-daily", "caption": "Daily room revenue — rate per occupied room. Note the ID column: \"?\" on every one of 51 rows."},
+        {"screen": "fd-guest-history", "caption": "Guest history — repeat-stay count and guest class (individual / VIP 1 / VIP 2 / Guest return). Reception uses it at check-in; the owner uses it to see who comes back."}
+      ]
+    },
+
+    {
+      "name": "ADMIN · CONFIG — split in two",
+      "note": "Item masters are separate pages, all permission-blocked for reception. Charge behaviour lives in Settings, which reception can see.",
+      "arrows": false,
+      "items": [
+        {"screen": "sys-charge-config", "caption": "Settings › Thuế - Dịch vụ — per charge type: service charge %, tax %, net/gross. Every value is 0 and everything is net: they charge gross, with no VAT line."},
+        {"screen": "sys-booking-rules", "caption": "Settings › Cấu hình đặt phòng — day boundary 23:59 · overbooking ON · under 6 = child · auto-count adults/children · auto-assign the room needed soonest."},
+        {"screen": "sys-settings", "caption": "Settings › hotel info — 26 tabs in total. Default check-in 14:00 / check-out 12:00, weekend surcharge fields both 0, payment differences under 500 VND ignored, night audit off, LAN IP allowlist."}
+      ],
+      "panel": "ITEM MASTERS — exist, all blocked for reception\n\n• room\n• room_type\n• product\n• minibar · minibar_product\n• laundry\n• service · extra_service\n• category\n• package\n• currency\n• restaurant_product\n\nThis is where rooms, room prices, minibar items, laundry items and service items are maintained. Nobody doing the daily work can see it — and the extra-service catalogue shows what happens without curation.\n\nDocumenting their fields needs an admin login. Worth asking the client for.\n\nAlso configured but NOT used: hourly/day-use pricing (1h 400k, 2h 500k) — SoLex sells daily only.",
+      "panelWidth": 540
+    },
+
+    {
+      "name": "WHAT MATTERS FOR THE REBUILD",
+      "note": "WS2's read of what is actually used. WS3 decides.",
+      "arrows": false,
+      "items": [],
+      "panel": "CORE\nbookings incl. group/company + waiting list · room assignment & room status · check-in / check-out · folio with extras · payments incl. deposits · receivables by debtor · guest profiles with history · revenue + occupancy reporting · PA18 export · user attribution\n\nOUT\nrestaurant POS · housekeeping scheduling · key cards · golf · multi-property · channel-manager sync (later) · card storage (never)\n\n—\n\nNO CARD DATA, EVER. ezFolio stores holder, number, expiry and CVV on the booking. The rebuild has no PCI surface.\n\nGUEST IDENTITY IS NOT CAPTURED. ID is \"?\" on every row of the daily revenue report, DOB blank, gender defaulted — while PA18 is a legal export built on exactly that data. Decide whether identity is enforced at check-in.\n\nCHANNEL EXISTS, JUST NOT AS A FIELD. Typed into the guest name (AGD / CTRIP / TVLK / EXP), but the real OTA reference IS stored in \"Mã hiển thị\". Promote both to first-class fields; commission is currently per booking, not per channel.\n\nEXCEL EXPORT IS BROKEN. Every export truncates to the title — the app builds a data: URL and the table's bordercolor=\"#...\" cuts it at the first #. No supported way to get their data out. Migration is deferred: the rebuild starts fresh.\n\nNIGHT AUDIT IS OFF. Days are never formally closed. The day-boundary rule (23:59) needs an explicit decision, as does overbooking (currently allowed).\n\nTWO REAL PERSONAS. Manager (reads) and receptionist (does everything). Housekeeping, restaurant and the rest operate off-system and ask reception to make changes.\n\nEVERYTHING IS ATTRIBUTED. Created / edited / checked-in by, plus a per-booking log. Discounts carry an approval trail. An event-sourced rebuild gets this for free.\n\nSEVERAL TRAVELLERS PER ROOM-STAY. The guest table takes N people, each with their own identity fields. RoomStay → many Guests.\n\nSTAY RULES ARE A CHANGE TARGET, not a spec — Alex, 2026-09-20.",
+      "panelWidth": 900
+    }
+  ]
+}
