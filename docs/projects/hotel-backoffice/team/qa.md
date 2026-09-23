@@ -14,6 +14,7 @@ Architect reviews each slice dev lands. Worktree: `~/git/hub/alexluong/solex-qa`
 - [ ] Reactions (§10) run once inline, not on replay
 - [ ] `requireUser()` on every server fn; owner-only commands guarded (from slice 4)
 - [ ] `decide` functions unit-tested incl. the reject paths; conflict retry tested
+- [ ] D-24: no domain logic in a server fn; every new command is a `Hotel` method with at least one scenario test against `MemoryStore`
 - [ ] **Disable a control only for a no-op, never for a rule.** If the domain can refuse it, the click goes through, the domain refuses, the reason renders (`useCommand` + `CommandError`, `src/ui/command.tsx`). Overbooking override must be clickable. Not unit-testable — click every refused path by hand.
 - [ ] **Migrations apply on a populated DB**, not just an empty one (drizzle-kit `ADD COLUMN NOT NULL` trap). Run against a DB with rows before calling it done.
 - [ ] Upcaster: fold path throws on a gap; display paths tolerate and flag.
