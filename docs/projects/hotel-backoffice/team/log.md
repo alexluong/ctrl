@@ -1,4 +1,5 @@
 # Team log
+- 2026-09-24 — solex-qa: N23 rulings in cases (e4e3dc3): S5-12d individual auto-close, S5-16 master charges keep stay (green), S5-13/15 reworded; e2e flake fixed. Waiting on landing 3.
 - 2026-09-24 — product: row 7a / §11 CloseBooking group-only / RetireCompany guard aligned (7709bc1).
 - 2026-09-24 — solex-qa landing 2 run 91/92; N23 (individual bookings never close). Architect: individual auto-close on last terminal stay; group explicit CloseBooking; company.inUse reads stays/master not status; master charges keep stay_id (intended). Dev picks up post-compaction as landing 3.
 - 2026-09-24 — dev: 5.1 landing 2 (group form, routing, master panel; staging 68192888, 309 green). Architect accepted; ruled CloseBooking = new explicit command with master + stays guards. Dev paused for compaction (276k) before landing 3.
