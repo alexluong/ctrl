@@ -65,10 +65,12 @@ mise install && mise run setup   # ports, deps, database
 mise run dev                     # http://localhost:<PORT_APP>
 mise run fix && mise run check   # before landing
 pnpm preview:cloudflare          # the Workers build, locally
-pnpm deploy                      # build + ship
+pnpm deploy                      # migrate D1, build, ship
 ```
 
 Compose (`mise run up`) runs the same dev server in a container for worktrees that want it.
+
+**Migrations run first, on both paths** (N8). `pnpm dev` applies local migrations before starting Vite, and `pnpm deploy` applies them to D1 before the Worker flips. Both orderings are the same bet: schema ahead of code is harmless, code ahead of schema is a 500 on the first page that touches the new table — which reads as a broken feature rather than as a missing migration. It cost an architect a confused half hour on `/calendar`. The bet holds only while migrations stay additive; a destructive one needs expand/contract across two deploys, and this ordering will not save it.
 
 ## The ES skeleton as built (2026-09-23)
 
