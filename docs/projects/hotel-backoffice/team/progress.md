@@ -9,7 +9,7 @@ Narrative record of what the team (and Alex) has done, by day. `log.md` is the t
 | WS | agent | state |
 |---|---|---|
 | Cockpit | solex-architect | active — merging, deciding, routing |
-| WS1 stack → ES skeleton | solex-dev | **skeleton live** — events + projections + replay, Room aggregate, `/system` console; next: D-12 envelope columns, then Booking/Stay from §11 |
+| WS1 stack → ES skeleton | solex-dev | **skeleton live** — events + projections + replay, Room aggregate, `/system` console; next: D-22 Room → CRUD+events, D-12 envelope columns, then Booking/Stay from §11 |
 | WS2 existing system | solex-explore | **delivered** (map, flow board, lifecycle & money); on standby for 5 Alex-walkthrough items |
 | WS3 product | solex-product | **v1 delivered** (D-12…D-19, §10–12); standby, spec owner |
 
@@ -44,7 +44,7 @@ Narrative record of what the team (and Alex) has done, by day. `log.md` is the t
 **Architect:** merged each wave into README; queued 8 policy points; asked dev for a storage sanity-check (DO per hotel vs D1); reviewed the board and sent the 10 questions; recorded D-6, D-7; wrote the business-date model; set product's agenda; merged dev's spike → D-3 amended, D-8 proposed, product pinged to reconcile §6.
 
 ## Decisions so far
-D-1 Go/no-VM/CF (superseded) · D-2 one owner per file · D-3 TS on plain Workers · D-4 rebuild for data ownership, core subset · D-5 fresh start, no migration · D-6 Setup scope + setup/admin persona · D-7 business date w/ configurable roll · D-8 D1 log + projections, no DO, Hookdeck deferred (built) · D-9 multi-tenant by design, one tenant · D-10 folded into D-12 · D-11 (proposed) auth · D-12 event naming + envelope · D-13 Booking v1 scope · D-14 Booking/Stay naming · D-15 night is the unit · D-16 money v1 · D-17 Ledger context · D-18 users/roles/apps · D-19 v1 screens · D-20 PII outside log · D-21 architect decides, Alex reviews. Full text: `decisions.md`.
+D-1 Go/no-VM/CF (superseded) · D-2 one owner per file · D-3 TS on plain Workers · D-4 rebuild for data ownership, core subset · D-5 fresh start, no migration · D-6 Setup scope + setup/admin persona · D-7 business date w/ configurable roll · D-8 D1 log + projections, no DO, Hookdeck deferred (built) · D-9 multi-tenant by design, one tenant · D-10 folded into D-12 · D-11 (proposed) auth · D-12 event naming + envelope · D-13 Booking v1 scope · D-14 Booking/Stay naming · D-15 night is the unit · D-16 money v1 · D-17 Ledger context · D-18 users/roles/apps · D-19 v1 screens · D-20 PII outside log · D-21 architect decides, Alex reviews · D-22 ES core (Booking/Stay/Ledger), event-notified CRUD for the rest. Full text: `decisions.md`.
 
 ## Flag for Alex (decided under D-21, glance when convenient)
 - D-11 auth: app-owned username/password v1, OIDC later; staging login before real data.

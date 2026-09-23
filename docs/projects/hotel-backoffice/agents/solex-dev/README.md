@@ -6,9 +6,15 @@
 
 **Constraints (from Alex):** TypeScript on plain Cloudflare Workers (D-3, 2026-09-19 — Go dropped). No VM. Free tier where possible; ask before paid. Ship > purity.
 
-## Current objective (2026-09-23, rev 4 — ES skeleton live)
+## Current objective (2026-09-23, rev 5 — build Booking/Stay)
+
+All blockers cleared (D-11, D-20, D-21, D-22 accepted; product v1 = spec). Order: **(1) D-22** flip Room from ES aggregate to CRUD table + `room.*` events appended in the same batch (tier b: table is truth, no fold, no version guard beyond the row); keep the log path. **(2) D-12** envelope columns + `schema_version` + upcaster hook `(type, from) → payload` at load. **(3) Booking → Stay** from `product.md` §11, every supply/demand command versions `availability:<hotel>` in-batch (D-8). **(4) D-11** app-owned username/password behind `requireUser()`; must land before staging holds real data. Product owns the spec — a gap goes into `product.md` first, then code. Ask architect only for breaking calls.
+
+<details><summary>rev 4 (ES skeleton live, superseded same day)</summary>
 
 Skeleton done (D-8 shape, D-9 in, Room aggregate, `/system` console). Before **Booking** (the real test — cross-aggregate availability): add `schema_version` on `events` + upcaster hook (D-10, proposed); auth waits on Alex's IdP pick (D-11). Booking itself waits on product v1 (§6 vocabulary + the availability-stream versioning rule in D-8). Take direction from Alex in-session over this profile; tell architect what changed.
+
+</details>
 
 <details><summary>rev 3 (standby, superseded same day)</summary>
 
@@ -41,6 +47,7 @@ Do **not** yet: domain code, ES infra, Hookdeck. Those wait on product + archite
 - Frontend: TS → React likely; coordinate w/ `collie-ui` (see README cross-ref).
 
 ## Log
+- 2026-09-23 — architect: rev 5. D-22 (two tiers) accepted by Alex; Room → CRUD+events first, then envelope, Booking/Stay, auth.
 
 - 2026-09-19 — session created.
 - 2026-09-19 — objective rev 2: Go dropped (D-3), TS Workers + D1 spike.

@@ -32,6 +32,8 @@ Secrets (existing-system URL/login): `ctrl/secrets/hotel-backoffice.md` (gitigno
 **Decided (D-8, de facto):** D1 for event log *and* projections, optimistic concurrency on `(stream_id, version)`, no Durable Object, projections in the same atomic batch, Hookdeck deferred. Built + deployed 2026-09-23 at Alex's direction.
 **Decided (D-12…D-19, product session 2026-09-23):** event naming `agg.past_verb` + full envelope (ulid, hotelId, stream, version, type, schemaVersion, occurredAt, businessDate, actor, correlation/causation/commandId) · Booking v1 minimal, no OTA logic · **Booking/Stay** naming · **night is the unit** (Stay = nights[] w/ room+rate+posted; availability = no two stays share (roomId, date)) · money v1 (own+master folios, Setup charge categories, receivable per folio, no due date) · **generic double-entry Ledger** under Billing/Expenses (Folio/Receivable = projections) · users per person, roles = capability bundles (`receptionist`, `owner`), three apps (Front Desk, Back Office, Setup) · v1 screen inventory. §10 rules, §11 ~40 commands, §12 event index in `product.md`.
 **Decided (D-11, D-20, D-21):** app-owned username/password auth v1, OIDC later · person PII outside the event log (id refs, tombstone erasure) · architect accepts routine decisions on Alex's behalf, flags breaking ones. D-10 folded into D-12.
+
+**Decided (D-22, Alex 2026-09-23):** two tiers — Booking/Stay/Ledger are event-sourced (log = truth); Room, rates, charge categories, companies, guests, users, profile are CRUD tables that still emit events to the same log (history, projections), no fold. Don't ES everything.
 **Decided (D-4):** client already has a PMS (**ezFolio** by ezCloud, the `:99` system). SoLex = rebuild driven by **data ownership**; core subset + enhancements, not feature parity. WS2 maps the PMS first via slow walkthrough w/ Alex.
 **Decided (D-5):** fresh start, migration deferred — ezFolio has no working export. Schema for the domain, not for an import.
 See `team/decisions.md`. Older Go notes below kept for context.
@@ -108,7 +110,7 @@ This is the **Go-at-scale learning project**: backend-heavy, web back office, no
 
 Three parallel sessions, named agents: `solex-dev` (WS1), `solex-explore` (WS2), `solex-product` (WS3); `solex-architect` = cockpit. Profiles + protocol in `agents/`. Rules: each writes only its own file (above), commits in ctrl with `docs(hotel-backoffice/<ws>): …`, pulls before committing. Cross-WS findings go in the WS's own file under a "For other WSs" section; cockpit session merges into README.
 
-Ordering: ~~WS1 + WS3 can start now. WS2 needs Alex…~~ **WS2 complete 2026-09-20. WS3 v0 complete 2026-09-23** (`product.md`: 7 aggregates, event vocabulary, 8 policy points). **WS1 spike + ES skeleton shipped 2026-09-23.** **WS3 v1 complete 2026-09-23** (D-12…D-19, §10 rules, §11 command catalogue, §12 event index). Next: dev adds D-12 envelope columns, then Booking/Stay from §11; D-11 auth needs Alex's IdP.
+Ordering: ~~WS1 + WS3 can start now. WS2 needs Alex…~~ **WS2 complete 2026-09-20. WS3 v0 complete 2026-09-23** (`product.md`: 7 aggregates, event vocabulary, 8 policy points). **WS1 spike + ES skeleton shipped 2026-09-23.** **WS3 v1 complete 2026-09-23** (D-12…D-19, §10 rules, §11 command catalogue, §12 event index). Next: dev flips Room to CRUD+events (D-22), adds D-12 envelope columns, then Booking/Stay from §11; then D-11 auth (app-owned).
 
 ~~Later WS (not now): event-store design — Hookdeck-as-log vs bus + archive.~~ Collapsed into D-8 (2026-09-23) if accepted.
 
