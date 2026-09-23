@@ -65,6 +65,7 @@ Do **not** yet: domain code, ES infra, Hookdeck. Those wait on product + archite
 - Frontend: TS → React likely; coordinate w/ `collie-ui` (see README cross-ref).
 
 ## Log
+- 2026-09-23 — architect: slice 3 order after landing 4: money screens (folio tab, post charge, take payment, check-out with balance) → Alex staging pass → receivable side (record payment, write off) + expenses → cron entry before go-live.
 - 2026-09-23 — architect: slices 1–2 accepted (173 tests). Slice 3 go: Ledger (D-17) + folio projection + post_charge/payment + night posting per D-25 + checkout balance guard + transfer to receivable. Hotel methods + scenarios first; money commands idempotent by commandId; owner-only guards via ctx.must. CreateUser/UpdateUser/DisableUser → slice 4.
 - 2026-09-23 — architect: rev 6, slice plan 0–5; Alex green light for rough end-to-end.
 - 2026-09-23 — architect: auth landed ahead of order (fine). Answers: User/staff tier b, library owns row; system_operator ok; wipe staging log at Room flip; D-23 redaction.

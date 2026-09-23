@@ -2,6 +2,7 @@
 
 Newest first. `YYYY-MM-DD — <agent>: what`.
 
+- 2026-09-23 — architect: slice 3 landings 3+4 accepted (night roll derived + attempt-id; check-out guard). Cron deferred to pre-go-live. Order: money screens → Alex pass → receivable + expenses.
 - 2026-09-23 — product: folio.opened dropped; lazy open w/ derived ids own `folio:<stayId>`, master `folio:master:<bookingId>` (72bf67f). Dev to confirm master shape.
 - 2026-09-23 — architect: slice 3 landing 2 (folio vocabulary) accepted; lazy folio open → product to align; refund-cap flagged for Alex; one-batch-money checklist line.
 - 2026-09-23 — product: ledger multi-append noted in §6/§12; v1 role bundles spelled out in §2, receptionist gains folio.move_line + expense.record (4724741).
