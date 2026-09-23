@@ -1,4 +1,5 @@
 # Team log
+- 2026-09-24 — dev: 5.1a Company done (d896f3c, staging eda576d9, 285 green); routing control deferred to 5.1 landing 2 (accepted). Starting 5.1 landing 1 domain (N stays, party.companyId, lazy master folio, routing at postCharge).
 - 2026-09-24 — dev (post-compaction): N19 fixed 4cb9908, staging be0647d5, 285 green; store port `people.contact` now returns `{id, write, stream}` so the type carries the rule. On Company Setup screen. Port 7531 held by another session's dev server (QA's?) — dev didn't run e2e; QA reruns S4-21.
 - 2026-09-24 — solex-qa stopped for compaction (solex aa34fd7, 78 e2e). N19: booking-created contacts have no `contact.created` → blocking, dev first on resume. Plain-language S4 block for Alex still to write (QA first on resume).
 - 2026-09-24 — architect: dev idle at clean stop for compaction (5.1a Company server side a9fe985, staging 138c9393, 284 green; resume = Setup screen + transfer picks from list). Docker: orphan postgres container/volume/network removed; local dev = `mise run dev` (SQLite, no Docker). QA stopped for compaction. Flag for Alex's Vietnamese pass: wording for "own bill" vs "master folio".
