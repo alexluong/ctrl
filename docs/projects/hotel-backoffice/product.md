@@ -21,7 +21,25 @@ Owner: `solex-product`. **v0.1 draft, 2026-09-23** — built from `requirements.
 | **Back Office** | receivables, expenses, reports / dashboard, guest history | ✓ receivables + expenses (assumed; client to confirm); reports owner-only | ✓ |
 | **Setup** | the whole Setup context | – | ✓ |
 
-Roles v1: `receptionist`, `owner`. No per-action permissions, no approval workflows (discount approval → later ticket). Admin SDK (D-9) sits outside the apps, for seeding/tenant creation.
+**Authz is capability-based, enforced per command** (Alex: role/authz matters). Apps only hide what you can't do; the server checks.
+
+```ts
+type Capability =
+  | 'booking.create' | 'booking.edit' | 'booking.cancel'
+  | 'stay.assign' | 'stay.check_in' | 'stay.check_out' | 'stay.move' | 'stay.cancel'
+  | 'folio.post_charge' | 'folio.void' | 'folio.move_line' | 'folio.take_payment' | 'folio.refund' | 'folio.transfer_to_receivable'
+  | 'room.set_status' | 'room.set_out_of_order'
+  | 'receivable.record_payment' | 'receivable.write_off'
+  | 'expense.record' | 'expense.void'
+  | 'reports.view' | 'guests.view'
+  | 'setup.edit' | 'users.manage'
+type Role = { id: RoleId; hotelId: HotelId; name: string; capabilities: Capability[] }
+type User = { id: UserId; hotelId: HotelId; name: string; email: string; roleId: RoleId; status: 'active' | 'disabled' }
+```
+- Every command declares the capability it needs; the handler checks it against the actor. Audit = event `actor` + capability.
+- **v1 ships two fixed bundles**: `receptionist` (Front Desk ops + receivable payments + expense record, assumed) and `owner` (all). Sensitive ones — void, refund, write-off, setup, users — sit in `owner` by default.
+- Custom roles / editing bundles in Setup → later; the model already allows it because a role *is* a capability list.
+- No approval workflows in v1 (discount approval → later ticket). Admin SDK (D-9) sits outside the apps, for seeding/tenant creation.
 
 Housekeeping, restaurant, etc. are off-system; reception acts on their behalf.
 
