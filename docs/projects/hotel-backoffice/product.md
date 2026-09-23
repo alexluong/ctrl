@@ -269,7 +269,7 @@ What it buys: one balance rule, one immutable money log; "cash today", "revenue 
 
 ### Folio — charges and payments (Billing; **projection + commands over Ledger**, settled w/ Alex 2026-09-23)
 
-One **own folio** per Stay + one **master folio** per group Booking. A charge is posted *against a stay*; the stay's routing for that category decides which folio it lands on. Stay = one visit = one folio, as Alex put it.
+One **own folio** per Stay + one **master folio** per *group* Booking only (individual bookings: no master, no routing, own folio takes everything; company traveller → transfer-to-receivable at check-out). A charge is posted *against a stay*; for a group stay, its routing for that category decides which folio it lands on. Stay = one visit = one folio, as Alex put it.
 
 ```ts
 type Folio = {
@@ -412,7 +412,7 @@ Later: WaitingList (unassigned stays), Breakfast list, PA18 export, CommissionBy
 | 6b | Out-of-order room | assign to future nights: warn + allow. Check-in: refuse. Taking a room OOO under assigned nights: warn + allow. |
 | 7 | Check-out with balance | stay's own folio: blocked unless 0 or remainder transferred to a company receivable. Master folio not checked here. |
 | 7a | Close booking | `CloseBooking` refused while the master folio balance > 0 (settle or transfer on the booking page); all stays terminal |
-| 8 | Group billing default | routing keyed by `ChargeCategoryId`: `Company.defaultRouting` if set, else room → master, everything else → own; settable per stay per category (`SetRouting`) |
+| 8 | Group billing default | **Group bookings only.** Routing keyed by `ChargeCategoryId`: `Company.defaultRouting` if set, else room → master, everything else → own — the *seed* for each group stay's routing, settable per stay per category (`SetRouting`). An individual booking has no master folio and no routing: every charge lands on the stay's own folio; a company traveller's bill reaches the company via transfer-to-receivable at check-out. |
 | 9 | Rates | prefilled from `RateTable` (ranges half-open `[from, to)`); no table rate and no desk-typed price → **refuse** `rate.notFound`, never silently 0 (D-21); 0 only when typed (FOC); editable until the night posts; posted nights immutable. Day-of-week rates later. |
 | 10 | Sensitive money actions | void, refund, write-off, transfer = `owner` capabilities by default |
 
