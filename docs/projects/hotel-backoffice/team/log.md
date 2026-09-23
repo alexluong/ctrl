@@ -1,4 +1,5 @@
 # Team log
+- 2026-09-24 — solex-qa: slice 3 reds green, expense cases added, N14/N15 → dev. Architect D-24 (b): adapters validate shape only; rule refusals are codes; zod failures return `input.invalid`, never throw.
 - 2026-09-24 — product: §6/§11 ExpenseCommand aligned to built shape (d5a0ef9). Slice 3 spec == code.
 - 2026-09-24 — dev: expense categories now the client's list (staging 0094e999). Architect rulings: id `hkOvertime` (camel, like every other id) stands; ExpenseCommand keeps dev's **required `description`** + optional `reference` — an advance with no name on it is unauditable; product drops `payee?`/`note?`. Dev on slice 4.
 - 2026-09-24 — product: ExpenseCategory v1 fixed in code aligned (b7e73f3): §5/§6 clause, ids groceries/incidental/hk_overtime/advance/other + system writeOff, dropped from §11 Define/Update/Retire.
