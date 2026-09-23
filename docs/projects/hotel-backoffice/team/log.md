@@ -1,4 +1,5 @@
 # Team log
+- 2026-09-24 — product: §11 DisableUser deferred, user stream/payload/session notes aligned (0b76254).
 - 2026-09-24 — dev: slice 4 landing 1 accounts (staging 5d3807df, 272 green); N16 closed. Architect accepted; ruled no account-level DisableUser in v1 (D-18 built note); product to mark §11 DisableUser deferred. Next: roles + history tabs.
 - 2026-09-24 — solex-qa: D-24 (b) verified; S3-32 sweep green; N16 refund form pre-fills reason (rule unreachable) → dev, non-blocking; slice 4 cases S4-1..5 prepared. Checklist line extended: UI never answers a rule on the user's behalf.
 - 2026-09-24 — dev: D-24 (b) applied (staging acf36ff1, 259 + 45 green); found refund had no reason rule (schema-only) → `folio.reasonRequired`. Architect accepted; checklist: screen decides what to send, never whether allowed. Slice 4 started.
