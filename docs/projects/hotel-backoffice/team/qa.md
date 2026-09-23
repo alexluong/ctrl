@@ -37,7 +37,7 @@ Architect reviews each slice dev lands. Worktree: `~/git/hub/alexluong/solex-arc
 - **Access changes end live sessions in the same batch** — deactivate / password reset / role change never leaves a cookie that outlives the row (D-18 built note).
 
 - **A library that re-validates gets our rule, not its default** — username/password/email patterns are one constant shared with Better Auth (N17).
-- **Every tier (b) row has a creating event** — no row is written outside `change()` / a commit's `writes`; a history page for any entity is never empty (dev's guest gap, 2026-09-24).
+- **Every tier (b) row has a creating event** — no row is written outside `change()` / a commit's `writes`; a history page for any entity is never empty (dev's guest gap, 2026-09-24). **Both halves of a row's birth come from one function**: a store upsert returns `{ write, stream }` together, typed, so a batch that drops the append does not compile (N19, third instance).
 
 - **What-changed is compared against the row, never against what the form sent** — the screen must send everything (N16), so only the rules can say nothing moved; no `*.updated` event for a no-op (N18).
 
