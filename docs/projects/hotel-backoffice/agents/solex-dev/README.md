@@ -15,7 +15,7 @@ Alex: "green light, let's implement a rough version of the overall design." Auth
 | 0 | Foundation (in flight) | Room flip → CRUD+events, staging wipe (Alex ok'd), D-12 envelope + `schema_version`/upcaster hook, `command_id` UNIQUE (idempotency) | `/system` |
 | 1 | **Occupancy loop** | `booking.create` (walk-in, one room type, nights, contactId) → `stay.create` → `stay.assign_room` → `stay.check_in` → `stay.check_out` (no balance check yet) + `room.mark_dirty` reaction + `stay.cancel`. Every supply/demand command versions `availability:<hotel>` (D-8). | Front Desk room grid (dates × rooms), booking list, one stay page |
 | 2 | Setup minimum (tier b) | RoomType, RateType, Guest/Contact CRUD + events; `hotel_staff` so `requireUser()` returns hotelId+role | plain Setup forms |
-| 3 | Money | `folio.post_charge`, `payment.record`, night posting on business-date roll (D-7), transfer to company receivable, checkout blocked with balance (§10); Ledger = truth, folio = projection (D-16/17) | folio tab on stay, payment form |
+| 3 | **Money — next (2026-09-23)** | `folio.post_charge`, `payment.record`, night posting on business-date roll (D-7), transfer to company receivable, checkout blocked with balance (§10); Ledger = truth, folio = projection (D-16/17) | folio tab on stay, payment form |
 | 4 | Roles + audit | owner-only guards on money commands; history tab (events per stream) on room/stay/folio | history tab |
 | 5 | Long tail | OOO, overbooking override, group routing, reports, rest of §11 | as needed |
 
@@ -65,6 +65,7 @@ Do **not** yet: domain code, ES infra, Hookdeck. Those wait on product + archite
 - Frontend: TS → React likely; coordinate w/ `collie-ui` (see README cross-ref).
 
 ## Log
+- 2026-09-23 — architect: slices 1–2 accepted (173 tests). Slice 3 go: Ledger (D-17) + folio projection + post_charge/payment + night posting per D-25 + checkout balance guard + transfer to receivable. Hotel methods + scenarios first; money commands idempotent by commandId; owner-only guards via ctx.must. CreateUser/UpdateUser/DisableUser → slice 4.
 - 2026-09-23 — architect: rev 6, slice plan 0–5; Alex green light for rough end-to-end.
 - 2026-09-23 — architect: auth landed ahead of order (fine). Answers: User/staff tier b, library owns row; system_operator ok; wipe staging log at Room flip; D-23 redaction.
 - 2026-09-23 — architect: rev 5. D-22 (two tiers) accepted by Alex; Room → CRUD+events first, then envelope, Booking/Stay, auth.
