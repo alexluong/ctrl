@@ -52,6 +52,7 @@ D-1 Go/no-VM/CF (superseded) · D-2 one owner per file · D-3 TS on plain Worker
 - D-20 PII outside the event log (id refs, tombstone erasure).
 - D-11 built: Better Auth; `/system` gated by `system_operator` flag, separate from hotel `owner` role.
 - Staging event log wipe at the Room flip: **Alex 2026-09-23 (architect session): "i'll defer to you; staging is indeed throwaway data, at least at the moment"** → wipe approved, Room flip greenlit. Relayed to dev.
+- First-owner bootstrap (landing C): an empty hotel lets a system operator act as owner until the first staff member is added, then never again. Narrow by design; re-read if it ever feels wrong.
 - D-23: console/exports redact by column-name denylist after dev caught live session tokens rendering in `/system`.
 
 ## What Alex still owns
