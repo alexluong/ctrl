@@ -149,15 +149,26 @@ Plain-language, same reading as slice 4. Company names below are examples; the e
 | S5-4 | Company pays in full, then owner retires it; desk opens a transfer | retired without complaint; it's gone from the transfer list | retire once settled; retired ≠ choosable | e2e "S5-4" | d607656 pass |
 | S5-5 | Desk transfers a bill before any company exists | "Chưa khai báo công ty nào. Chủ khách sạn thêm trong phần Thiết lập." (not "Chọn công ty nhận công nợ.") | an empty list says who has to act (N10 class) | e2e:hotel.setup "S5-5" | d607656 pass |
 
-### 5.1 group bookings (drafted; runs when landing 2 screens land; domain 98f0989)
+### 5.1 group bookings (landing 2: 87e160d form + routing, db0c0e0 master folio)
+
+Routing and master-folio wording is dev's placeholder until Alex's pass; the e2e asserts by key, so the words can change.
 
 | ID | who / what they do | what they should see | rule | automated by | last run |
 |---|---|---|---|---|---|
-| S5-6 | Desk makes one group booking for 3 rooms | 3 stays under one booking, one master folio | a group booking makes one stay per room | todo (e2e + scenario) | — |
-| S5-7 | Desk makes an individual booking for a company traveller, posts a charge | no master folio; the charge is on the guest's own folio; settled at check-out by transfer to the company | product §10 row 8 (4a77be0): routing and master only for groups | todo | — |
-| S5-8 | Group, company without default routing: room night + minibar | room charge on the master; minibar on the guest's own folio | built-in default: room → master, rest → own | todo | — |
-| S5-9 | Group, company whose default routing differs | charges follow the company's default | Company.defaultRouting beats built-in | todo | — |
-| S5-10 | Group, desk sets a per-stay routing for one category | that stay's charges in that category follow the override | stay override beats company default (per category) | todo | — |
-| S5-11 | One group stay checks out while the master still owes | check-out allowed once the stay's OWN folio is settled | §10 row 7: check-out guards own folio only | todo | — |
-| S5-12 | Desk closes the group booking while the master owes / while a stay is still in-house | refused, with a message; closes only when master is 0 and every stay is checked out or cancelled | §10 row 7a | todo | — |
-| S5-13 | Owner retires a company with an open booking (no debt) | refused "Công ty này còn công nợ hoặc còn đặt phòng đang mở…" | §11: open booking half of company.inUse | todo | — |
+| S5-6 | Desk books **Đoàn** (group) for 3 rooms, choosing a company as **Bên thanh toán** | the booking page lists 3 stays and a group bill, settled | a group booking makes one stay per room | e2e:groups.spec "S5-6" + scenario (groups.test) | db0c0e0 pass |
+| S5-14 | Desk opens a group booking's page | group bill has payment (and transfer when it owes) but **no** post-charge form | the master only gets lines through routing (by design, not a finding) | e2e "S5-14" | db0c0e0 pass |
+| S5-7 | Desk books **Khách lẻ** (individual) with a company, checks in, posts a minibar | no "where charges go" section on the stay; room + minibar both on the guest's own bill; the booking page has no group bill | product §10 row 8 (4a77be0): only groups have a master and routing | e2e "S5-7" + scenario | db0c0e0 pass |
+| S5-8 | Group with a company that has no agreement; desk assigns a room, checks in, posts a minibar; then takes the company's payment on the group bill | room night on the group bill, minibar on the guest's own; the payment line names no room | built-in default: room → master, rest → own; master payments are the booking's (DB check) | e2e "S5-8" + scenario | db0c0e0 pass |
+| S5-9 | Company whose agreement sends something else to the group bill | charges follow the company's agreement | Company.defaultRouting beats the built-in default | scenario only (groups.test, routing.test): no screen sets an agreement yet | db0c0e0 scenario |
+| S5-10 | On one group stay, desk sets **Tiền phòng** (room) to the guest's own bill, then checks in | the choice survives a reload; the room night lands on the guest's bill; group bill stays settled | a stay override beats the agreement (per category) | e2e "S5-10" + scenario | db0c0e0 pass |
+| S5-11 | Group stay whose own bill is settled checks out while the group bill still owes | check-out goes through; group bill still owes | §10 row 7: check-out guards the stay's own bill only | e2e "S5-11" | db0c0e0 pass |
+| S5-13 | Owner retires a company that has a future booking (no debt) | "Công ty này còn công nợ hoặc còn đặt phòng đang mở…" | §11: the open-booking half of company.inUse | e2e "S5-13" | db0c0e0 pass |
+| S5-15 | A company's only booking is checked in, paid, checked out; owner retires the company | retired without complaint | a finished booking is not an open one | e2e "S5-15" | db0c0e0 **fail** (N23: booking stays `booked` forever) |
+
+### 5.1 closing a booking (landing 3; drafted)
+
+| ID | who / what they do | what they should see | rule | automated by | last run |
+|---|---|---|---|---|---|
+| S5-12a | Desk closes a group booking while one stay is still in-house or booked | refused, with a message saying stays are still open | §10 row 7a: every stay must be checked out or cancelled | todo | — |
+| S5-12b | Desk closes a group booking whose stays are all out but the group bill still owes | refused, with a message saying the group bill still owes | §10 row 7a: master must be 0 | todo | — |
+| S5-12c | Group bill paid or transferred to the company, all stays out; desk closes | booking shows closed; no more payments on the group bill; the company can now be retired (S5-13 turns green) | happy path | todo | — |
