@@ -43,18 +43,39 @@ type User = { id: UserId; hotelId: HotelId; name: string; email: string; roleId:
 
 Housekeeping, restaurant, etc. are off-system; reception acts on their behalf.
 
-## 3. Jobs to be done
+## 3. Actions and interfaces (settled w/ Alex 2026-09-23)
 
-Receptionist: quote availability for a date range by room type → take a booking (individual: specific room; group: types × qty) → assign rooms → check in (register guests) → post charges during stay → move/extend stays → check out and settle (cash/transfer/card/to company debt) → keep room status current → chase receivables → record expenses.
+Screen → actions → command. Immediate scope only; capability in brackets where not obvious.
 
-Manager: today's state (vacant, arrivals, departures, revenue) · forward book (occupancy, revenue forecast) · revenue by bucket / channel / payment method · unpaid + receivables by debtor type · guest history · expenses / P&L-ish · approve discounts.
+### Front Desk app
+| screen | actions |
+|---|---|
+| **Room map** (home) | every room's state *now*; tile → check in, post charge, take payment, mark clean/dirty, out of order |
+| **Tape chart** | rooms × dates; per-type availability inline; drag a stay = move room / extend (`stay.room_changed` / `stay.nights_changed`); click empty cell → new booking |
+| **New booking** | individual: room + dates + guest → done (one stay, assigned). Group: company, dates, types × qty, assign now (default) or later |
+| **Booking page** | edit party / notes, add / remove stays, assign rooms, cancel w/ reason, master folio |
+| **Stay page** | guests, nights (room + rate per night), check in, check out, move, extend, cancel / no-show, own folio |
+| **Folio** | lines; post charge (catalogue item or free text); void [owner]; move line to another folio; take payment (cash / transfer / card); deposit; refund [owner]; transfer remainder to company; close; **print** |
+| **Arrivals / departures today** | lists off the map; one-click check in / out |
+| **Search** | booking / stay by guest name, phone, company |
 
-Setup/admin: onboard the hotel (identity, floors, rooms, types, bed types) · set and change prices (rate table, charge items) · curate catalogues (no duplicates, archive dead items) · set tax/service % per bucket · set booking rules (day boundary, overbooking, child age, default check-in/out times, ID enforcement) · register channels/companies with commission + terms.
+### Back Office app
+| screen | actions |
+|---|---|
+| **Dashboard** | today: occupancy, arrivals, departures, revenue posted, cash in; forward book |
+| **Receivables** | by company; record payment; write off [owner] |
+| **Expenses** | record, void; by category / period |
+| **Reports** [owner] | revenue by category / source / method; occupancy over time; guest history |
+
+### Setup app [owner]
+CRUD per Setup item (§6), retire not delete. Users + roles management.
+
+Later: registration card print, discount approval flow, group label/color on tape chart, breakfast / pickup lists, PA18 export, thank-you email.
 
 ## 4. Home screens (projections, not reports)
 
 - **Room map** — now. Tiles by floor; color = derived status; tile → check-in, balance, post charge, set dirty/clean/OOO.
-- **Tape chart** — over time. Room × date grid, stay bars; drag = move/extend (emits `RoomChanged` / `StayDatesChanged`); shows per-type availability inline for quoting.
+- **Tape chart** — over time. Room × night grid drawn from `Night` rows; a moved stay shows as two bars; drag emits `stay.room_changed` / `stay.nights_changed`; per-type availability inline for quoting.
 Everything else hangs off these two.
 
 ## 5. Bounded contexts (settled w/ Alex 2026-09-23)
