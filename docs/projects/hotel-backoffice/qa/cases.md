@@ -10,7 +10,7 @@ Seeded 2026-09-24 by architect from the walkthroughs in `../team/qa.md`. `last r
 | S0-2 | D-8 retry redecides | two writers, same room, take out of order | second gets `room.alreadyOutOfOrder`, one event | scenario:(store) "retries must re-decide" | 3fb421a pass |
 | S0-3 | D-8 non-atomic write | pass a non-batchable statement | throws, nothing written | scenario:(store) | 3fb421a pass |
 | S0-4 | no-op = no event | mark dirty twice | exactly one `room.marked_dirty` | scenario + manual | d629752 pass |
-| S0-5 | N4 disable only for no-op | mark clean on an OOO room | click goes through, alert with reason, no event | e2e (todo) | d629752 pass (manual) |
+| S0-5 | N4 disable only for no-op | mark dirty, then OOO, then mark clean | dirty button disabled (no-op); clean enabled, click → alert with reason, no event | e2e:rooms.spec "S0-5" | ef6d242 pass |
 | S0-6 | D-23 redaction | open `/system/tables/user`, `/session` | name/email/token columns `••• redacted` | scenario:(queries.test) + manual | 5b93104 pass |
 | S0-7 | D-22 replay leaves tier (b) | rebuild projections | `rooms` row unchanged, events count unchanged | scenario:"leaves the tier (b) tables alone" + manual | 5b93104 pass |
 | S0-8 | D-12 idempotency | same commandId twice | one write, original result returned | scenario:(log.test) | ca19a48 pass |
@@ -21,8 +21,8 @@ Seeded 2026-09-24 by architect from the walkthroughs in `../team/qa.md`. `last r
 
 | ID | rule | steps | expected | automated by | last run |
 |---|---|---|---|---|---|
-| S1-1 | §11a nights [arrive, depart) | book 23→26 | nights 23, 24, 25 held; form shows "3 đêm" live | scenario:"holds every night of the stay on the calendar" + e2e (todo) | f35bded pass |
-| S1-2 | D-15 no double sale | second booking on 101 for a held night | refused "Phòng đã có khách trong những đêm này", rendered as alert, not listed | scenario:"refuses to sell a night that is already held" + e2e (todo) | f35bded pass |
+| S1-1 | §11a nights [arrive, depart) | book 23→26 | nights 23, 24, 25 held; form shows "3 đêm" live | scenario:"holds every night of the stay on the calendar" + e2e:booking.spec "S1-1" | ef6d242 pass |
+| S1-2 | D-15 no double sale | second booking on 101 for a held night | refused "Phòng đã có khách trong những đêm này", rendered as alert, not listed | scenario:"refuses to sell a night that is already held" + e2e:booking.spec "S1-2" | ef6d242 pass |
 | S1-3 | §10 turnover day | stay A departs 26, stay B arrives 26 same room | allowed | scenario:"allows the turnover day, because departure is exclusive" | 42c55cb pass |
 | S1-4 | D-8 stale availability read | two desks race for the last room | exactly one wins; loser re-decides, sees clash | scenario:"gives the last room to exactly one of them" + guard.test | 92aa083 pass |
 | S1-5 | §10 6a early check-out | check-in 23, depart 26, check out on 23 | `stay.nights_changed` then `stay.checked_out` in one batch; 24–25 freed; stay shows 1 night | scenario:"shortens the stay and frees the remaining nights" + manual | f35bded pass |
@@ -49,6 +49,10 @@ Seeded 2026-09-24 by architect from the walkthroughs in `../team/qa.md`. `last r
 | S2-8 | last owner | deactivate the only owner | refused `staff.lastOwner` | scenario | 71402c8 pass |
 | S2-9 | first-owner bootstrap | empty hotel, system operator | acts as owner with warning; adding first staff row closes it permanently | manual | b65acd2 pass |
 | S2-10 | roomType retire in use | retire a type a live room references | refused `roomType.inUse` | scenario (todo verify) | — |
+| S2-12 | §10 row 9 zero only when typed | book with rate field `0` | booked at 0 (FOC); blank field + no table rate → `rate.notFound` | scenario (todo verify) | — |
+| S2-13 | §2 re-add staff | add a user already on staff | refused `staff.alreadyStaff` | scenario (todo verify) | — |
+| S2-14 | §2 last owner demote | demote the only active owner to receptionist | refused `staff.lastOwner` (deactivate is S2-8) | scenario (todo verify) | — |
+| S2-15 | D-20 contact erase owner-only | receptionist erases a contact | refused (`guests.erase`); owner: row blanked, `contact.erased {}` | scenario (todo verify) | — |
 | S2-11 | script emits event | `create-user.mjs --role` | `staff.added` beside the row, actor `system:bootstrap` | manual | f5591d1 pass |
 
 ## Slice 3 — money
@@ -67,6 +71,15 @@ Seeded 2026-09-24 by architect from the walkthroughs in `../team/qa.md`. `last r
 | S3-10 | D-25 roll | day rolls / cron + lazy both fire / 3-day outage | next night posted once; catch-up; never posts nights ahead | scenario:(night.test ×6) | b3c7597 pass |
 | S3-11 | voided night re-posts | void tonight's room charge, roll again | charge re-posted (attempt id) | scenario:"becomes owed again, and the roll posts it next time" | b3c7597 pass |
 | S3-12 | §10 check-out guard | check out with balance | refused "Hoá đơn chưa thanh toán. Hãy thu tiền hoặc chuyển sang công nợ công ty"; credit balance passes; race with a landing charge re-runs | scenario + manual | 624ac57 pass |
-| S3-13 | money loop on screen | category list → rate → book → check-in → minibar → refused → cash → check-out | bill correct at each step, forms removed after close | manual (e2e todo, the headline spec) | 624ac57 pass |
-| S3-14 | N10 no silent block | submit any form with an invalid/empty required field or an empty select | message on the page, never a silent no-op (`step`, `required`, empty options) | e2e (todo, all forms) | — |
+| S3-13 | money loop on screen | category list → rate → book → check-in → minibar → refused → cash → check-out | bill correct at each step, forms removed after close | e2e:money-loop.spec "S3-13" | ef6d242 pass |
+| S3-14 | N10 no silent block | submit any form with an invalid/empty required field or an empty select | message on the page, never a silent no-op (`step`, `required`, empty options) | e2e:no-silent-block.spec (14 forms) + empty-hotel.setup (empty select) | ef6d242 **fail** 15/15 (N10) |
 | S3-15 | receivable transfer | company booking, transfer remainder, check out | `ledger.account_opened` on `ledger:receivable:<companyId>`, folio at zero, check-out allowed | scenario (todo verify) | — |
+| S3-16 | D-25 businessDayStart | receptionist changes it; owner changes it while tonight unposted | both refused; owner after roll allowed | scenario (todo verify) | — |
+| S3-17 | §6 folio lazy open | book, don't check in | no `ledger.account_opened`/folio stream until first charge/payment; bill shows "Đã thanh toán" | scenario (todo verify) + e2e:money-loop (balance before check-in) | ef6d242 pass (screen half) |
+| S3-18 | §6 deposit before charge | booked stay, take deposit | allowed; balance shows credit; check-in posts tonight against it | e2e (todo) | — |
+| S3-19 | receivable payment cap | pay a company more than it owes | refused "Vượt quá số công ty còn nợ", rendered | e2e (todo, landing 6) | — |
+| S3-20 | receivable settles | pay exactly the outstanding | company drops off /receivables; statement still opens with every line | e2e (todo, landing 6) | — |
+| S3-21 | receivable double-click | double-click a payment that settles the debt | posted once, not refused | e2e (todo, landing 6) + scenario | — |
+| S3-22 | write-off owner-only, reason required | receptionist opens /receivables; owner writes off with blank/whitespace reason | receptionist sees a note, no form; blank reason refused on page | e2e (todo, landing 6) | — |
+| S3-23 | N10 on receivables forms | submit empty company / amount / reason | message on page (forms are noValidate) | e2e (todo, landing 6) | — |
+| S3-24 | N11 pre-hydration submit | submit any form before hydration | no native GET with fields in the URL (guest name/phone would land in the query string + access logs) | e2e (todo, after dev's call) | 624ac57 **fail** (seen) |
