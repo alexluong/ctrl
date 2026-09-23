@@ -16,7 +16,7 @@ Each SoLex session is a named Claude Code agent with a dir here: `agents/<name>/
 - **One owner per file.** Write only what you own. Need something changed elsewhere → message its owner.
 - **Git**: `git pull --rebase` before commit; commit as `docs(hotel-backoffice/<agent-short>): …` (short = dev/explore/product/architect). Push after each commit; others pull.
 - **Messaging** (`SendMessage` by session name): short, factual, one topic. Use for: a finding another agent needs now, a blocking question, "done with X". Don't use for status chatter — that goes in your file's Status section.
-- **Decisions** are architect's. Propose in `../team/decisions.md` (status Proposed) or by message; architect flips to Accepted.
+- **Decisions** are architect's. Propose in `../team/decisions.md` (status Proposed) or by message; architect flips to Accepted. Per D-21 (2026-09-23) architect accepts routine ones on Alex's behalf; breaking ones (money semantics, data loss, paid resources, hard-to-undo) wait for Alex. Architect's Accepted is final.
 - **Questions** for Alex/client → `../team/questions.md`. **Handoffs / done-notices** → `../team/log.md` (newest first). Personal thinking / progress → a new file in your `notes/`.
 - **Alex** talks to any agent directly. If Alex tells you something that changes scope/direction, write it in your file *and* message architect.
 - **Secrets**: `ctrl/secrets/` only. Never in tracked files or messages.
