@@ -336,7 +336,7 @@ Reference data, retire-not-delete, seeded by admin SDK (D-9). Each has `<name>.d
 - `ExpenseCategory` — groceries, incidental, hk overtime, advance, other
 - `Company` — name, contact, kind, default group routing `{category → own | master}`; commission/terms → later
 - `BookingRules` — childAgeThreshold 6, overbooking `warn` (override allowed), autoDirtyOnCheckout true, idEnforcement optional
-Rules: unique room numbers per hotel; retired items not selectable; can't retire a room with future nights.
+Rules: unique room numbers per hotel; retired items not selectable; can't retire a room with future nights; **can't retire a room type while any non-retired room references it** (refuse `roomType.inUse`; retire or re-type the rooms first — mirrors the room rule, and a retired type with live rooms would break availability counts); room type id = slug of name (`phong-doi`); rate ranges half-open `[from, to)`.
 
 ### Expense — owner's cash-out (settled w/ Alex 2026-09-23; posts to Ledger)
 
@@ -395,7 +395,7 @@ Later: WaitingList (unassigned stays), Breakfast list, PA18 export, CommissionBy
 | 6b | Out-of-order room | assign to future nights: warn + allow. Check-in: refuse. Taking a room OOO under assigned nights: warn + allow. |
 | 7 | Check-out with balance | blocked unless remainder transferred to a company receivable |
 | 8 | Group billing default | routing from `Company.defaultRouting` (room → master, rest → own); editable per stay |
-| 9 | Rates | prefilled from `RateTable`; editable until the night posts; posted nights immutable |
+| 9 | Rates | prefilled from `RateTable` (ranges half-open `[from, to)`); no table rate and no desk-typed price → **refuse** `rate.notFound`, never silently 0 (D-21); 0 only when typed (FOC); editable until the night posts; posted nights immutable. Day-of-week rates later. |
 | 10 | Sensitive money actions | void, refund, write-off, transfer = `owner` capabilities by default |
 
 Deferred: OTA commission / gross-net · VAT / red invoice · discount approvals · receivable due dates.
@@ -477,7 +477,7 @@ type CreateBooking = {
   notes?: string
 }
 // minimum a receptionist must type: contact.name, arrive, depart, roomTypeId, adults. Everything else defaults
-// (bedType from room, ratePerNight from RateTable else 0 and flagged, children 0).
+// (bedType from room, ratePerNight from RateTable else refuse rate.notFound unless typed (D-21), children 0).
 
 type AssignRoom   = { commandId; stayId: string; roomId: string; fromDate?: LocalDate }   // fromDate default = first unposted night
 type CheckIn      = { commandId; stayId: string; guests?: Array<{ name: string; idDoc?: { type: 'cccd'|'passport'|'other'; number: string } }> }
@@ -533,7 +533,7 @@ Envelope + naming per §6 conventions (D-12). **Two tiers (D-22)**: `booking.*` 
 `folio.` opened · charge_posted · charge_voided · charge_moved · payment_received · payment_refunded · deposit_forfeited · transferred_to_receivable · closed
 `receivable.` opened · payment_received · settled · written_off
 `ledger.` account_opened · entry_posted · entry_reversed · account_closed
-`guest.` created · updated
+`guest.` created · updated · erased (tombstone, D-20)
 `expense.` recorded · voided
 `setup.` `<item>.defined / updated / retired` · hotel_profile_set · booking_rules_set
 `user.` created · updated · disabled · role_set · password_reset(byUserId) — access events; visible in History to owner only
