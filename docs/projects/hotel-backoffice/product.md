@@ -34,7 +34,8 @@ type Capability =
   | 'reports.view' | 'guests.view'
   | 'setup.edit' | 'users.manage'
 type Role = { id: RoleId; hotelId: HotelId; name: string; capabilities: Capability[] }
-type User = { id: UserId; hotelId: HotelId; name: string; email: string; roleId: RoleId; status: 'active' | 'disabled' }
+type User = { id: UserId; hotelId: HotelId; name: string; username: string; email?: string; roleId: RoleId; status: 'active' | 'disabled' }
+// identity (password, sessions) lives in Better Auth's mutable tables (D-11), NOT in the event log; membership + role changes are events (`user.*`). Sign-in by username for all roles, email optional; password reset by owner. Deactivated users stay in history, render as "(former)".
 ```
 - Every command declares the capability it needs; the handler checks it against the actor. Audit = event `actor` + capability.
 - **v1 ships two fixed bundles**: `receptionist` (Front Desk ops + receivable payments + expense record, assumed) and `owner` (all). Sensitive ones — void, refund, write-off, setup, users — sit in `owner` by default.
@@ -143,7 +144,7 @@ type Booking = {
   id: BookingId
   hotelId: HotelId
   kind: 'individual' | 'group'
-  party: { companyId?: CompanyId; contactName: string; phone?: string }
+  party: { companyId?: CompanyId; contactId: ContactId }   // contact PII in mutable table, not in events (D-20)
   sourceId?: BookingSourceId   // Setup-defined list (walk-in, phone, Agoda…); lookup only, no logic
   arrive: LocalDate
   depart: LocalDate            // exclusive
@@ -315,7 +316,7 @@ Rules: opened only from a folio transfer · payments ≤ amount · settled when 
 type Guest = { id: GuestId; hotelId: HotelId; name: string; phone?: string; email?: string; nationality?: string
   idDoc?: { type: 'cccd' | 'passport' | 'other'; number: string }; notes?: string }
 ```
-Events: `guest.created` · `guest.updated`. Belongs to the hotel (D-9); reused across stays for history. ID capture optional in v1. Later: merge duplicates, PA18 police export, VIP class.
+Events: `guest.created` · `guest.updated` · `guest.erased` — **PII never enters event payloads** (D-20). Events carry `guestId` only; name/phone/idDoc live in a mutable `guests` table. Erasure = overwrite the row, log keeps a tombstone; replay still works. Same for `Booking.party.contactName/phone` → stored as a `contact` row referenced by id. Belongs to the hotel (D-9); reused across stays for history. ID capture optional in v1. Later: merge duplicates, PA18 police export, VIP class.
 
 ### Setup context (D-6) — what the hotel is made of
 
