@@ -63,6 +63,17 @@ See `team/decisions.md`. Older Go notes below kept for context.
 - **Config split**: item masters (room, room_type, product, minibar, laundry, service, …) all permission-blocked → no pricing config documented. Settings visible (26 tabs): tax 0%, service charge 0%, all net.
 - **Settled by Alex (2026-09-23)**: room map + tape chart = the two home screens (tape chart = receptionist tool, drag to move/extend). Daily stays only, no hourly. Early/late = catalogue items; drop the +0.3/+0.5/+1 rate multipliers. Personas unchanged.
 - Facts: child age threshold 6, adults/children auto-counted from guest list. Overbooking ON today (tape chart sells >100% on turnover days). Guest ID field is "?" on all 51 revenue rows while PA18 depends on it.
+- **Lifecycle & money (2026-09-23, explore, all read-only verified):**
+  - **Nightly posting confirmed**: room charge for night N posts at 23:59 (`is_post` per night); in-house folio grows nightly; "advance post" exists. `rpt-room-revenue-daily` = occupancy × rate, not posted charges — they reconcile at 23:59. "Revenue today" must say which.
+  - **Departure date exclusive**, nights not dates: 18→28/09 = 10 charge rows. Double-booking = overlapping *nights*; turnover days are fine. So `allow_over_room` ON = genuine overbooking.
+  - **Settlement**: no payment page; checkout = `quickout` dialog in the editor, one row per room-stay, one method each (cash 2 · card 3 · transfer 6 · FOC 9 · **debt 10**). Debt method = what opens a receivable. Split payment → split the folio. **Đóng (closed) = night-audit day close, not settlement.**
+  - **Receivable**: per *folio* (Số RE), not per booking. Settle = amount (partial ok) + method + note. **No due date** — overdue is age only.
+  - **Folio is constructed, not fixed**: charge lines can be moved between rooms/folios (`Chuyển dịch vụ`); master folio = one folio carrying many room-stays' lines; routing switches = the automatic version. Master settles like any folio → company receivable. Naming trap: form "FolioID" = reservation id; ledger "Số RE" = real folio no.
+  - **Deposit** = a number on the booking, checked before cancel/checkout. On cancel, forfeited *by hand* as an extra-service charge line. No refund path.
+  - **Cancel**: guarded (not if checked in; charges must be moved off first; reason mandatory), no charge posted. **No-show** = bare flag. Groups cancel per room-stay; partial cancel = cancel N stays.
+  - **Waiting list is empty all September** — rooms are assigned at booking time in practice. Every status verb is per room-stay → partial arrivals/departures are normal; rooming list mostly never entered.
+  - **Mid-stay**: room move = from→to only, no repricing; extend/shorten regenerates night rows, posted ones immutable; **no rate-change event** — per-night price is mutable state w/o history. Keep "posted nights immutable", make price change an event.
+  - OTAs appear as *debtors* → guest pays channel, hotel bills OTA. Gross vs net of commission unconfirmed.
 - Flow board: `board/solex-flow.excalidraw` (gitignored — live guest data), regenerate via `tools/excalidraw/build.py`. FigJam copy frozen (Figma plan caps MCP at 20 calls/month) — Excalidraw is source of truth.
 - ~~Admin login~~ closed (D-6): masters inferred from live data are enough; Setup is designed from a checklist, not copied. Parked: which of ~60 booking fields are used daily, data volume/history.
 
@@ -116,6 +127,7 @@ Later WS (not now): event-store design — Hookdeck-as-log vs bus + archive. Nee
 ## Status
 
 - 2026-07-10 — plan agreed, awaiting discovery brain-dump.
+- 2026-09-23 — explore answered architect's 10 lifecycle/money Qs (5e143b4): nightly posting, exclusive departure, debt-as-method, per-folio receivables, constructed folios, manual deposit forfeit. 5 items left for Alex walkthrough. **Exploration essentially complete.**
 - 2026-09-23 — product v0.1: Setup context added, in v1 core. **Blocked on Alex: §10 policy points.**
 - 2026-09-23 — **D-6: Setup is its own scope + third persona; no admin login.** Product to add Setup context.
 - 2026-09-23 — **product.md v0** (product). Aggregates: Booking→RoomStay, Room, Folio (own+master), Receivable, Guest, Catalogue, Expense. Key architectural ask: availability is cross-aggregate → single-writer DO per hotel for Reservations, not per-room streams. 8 policy points → questions.md.

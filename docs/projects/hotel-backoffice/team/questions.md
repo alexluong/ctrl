@@ -18,7 +18,7 @@ Format: `- [ ] Q (asked by, date) → for: Alex | client`. Check off + answer in
 - [ ] `wrangler login` expired on MBP — Alex to run in solex-dev session. (dev, 2026-09-19) → Alex
 ## Decisions needed (Alex) — surfaced by explore, 2026-09-23
 
-- [ ] **Day boundary**: ezFolio rolls charges at 23:59, night audit off, days never formally closed. SoLex: hotel-local calendar day w/ implicit roll at a fixed time? or explicit day-close? (needed before reports)
+- [ ] **Day boundary**: confirmed ezFolio posts night N at 23:59 (in-house folio grows nightly). SoLex: same fixed roll (recommended), and define "revenue today" = posted charges (accrual) with occupancy×rate as forecast view. Accept?
 - [ ] **Overbooking**: allowed today (`allow_over_room` ON; >100% on turnover days). Keep as a receptionist override, or hard-block?
 - [ ] **Guest identity**: ID missing on all revenue rows; PA18 export legally depends on it. Enforce ID at check-in, or keep optional?
 - [ ] **OTA commission basis**: OTA remits net (receivable = net) vs hotel pays commission out? Per-Company setting. (product §10, 2026-09-23)
@@ -26,6 +26,14 @@ Format: `- [ ] Q (asked by, date) → for: Alex | client`. Check off + answer in
 - [ ] **Group billing default**: all buckets → master (today's usage) vs room-only → master (corporate norm)? Default per Company. (product §10)
 - [ ] **VAT / red invoice**: out for v1 unless client says otherwise? (product §10; also in open Qs)
 Product's recommendations for each are in `product.md` §10 — Alex can just accept/override there.
+
+## Alex walkthrough needed (explore, 2026-09-23) — closes exploration
+
+- [ ] Group rooms: assigned by tape-chart drag or per room-stay edit? (in practice, since waiting list is always empty)
+- [ ] Deposit: is it a payment record w/ method + date, or just a number on the booking? (`rpt-deposit` suggests method exists)
+- [ ] Room status: auto-dirty on checkout? clean required for check-in? INSPECTED ever used? OOO needs reason?
+- [ ] OTA receivable: gross or net of commission? Compare one Agoda folio to its booking's Hoa hồng.
+- [ ] Cancellation base: 149 in Sept vs how many bookings? (explore can count the reservation list)
 
 ## Open questions
 
