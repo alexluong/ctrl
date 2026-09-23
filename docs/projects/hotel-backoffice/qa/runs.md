@@ -2,7 +2,7 @@
 
 Newest first. `date · commit · staging · cases · result · findings · blocking?`
 
-- 2026-09-24 · db0c0e0 (e2e f-up) · — · S5-8/S5-16 · pass · architect ruled N23 (landing 3: individual auto-close, group explicit close, inUse = live stay or master > 0) and master charges keep their stay (S5-16). Flake fixed: after a group submit the URL changes before the booking page renders, so stay links were read off the /bookings list · N
+- 2026-09-24 · db0c0e0 (e2e 4c39a3c) · — · S5-8/S5-16 · pass · architect ruled N23 (landing 3: individual auto-close, group explicit close, inUse = live stay or master > 0) and master charges keep their stay (S5-16). Flake fixed: after a group submit the URL changes before the booking page renders, so stay links were read off the /bookings list · N
 
 - 2026-09-24 · db0c0e0 (e2e b03e8d4) · 68192888 (not walked) · full e2e 92: all pass except S5-15 · new S5-6..8, S5-10, S5-11, S5-13, S5-14 pass; S5-9 scenario only (no screen for a company agreement) · **N23** a checked-out, paid booking keeps status `booked` (no close command yet, and individual bookings may never get one), so `bookingsOfCompany` says in use forever: any company that was ever booked can never be retired · N (retire is admin, not money; asks architect whether landing 3 closes individual bookings too). Q to architect: master room charges carry the originating stay_id (entries + charges); only payments/transfers are stay-less. The "no stayId" rule was checked on payments
 
