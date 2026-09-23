@@ -121,7 +121,7 @@ Format (agreed w/ Alex 2026-09-23): each thing = TypeScript type + events + rule
 type Event<T extends string = string, P = unknown> = {
   id: EventId                  // ulid — unique, time-sortable
   hotelId: HotelId             // tenant key (D-9)
-  stream: string               // 'booking:<id>' — aggregate type + id
+  stream: string               // '<hotelId>/booking:<id>' — hotel-first, then aggregate type + id
   version: number              // position in stream; UNIQUE(stream, version) (D-8)
   type: T                      // 'booking.created'
   schemaVersion: number        // per-type payload version; never edit old rows
@@ -454,14 +454,14 @@ Command = one intent. `needs` = capability. `checks` = rules beyond "hotel match
 
 ## 11a. Slice 1 payloads — occupancy loop (pinned 2026-09-23 for dev; walk-in individual only)
 
-Exact shapes for the first slice. Group bookings, money, and Setup come in later slices; nothing here changes when they do. Ids are ulids as strings. `LocalDate` = `'YYYY-MM-DD'` in hotel-local calendar; `Instant` = ISO-8601 UTC.
+Exact shapes for the first slice. **Frozen 2026-09-23** after last pass. Group bookings, money, and Setup come in later slices; payload *types* already admit them (unions, arrays) so no schemaVersion bump is needed — slice 1 restricts by *rule*, not by type. Ids are ulids as strings. `LocalDate` = `'YYYY-MM-DD'` in hotel-local calendar; `Instant` = ISO-8601 UTC; `Money` = integer VND. Stream ids are hotel-first: `<hotelId>/<type>:<id>`, availability = `<hotelId>/availability:all`.
 
 ```ts
 // ---- commands (input the handler receives; hotelId + actor come from the session, not the body)
 
 type CreateBooking = {
   commandId: string                       // idempotency
-  kind: 'individual'                      // 'group' arrives in slice 2+
+  kind: 'individual' | 'group'            // slice 1 rejects 'group' by rule, not by type
   contact: { name: string; phone?: string }   // handler upserts a contacts row, stores contactId only
   sourceId?: string
   arrive: LocalDate
@@ -484,38 +484,39 @@ type SetHousekeeping = { commandId; roomId: string; state: 'clean' | 'dirty' }
 // ---- event payloads (envelope per D-12 wraps these)
 
 type BookingCreated = {
-  bookingId: string; kind: 'individual'; party: { contactId: string; companyId?: string }
+  bookingId: string; kind: 'individual' | 'group'; party: { contactId: string; companyId?: string }
   sourceId?: string; arrive: LocalDate; depart: LocalDate
-  requests: Array<{ roomTypeId: string; bedType: string; qty: 1; adults: number; children: number; ratePerNight: number }>
+  requests: Array<{ roomTypeId: string; bedType: string; qty: number; adults: number; children: number; ratePerNight: number }>
   notes?: string
 }
 type StayCreated = {
   stayId: string; bookingId: string; roomTypeId: string; bedType: string
-  nights: Array<{ date: LocalDate; roomId?: string; rate: number; posted: false }>
-  adults: number; children: number; guests: []
+  nights: Array<{ date: LocalDate; roomId?: string; rate: number; posted: boolean }>   // slice 1 always posted:false
+  adults: number; children: number; guestIds: string[]                                   // slice 1 always []
 }
 type StayRoomAssigned  = { stayId: string; roomId: string; fromDate: LocalDate }
 type StayCheckedIn     = { stayId: string; at: Instant; roomId: string; guestIds: string[] }
 type StayCheckedOut    = { stayId: string; at: Instant }
 type StayCancelled     = { stayId: string; reason: string }
 type BookingCancelled  = { bookingId: string; reason: string }
-type RoomMarkedDirty   = { roomId: string; cause: 'checkout' | 'manual' }   // tier b notification
+type RoomMarkedDirty   = { roomId: string; cause: 'checkout' | 'manual'; stayId?: string }   // tier b notification; stayId when cause = checkout
 type RoomMarkedClean   = { roomId: string }
 
 // ---- streams touched per command (same batch)
-// CreateBooking : booking:<id> (booking.created) · stay:<id> (stay.created) · availability:<hotel> (version++ if roomId given)
-// AssignRoom    : stay:<id> · availability:<hotel>
+// (all stream ids prefixed <hotelId>/)
+// CreateBooking : booking:<id> (booking.created) · stay:<id> (stay.created) · availability:all (version++ if roomId given)
+// AssignRoom    : stay:<id> · availability:all
 // CheckIn       : stay:<id> · (slice 3 adds folio charge)
 // CheckOut      : stay:<id> · rooms row update + room.marked_dirty (reaction, in-batch, not on replay)
-// CancelStay    : stay:<id> · availability:<hotel>
-// CancelBooking : booking:<id> · stay:<id> ×N · availability:<hotel>
+// CancelStay    : stay:<id> · availability:all
+// CancelBooking : booking:<id> · stay:<id> ×N · availability:all
 ```
 
 Rules active in slice 1: arrive < depart · room free on every night `[arrive, depart)` · room not OOO at check-in · cancel only from `booked` · check-out only from `checkedIn`. Overbooking per type: warn only (override event in slice 2).
 
 ## 12. Event index
 
-Envelope + naming per §6 conventions (D-12). **Two tiers (D-22)**: `booking.*` `stay.*` `ledger.*` (+ `folio.*` `receivable.*` `expense.*` as Ledger-derived) are state — folded on replay. `room.*` `guest.*` `setup.*` `user.*` are **notifications**: emitted on every CRUD write for history tabs and projections, never folded; the row is truth. Streams: `booking:*` `stay:*` `room:*` `folio:*` `receivable:*` `ledger:*` `guest:*` `expense:*` `setup:*` `user:*` + `availability:<hotel>` (serialisation only, D-8).
+Envelope + naming per §6 conventions (D-12). **Two tiers (D-22)**: `booking.*` `stay.*` `ledger.*` (+ `folio.*` `receivable.*` `expense.*` as Ledger-derived) are state — folded on replay. `room.*` `guest.*` `setup.*` `user.*` are **notifications**: emitted on every CRUD write for history tabs and projections, never folded; the row is truth. Streams: `booking:*` `stay:*` `room:*` `folio:*` `receivable:*` `ledger:*` `guest:*` `expense:*` `setup:*` `user:*` + `availability:all` (serialisation only, D-8). **Stream ids are hotel-first per D-9: `<hotelId>/booking:<id>`, `<hotelId>/availability:all`.**
 
 `booking.` created · requests_changed · party_changed · notes_changed · cancelled · closed · stay_merged_in (reserved)
 `stay.` created · room_assigned · room_unassigned · room_changed · nights_changed · rate_set · guest_added · guest_removed · routing_set · checked_in · checked_out · cancelled · marked_no_show · overbooking_overridden
