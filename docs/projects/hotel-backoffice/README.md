@@ -29,7 +29,8 @@ Secrets (existing-system URL/login): `ctrl/secrets/hotel-backoffice.md` (gitigno
 
 **Decided (D-3):** TypeScript on plain Cloudflare Workers. Go dropped — simplicity wins. **Amended 2026-09-23:** TanStack Start + Drizzle + SQLite; Cloudflare = build target only, dev loop is Node + local SQLite. Staging live: https://solex-stg.collie.studio (`stack.md`).
 **Decided (D-9):** multi-tenant by design, one tenant in practice — everything keyed by `Hotel`, no cross-hotel data v1, tenant seeding via script, no self-signup/billing/super-admin.
-**Proposed (D-8, dev):** D1 for event log *and* projections, optimistic concurrency on `(stream_id, version)` instead of a Durable Object, projections in the same atomic batch, Hookdeck deferred. Awaiting Alex + product.
+**Decided (D-8, de facto):** D1 for event log *and* projections, optimistic concurrency on `(stream_id, version)`, no Durable Object, projections in the same atomic batch, Hookdeck deferred. Built + deployed 2026-09-23 at Alex's direction.
+**Proposed:** D-10 event payload versioning (`schema_version` + upcasters) · D-11 auth (OIDC stance from `docs/stack.md`, hotel-scoped roles).
 **Decided (D-4):** client already has a PMS (**ezFolio** by ezCloud, the `:99` system). SoLex = rebuild driven by **data ownership**; core subset + enhancements, not feature parity. WS2 maps the PMS first via slow walkthrough w/ Alex.
 **Decided (D-5):** fresh start, migration deferred — ezFolio has no working export. Schema for the domain, not for an import.
 See `team/decisions.md`. Older Go notes below kept for context.
@@ -129,6 +130,7 @@ Ordering: ~~WS1 + WS3 can start now. WS2 needs Alex…~~ **WS2 complete 2026-09-
 ## Status
 
 - 2026-07-10 — plan agreed, awaiting discovery brain-dump.
+- 2026-09-23 — **ES skeleton live** on staging: events table + same-batch projections + replay, Room aggregate, `/system` console (log browser, tables, replay). D-8 built as proposed → accepted de facto; D-9 folded in. Next aggregate = Booking; D-10/D-11 proposed first.
 - 2026-09-23 — **WS1 spike shipped** (9f54e73): TanStack Start + Drizzle + SQLite/D1 on Workers, https://solex-stg.collie.studio, $0. D-3 amended (CF = build target only). **D-8 proposed**: D1 log + projections, no DO, Hookdeck deferred. New Qs: hotel-local tz, staging auth.
 - 2026-09-23 — **D-7: hotel day = configurable business date; nights from timestamps + rules.** Closes day-boundary Q.
 - 2026-09-23 — explore answered architect's 10 lifecycle/money Qs (5e143b4): nightly posting, exclusive departure, debt-as-method, per-folio receivables, constructed folios, manual deposit forfeit. 5 items left for Alex walkthrough. **Exploration essentially complete.**

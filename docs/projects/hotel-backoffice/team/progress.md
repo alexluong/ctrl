@@ -9,7 +9,7 @@ Narrative record of what the team (and Alex) has done, by day. `log.md` is the t
 | WS | agent | state |
 |---|---|---|
 | Cockpit | solex-architect | active — merging, deciding, routing |
-| WS1 stack spike | solex-dev | **delivered** — staging live, stack + dev loop in `stack.md`; storage take filed as D-8 (proposed); standby |
+| WS1 stack → ES skeleton | solex-dev | **skeleton live** — events + projections + replay, Room aggregate, `/system` console; next Booking after D-10/D-11 |
 | WS2 existing system | solex-explore | **delivered** (map, flow board, lifecycle & money); on standby for 5 Alex-walkthrough items |
 | WS3 product | solex-product | v0.1 drafted; primed for Alex session |
 
@@ -40,14 +40,14 @@ Narrative record of what the team (and Alex) has done, by day. `log.md` is the t
 **Alex:** closed the admin-login chase; declared **Setup/config its own scope with a third persona** (D-6); raised the **hotel day** problem (late arrivals should count as prior night) → configurable business date (D-7); set the agenda for the product session: schema → roles → actions/interfaces → rules → events.
 **Explore:** full Excalidraw board replaces FigJam (9 sections, 22 screens); four model-changing findings (group folio routing, two booking use cases, one charge shape, config split); Setup checklist; then answered architect's **10 lifecycle & money questions** read-only via the editor's endpoints: nightly posting confirmed, departure exclusive, debt-as-payment-method opens per-folio receivables, folios are constructed, deposit forfeit manual, cancel guards, no rate-change history. 5 items left for Alex walkthrough.
 **Product:** `product.md` v0 (roles, contexts, 7 aggregates, events, invariants, cascade, scope, 8 policy points); v0.1 adds Setup context; prep notes for Alex session.
-**Dev:** Alex ran `wrangler login` and chose **TanStack Start**, local SQLite for dev, Cloudflare as build target only; dev shipped the spike — repo `alexluong/solex`, https://solex-stg.collie.studio (Workers + D1, $0), browser-verified on Node/SQLite, local workerd/D1 and deployed; recorded TLS one-label trap and SSR hydration tz bug; wrote the storage desk exercise → recommends D1 for log + projections with optimistic concurrency, no DO, Hookdeck deferred.
+**Dev:** Alex ran `wrangler login` and chose **TanStack Start**, local SQLite for dev, Cloudflare as build target only; dev shipped the spike — repo `alexluong/solex`, https://solex-stg.collie.studio (Workers + D1, $0), browser-verified on Node/SQLite, local workerd/D1 and deployed; recorded TLS one-label trap and SSR hydration tz bug; wrote the storage desk exercise → recommends D1 for log + projections with optimistic concurrency, no DO, Hookdeck deferred. Later same day, at Alex's in-session request, built the **ES skeleton**: events table, same-batch projections, replay, Room aggregate, multi-tenant from line one (D-9), `/system` console; 7 tests, browser-verified on D1.
 **Architect:** merged each wave into README; queued 8 policy points; asked dev for a storage sanity-check (DO per hotel vs D1); reviewed the board and sent the 10 questions; recorded D-6, D-7; wrote the business-date model; set product's agenda; merged dev's spike → D-3 amended, D-8 proposed, product pinged to reconcile §6.
 
 ## Decisions so far
-D-1 Go/no-VM/CF (superseded) · D-2 one owner per file · D-3 TS on plain Workers · D-4 rebuild for data ownership, core subset · D-5 fresh start, no migration · D-6 Setup scope + setup/admin persona · D-7 business date w/ configurable roll · D-8 (proposed) D1 log + projections, no DO, Hookdeck deferred · D-9 multi-tenant by design, one tenant. Full text: `decisions.md`.
+D-1 Go/no-VM/CF (superseded) · D-2 one owner per file · D-3 TS on plain Workers · D-4 rebuild for data ownership, core subset · D-5 fresh start, no migration · D-6 Setup scope + setup/admin persona · D-7 business date w/ configurable roll · D-8 D1 log + projections, no DO, Hookdeck deferred (built) · D-9 multi-tenant by design, one tenant · D-10 (proposed) payload versioning · D-11 (proposed) auth. Full text: `decisions.md`.
 
 ## What Alex still owns
 - Product session (schema / roles / actions / rules / events) + §10 policy answers
-- Accept/override **D-8** (storage shape)
+- D-10 (payload versioning) nod · **D-11 auth: pick IdP**, staging auth before Booking?
 - Hotel-local time zone (rendering); staging auth before real data (`questions.md`)
 - 5 explore walkthrough items (`questions.md`) — not blocking

@@ -6,9 +6,15 @@
 
 **Constraints (from Alex):** TypeScript on plain Cloudflare Workers (D-3, 2026-09-19 — Go dropped). No VM. Free tier where possible; ask before paid. Ship > purity.
 
-## Current objective (2026-09-23, rev 3 — spike shipped)
+## Current objective (2026-09-23, rev 4 — ES skeleton live)
+
+Skeleton done (D-8 shape, D-9 in, Room aggregate, `/system` console). Before **Booking** (the real test — cross-aggregate availability): add `schema_version` on `events` + upcaster hook (D-10, proposed); auth waits on Alex's IdP pick (D-11). Booking itself waits on product v1 (§6 vocabulary + the availability-stream versioning rule in D-8). Take direction from Alex in-session over this profile; tell architect what changed.
+
+<details><summary>rev 3 (standby, superseded same day)</summary>
 
 Standby. Spike delivered (`stack.md`, staging live). Next work waits on: Alex accepting D-8 (storage), product v1 (schema/events). When both land: ES skeleton in `solex` — `events` table + one aggregate end-to-end (booking) with synchronous projections. Until then: nothing in `solex` beyond housekeeping; answer product/architect questions.
+
+</details>
 
 <details><summary>rev 2 (2026-09-19, done)</summary>
 
@@ -40,3 +46,4 @@ Do **not** yet: domain code, ES infra, Hookdeck. Those wait on product + archite
 - 2026-09-19 — objective rev 2: Go dropped (D-3), TS Workers + D1 spike.
 - 2026-09-23 — + storage sanity-check vs product's aggregates (desk exercise).
 - 2026-09-23 — spike shipped (9f54e73); storage take → D-8 proposed. Objective rev 3: standby.
+- 2026-09-23 — Alex asked in-session for ES skeleton; built + deployed (Room, console, replay). Rev 4: D-10/D-11 before Booking.
