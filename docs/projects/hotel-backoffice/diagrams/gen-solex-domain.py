@@ -51,10 +51,10 @@ def box(x, y, w, key, title, body, extra_h=0):
 
 # ---------- title
 text(40, 20, "SoLex — domain model v1 (2026-09-23)", size=28, bold=True)
-text(40, 58, "CQRS + event sourcing. Command → checks capability + rules → events appended → projections rebuilt (same batch) → screens read projections.\nSolid arrows = depends on / references. Dashed = event reaction. Source: product.md v1.", size=12, color="#555555")
+text(40, 58, "CQRS + event sourcing. Command → checks capability + rules → events appended → projections rebuilt (same batch) → screens read projections.\nSolid arrows = depends on / references. Dashed = event reaction. Tier a = event-sourced (log is truth); tier b = CRUD row + notification events (D-22). Source: product.md v1.", size=12, color="#555555")
 
 # ---------- Setup (top band)
-context(40, 120, 1560, 250, "setup", "Setup", "reference data · upstream of everything, depends on nothing · retire never delete · seeded by admin SDK (D-9)")
+context(40, 120, 1560, 250, "setup", "Setup  [tier b]", "reference data · CRUD row is truth, every write emits an event (D-22) · upstream of everything, depends on nothing · retire never delete · seeded by admin SDK (D-9)")
 sx = 60; sy = 170
 items = [
  ("HotelProfile", "name, address, timeZone\ncheckInTime 14:00, checkOutTime 12:00\nbusinessDayStart 02:00 (D-7)"),
@@ -71,7 +71,7 @@ for i, (t, b) in enumerate(items):
     box(sx + i*(w+8), sy, w, "setup", t, b)
 
 # ---------- Reservations
-context(40, 420, 760, 430, "res", "Reservations", "Booking = the envelope · Stay = one guest visit, night by night · availability rule lives here")
+context(40, 420, 760, 430, "res", "Reservations  [tier a]", "event-sourced (D-22) · Booking = the envelope · Stay = one guest visit, night by night · availability rule lives here")
 box(60, 480, 340, "res", "Booking", "id, hotelId, kind: individual | group\nparty { companyId?, contactId }   ← PII by id (D-20)\nsourceId?  (Setup BookingSource)\narrive, depart (exclusive)\nrequests[]: { roomTypeId, bedType, qty,\n              adults, children, ratePerNight }\nnotes?, status: open | cancelled | closed\n\nevents: booking.created · requests_changed ·\nparty_changed · notes_changed · cancelled · closed")
 box(430, 480, 350, "res", "Stay", "id, hotelId, bookingId, roomTypeId, bedType\nnights: Night[]   ← THE UNIT (D-15)\n  Night { date, roomId?, rate, posted }\n  arrive/depart derived · move never splits\nadults, children, guests: GuestId[]\nrouting? {category → own | master}  (group)\nstatus: booked | checkedIn | checkedOut |\n        cancelled | noShow\ncheckedInAt?, checkedOutAt?\n\nevents: stay.created · room_assigned · room_changed ·\nnights_changed · rate_set · guest_added/removed ·\nrouting_set · checked_in · checked_out · cancelled ·\nmarked_no_show · overbooking_overridden")
 arrow(400, 520, 430, 520, color=C["res"], label="1 → N")
@@ -80,25 +80,25 @@ text(72, 738, "Availability rule (one availability:<hotel> stream, D-8)", size=1
 text(72, 760, "• per room: no two stays share (roomId, date)   • per type per night: booked ≤ rooms in service, warn + override\n• every command touching supply or demand versions the stream: assign / move / nights / check-in / OOO / room retire / override", size=11)
 
 # ---------- Rooms
-context(830, 420, 360, 200, "rooms", "Rooms", "physical + housekeeping state")
+context(830, 420, 360, 200, "rooms", "Rooms  [tier b]", "row is truth + events · OOO still versions availability")
 box(850, 480, 320, "rooms", "Room", "id, hotelId, number, floor, roomTypeId, bedType\nhousekeeping: clean | dirty   (inspected → later)\noutOfOrder? { reason, since }, note?\noccupied / arriving / departing = DERIVED\n\nevents: room.marked_clean/dirty ·\ntaken_out_of_order · returned_to_service · note_set")
 
 # ---------- Guests
-context(1220, 420, 380, 200, "guest", "Guests", "thin profile · PII in mutable table, never in events")
+context(1220, 420, 380, 200, "guest", "Guests  [tier b]", "thin profile · PII in mutable table, never in events")
 box(1240, 480, 340, "guest", "Guest", "id, hotelId, name, phone?, email?, nationality?\nidDoc? { type: cccd | passport | other, number }\nnotes?\nerasure = overwrite row + guest.erased tombstone\n\nevents: guest.created · updated · erased")
 
 # ---------- Billing
-context(40, 900, 760, 400, "bill", "Billing", "hotel vocabulary over the Ledger · Folio + Receivable are PROJECTIONS + commands, not aggregates")
+context(40, 900, 760, 400, "bill", "Billing  [tier a via Ledger]", "hotel vocabulary over the Ledger · Folio + Receivable are PROJECTIONS + commands, not aggregates")
 box(60, 960, 350, "bill", "Folio (projection)", "id, hotelId\nowner: stay (own) | booking (master)\nstatus: open | closed\nbalance = Σcharges − Σvoided − Σpayments + Σrefunds\n\nCharge { stayId, businessDate, categoryId,\n  itemId?, description, qty, unitPrice, voided? }\nPayment { businessDate, method: cash | bankTransfer\n  | card (word only), kind: deposit | settlement\n  | refund, amount, ref? }\n\nevents: folio.opened · charge_posted · charge_voided ·\ncharge_moved · payment_received · payment_refunded ·\ndeposit_forfeited · transferred_to_receivable · closed")
 box(440, 960, 340, "bill", "Receivable (projection)", "id, hotelId, debtorCompanyId, folioId\namount, status: open | partial | settled |\n        writtenOff\nno due date in v1 · overdue = age\n\nevents: receivable.opened · payment_received ·\nsettled · written_off")
 arrow(410, 1000, 440, 1000, color=C["bill"], label="transfer\nremainder")
 
 # ---------- Ledger
-context(830, 900, 470, 400, "ledger", "Ledger", "generic double-entry · knows nothing about hotels · one balance rule, one money log (D-17)")
+context(830, 900, 470, 400, "ledger", "Ledger  [tier a]", "event-sourced · generic double-entry · knows nothing about hotels · one balance rule, one money log (D-17)")
 box(850, 960, 430, "ledger", "Account · Entry", "Account { id, hotelId, kind: folio | receivable | cash |\n  bank | revenue | expense, ref?, status }\nEntry { id, hotelId, businessDate, kind: charge |\n  payment | refund | transfer | expense | reversal,\n  lines[]: { accountId, amount }  Σ = 0,\n  ref?, memo? }\nentries immutable · undo = reversal · close at 0\n\ncharge     debit folio / credit revenue:category\npayment    debit cash|bank / credit folio\ntransfer   debit receivable:company / credit folio\nexpense    debit expense:category / credit cash|bank\n\nevents: ledger.account_opened · entry_posted ·\nentry_reversed · account_closed")
 
 # ---------- Expenses
-context(1330, 900, 270, 200, "exp", "Expenses", "owner's cash-out")
+context(1330, 900, 270, 200, "exp", "Expenses  [tier a]", "owner's cash-out · = ledger entries")
 box(1350, 960, 230, "exp", "ExpenseCommand", "businessDate, categoryId\namount, method: cash | bankTransfer\npayee?, note?\n\nevents: expense.recorded · voided")
 
 # ---------- dependency arrows
