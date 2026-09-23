@@ -31,7 +31,7 @@ type Capability =
   | 'room.set_status' | 'room.set_out_of_order'
   | 'receivable.record_payment' | 'receivable.write_off'
   | 'expense.record' | 'expense.void'
-  | 'reports.view' | 'guests.view'
+  | 'reports.view' | 'guests.view' | 'guests.erase'   // erase: owner only (D-20)
   | 'setup.edit' | 'users.manage'
 type Role = { id: RoleId; hotelId: HotelId; name: string; capabilities: Capability[] }
 // role hangs off the (hotel, user) membership pair, not the user: a person can be owner at one hotel and receptionist at another later (D-9)
@@ -322,7 +322,13 @@ type Guest = { id: GuestId; hotelId: HotelId; name: string; phone?: string; emai
 ```
 **PII columns (D-20 / D-23 redaction denylist):** `guests.name`, `guests.phone`, `guests.email`, `guests.nationality`, `guests.id_doc_type`, `guests.id_doc_number`, `guests.notes`; `contacts.name`, `contacts.phone`; `users.name`, `users.email`. Not PII: ids, timestamps, status. `guest.updated` payload carries changed *field names*, never values.
 
-Events: `guest.created` · `guest.updated` · `guest.erased` — **PII never enters event payloads** (D-20). Events carry `guestId` only; name/phone/idDoc live in a mutable `guests` table. Erasure = overwrite the row, log keeps a tombstone; replay still works. Same for `Booking.party.contactName/phone` → stored as a `contact` row referenced by id. Belongs to the hotel (D-9); reused across stays for history. ID capture optional in v1. Later: merge duplicates, PA18 police export, VIP class.
+Events: `guest.created` · `guest.updated` · `guest.erased` — **PII never enters event payloads** (D-20). Events carry `guestId` only; name/phone/idDoc live in a mutable `guests` table. Erasure = overwrite the row, log keeps a tombstone; replay still works. Belongs to the hotel (D-9); reused across stays for history. ID capture optional in v1. All Guest fields captured from slice 2 (all optional but name). Later: merge duplicates, PA18 police export, VIP class.
+
+**Contact — who booked (settled 2026-09-23).** Separate from Guest on purpose: ~2/3 of business is company/group, the booker (secretary, agent, company) is usually not a sleeper. Not folded into Guest.
+```ts
+type Contact = { id: ContactId; hotelId: HotelId; name: string; phone?: string; companyId?: CompanyId }
+```
+Events mirror Guest: `contact.created` · `contact.updated` (field names only) · `contact.erased` (tombstone), stream `<hotelId>/contact:<id>`, tier b. Same D-20 erasure path. Commands `CreateContact / UpdateContact / EraseContact`. **Reuse**: `CreateBooking.contactId?` picks an existing contact; without it a new row is minted (typo fix = `UpdateContact`, never edit the booking). Phone match on the booking form is a *suggestion* ("same phone as Nguyen Van A — reuse?"), never an auto-merge; the search box lands with the booking form.
 
 ### Setup context (D-6) — what the hotel is made of
 
@@ -449,7 +455,8 @@ Command = one intent. `needs` = capability. `checks` = rules beyond "hotel match
 ### Guests · Expenses · Setup · Users — Guests, Setup, Users tier **b**; Expenses tier **a** via Ledger (the expense *is* an entry; `expense.*` rides on the ledger stream)
 | command | needs | emits |
 |---|---|---|
-| `CreateGuest / UpdateGuest` | `booking.edit` | `guest.created` / `updated` |
+| `CreateGuest / UpdateGuest / EraseGuest` | `booking.edit` (erase: `guests.erase`, owner only) | `guest.created` / `updated` / `erased` |
+| `CreateContact / UpdateContact / EraseContact` | `booking.edit` (erase: `guests.erase`, owner only) | `contact.created` / `updated` / `erased` |
 | `RecordExpense {businessDate, categoryId, amount, method, payee?, note?}` / `VoidExpense` | `expense.record` / `expense.void` | `expense.recorded` / `voided` → entry |
 | `Define / Update / Retire <SetupItem>` (Floor, RoomType, Room, RateTable, ChargeCategory, ChargeItem, BookingSource, ExpenseCategory, Company), `SetHotelProfile`, `SetBookingRules` | `setup.edit` | `<item>.defined / updated / retired`; Room retire/type change also versions availability |
 | `CreateUser / UpdateUser / DisableUser`, `SetUserRole` | `users.manage` | `user.created / updated / disabled / role_set` |
@@ -468,7 +475,8 @@ Exact shapes for the first slice. **Frozen 2026-09-23** after last pass. Group b
 type CreateBooking = {
   commandId: string                       // idempotency
   kind: 'individual' | 'group'            // slice 1 rejects 'group' by rule, not by type
-  contact: { name: string; phone?: string }   // handler upserts a contacts row, stores contactId only
+  contact: { name: string; phone?: string }   // handler mints a contacts row, stores contactId only
+  contactId?: string                      // slice 2 widening: reuse an existing contact instead of minting
   sourceId?: string
   arrive: LocalDate
   depart: LocalDate                       // exclusive; depart > arrive
@@ -534,6 +542,7 @@ Envelope + naming per §6 conventions (D-12). **Two tiers (D-22)**: `booking.*` 
 `receivable.` opened · payment_received · settled · written_off
 `ledger.` account_opened · entry_posted · entry_reversed · account_closed
 `guest.` created · updated · erased (tombstone, D-20)
+`contact.` created · updated · erased — same shape as guest; booker ≠ sleeper, kept separate
 `expense.` recorded · voided
 `setup.` `<item>.defined / updated / retired` · hotel_profile_set · booking_rules_set
 `user.` created · updated · disabled · role_set · password_reset(byUserId) — access events; visible in History to owner only
