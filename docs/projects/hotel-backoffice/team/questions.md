@@ -18,13 +18,7 @@ Format: `- [ ] Q (asked by, date) → for: Alex | client`. Check off + answer in
 - [ ] `wrangler login` expired on MBP — Alex to run in solex-dev session. (dev, 2026-09-19) → Alex
 ## Decisions needed (Alex) — surfaced by explore, 2026-09-23
 
-- [ ] **Hotel day / business date** (reframed 2026-09-23 after Alex's note): ezFolio rolls at 23:59 = calendar day, which is the thing Alex wants changed. Proposed model:
-  - Config: `businessDayStart` (e.g. 05:00). Business date D runs D 05:00 → D+1 05:00. A "night" = one business date.
-  - Check-in at 01:00 Tue → business date Mon → charged Mon night (their reserved night). Check-in at 08:00 Tue → business date Tue; before `checkInTime` (14:00) = early check-in surcharge (catalogue item) or free per policy.
-  - Check-out at 12:00 → normal. After `checkOutTime` → late-checkout surcharge. After next `businessDayStart` → another night.
-  - Nights charged = business dates in [arrival_bd, departure_bd), derived from actual timestamps + policy thresholds, not from typed dates. Reserved dates are the *plan*; actual timestamps drive posting; mismatch = event (early/late/extra night).
-  - Room charge posts at `businessDayStart` roll (or at check-in for the current night). "Revenue today" = posted charges for business date; occupancy × rate = forecast view.
-  - **To confirm w/ client**: what time does the day actually roll (Alex says ~2am?); is a 1am arrival always charged the prior night; grace rules.
+- [x] **Hotel day / business date** → D-7: configurable roll (default 02:00) + rules; nights from timestamps. (Alex, 2026-09-23)
 - [ ] **Overbooking**: allowed today (`allow_over_room` ON; >100% on turnover days). Keep as a receptionist override, or hard-block?
 - [ ] **Guest identity**: ID missing on all revenue rows; PA18 export legally depends on it. Enforce ID at check-in, or keep optional?
 - [ ] **OTA commission basis**: OTA remits net (receivable = net) vs hotel pays commission out? Per-Company setting. (product §10, 2026-09-23)

@@ -127,6 +127,7 @@ Later WS (not now): event-store design — Hookdeck-as-log vs bus + archive. Nee
 ## Status
 
 - 2026-07-10 — plan agreed, awaiting discovery brain-dump.
+- 2026-09-23 — **D-7: hotel day = configurable business date; nights from timestamps + rules.** Closes day-boundary Q.
 - 2026-09-23 — explore answered architect's 10 lifecycle/money Qs (5e143b4): nightly posting, exclusive departure, debt-as-method, per-folio receivables, constructed folios, manual deposit forfeit. 5 items left for Alex walkthrough. **Exploration essentially complete.**
 - 2026-09-23 — product v0.1: Setup context added, in v1 core. **Blocked on Alex: §10 policy points.**
 - 2026-09-23 — **D-6: Setup is its own scope + third persona; no admin login.** Product to add Setup context.
