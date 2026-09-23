@@ -2,6 +2,7 @@
 
 Newest first. `YYYY-MM-DD — <agent>: what`.
 
+- 2026-09-23 — architect: slice 1 walkthrough green (f35bded). N8 migrate-on-dev, N9 checked-out style → dev. Alex asked for staging pass.
 - 2026-09-23 — product: N7 ruled (§10 6c): check-in normalises nights to include today; dev told.
 - 2026-09-23 — architect: D-24 refactor reviewed + accepted (92aa083, 100 green, 16 scenarios). B3/N5/mark_dirty verified closed. N7 (check-out before arrival) → product. Dev → slice-1 screens.
 - 2026-09-23 — architect: D-24 amended — SQLite :memory: instead of hand-written MemoryStore (dev's argument), lint boundary on drizzle imports; Hotel shape reviewed w/ 3 notes. Dev landed B3+N5+mark_dirty (26d13b1) first.
