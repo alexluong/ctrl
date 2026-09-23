@@ -33,16 +33,29 @@ Setup/admin: onboard the hotel (identity, floors, rooms, types, bed types) · se
 - **Tape chart** — over time. Room × date grid, stay bars; drag = move/extend (emits `RoomChanged` / `StayDatesChanged`); shows per-type availability inline for quoting.
 Everything else hangs off these two.
 
-## 5. Bounded contexts
+## 5. Bounded contexts (settled w/ Alex 2026-09-23)
 
-| context | aggregates | notes |
+A context = one area of the business with its own vocabulary and rules. Dependencies flow one way, downward:
+
+```
+Setup ──▶ Reservations (Booking, Stay, availability)
+  │   ──▶ Rooms (housekeeping state)
+  │   ──▶ Billing (charges, payments, receivables) ──▶ Ledger (accounts, entries)
+  │   ──▶ Guests
+  └── ──▶ Expenses ─────────────────────────────────▶ Ledger
+```
+
+| context | owns | notes |
 |---|---|---|
-| **Reservations** | Booking, Stay | commercial + stay lifecycle; availability check lives here |
-| **Rooms** | Room | physical + housekeeping state (definitions come from Setup) |
-| **Billing** | Folio, Receivable | charges, payments, routing, debt |
-| **Guests** | Guest | profiles, merge, history, ID data for PA18 |
-| **Setup** (D-6) | HotelProfile, RoomType/Floor/Room definitions, ChargeItem, RateTable, Company/Channel, BookingRules | what the system is made of; setup/admin persona; designed from explore's checklist, not ezFolio masters |
-| **Expenses** | Expense | standalone cash-out ledger |
+| **Setup** | HotelProfile, Floor, RoomType, Room definitions, RateTable, ChargeCategory + ChargeItem, BookingSource, ExpenseCategory, Company, BookingRules | reference data; upstream of everything, depends on nothing; seeded by admin SDK (D-9) |
+| **Reservations** | Booking, Stay (nights), availability rule | the commercial + stay lifecycle |
+| **Rooms** | Room housekeeping / out-of-order state | definition comes from Setup |
+| **Billing** | charge / payment / transfer / deposit commands; folio + receivable *projections* | hotel vocabulary over the Ledger; no aggregates of its own |
+| **Ledger** | Account, Entry | generic double-entry; knows nothing about hotels |
+| **Guests** | Guest | thin profile, reused across stays |
+| **Expenses** | expense commands | owner's cash-out; posts to Ledger |
+
+How downstream uses Setup: (1) **lookup at command time** — e.g. posting item X copies X's current price onto the entry; later price changes never touch history. (2) **react to a Setup event** — only where supply changes: `room.retired` / `room.type_changed` version `availability:<hotel>` (D-8). Setup never reads downstream; its one guard ("can't retire a room with future nights") is a check in the command against the projection.
 
 ## 6. Aggregates, events, invariants
 
@@ -160,7 +173,43 @@ Events: `room.marked_dirty` · `room.marked_clean` · `room.taken_out_of_order(r
 Auto: `stay.checked_out` → `room.marked_dirty` (policy reaction).
 Map vocabulary (derived): vacant clean · vacant dirty · occupied clean · occupied dirty · out of order, + arriving / departing overlays.
 
-### Folio — charges and payments (settled w/ Alex 2026-09-23)
+### Ledger — generic double-entry core (settled w/ Alex 2026-09-23)
+
+Folios, receivables and expenses are three views of one thing: accounts in a ledger. The Ledger context is hotel-agnostic; Billing and Expenses are hotel vocabulary over it. Reception never sees debit/credit.
+
+```ts
+type Account = {
+  id: AccountId; hotelId: HotelId
+  kind: 'folio' | 'receivable' | 'cash' | 'bank' | 'revenue' | 'expense'
+  ref?: { stayId?: StayId; bookingId?: BookingId; companyId?: CompanyId; categoryId?: string }
+  status: 'open' | 'closed'
+}
+type Entry = {
+  id: EntryId; hotelId: HotelId
+  businessDate: LocalDate
+  kind: 'charge' | 'payment' | 'refund' | 'transfer' | 'expense' | 'reversal'
+  lines: Array<{ accountId: AccountId; amount: Money }>   // + debit, − credit; Σ = 0
+  ref?: { stayId?; chargeId?; entryId? /* reversed */ }
+  memo?: string
+}
+// balance(account) = Σ its lines · entries immutable; undo = reversal entry · account closes only at 0
+```
+Events: `ledger.account_opened` · `ledger.entry_posted` · `ledger.entry_reversed(entryId, reason)` · `ledger.account_closed`.
+
+| hotel action | ledger entry |
+|---|---|
+| post charge to stay | debit folio(stay or master, per routing) / credit revenue:category |
+| payment received | debit cash or bank / credit folio |
+| deposit | same as payment, kind `deposit` on the folio projection |
+| refund | debit folio / credit cash or bank |
+| transfer remainder to company | debit receivable:company / credit folio |
+| company pays receivable | debit cash or bank / credit receivable:company |
+| expense | debit expense:category / credit cash or bank |
+| void charge | reversal entry |
+
+What it buys: one balance rule, one immutable money log; "cash today", "revenue by category", "receivables by company", P&L-ish are the same query. Cash drawer / bank reconciliation come free later.
+
+### Folio — charges and payments (Billing; **projection + commands over Ledger**, settled w/ Alex 2026-09-23)
 
 One **own folio** per Stay + one **master folio** per group Booking. A charge is posted *against a stay*; the stay's routing for that category decides which folio it lands on. Stay = one visit = one folio, as Alex put it.
 
@@ -198,7 +247,7 @@ Rules: never edit a charge — void and repost · a night's room charge posts on
 
 Simplifications vs ezFolio: dropped `telephone` category (dead) · discount = negative-priced line or void + repost, **no approval workflow in v1** (later ticket) · tax/service % not modelled as lines (VAT / red invoice → later) · FOC = rate 0, not a payment method · `debt` is not a payment method, it is the transfer-to-receivable action.
 
-### Receivable — debt that outlives the stay (settled w/ Alex 2026-09-23)
+### Receivable — debt that outlives the stay (Billing; **projection over a Ledger receivable account**, settled w/ Alex 2026-09-23)
 
 ```ts
 type Receivable = {
@@ -213,24 +262,34 @@ type Receivable = {
 Events: `receivable.opened` · `receivable.payment_received(method, amount, ref?)` · `receivable.settled` · `receivable.written_off(reason)`.
 Rules: opened only from a folio transfer · payments ≤ amount · settled when paid in full.
 
-### Guest — reusable profile
-Fields: name, gender, DOB, nationality, ID `{type CCCD | passport | licence | other, number, issueDate}`, visa?, phone, email, address, class `normal | vip1 | vip2 | returning`, note. History (stays, nights, spend) is a projection.
-Events: `GuestProfileCreated` · `GuestProfileUpdated` · `GuestProfilesMerged(into, from)`.
-Invariants: merge is one-way; ID number uniqueness is soft (warn, don't block) unless §10 says enforce.
+### Guest — thin profile (settled w/ Alex 2026-09-23)
 
-### Setup context (D-6) — what the system is made of
-Persona: setup/admin. Small, low-frequency event streams; every operational aggregate reads its definitions from here. Designed from explore's checklist of what actually carries values in ezFolio, not from its masters.
-- `HotelProfile`: name, address, currency VND, USD display rate, default check-in/out times (14:00 / 12:00), print/signature names. Events `HotelProfileSet`.
-- `Floor`, `RoomType` (code, name, bedTypes DBL|TWN, default pax), `Room` (number, floor, type, bedType) — `RoomDefined` lives here; hk state stays on Room in the Rooms context. Events `FloorDefined` · `RoomTypeDefined/Updated/Retired` · `RoomDefined/Updated/Retired` (retire, don't delete — history references it).
-- `RateTable` (enhancement, replaces per-booking typed rates): `{roomType, bedType, dateRange | dayOfWeek, ratePerNight}` with a base rate per type as fallback. Resolves default `ratePerNight` on `StayCreated`; per-night override stays allowed. Events `RateDefined/Retired`.
-- `ChargeItem`: bucket (the 8-bucket enum), name (VN + EN), unitPrice, active. Seeded list: breakfast adult/child, early check-in, late check-out, extra bed, airport transfer, laundry per garment, minibar items, damage (free-price), other. Events `ChargeItemDefined/Updated/Archived`. One list, curated — no free-text item names on posting.
-- `ChargeBehaviour` per bucket: taxPct, serviceFeePct, netOrGross. All 0 / gross today; capability kept for VAT + 5% service. Events `ChargeBehaviourSet(bucket, …)`.
-- `Company` (= channel/agent/corporate/debtor): name, kind `OTA | TA | CORP`, contact, defaultCommission (% or amount), commissionBasis (§10.5), paymentTerms (days), defaultGroupRouting (§10.8). Events `CompanyRegistered/Updated/Archived`.
-- `BookingRules` (the §10 policy points once decided): dayBoundaryTime, overbookingMode `block | override`, childAgeThreshold (6), idEnforcement `optional | warn | require`, autoMarkDirtyOnCheckout, cancellationCharging. Events `BookingRulesSet`.
-Invariants: room numbers unique; a room's type/bedType change doesn't rewrite past stays; archived items can't be posted but still render in history; rate ranges for one type/bedType may not overlap.
+```ts
+type Guest = { id: GuestId; hotelId: HotelId; name: string; phone?: string; email?: string; nationality?: string
+  idDoc?: { type: 'cccd' | 'passport' | 'other'; number: string }; notes?: string }
+```
+Events: `guest.created` · `guest.updated`. Belongs to the hotel (D-9); reused across stays for history. ID capture optional in v1. Later: merge duplicates, PA18 police export, VIP class.
 
-### Expense — cash-out ledger (not in ezFolio; client wants it)
-Fields: date, category `groceries | incidental | hkOvertime | advance | other`, amount, method, payee?, note, actor. Events `ExpenseRecorded` · `ExpenseVoided`. Feeds P&L-ish dashboard only.
+### Setup context (D-6) — what the hotel is made of
+
+Reference data, retire-not-delete, seeded by admin SDK (D-9). Each has `<name>.defined / updated / retired` events for audit.
+- `HotelProfile` — name, address, **timeZone**, `checkInTime` 14:00, `checkOutTime` 12:00, `businessDayStart` 02:00 (D-7)
+- `Floor`, `RoomType` (name, capacity), `Room` (number, floor, type, bedType)
+- `RateTable` — `{roomTypeId, bedType, dateRange | dayOfWeek, ratePerNight}`; no overlapping ranges
+- `ChargeCategory` — seeded room · roomSurcharge · minibar · laundry · compensation · extraService · restaurant; `room` reserved
+- `ChargeItem` — category, VN + EN name, unitPrice, active
+- `BookingSource` — walk-in, phone, Agoda, … (lookup only)
+- `ExpenseCategory` — groceries, incidental, hk overtime, advance, other
+- `Company` — name, contact, kind, default group routing `{category → own | master}`; commission/terms → later
+- `BookingRules` — childAgeThreshold 6, overbooking `warn` (override allowed), autoDirtyOnCheckout true, idEnforcement optional
+Rules: unique room numbers per hotel; retired items not selectable; can't retire a room with future nights.
+
+### Expense — owner's cash-out (settled w/ Alex 2026-09-23; posts to Ledger)
+
+```ts
+type ExpenseCommand = { businessDate: LocalDate; categoryId: ExpenseCategoryId; amount: Money; method: 'cash' | 'bankTransfer'; payee?: string; note?: string }
+```
+Events: `expense.recorded` · `expense.voided(reason)` → ledger entries. Projection: expenses by category / period.
 
 ## 7. The "Need" cascade (requirements §1) → events → projections
 
