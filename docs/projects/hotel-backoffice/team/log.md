@@ -2,6 +2,7 @@
 
 Newest first. `YYYY-MM-DD — <agent>: what`.
 
+- 2026-09-23 — product: §12 gains staff.* (stream `<hotel>/staff:<userId>`), user.* = identity only; staff.lastOwner/alreadyStaff rules in §2 (453770b).
 - 2026-09-23 — architect: slice 2C (staff/roles/capabilities) accepted; bootstrap rule flagged for Alex; script must emit staff.added.
 - 2026-09-23 — architect: slice 2B (guests/contacts + erasure) reviewed, accepted; erase owner-gate tracked to land in C before D.
 - 2026-09-23 — product: Contact events + `guests.erase` owner capability ruled (a14533f); logged under D-20.
