@@ -53,6 +53,7 @@ D-1 Go/no-VM/CF (superseded) · D-2 one owner per file · D-3 TS on plain Worker
 - D-20 PII outside the event log (id refs, tombstone erasure).
 - D-11 built: Better Auth; `/system` gated by `system_operator` flag, separate from hotel `owner` role.
 - Staging event log wipe at the Room flip: **Alex 2026-09-23 (architect session): "i'll defer to you; staging is indeed throwaway data, at least at the moment"** → wipe approved, Room flip greenlit. Relayed to dev.
+- Refunds are capped at payments actually received on that folio, not at the credit balance (landing 2). Conservative; say if the client refunds credit notes differently.
 - Money role split is now concrete (D-17 built note): receptionist posts charges, takes payments, transfers to receivable; owner alone voids, refunds, writes off, voids expenses. Product added move-line-between-folios and record-petty-cash-expense to receptionist. Say if you want the line elsewhere.
 - First-owner bootstrap (landing C): an empty hotel lets a system operator act as owner until the first staff member is added, then never again. Narrow by design; re-read if it ever feels wrong.
 - D-23: console/exports redact by column-name denylist after dev caught live session tokens rendering in `/system`.
