@@ -102,8 +102,11 @@ Alex asked to see event-driven architecture working, to browse the events, and t
 ```
 src/routes/            file routes; index = room board, system.* = operator console
 src/server/events/     store.ts (append/read/replay), stream.ts (ids), types.ts
-src/server/rooms/      domain.ts (pure rules), projection.ts, commands.ts
+src/server/rooms/      domain.ts (pure rules, tier b), table.ts, commands.ts
 src/server/auth/       options.ts (static) + index.ts (lazy instance), session.ts, api.ts, directory.ts
+src/server/booking/    domain.ts (pure) · dates.ts · input.ts (zod) · commands.ts · projection.ts · people.ts
+src/server/stay/       domain.ts (pure aggregate: check-in/out, cancel, nights)
+src/ui/command.tsx     useCommand + CommandError — one way to run a command and show a refusal
 src/server/system/     access.ts (operator gate), queries.ts, api.ts
 src/server/runtime/    node.ts | cloudflare.ts — the ONLY Cloudflare-aware files
 src/server/tenant.ts   current hotel (server-only; never import from a route)
@@ -129,6 +132,51 @@ Alex asked whether it was all hand-built. It was: ~350 lines, four routes and tw
 - The **event log, stream/type filters and the replay button** are not duplicative — no general-purpose database tool knows what an event stream is, or that projections are disposable.
 
 **The table browser also turned out to carry a cost.** Adding authentication put password hashes and live session tokens in the same database as the room board, and a browser that shows any table it finds showed those too. A session token on screen is not a record of a credential, it *is* the credential. Fixed by redacting on column name rather than table name, so a future table with a `token` column is covered the day it is added; `src/server/system/queries.test.ts` is the test that has to keep passing. Worth noting as an argument for the smaller console: the fewer generic surfaces, the fewer of these.
+
+## Two tiers, and the guard that holds them together (D-22 / D-8)
+
+**Tier (a) — the log is truth**: Booking, Stay, Ledger. Folded on read, guarded
+by `UNIQUE(stream_id, version)`.
+
+**Tier (b) — a mutable row is truth**: Room, Setup items, Guest/Contact, User.
+Every write still appends an event to the same log, in the same batch, so
+history and projections see one story. No fold, no version guard beyond the row.
+
+Room started as tier (a) and moved. The argument that settled it: a room is a
+handful of independent fields with no invariant spanning time, and folding a log
+buys you exactly that. Stay does have such invariants — whether it can be
+checked out depends on whether it was checked in — so it stays tier (a).
+
+### The bug class this project keeps producing
+
+Three separate findings, one shape. **If a command's guard reads a table another
+command writes, both sides must serialise on the same guard — not just the
+writer.**
+
+`availability:<hotel>` (ours: `<hotel>/availability:all`) is that guard. It has
+no history worth reading; it is a version counter. Anything that changes what
+can be sold — holding nights, releasing them, taking a room out of order,
+checking in — appends there at an expected version, so two writers collide on
+the index and one is told to look again.
+
+Each instance looked correct in isolation and none was visible to a unit test:
+
+- `takeOutOfOrder` not versioning availability → a room withdrawn in the same
+  instant it is sold, both batches committing.
+- `checkIn` reading the rooms row without versioning → a guest checked into an
+  out-of-order room.
+- A retry replaying a decision made against state that had moved.
+
+The fix for the last one generalises: **`prepare` is a thunk**, re-run on every
+attempt, so a retry re-reads and re-decides rather than re-appending.
+
+### What an integration test is for here
+
+`src/server/booking/occupancy.test.ts` exists because the pure rules cannot
+prove the thing that matters. The case worth keeping: **a stale availability
+read rejected even where the room calendar would have said yes.** That is the
+only failure the calendar cannot catch alone, and it is the whole reason the
+guard exists.
 
 ## Authentication (D-11 / D-18, built 2026-09-23)
 

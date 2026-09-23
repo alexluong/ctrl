@@ -97,3 +97,33 @@ limit entirely**. We are on paid, so it works. Checked before recommending, not 
 
 15 tests green (was 7). Notes: `agents/solex-dev/notes/2026-09-23-2130-auth.md`; design rationale
 in `stack.md` §Authentication. Next per D-22: Room → CRUD tier, then D-12 envelope, then Booking.
+
+## 2026-09-23 · WS1 — slice 0 complete, slice 1 server side done (no screens yet)
+Long build session, four sessions in parallel. `main` 26d13b1, staging e84e238a, **86 tests green**
+(7 that morning).
+
+Shipped: **Better Auth** (username+password, no email dependency, console token retired,
+`events.actor` now a real user id) · **D-23 redaction** (one denylist, fail-closed, credentials +
+product's PII columns) · **Room → tier (b)** per D-22 · **D-12 envelope** (ULID, schemaVersion,
+businessDate, correlationId, commandId with unique index — a double-clicked command returns the
+original events) · **cross-stream atomic writes + the `availability:all` guard** · **Booking and
+Stay aggregates** · **the six occupancy commands** · **early check-out shortens the stay**.
+
+**The finding worth carrying forward.** Three separate blocking bugs, all one shape: *if a
+command's guard reads a table another command writes, both sides must serialise on the same guard,
+not just the writer.* takeOutOfOrder not versioning availability; checkIn reading the rooms row
+without versioning (architect's B3, found after I'd "closed" the first); a retry replaying a
+decision made against moved state. Each looked correct in isolation, none was visible to a unit
+test. Now a checklist line in `team/qa.md`.
+
+Architect QA'd from a detached read-only worktree throughout and found two blocking bugs I would
+not have found alone. Product answered five blocking questions in minutes and froze §11a mid-build.
+
+**Still not done:** screens. A receptionist cannot do any of this in a browser, which is the bar
+for "rough end to end" — slice 1 is open. Staging's event log is still unwiped (Alex's call,
+relayed twice via architect; I held it because deleting data is not something a relayed green
+light covers). It is now optional either way — the migration was hand-written to work on a
+populated database.
+
+Notes: `agents/solex-dev/notes/2026-09-23-2200-slice-0-and-1.md`. Design rationale in `stack.md`
+§Two tiers and §Authentication.
