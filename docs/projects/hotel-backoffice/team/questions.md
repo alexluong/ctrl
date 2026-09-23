@@ -21,6 +21,11 @@ Format: `- [ ] Q (asked by, date) → for: Alex | client`. Check off + answer in
 - [ ] **Day boundary**: ezFolio rolls charges at 23:59, night audit off, days never formally closed. SoLex: hotel-local calendar day w/ implicit roll at a fixed time? or explicit day-close? (needed before reports)
 - [ ] **Overbooking**: allowed today (`allow_over_room` ON; >100% on turnover days). Keep as a receptionist override, or hard-block?
 - [ ] **Guest identity**: ID missing on all revenue rows; PA18 export legally depends on it. Enforce ID at check-in, or keep optional?
+- [ ] **OTA commission basis**: OTA remits net (receivable = net) vs hotel pays commission out? Per-Company setting. (product §10, 2026-09-23)
+- [ ] **Cancellation / no-show charging**: per-channel policy or manual `compensation` charge? Product recommends manual for v1. (product §10)
+- [ ] **Group billing default**: all buckets → master (today's usage) vs room-only → master (corporate norm)? Default per Company. (product §10)
+- [ ] **VAT / red invoice**: out for v1 unless client says otherwise? (product §10; also in open Qs)
+Product's recommendations for each are in `product.md` §10 — Alex can just accept/override there.
 
 ## Open questions
 

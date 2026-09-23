@@ -20,6 +20,8 @@ Deliver in `stack.md`: deployed URL, dev loop, D1 fit for an event store (honest
 
 Do **not** yet: domain code, ES infra, Hookdeck. Those wait on product + architect.
 
+**Added 2026-09-23 — storage sanity-check (desk exercise, no code):** read `product.md` §5–6. Product proposes a single-writer Durable Object per hotel for the Reservations context (availability = cross-aggregate invariant), D1 for projections/read models. Write your take in `stack.md`: DO-as-event-store feasibility (storage API, size limits, replay), D1 vs DO for the event log, how projections get fed (DO alarms? queues?), and whether Hookdeck has a role. Keep it to a page.
+
 ## Later (not now)
 
 - Event store implementation once architect decides Hookdeck-as-log vs bus+archive.
@@ -29,3 +31,4 @@ Do **not** yet: domain code, ES infra, Hookdeck. Those wait on product + archite
 
 - 2026-09-19 — session created.
 - 2026-09-19 — objective rev 2: Go dropped (D-3), TS Workers + D1 spike.
+- 2026-09-23 — + storage sanity-check vs product's aggregates (desk exercise).

@@ -93,7 +93,7 @@ This is the **Go-at-scale learning project**: backend-heavy, web back office, no
 
 Three parallel sessions, named agents: `solex-dev` (WS1), `solex-explore` (WS2), `solex-product` (WS3); `solex-architect` = cockpit. Profiles + protocol in `agents/`. Rules: each writes only its own file (above), commits in ctrl with `docs(hotel-backoffice/<ws>): …`, pulls before committing. Cross-WS findings go in the WS's own file under a "For other WSs" section; cockpit session merges into README.
 
-Ordering: ~~WS1 + WS3 can start now. WS2 needs Alex…~~ **WS2 complete 2026-09-20.** WS3 now reconciling against it. WS1 blocked on `wrangler login`.
+Ordering: ~~WS1 + WS3 can start now. WS2 needs Alex…~~ **WS2 complete 2026-09-20. WS3 v0 complete 2026-09-23** (`product.md`: 7 aggregates, event vocabulary, 8 policy points). WS1 blocked on `wrangler login`. Next: Alex decides §10 policy points; dev sanity-checks aggregates vs D1/DO.
 
 Later WS (not now): event-store design — Hookdeck-as-log vs bus + archive. Needs WS1 spike result + Hookdeck retention answer.
 
@@ -116,6 +116,7 @@ Later WS (not now): event-store design — Hookdeck-as-log vs bus + archive. Nee
 ## Status
 
 - 2026-07-10 — plan agreed, awaiting discovery brain-dump.
+- 2026-09-23 — **product.md v0** (product). Aggregates: Booking→RoomStay, Room, Folio (own+master), Receivable, Guest, Catalogue, Expense. Key architectural ask: availability is cross-aggregate → single-writer DO per hotel for Reservations, not per-room streams. 8 policy points → questions.md.
 - 2026-09-23 — explore: flow board + 4 model-changing findings (group folio routing, two booking use cases, one charge shape / 8 buckets, config split). 3 decisions queued for Alex.
 - 2026-09-20 — **WS2 complete** (explore). Summary above. Explore on standby for re-reads / admin screens.
 - 2026-09-20 — **D-5: fresh start, migration deferred.** `existing-system.md` landed: ~30-screen ezFolio map, group-booking flow, candidate core, hard constraints (no card data; personas manager + receptionist; group/company bookings core; key cards out). Product second pass unblocked.
