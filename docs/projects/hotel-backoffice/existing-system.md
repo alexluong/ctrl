@@ -366,6 +366,243 @@ The settings page has **26 tabs**, not the 8 recorded earlier. The relevant ones
 - **Overbooking is allowed today** (`allow_over_room`), and the tape chart sells >100% occupancy
   on turnover days. The rebuild needs an explicit stance.
 
+## Lifecycle & money — architect Qs, 2026-09-23
+
+Answers to `solex-architect`'s ten questions. Everything below is **observed** — read out of the
+live booking editor's markup, its read-only AJAX endpoints, and the receivables screens — unless
+marked *inferred* or *open*. Nothing was clicked that writes. Method: the booking editor loads its
+numbers over `save_reservation_room.php?<verb>=1`; the read-only guard lets `get_*` / `list_*` /
+`load_*` through and blocks the rest, so the whole money model could be read without touching it.
+
+### 1 · Settlement — there is no payment screen, there is a checkout dialog
+
+There is no `payment` / `cashier` / `invoice` page (probed: all return the empty shell). Settlement
+happens **inside the booking editor**, and there are two buttons:
+
+- **`Checkout`** — the careful path. Runs `check_deposit_before_checkout`, forces
+  `departure_date = today`, reloads the balance, `check_total_room()`, then saves with
+  `status = CHECKOUT`.
+- **`Fast checkout`** — the same deposit check, then opens the **`quickout` dialog**, which *is*
+  the payment act. One row **per room-stay**:
+  `Phòng · SL Còn (balance) · Phương thức thanh toán · Loại tiền (VND/USD) · Số thẻ · Ngân hàng`,
+  with the exchange rate in the header. **Post** fires
+  `save_reservation_room.php?quickOut=1&id=<res>&r_r_id=<room-stay>&payment_type=&card_number=&bank_id=&currency=`
+  and then opens the folio/invoice window.
+
+**Payment methods** are a real list (`list_pay_out=1`): `2 Tiền mặt` (cash) · `3 Thẻ tín dụng`
+(card) · `6 Chuyển khoản` (transfer) · `9 FOC` · **`10 Công nợ` (debt)**. Banks/card types are a
+separate catalogue (`get_card_type=1`: AGRIBANK, VCB, BIDV, SACOMBANK, VISA, MASTER, JCB, HSBC …)
+each carrying `allow_payment` and `bank_fee`.
+
+- **Split payment**: the dialog is one row per room, one method per room — so a *group* splits by
+  room, but **a single room's balance cannot be split across two methods in this dialog**. Splitting
+  one room's bill is done the other way round, by splitting the **folio** first (see #4).
+- **Partial / unpaid balance → `10 Công nợ`.** That is the debt method, and it is what creates the
+  receivable. There is no separate "create receivable" action.
+- **Checkout vs Đóng are different things.** `Checkout` is the room-stay's status. **`Đóng` (Close)
+  is the night audit closing a day's revenue** — the audit's own strings are
+  `Danh sách phòng chưa đóng doanh thu` ("rooms whose revenue isn't closed"), `Đóng tất cả`,
+  `need_to_close_all_revenue_in_date_to_continue`, `need_to_close_all_debit_in_date_to_continue`.
+  So **Closed ≠ folio settled**; closed = the accounting day is sealed and can't be reopened. A
+  checked-out room can be closed while still carrying a receivable.
+
+### 2 · Receivable lifecycle
+
+`?page=giveback_debit` ("CẬP NHẬT CÔNG NỢ") is the ledger, and it is a per-folio list, not
+per-booking:
+
+`STT · Mã đặt phòng (reservation) · Số RE (folio id) · Công ty/Tên khách · Tổng nợ · Đã thanh toán ·
+Còn lại · Ngày tạo + user · Thanh toán`
+
+- **Grain: one row per folio**, linked to `?page=reservation&cmd=show_invoice_new&folio_id=<n>`,
+  and to the room-stay it came from. One booking with two rooms shows up as two rows.
+- **Created** by checking out with `payment_type = 10 Công nợ`. `Ngày tạo` + the user stamp are the
+  only provenance.
+- **Settled** by the per-row action →
+  `?page=giveback_debit&detail=1&id=<r_r_id>&total_debit=<amount>`, a small form:
+  **amount (prefilled with the remaining, editable) · pay item · payment method
+  (Tiền mặt / Thẻ / Bank tranfer) · note → Lưu**.
+- **Partial settlement: yes** — the amount is editable and the list keeps `Tổng nợ / Đã thanh toán /
+  Còn lại` separately.
+- **No due date anywhere.** No due-date column, no due-date field. "Overdue" is age only — the Sept
+  ledger has rows created in April still unpaid next to rows from yesterday.
+- **Who**: the same reception login. There is no separate AR role.
+- **Rebuild note**: the debt payment method is doing double duty as "close the folio" and "open a
+  receivable". Worth separating: *settle* (method, amount, date) and *the unsettled remainder is the
+  receivable*, which also gives partial settlement at checkout for free.
+
+### 7 · Nightly room-charge posting — confirmed, it posts per night
+
+`get_room_charge=1&id=&r_r_id=` returns **one row per night**, each with `in_date`, `change_price`
+and an **`is_post` flag**. For a live 18/09→28/09 stay read on 23/09:
+
+| night | 18 | 19 | 20 | 21 | 22 | 23 | 24 | 25 | 26 | 27 |
+|---|---|---|---|---|---|---|---|---|---|---|
+| `is_post` | 1 | 1 | 1 | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
+
+Every night is 1,100,000. Five posted, tonight and the rest not yet. And the folio agrees:
+`load_if_room_payment_total` → `totalroom: 5,500,000` = **5 × 1,100,000 = the posted nights only**,
+`totalservice: 20,000`, `total / remaining: 5,520,000`, `deposit: 0`, `payment: 0`.
+
+So: **the room charge for night N posts at the end of day N** (`time_next_date = 23:59`), and
+**the in-house folio genuinely grows nightly**. A guest's balance mid-stay is nights-so-far, not
+the whole stay.
+
+Two consequences:
+
+- The `Advance Post Room Charge` tab exists precisely because of this: it lists the *unposted*
+  future nights with checkboxes (posted ones come back `dis: 1`, disabled) and posts them early
+  via `save_post_room_charge_group=1`. That's how you take money before the nights have run.
+- **The daily room revenue report is not the folio.** It lists occupied rooms × rate for the date,
+  including tonight's room whose charge has not posted yet. So `rpt-room-revenue-daily` is an
+  *occupancy projection*; the folio is *posted charges*. They agree at the end of the day and
+  disagree all day. For the rebuild's "revenue today", **say which one you mean.**
+  (This resolves §10 #1: room revenue is posted, not computed at checkout.)
+
+### 8 · Date semantics — nights, departure date exclusive
+
+Same booking: `arrival_time 18/09/2026`, `departure_time 28/09/2026`, and exactly **10 charge rows,
+18/09 … 27/09**. The departure date has no charge row.
+
+- **Departure date is exclusive.** The room is sold for nights, not dates.
+- **The availability engine counts nights** — consistent with the room-type × night matrix.
+- So **"double booking" = same room, overlapping nights**, not overlapping dates. A stay departing
+  the 23rd and one arriving the 23rd are not in conflict, which is why the tape chart looks
+  >100% on turnover days without anything being wrong.
+- **`allow_over_room` is therefore about genuine overbooking** — selling more room-nights than
+  exist on a night — not about turnover-day arithmetic. It is on.
+
+### 5 · Deposits
+
+- The deposit is **a number on the booking** (`Đặt cọc`), surfaced as `deposit` in
+  `load_if_room_payment_total` and as a column on the unassigned-bookings list. It is checked
+  before both cancel (`check_deposit_2`) and checkout (`check_deposit_before_checkout`) — checkout
+  is *blocked* if that check fails.
+- **On cancellation it is forfeited by hand, as a charge.** When a room with a deposit is
+  cancelled, ezFolio offers two doors: downgrade to `BOOKED` with a pre-checkin reason, or open
+  `?page=extra_service_invoice&deposit=1&cmd=add&add_prepayment=1&service_id=38` — i.e. **post the
+  deposit as an extra-service line (service 38)** so it becomes revenue. There is no automatic
+  forfeit and no refund path in the UI.
+- *Open*: whether the deposit carries its own method/date as a payment record, or is only the
+  number plus the `rpt-deposit` report row. The report shows method (cash / bank), so *inferred*:
+  a deposit is recorded as a payment, and the booking caches the total.
+
+### 6 · Cancellation and no-show
+
+**Cancel** (`Hủy đặt phòng`) is guarded, and the guards are the interesting part:
+
+- `Phòng đã CHECKIN không thể hủy` — **a checked-in room cannot be cancelled.**
+- `Phòng đã dùng dịch vụ — bạn phải chuyển dịch vụ sang phòng khác thì mới được CANCEL phòng` —
+  **if charges have been posted, you must move them to another room first.** Cancel is only for
+  a clean room-stay.
+- If a deposit exists → the pre-checkin / forfeit fork above.
+- Otherwise: confirm with a **mandatory reason** → `status = CANCEL`, saved.
+- There is a further guard on days already stayed.
+
+**No cancellation charge is posted.** Status change plus a reason, and the deposit handled
+manually.
+
+**No-show** (`Không đến`) is thinner still: `save_reservation_room.php?no_show=1&r_r_id=&noshow=1`
+— **a flag on the room-stay**, no charge, no reason. It appears as an `is_NOSHOW` filter on the
+reservation list.
+
+**Groups**: cancel is per room-stay, so a partial cancel is "cancel these N room-stays" rather than
+"reduce qty". *Open*: the 149 Sept cancellations against what base — the cancellation list doesn't
+show a denominator and I won't guess one.
+
+### 3 · Group lifecycle after booking
+
+- **`?page=waiting_list` — "DANH SÁCH ĐẶT PHÒNG CHƯA GÁN"** (bookings not yet assigned to a room)
+  is the assignment queue. Columns: Folio ID · Mã hiển thị · Tên KH · **Hạng phòng (room type, not
+  room)** · dates · status (BOOKED/CANCEL) · **Đặt cọc** · X/N · note.
+  Note this is a *different* page from `?page=reservation&cmd=waiting_list`, which is the ordinary
+  reservation list with `is_BOOKED / is_CHECKIN / is_NOSHOW / is_CHECKOUT` filters and an `Đoàn`
+  (group) filter.
+- **It is empty for the whole of September.** So in practice rooms are assigned at booking time and
+  nothing waits. The room-type-only state exists in the model but isn't lived in. `lay_phong_can_ngay`
+  (auto-assign the room needed soonest) is on, which fits.
+- **Check-in is per room-stay**, not per group — every status verb in the editor operates on one
+  `r_r_id`. So partial arrivals and early departures of individual rooms are the normal case, not
+  an exception. Same for cancel and no-show.
+- **The rooming list is largely not entered** — consistent with the 31-room group under one repeated
+  contact label. The guest tab exists per room-stay; nobody fills it.
+- *Open, for Alex by walkthrough*: whether reception assigns a group's rooms from the tape chart or
+  by editing each room-stay. Both are possible; the drag on `hk_room_status` is the likely answer.
+
+### 4 · Master folio
+
+**A folio is a bill you construct, not a fixed per-booking object.**
+
+- `sp_FOLIO.php?list_folio=1&r_r_id=` returns `{old: [], new: []}` — folios are created on demand,
+  and the booking I read has none.
+- The **FO tab** lists them (`STT · Mô tả · Tổng · Còn lại · Xem hóa đơn` → `view_folio(id)`).
+- **`Chuyển dịch vụ`** (the `#folio` button) opens a two-pane multiselect: pick a room, pick which
+  service lines move onto it, save via `save_invoice_info.php?…&t=<type>&tid=&nid=&rid=&nidold=`.
+  So **splitting and merging bills is done by moving charge lines between rooms/invoices.**
+- That is the master folio: **one folio carrying lines from several room-stays**, assembled this
+  way, and reached in the receivables ledger as one `Số RE` row against the company. The nine
+  group-routing switches are the automatic version of the same move, applied at posting time.
+- **Settlement of the master** is then ordinary: it is a folio with a balance, so it either gets a
+  method at checkout or becomes one `Công nợ` row against the company. The corporate case is
+  therefore *straight to a company receivable* in practice — which is exactly what the debit
+  ledger shows, corporates and OTAs side by side.
+- Careful with the label: **the booking form's "FolioID" is the reservation id** (booking 5843 shows
+  "Folio id: 5843"). The ledger's **`Số RE` is the real folio/invoice number** and is a different
+  sequence. Two different things wearing one name.
+
+### 9 · Room status
+
+The status vocabulary is `INSPECTED` (`readyen`) · `CLEAN` (`houseuseen`) · `DIRTY` · `OOO`
+(`repairen`), and the room map / tape chart (`?page=hk_room_status` — note the tape chart lives
+under **Buồng**, housekeeping, not front desk) colour by it.
+
+*Partly open.* What I can say: **DIRTY is a manual quick-action on the room tile** — it sits in the
+tile footer next to MINIBAR / LAUNDRY / COMPENSATION / EXTRA SERVICE, so reception marks it. That
+strongly suggests the transitions are **manual, driven by reception on housekeeping's word**, which
+matches a hotel with no housekeeping logins in daily use. Whether checkout auto-dirties, whether
+check-in requires clean, whether INSPECTED is ever used, and whether OOO demands a reason are
+**observable only by doing it** — they need Alex's walkthrough, not another probe.
+
+### 10 · Mid-stay changes
+
+- **Move room**: `?page=change_room` — a `from room (occupied)` → `to room (vacant only)` picker,
+  nothing else. No rate question, no date question. Already-posted nights stay on the folio; the
+  move is recorded and shows up in `rpt-room-transfer`. So **a room move does not re-price.**
+- **Extend / shorten**: change the departure date on the booking; the per-night charge rows are
+  regenerated for the new span. **Already-posted nights are not touched** — they carry `is_post=1`
+  and come back disabled.
+- **Change rate**: there is no rate-change *event*. The **price chart** (`Price chart` tab) is a
+  per-night editable price list, gated by an `allowchangeprice` flag; each night's `change_price`
+  is just edited. There is also `update_reduce_amount` — a post-hoc discount on the room-stay,
+  editable after the fact, behind an explicit "edit" toggle.
+- **Rebuild note**: this is the weak spot in their model. A night's price is mutable state with no
+  history, so "why is this folio 200k lighter than the rate card" is unanswerable after the fact.
+  Nights already posted being immutable is the one good instinct here — keep it, and make a price
+  change an event rather than an edit.
+
+### The two small ones
+
+- **(a)** Fixed — the board's findings panel said "TWO REAL PERSONAS" in one place and "THREE
+  PERSONAS, NOT TWO" in another. The first now reads three.
+- **(b) OTA payment — partly answered, partly open.** OTAs (BOOKING.COM, EXPEDIA, Agoda, Ctrip,
+  Traveloka) appear **as debtors in the receivables ledger**, alongside corporates. So for those
+  bookings **the guest does not pay the hotel — the hotel bills the OTA**, i.e. prepaid at the
+  channel. Whether the receivable is booked **net of commission** is *open*: the booking carries a
+  separate `Hoa hồng` (commission, % or amount) field, which suggests the folio is **gross with
+  commission tracked alongside**, but I have not tied one Agoda receivable to one folio total to
+  prove it. One invoice compared against its booking's commission settles it — a good question for
+  Alex rather than another probe.
+
+### What's still open
+
+| # | Open | How it gets closed |
+|---|---|---|
+| 3 | Whether group rooms are assigned by tape-chart drag or per room-stay edit | Alex walkthrough |
+| 5 | Whether a deposit is a payment record with its own method/date | `rpt-deposit` columns, or Alex |
+| 6 | Cancellation base rate (149 in Sept against how many bookings) | count the reservation list |
+| 9 | Auto vs manual status transitions; INSPECTED and OOO in practice | Alex walkthrough — not probeable read-only |
+| b | OTA receivable gross or net of commission | compare one Agoda folio to its booking |
+
 ## For other WSs
 - **No card data. Ever.** (Alex, 2026-09-20) ezFolio stores card holder / number / expiry / CVV on the booking. The rebuild deliberately does not — no PCI surface. WS3: leave card capture out of the model; WS1: no card fields in the schema.
 - **Group / company bookings are a large share of business** (Alex, 2026-09-20; ~2/3 of in-house rooms today are group or company). Model Company, group booking, "merge into group", and receivables by debtor type as core, not later.

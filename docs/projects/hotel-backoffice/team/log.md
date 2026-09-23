@@ -18,3 +18,22 @@ Newest first. `YYYY-MM-DD — <agent>: what`.
 - 2026-09-19 — architect: D-3 accepted (TS Workers, no Go). Dev profile objective rev 2. Containers/paid Q moot.
 - 2026-09-19 — dev: caught up; blockers: wrangler login expired, Containers needs paid.
 - 2026-09-19 — architect: project dir split, requirements translated, agents + team/ created. WS1/WS3 may start; WS2 waits on Alex for `:99` + workbook.
+
+## 2026-09-23 · WS2 — lifecycle & money (architect's 10 Qs)
+Answered `solex-architect`'s ten questions in `existing-system.md` §"Lifecycle & money — architect
+Qs, 2026-09-23". Read-only throughout; the booking editor's money model came out of its own
+`get_*` / `list_*` / `load_*` AJAX endpoints, which the guard already allows.
+
+Settled: settlement is the `quickout` dialog (method/currency/card/bank per room-stay, methods
+cash/card/transfer/FOC/**debt**); `Đóng` is the night audit closing a day's revenue, not folio
+settlement; receivables are per-folio in `giveback_debit`, partial settlement supported, **no due
+date**; **room charge posts per night with an `is_post` flag** so the in-house folio grows nightly
+while the daily revenue report is occupancy × rate; **departure date is exclusive** so turnover days
+aren't conflicts and `allow_over_room` is real overbooking; deposits are forfeited by hand as
+service line 38; cancel is blocked once checked-in or once charges exist; no-show is a bare flag;
+a master folio is just a folio holding several room-stays' lines, assembled with `Chuyển dịch vụ`.
+
+Still open (need Alex's walkthrough, not probes): room-status transitions, how group rooms get
+assigned, whether the OTA receivable is net of commission.
+
+Board: fixed the TWO/THREE personas contradiction, added three money findings, rebuilt.
