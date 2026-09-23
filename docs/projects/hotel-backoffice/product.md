@@ -135,6 +135,8 @@ type Event<T extends string = string, P = unknown> = {
 ```
 No `metadata` grab-bag; no `aggregateType` (in `stream`).
 
+**Not everything is event-sourced (D-22).** Tier a (Booking, Stay, Ledger): the log is truth. Tier b (Room, Setup items, Guest/Contact, User): a mutable row is truth and every write still emits an event with the same envelope, so history and projections see one log. §11 tags each command.
+
 ### Booking — the commercial envelope (settled w/ Alex 2026-09-23)
 
 A group = one Booking holding N Stays (company, contact, requested types × qty; rooms assigned later or now). An individual = one Booking with one Stay, room picked at creation. Same shape, no special case. Two-level on purpose: master folio, group cancel, "20 adults across 15 rooms not yet assigned" all need the envelope.
@@ -393,9 +395,9 @@ Deferred: OTA commission / gross-net · VAT / red invoice · discount approvals 
 
 ## 11. Command catalogue (canonical list of actions; dev builds and tests from this)
 
-Command = one intent. `needs` = capability. `checks` = rules beyond "hotel matches, entity exists". `emits` = events (Ledger entries implied for money).
+Command = one intent. `needs` = capability. `checks` = rules beyond "hotel matches, entity exists". `emits` = events (Ledger entries implied for money). **Tier (D-22)**: **a** = event-sourced (log is truth, state = fold, version guard); **b** = event-notified (CRUD row is truth, write still appends an event to the same log, no fold). Rule of thumb: would we replay it to rebuild state? no → b.
 
-### Reservations
+### Reservations — tier **a** (Booking, Stay streams; availability stream)
 | command | needs | checks | emits |
 |---|---|---|---|
 | `CreateBooking {kind, party, sourceId?, arrive, depart, requests[], notes?}` | `booking.create` | arrive < depart · qty ≥ 1 · availability per type (warn/override) · individual: room given + free | `booking.created`, `stay.created`×N, `folio.opened` (master if group, own per stay) |
@@ -415,14 +417,14 @@ Command = one intent. `needs` = capability. `checks` = rules beyond "hotel match
 | `MarkNoShow {stayId}` | `stay.cancel` | booked · after arrival date | `stay.marked_no_show` |
 | `OverrideOverbooking {stayId}` | `stay.assign` (owner by default) | – | `stay.overbooking_overridden` |
 
-### Rooms
+### Rooms — tier **b** (Room row is truth; every write emits `room.*`). `TakeOutOfOrder` / `ReturnToService` and Setup room retire / type change **still version `availability:<hotel>`** in the same batch (D-8): the row is tier b, the supply change is not.
 | command | needs | checks | emits |
 |---|---|---|---|
 | `SetHousekeeping {roomId, clean|dirty}` | `room.set_status` | – | `room.marked_clean` / `marked_dirty` |
 | `TakeOutOfOrder {roomId, reason}` / `ReturnToService` | `room.set_out_of_order` | no checked-in stay tonight · versions availability | `room.taken_out_of_order` / `returned_to_service` |
 | `SetRoomNote` | `room.set_status` | – | `room.note_set` |
 
-### Billing (over Ledger)
+### Billing (over Ledger) — tier **a** (Ledger streams; folio / receivable = projections)
 | command | needs | checks | emits |
 |---|---|---|---|
 | `PostCharge {stayId, categoryId, itemId?, description?, qty, unitPrice}` | `folio.post_charge` | target folio open (per routing) · category ≠ room | `folio.charge_posted` → `ledger.entry_posted` |
@@ -437,7 +439,7 @@ Command = one intent. `needs` = capability. `checks` = rules beyond "hotel match
 | `WriteOffReceivable {receivableId, reason}` | `receivable.write_off` | open/partial | `receivable.written_off` → entry |
 | `PostNightlyRoomCharges` (system, at roll) | system | per checked-in stay, tonight unposted | `folio.charge_posted`×N, night.posted = true |
 
-### Guests · Expenses · Setup · Users
+### Guests · Expenses · Setup · Users — Guests, Setup, Users tier **b**; Expenses tier **a** via Ledger (the expense *is* an entry; `expense.*` rides on the ledger stream)
 | command | needs | emits |
 |---|---|---|
 | `CreateGuest / UpdateGuest` | `booking.edit` | `guest.created` / `updated` |
@@ -449,7 +451,7 @@ Command = one intent. `needs` = capability. `checks` = rules beyond "hotel match
 
 ## 12. Event index
 
-Envelope + naming per §6 conventions (D-12). Streams: `booking:*` `stay:*` `room:*` `folio:*` `receivable:*` `ledger:*` `guest:*` `expense:*` `setup:*` `user:*` + `availability:<hotel>` (serialisation only, D-8).
+Envelope + naming per §6 conventions (D-12). **Two tiers (D-22)**: `booking.*` `stay.*` `ledger.*` (+ `folio.*` `receivable.*` `expense.*` as Ledger-derived) are state — folded on replay. `room.*` `guest.*` `setup.*` `user.*` are **notifications**: emitted on every CRUD write for history tabs and projections, never folded; the row is truth. Streams: `booking:*` `stay:*` `room:*` `folio:*` `receivable:*` `ledger:*` `guest:*` `expense:*` `setup:*` `user:*` + `availability:<hotel>` (serialisation only, D-8).
 
 `booking.` created · requests_changed · party_changed · notes_changed · cancelled · closed · stay_merged_in (reserved)
 `stay.` created · room_assigned · room_unassigned · room_changed · nights_changed · rate_set · guest_added · guest_removed · routing_set · checked_in · checked_out · cancelled · marked_no_show · overbooking_overridden
