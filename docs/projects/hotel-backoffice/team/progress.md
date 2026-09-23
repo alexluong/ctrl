@@ -9,9 +9,9 @@ Narrative record of what the team (and Alex) has done, by day. `log.md` is the t
 | WS | agent | state |
 |---|---|---|
 | Cockpit | solex-architect | active — merging, deciding, routing |
-| WS1 stack → ES skeleton | solex-dev | **skeleton live** — events + projections + replay, Room aggregate, `/system` console; next Booking after D-10/D-11 |
+| WS1 stack → ES skeleton | solex-dev | **skeleton live** — events + projections + replay, Room aggregate, `/system` console; next: D-12 envelope columns, then Booking/Stay from §11 |
 | WS2 existing system | solex-explore | **delivered** (map, flow board, lifecycle & money); on standby for 5 Alex-walkthrough items |
-| WS3 product | solex-product | v0.1 drafted; primed for Alex session |
+| WS3 product | solex-product | **v1 delivered** (D-12…D-19, §10–12); standby, spec owner |
 
 ## Timeline
 
@@ -37,17 +37,16 @@ Narrative record of what the team (and Alex) has done, by day. `log.md` is the t
 **Explore:** individual booking flow (one form, two exits); named the tape chart / resource-timeline pattern; charges flow + config behind it (one charge shape, 8 buckets; item catalogues recovered from data; config split in two); FigJam hit Figma's 20-calls/month cap → wrote an **Excalidraw generator** (`tools/excalidraw/`).
 
 ### 2026-09-23 — closing discovery
-**Alex:** closed the admin-login chase; declared **Setup/config its own scope with a third persona** (D-6); raised the **hotel day** problem (late arrivals should count as prior night) → configurable business date (D-7); set the agenda for the product session: schema → roles → actions/interfaces → rules → events.
+**Alex:** closed the admin-login chase; declared **Setup/config its own scope with a third persona** (D-6); raised the **hotel day** problem (late arrivals should count as prior night) → configurable business date (D-7); set the agenda for the product session: schema → roles → actions/interfaces → rules → events; ran it with product (D-9, D-12…D-19); asked dev in-session for the ES skeleton + event browser + system console; proposed the Ledger context.
 **Explore:** full Excalidraw board replaces FigJam (9 sections, 22 screens); four model-changing findings (group folio routing, two booking use cases, one charge shape, config split); Setup checklist; then answered architect's **10 lifecycle & money questions** read-only via the editor's endpoints: nightly posting confirmed, departure exclusive, debt-as-payment-method opens per-folio receivables, folios are constructed, deposit forfeit manual, cancel guards, no rate-change history. 5 items left for Alex walkthrough.
-**Product:** `product.md` v0 (roles, contexts, 7 aggregates, events, invariants, cascade, scope, 8 policy points); v0.1 adds Setup context; prep notes for Alex session.
+**Product:** `product.md` v0 (roles, contexts, 7 aggregates, events, invariants, cascade, scope, 8 policy points); v0.1 adds Setup context; then the **full session with Alex → v1**: event envelope, Booking/Stay naming, night-as-unit, money + a generic double-entry Ledger (Alex's idea), capability-based roles, three apps, screen inventory, §10 rules closed, §11 command catalogue, §12 event index.
 **Dev:** Alex ran `wrangler login` and chose **TanStack Start**, local SQLite for dev, Cloudflare as build target only; dev shipped the spike — repo `alexluong/solex`, https://solex-stg.collie.studio (Workers + D1, $0), browser-verified on Node/SQLite, local workerd/D1 and deployed; recorded TLS one-label trap and SSR hydration tz bug; wrote the storage desk exercise → recommends D1 for log + projections with optimistic concurrency, no DO, Hookdeck deferred. Later same day, at Alex's in-session request, built the **ES skeleton**: events table, same-batch projections, replay, Room aggregate, multi-tenant from line one (D-9), `/system` console; 7 tests, browser-verified on D1.
 **Architect:** merged each wave into README; queued 8 policy points; asked dev for a storage sanity-check (DO per hotel vs D1); reviewed the board and sent the 10 questions; recorded D-6, D-7; wrote the business-date model; set product's agenda; merged dev's spike → D-3 amended, D-8 proposed, product pinged to reconcile §6.
 
 ## Decisions so far
-D-1 Go/no-VM/CF (superseded) · D-2 one owner per file · D-3 TS on plain Workers · D-4 rebuild for data ownership, core subset · D-5 fresh start, no migration · D-6 Setup scope + setup/admin persona · D-7 business date w/ configurable roll · D-8 D1 log + projections, no DO, Hookdeck deferred (built) · D-9 multi-tenant by design, one tenant · D-10 (proposed) payload versioning · D-11 (proposed) auth. Full text: `decisions.md`.
+D-1 Go/no-VM/CF (superseded) · D-2 one owner per file · D-3 TS on plain Workers · D-4 rebuild for data ownership, core subset · D-5 fresh start, no migration · D-6 Setup scope + setup/admin persona · D-7 business date w/ configurable roll · D-8 D1 log + projections, no DO, Hookdeck deferred (built) · D-9 multi-tenant by design, one tenant · D-10 folded into D-12 · D-11 (proposed) auth · D-12 event naming + envelope · D-13 Booking v1 scope · D-14 Booking/Stay naming · D-15 night is the unit · D-16 money v1 · D-17 Ledger context · D-18 users/roles/apps · D-19 v1 screens. Full text: `decisions.md`.
 
 ## What Alex still owns
-- Product session (schema / roles / actions / rules / events) + §10 policy answers
-- D-10 (payload versioning) nod · **D-11 auth: pick IdP**, staging auth before Booking?
+- **D-11 auth: pick IdP**, staging auth before Booking?
 - Hotel-local time zone (rendering); staging auth before real data (`questions.md`)
 - 5 explore walkthrough items (`questions.md`) — not blocking

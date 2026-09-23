@@ -6,7 +6,7 @@ Format: `- [ ] Q (asked by, date) → for: Alex | client`. Check off + answer in
 - [ ] Must the rebuild keep the PA18 guest declaration export? (explore, 2026-09-20) → Alex/client
 - [ ] (deferred) Ask ezCloud for a **database export** of history — only when migration comes up; rebuild starts fresh. (explore, 2026-09-20) → Alex/client
 - [x] Admin account for ezFolio config screens? **Closed 2026-09-23** — not pursuing. Setup/config is a scope the rebuild owns, not something to reverse-engineer (Alex).
-- [ ] Which time zone is "hotel-local" for rendering dates? (dev, 2026-09-23 — surfaced by an SSR hydration bug) → Alex/client
+- [x] Hotel-local time zone → `HotelProfile.timeZone`, the only zone (D-12). Value = client's (Asia/Ho_Chi_Minh presumably; confirm).
 - [ ] Should staging get auth before it holds anything real? Public URL today. (dev, 2026-09-23) → Alex
 - [x] Hookdeck retention — moot, D-8 (log lives in D1).
 - [x] What is the system at `:99`? → **The PMS the client uses today.** (answered by Alex via explore, 2026-09-19)
@@ -21,16 +21,15 @@ Format: `- [ ] Q (asked by, date) → for: Alex | client`. Check off + answer in
 ## Decisions needed (Alex) — surfaced by explore, 2026-09-23
 
 - [x] **Hotel day / business date** → D-7: configurable roll (default 02:00) + rules; nights from timestamps. (Alex, 2026-09-23)
-- [ ] **Overbooking**: allowed today (`allow_over_room` ON; >100% on turnover days). Keep as a receptionist override, or hard-block?
-- [ ] **Guest identity**: ID missing on all revenue rows; PA18 export legally depends on it. Enforce ID at check-in, or keep optional?
-- [ ] **OTA commission basis**: OTA remits net (receivable = net) vs hotel pays commission out? Per-Company setting. (product §10, 2026-09-23)
-- [ ] **Cancellation / no-show charging**: per-channel policy or manual `compensation` charge? Product recommends manual for v1. (product §10)
-- [ ] **Group billing default**: all buckets → master (today's usage) vs room-only → master (corporate norm)? Default per Company. (product §10)
-- [ ] **VAT / red invoice**: out for v1 unless client says otherwise? (product §10; also in open Qs)
+- [x] **Overbooking** → warn + explicit override (D-15, §10 #2).
+- [x] **Guest identity** → optional; PA18 later (§10 #4).
+- [x] **OTA commission basis** → deferred, no OTA logic v1 (D-13).
+- [x] **Cancellation / no-show** → manual compensation charge; explicit ForfeitDeposit (§10 #3).
+- [x] **Group billing default** → `Company.defaultRouting` (room → master, rest → own), editable per stay (§10 #8).
+- [x] **VAT / red invoice** → deferred (D-16).
 - [x] **D-8 storage shape** — accepted de facto 2026-09-23 (Alex had dev build it).
-- [ ] **D-10 event payload versioning** — `schema_version` + upcasters, add before Booking? (architect, 2026-09-23)
 - [ ] **D-11 auth** — OIDC stance; which IdP (Pocket ID on homelab / Cloudflare Access / other)? Staging auth before Booking? (architect, 2026-09-23)
-Product's recommendations for each are in `product.md` §10 — Alex can just accept/override there.
+All §10 points closed in the 2026-09-23 product session; table in `product.md` §10.
 
 ## Alex walkthrough needed (explore, 2026-09-23) — closes exploration
 

@@ -30,7 +30,8 @@ Secrets (existing-system URL/login): `ctrl/secrets/hotel-backoffice.md` (gitigno
 **Decided (D-3):** TypeScript on plain Cloudflare Workers. Go dropped — simplicity wins. **Amended 2026-09-23:** TanStack Start + Drizzle + SQLite; Cloudflare = build target only, dev loop is Node + local SQLite. Staging live: https://solex-stg.collie.studio (`stack.md`).
 **Decided (D-9):** multi-tenant by design, one tenant in practice — everything keyed by `Hotel`, no cross-hotel data v1, tenant seeding via script, no self-signup/billing/super-admin.
 **Decided (D-8, de facto):** D1 for event log *and* projections, optimistic concurrency on `(stream_id, version)`, no Durable Object, projections in the same atomic batch, Hookdeck deferred. Built + deployed 2026-09-23 at Alex's direction.
-**Proposed:** D-10 event payload versioning (`schema_version` + upcasters) · D-11 auth (OIDC stance from `docs/stack.md`, hotel-scoped roles).
+**Decided (D-12…D-19, product session 2026-09-23):** event naming `agg.past_verb` + full envelope (ulid, hotelId, stream, version, type, schemaVersion, occurredAt, businessDate, actor, correlation/causation/commandId) · Booking v1 minimal, no OTA logic · **Booking/Stay** naming · **night is the unit** (Stay = nights[] w/ room+rate+posted; availability = no two stays share (roomId, date)) · money v1 (own+master folios, Setup charge categories, receivable per folio, no due date) · **generic double-entry Ledger** under Billing/Expenses (Folio/Receivable = projections) · users per person, roles = capability bundles (`receptionist`, `owner`), three apps (Front Desk, Back Office, Setup) · v1 screen inventory. §10 rules, §11 ~40 commands, §12 event index in `product.md`.
+**Proposed:** D-11 auth (OIDC stance from `docs/stack.md`; IdP = Alex's pick). D-10 folded into D-12.
 **Decided (D-4):** client already has a PMS (**ezFolio** by ezCloud, the `:99` system). SoLex = rebuild driven by **data ownership**; core subset + enhancements, not feature parity. WS2 maps the PMS first via slow walkthrough w/ Alex.
 **Decided (D-5):** fresh start, migration deferred — ezFolio has no working export. Schema for the domain, not for an import.
 See `team/decisions.md`. Older Go notes below kept for context.
@@ -107,7 +108,7 @@ This is the **Go-at-scale learning project**: backend-heavy, web back office, no
 
 Three parallel sessions, named agents: `solex-dev` (WS1), `solex-explore` (WS2), `solex-product` (WS3); `solex-architect` = cockpit. Profiles + protocol in `agents/`. Rules: each writes only its own file (above), commits in ctrl with `docs(hotel-backoffice/<ws>): …`, pulls before committing. Cross-WS findings go in the WS's own file under a "For other WSs" section; cockpit session merges into README.
 
-Ordering: ~~WS1 + WS3 can start now. WS2 needs Alex…~~ **WS2 complete 2026-09-20. WS3 v0 complete 2026-09-23** (`product.md`: 7 aggregates, event vocabulary, 8 policy points). **WS1 spike shipped 2026-09-23** (staging live, storage take = D-8 proposed). Next: Alex decides §10 policy points + D-8; product reconciles §6 with D-8.
+Ordering: ~~WS1 + WS3 can start now. WS2 needs Alex…~~ **WS2 complete 2026-09-20. WS3 v0 complete 2026-09-23** (`product.md`: 7 aggregates, event vocabulary, 8 policy points). **WS1 spike + ES skeleton shipped 2026-09-23.** **WS3 v1 complete 2026-09-23** (D-12…D-19, §10 rules, §11 command catalogue, §12 event index). Next: dev adds D-12 envelope columns, then Booking/Stay from §11; D-11 auth needs Alex's IdP.
 
 ~~Later WS (not now): event-store design — Hookdeck-as-log vs bus + archive.~~ Collapsed into D-8 (2026-09-23) if accepted.
 
@@ -130,7 +131,8 @@ Ordering: ~~WS1 + WS3 can start now. WS2 needs Alex…~~ **WS2 complete 2026-09-
 ## Status
 
 - 2026-07-10 — plan agreed, awaiting discovery brain-dump.
-- 2026-09-23 — **ES skeleton live** on staging: events table + same-batch projections + replay, Room aggregate, `/system` console (log browser, tables, replay). D-8 built as proposed → accepted de facto; D-9 folded in. Next aggregate = Booking; D-10/D-11 proposed first.
+- 2026-09-23 — **product v1** (96d3b04): Alex session done — D-12…D-19 accepted. Ledger context is Alex's idea. Command catalogue is canonical for dev. §10 policy points all closed (OTA/VAT/discounts/due dates deferred).
+- 2026-09-23 — **ES skeleton live** on staging: events table + same-batch projections + replay, Room aggregate, `/system` console (log browser, tables, replay). D-8 built as proposed → accepted de facto; D-9 folded in. Next aggregate = Booking; envelope per D-12, auth D-11 proposed.
 - 2026-09-23 — **WS1 spike shipped** (9f54e73): TanStack Start + Drizzle + SQLite/D1 on Workers, https://solex-stg.collie.studio, $0. D-3 amended (CF = build target only). **D-8 proposed**: D1 log + projections, no DO, Hookdeck deferred. New Qs: hotel-local tz, staging auth.
 - 2026-09-23 — **D-7: hotel day = configurable business date; nights from timestamps + rules.** Closes day-boundary Q.
 - 2026-09-23 — explore answered architect's 10 lifecycle/money Qs (5e143b4): nightly posting, exclusive departure, debt-as-method, per-folio receivables, constructed folios, manual deposit forfeit. 5 items left for Alex walkthrough. **Exploration essentially complete.**
