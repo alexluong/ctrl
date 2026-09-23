@@ -452,6 +452,67 @@ Command = one intent. `needs` = capability. `checks` = rules beyond "hotel match
 
 ~40 commands. Screens (§3) are compositions of these; nothing in the UI does what a command can't.
 
+## 11a. Slice 1 payloads — occupancy loop (pinned 2026-09-23 for dev; walk-in individual only)
+
+Exact shapes for the first slice. Group bookings, money, and Setup come in later slices; nothing here changes when they do. Ids are ulids as strings. `LocalDate` = `'YYYY-MM-DD'` in hotel-local calendar; `Instant` = ISO-8601 UTC.
+
+```ts
+// ---- commands (input the handler receives; hotelId + actor come from the session, not the body)
+
+type CreateBooking = {
+  commandId: string                       // idempotency
+  kind: 'individual'                      // 'group' arrives in slice 2+
+  contact: { name: string; phone?: string }   // handler upserts a contacts row, stores contactId only
+  sourceId?: string
+  arrive: LocalDate
+  depart: LocalDate                       // exclusive; depart > arrive
+  request: { roomTypeId: string; bedType: string; adults: number; children: number; ratePerNight: number }
+  roomId?: string                         // walk-in usually picks the room now; may be left for AssignRoom
+  notes?: string
+}
+// minimum a receptionist must type: contact.name, arrive, depart, roomTypeId, adults. Everything else defaults
+// (bedType from room, ratePerNight from RateTable else 0 and flagged, children 0).
+
+type AssignRoom   = { commandId; stayId: string; roomId: string; fromDate?: LocalDate }   // fromDate default = first unposted night
+type CheckIn      = { commandId; stayId: string; guests?: Array<{ name: string; idDoc?: { type: 'cccd'|'passport'|'other'; number: string } }> }
+                    // guests upserted to guests rows; event carries guestIds only
+type CheckOut     = { commandId; stayId: string }        // slice 1: folio check skipped (no money yet) — re-enabled in slice 3
+type CancelStay   = { commandId; stayId: string; reason: string }
+type CancelBooking= { commandId; bookingId: string; reason: string }
+type SetHousekeeping = { commandId; roomId: string; state: 'clean' | 'dirty' }
+
+// ---- event payloads (envelope per D-12 wraps these)
+
+type BookingCreated = {
+  bookingId: string; kind: 'individual'; party: { contactId: string; companyId?: string }
+  sourceId?: string; arrive: LocalDate; depart: LocalDate
+  requests: Array<{ roomTypeId: string; bedType: string; qty: 1; adults: number; children: number; ratePerNight: number }>
+  notes?: string
+}
+type StayCreated = {
+  stayId: string; bookingId: string; roomTypeId: string; bedType: string
+  nights: Array<{ date: LocalDate; roomId?: string; rate: number; posted: false }>
+  adults: number; children: number; guests: []
+}
+type StayRoomAssigned  = { stayId: string; roomId: string; fromDate: LocalDate }
+type StayCheckedIn     = { stayId: string; at: Instant; roomId: string; guestIds: string[] }
+type StayCheckedOut    = { stayId: string; at: Instant }
+type StayCancelled     = { stayId: string; reason: string }
+type BookingCancelled  = { bookingId: string; reason: string }
+type RoomMarkedDirty   = { roomId: string; cause: 'checkout' | 'manual' }   // tier b notification
+type RoomMarkedClean   = { roomId: string }
+
+// ---- streams touched per command (same batch)
+// CreateBooking : booking:<id> (booking.created) · stay:<id> (stay.created) · availability:<hotel> (version++ if roomId given)
+// AssignRoom    : stay:<id> · availability:<hotel>
+// CheckIn       : stay:<id> · (slice 3 adds folio charge)
+// CheckOut      : stay:<id> · rooms row update + room.marked_dirty (reaction, in-batch, not on replay)
+// CancelStay    : stay:<id> · availability:<hotel>
+// CancelBooking : booking:<id> · stay:<id> ×N · availability:<hotel>
+```
+
+Rules active in slice 1: arrive < depart · room free on every night `[arrive, depart)` · room not OOO at check-in · cancel only from `booked` · check-out only from `checkedIn`. Overbooking per type: warn only (override event in slice 2).
+
 ## 12. Event index
 
 Envelope + naming per §6 conventions (D-12). **Two tiers (D-22)**: `booking.*` `stay.*` `ledger.*` (+ `folio.*` `receivable.*` `expense.*` as Ledger-derived) are state — folded on replay. `room.*` `guest.*` `setup.*` `user.*` are **notifications**: emitted on every CRUD write for history tabs and projections, never folded; the row is truth. Streams: `booking:*` `stay:*` `room:*` `folio:*` `receivable:*` `ledger:*` `guest:*` `expense:*` `setup:*` `user:*` + `availability:<hotel>` (serialisation only, D-8).
