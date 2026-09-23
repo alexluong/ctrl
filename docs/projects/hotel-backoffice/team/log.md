@@ -1,4 +1,5 @@
 # Team log
+- 2026-09-24 — Worktree swap: `../solex-qa` handed to the solex-qa session (name matches agent, Alex's ask); architect now reviews in `../solex-architect`. Alex: dev should keep asking architect questions, not wait for him.
 
 Newest first. `YYYY-MM-DD — <agent>: what`.
 

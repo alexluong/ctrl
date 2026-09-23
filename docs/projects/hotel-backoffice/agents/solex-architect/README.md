@@ -6,7 +6,7 @@
 
 ## Current objective (2026-09-23, rev 2 — build phase)
 
-Alex: "work with Dev on this and make sure to help with review/QA as we go." Per slice (dev profile rev 6): review diff in `~/git/hub/alexluong/solex-qa` against decisions + product.md using `team/qa.md` checklist, run `pnpm check`, walk the flow, findings → `team/qa.md` + message dev; blocking fixed before next slice. Keep decisions/progress/log current; accept routine decisions under D-21; ping Alex after slices 1 and 3 with what to click on staging. Never commit to `solex`.
+Alex: "work with Dev on this and make sure to help with review/QA as we go." Per slice (dev profile rev 6): review diff in `~/git/hub/alexluong/solex-architect` (read-only, detached; `solex-qa` worktree handed to the QA session 2026-09-24) against decisions + product.md using `team/qa.md` checklist, run `pnpm check`, walk the flow, findings → `team/qa.md` + message dev; blocking fixed before next slice. Keep decisions/progress/log current; accept routine decisions under D-21; ping Alex after slices 1 and 3 with what to click on staging. Never commit to `solex`.
 
 <details><summary>rev 1 (2026-09-19, done)</summary>
 

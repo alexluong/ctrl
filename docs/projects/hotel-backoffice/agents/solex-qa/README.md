@@ -9,7 +9,7 @@
 ## Current objective (2026-09-24, rev 1)
 
 1. Read `../../qa/README.md` (how the plan works) and `../../qa/cases.md` (seeded from architect's walkthroughs, slices 0–3). Read `../../team/qa.md` for the history of findings so far.
-2. Set up your worktree: `git -C ~/git/hub/alexluong/solex worktree add --detach ../solex-qa origin/main` may already exist (architect's) — **use your own: `../solex-e2e`**, then `mise run setup`, seed a `user` row + `SOLEX_DEV_USER` (see `../../qa/README.md` "Local login").
+2. Set up your worktree: `~/git/hub/alexluong/solex-qa` is yours (detached from origin/main; architect moved to `../solex-architect` 2026-09-24), then `mise run setup`, seed a `user` row + `SOLEX_DEV_USER` (see `../../qa/README.md` "Local login").
 3. First deliverable: `solex/e2e/` Playwright project running against `pnpm dev` on your worktree port, with specs for cases tagged `e2e` in `cases.md` for slice 1 and 3 (booking → check-in → charge → refused check-out → payment → check-out; overlapping booking refused; rule refusal renders as alert; silent-block regression: every form submits or shows why). Report which cases are now automated by updating the `automated by` column.
 4. From then on: per dev landing (dev pings you and architect), add cases for the new rules, run, log in `qa/runs.md`, file findings. Blocking = violates an accepted decision/spec or data safety; dev fixes before the next landing.
 

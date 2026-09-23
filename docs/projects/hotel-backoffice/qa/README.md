@@ -1,6 +1,6 @@
 # SoLex QA — how the plan works
 
-Owner: `solex-qa` (architect until that session exists). Findings history before this dir existed: `../team/qa.md`.
+Owner: `solex-qa` (session live from 2026-09-24; worktree `~/git/hub/alexluong/solex-qa`). Findings history before this dir existed: `../team/qa.md`.
 
 ## Files
 
