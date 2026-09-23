@@ -1,4 +1,5 @@
 # Team log
+- 2026-09-24 — solex-qa: D-24 (b) verified; S3-32 sweep green; N16 refund form pre-fills reason (rule unreachable) → dev, non-blocking; slice 4 cases S4-1..5 prepared. Checklist line extended: UI never answers a rule on the user's behalf.
 - 2026-09-24 — dev: D-24 (b) applied (staging acf36ff1, 259 + 45 green); found refund had no reason rule (schema-only) → `folio.reasonRequired`. Architect accepted; checklist: screen decides what to send, never whether allowed. Slice 4 started.
 - 2026-09-24 — solex-qa: slice 3 reds green, expense cases added, N14/N15 → dev. Architect D-24 (b): adapters validate shape only; rule refusals are codes; zod failures return `input.invalid`, never throw.
 - 2026-09-24 — product: §6/§11 ExpenseCommand aligned to built shape (d5a0ef9). Slice 3 spec == code.
