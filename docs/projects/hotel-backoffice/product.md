@@ -9,15 +9,21 @@ Owner: `solex-product`. **v0.1 draft, 2026-09-23** — built from `requirements.
 - **Semi-professional** = one trusted receptionist persona does everything; owner reads; setup is rare and owner-done. No shifts, no night audit, no per-user permissions beyond the three roles, no approval workflows except discounts. Correctness of money and availability matters; POS, key cards, channel sync do not.
 - **Multi-tenant by design, one tenant in practice (D-9).** Everything hangs off a `Hotel`; streams and projections keyed by hotel; no cross-hotel data in v1. Tenant creation/seeding via admin SDK/script, not UI. No self-signup, billing, or super-admin console in v1.
 
-## 2. Users and roles
+## 2. Users, roles, apps (settled w/ Alex 2026-09-23)
 
-| role | what they do | access |
-|---|---|---|
-| **Receptionist** | bookings, assignment, check-in/out, charges, payments, room status, receivables follow-up, expenses entry | write everything |
-| **Manager / owner** | "how is the hotel doing": dashboard, reports, approve discounts | read all + approvals |
-| **Setup / admin** (D-6) | defines what the system is made of: rooms/types + prices, charge catalogues + prices, tax/service %, booking rules, hotel identity, channels/companies | Setup context only; rare (onboarding, price changes); the owner in practice |
+**Users** are individual accounts, one per person, belonging to one hotel (D-9). Several receptionists share the *role*, not a login; every event carries `actor.userId`, so "who did what" is free.
 
-Housekeeping, restaurant, etc. are off-system; reception acts on their behalf. Same operational screens for manager + receptionist, different defaults/density (explore). Setup is its own surface; whoever prices things can see and edit prices (ezFolio's rotted catalogue is the cautionary tale).
+**Apps, not per-role screens** (Odoo-style). The product is a few apps; a role = which apps you can open. The owner gets the same Front Desk as reception, plus more apps.
+
+| app | contains | receptionist | owner |
+|---|---|---|---|
+| **Front Desk** | room map, tape chart, bookings, check-in/out, charges, payments, room status | ✓ | ✓ |
+| **Back Office** | receivables, expenses, reports / dashboard, guest history | ✓ receivables + expenses (assumed; client to confirm); reports owner-only | ✓ |
+| **Setup** | the whole Setup context | – | ✓ |
+
+Roles v1: `receptionist`, `owner`. No per-action permissions, no approval workflows (discount approval → later ticket). Admin SDK (D-9) sits outside the apps, for seeding/tenant creation.
+
+Housekeeping, restaurant, etc. are off-system; reception acts on their behalf.
 
 ## 3. Jobs to be done
 
