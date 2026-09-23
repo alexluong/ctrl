@@ -50,7 +50,7 @@ D-1 Go/no-VM/CF (superseded) · D-2 one owner per file · D-3 TS on plain Worker
 - D-11 auth: app-owned username/password v1, OIDC later; staging login before real data.
 - D-20 PII outside the event log (id refs, tombstone erasure).
 - D-11 built: Better Auth; `/system` gated by `system_operator` flag, separate from hotel `owner` role.
-- **Staging event log wipe — NEEDS YOUR YES to dev.** Architect recommends wiping once at the Room flip (throwaway data per D-11; avoids two event vocabularies on one stream forever). Dev correctly won't act on architect's word for a delete. Dev also waits on your greenlight for the Room flip itself (D-22 reorder).
+- Staging event log wipe at the Room flip: **Alex 2026-09-23 (architect session): "i'll defer to you; staging is indeed throwaway data, at least at the moment"** → wipe approved, Room flip greenlit. Relayed to dev.
 - D-23: console/exports redact by column-name denylist after dev caught live session tokens rendering in `/system`.
 
 ## What Alex still owns
