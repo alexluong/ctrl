@@ -873,3 +873,32 @@ screens, which are live with my placeholder wording).
 `product.md:45`, where `folio.void/refund`, `receivable.write_off` and `expense.void` are in the
 owner bundle (D-17 role split). The code has always matched it. I had been carrying it in this log
 as an open question for Alex; it is not one, and should not be raised again unless he reopens it.
+
+## solex-dev — N23 recorded (QA, on db0c0e0); still paused
+
+Verified QA's report in the code before logging it. It is real, and it is mine.
+
+`projectBooking` only ever writes `status: "booked"` or `"cancelled"` — there is **no `booking.closed`
+case in the projection at all**, because nothing has ever emitted that event. `bookingsOfCompany`
+(`store/projections.ts:409`) counts `status = 'booked'` as open. So any company that has ever been
+booked can never be retired: `company.inUse` refuses forever, individual or group, paid or not.
+
+**This corrects something I wrote two entries up.** When I projected `bookings.company_id` early I
+said it made `company.inUse` "whole rather than half", and that the booking half was correctly
+always-false until groups landed. That was wrong in the direction that matters: it is always
+**true** once a company has a booking. I built a guard whose second half could not be satisfied,
+because the state it waits for has no way to be reached. Projecting the column early was still
+right; claiming the rule was therefore complete was not — a guard is not complete when nothing can
+clear it.
+
+**Landing 3 must include the projection**, not just the command: a `booking.closed` case in
+`projectBooking` setting `status = "closed"`. Without it CloseBooking would emit an event the
+company guard cannot see, and N23 would survive a landing that looks like its fix.
+
+Open question with architect (QA raised it, not mine to answer): whether CloseBooking covers
+**individual** bookings too, or whether an individual's booking should close on check-out. Landing 3
+as specced is group-shaped — "every stay checked out or cancelled, master balance ≤ 0" reads fine
+for one stay and a master folio that was never opened (balance 0), so one command may cover both.
+Waiting on the ruling before building either way.
+
+No code change yet; still paused for compaction. Nothing pending in either repo.
