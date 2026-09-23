@@ -1,6 +1,6 @@
 # SoLex — Product / Domain Model (WS3)
 
-Owner: `solex-product`. **v1, 2026-09-23** — walked with Alex section by section (D-9…D-17 Proposed in `team/decisions.md`). Built from `requirements.md` + `existing-system.md` + D-4..D-8. Types in §6, commands in §11, events in §12 are the contract; dev should not invent others. Later-scope items are listed inline as "Later"/"Deferred".
+Owner: `solex-product`. **v1, 2026-09-23** — walked with Alex section by section (D-9…D-19 Proposed in `team/decisions.md`). Built from `requirements.md` + `existing-system.md` + D-4..D-8. Types in §6, commands in §11, events in §12 are the contract; dev should not invent others. Later-scope items are listed inline as "Later"/"Deferred".
 
 ## 1. Framing
 
@@ -371,7 +371,7 @@ Other projections: **TapeChart** (stays × rooms × dates + per-type availabilit
 | # | rule | v1 |
 |---|---|---|
 | 1 | Hotel day | D-7. Business date rolls at `businessDayStart` 02:00. Room charge posts at the roll, or at check-in for the current night. Check-in before `checkInTime` 14:00 → optional early check-in item; checkout after `checkOutTime` 12:00 → optional late checkout item; after next roll → extra night (`stay.nights_changed`). Actual instants decide; typed dates are the plan. |
-| 2 | Overbooking | warn + explicit override (D-13) |
+| 2 | Overbooking | warn + explicit override (D-15) |
 | 3 | Cancellation / no-show | no automatic charge. Receptionist posts a compensation charge by hand if agreed. Deposit forfeit = explicit `ForfeitDeposit`. Cancel guards: not if checked in; reason required; charges moved off first. |
 | 4 | Guest ID | optional; PA18 export later |
 | 5 | Children | under `childAgeThreshold` (6) free, not counted against capacity |
@@ -441,7 +441,7 @@ Command = one intent. `needs` = capability. `checks` = rules beyond "hotel match
 
 ## 12. Event index
 
-Envelope + naming per §6 conventions (D-10). Streams: `booking:*` `stay:*` `room:*` `folio:*` `receivable:*` `ledger:*` `guest:*` `expense:*` `setup:*` `user:*` + `availability:<hotel>` (serialisation only, D-8).
+Envelope + naming per §6 conventions (D-12). Streams: `booking:*` `stay:*` `room:*` `folio:*` `receivable:*` `ledger:*` `guest:*` `expense:*` `setup:*` `user:*` + `availability:<hotel>` (serialisation only, D-8).
 
 `booking.` created · requests_changed · party_changed · notes_changed · cancelled · closed · stay_merged_in (reserved)
 `stay.` created · room_assigned · room_unassigned · room_changed · nights_changed · rate_set · guest_added · guest_removed · routing_set · checked_in · checked_out · cancelled · marked_no_show · overbooking_overridden
@@ -459,4 +459,4 @@ Envelope + naming per §6 conventions (D-10). Streams: `booking:*` `stay:*` `roo
 - 2026-09-19 — not started.
 - 2026-09-23 — v0 draft from requirements + explore's ezFolio map. Aggregate list sent to architect.
 - 2026-09-23 — v0.1: D-6 folded — setup/admin persona, Catalogue → Setup context (HotelProfile, Room/Type/Floor defs, RateTable, ChargeItem, ChargeBehaviour, Company, BookingRules). Awaiting Alex on §10.
-- 2026-09-23 · **v1** — full session w/ Alex: multi-tenant (D-9), naming/envelope (D-10), Booking (D-11), Stay+nights (D-12/13), money + Ledger (D-14/15), roles/authz (D-16), screens (D-17), rules §10, command catalogue §11, event index §12.
+- 2026-09-23 · **v1** — full session w/ Alex: multi-tenant (D-9), naming/envelope (D-12), Booking (D-13), Stay+nights (D-14/13), money + Ledger (D-16/15), roles/authz (D-18), screens (D-19), rules §10, command catalogue §11, event index §12.
