@@ -1,4 +1,5 @@
 # Team log
+- 2026-09-24 — Alex: confirmed the staging wipe with dev in dev's session; dev follows architect's instructions going forward, Alex checks in when he can.
 - 2026-09-24 — dev: D-12 (f) landed dba5704, staging 81fdef66, 243 green; found folio deciding ran outside the retry thunk (D-8 property false for money) — fixed. Architect accepted; checklist: decide inside `plan()`. Next: expenses → N10+N11 sweep → slice 4.
 - 2026-09-24 — architect: finding numbers minted by solex-qa from now (N12 clash resolved: N12 guest search, N13 mise .env override, QA's). QA e2e for N12 red (232a265), case S2-16.
 - 2026-09-24 — product: §6 gains "PII never in a URL" (c28acae, tagged N11/N12); `ledger:` stream spelling confirmed applied (1034113). Spec and code aligned.

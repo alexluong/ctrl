@@ -9,7 +9,7 @@ Narrative record of what the team (and Alex) has done, by day. `log.md` is the t
 | WS | agent | state |
 |---|---|---|
 | Cockpit | solex-architect | active — merging, deciding, routing |
-| WS1 stack → ES skeleton | solex-dev | **skeleton live** — events + projections + replay, Room aggregate, `/system` console; **auth live (D-11)**; building rough end-to-end in slices (dev profile rev 6): **0 foundation done 2026-09-23** (wipe pending Alex) → **1 occupancy loop done 2026-09-23** (grid, booking form, stay page; 110 tests; architect walkthrough green) — **Alex: review on staging** → **2 setup minimum done 2026-09-23** (room types, rates, guests/contacts + erasure, staff/roles, Setup screens; 173 tests) → 1 occupancy loop → 2 setup min → 3 money → 4 roles/audit → 5 long tail. Alex reviews staging after 1 and 3; architect reviews every slice (`team/qa.md`) |
+| WS1 stack → ES skeleton | solex-dev | **skeleton live** — events + projections + replay, Room aggregate, `/system` console; **auth live (D-11)**; building rough end-to-end in slices (dev profile rev 6): **0 foundation done 2026-09-23** (wipe confirmed by Alex in dev's session 2026-09-24) → **1 occupancy loop done 2026-09-23** (grid, booking form, stay page; 110 tests; architect walkthrough green) — **Alex: review on staging** → **2 setup minimum done 2026-09-23** (room types, rates, guests/contacts + erasure, staff/roles, Setup screens; 173 tests) → 1 occupancy loop → 2 setup min → 3 money → 4 roles/audit → 5 long tail. Alex reviews staging after 1 and 3; architect reviews every slice (`team/qa.md`) |
 | WS2 existing system | solex-explore | **delivered** (map, flow board, lifecycle & money); on standby for 5 Alex-walkthrough items |
 | WS3 product | solex-product | **v1 delivered** (D-12…D-19, §10–12); standby, spec owner |
 
@@ -54,7 +54,7 @@ D-1 Go/no-VM/CF (superseded) · D-2 one owner per file · D-3 TS on plain Worker
 - D-11 auth: app-owned username/password v1, OIDC later; staging login before real data.
 - D-20 PII outside the event log (id refs, tombstone erasure).
 - D-11 built: Better Auth; `/system` gated by `system_operator` flag, separate from hotel `owner` role.
-- Staging event log wipe at the Room flip: **Alex 2026-09-23 (architect session): "i'll defer to you; staging is indeed throwaway data, at least at the moment"** → wipe approved, Room flip greenlit. Relayed to dev.
+- Staging event log wipe at the Room flip: **Alex 2026-09-23 (architect session): "i'll defer to you; staging is indeed throwaway data, at least at the moment"** → wipe approved, Room flip greenlit. Relayed to dev. **Confirmed by Alex directly in dev's session 2026-09-24 — closed.**
 - Refunds are capped at payments actually received on that folio, not at the credit balance (landing 2). Conservative; say if the client refunds credit notes differently.
 - Money role split is now concrete (D-17 built note): receptionist posts charges, takes payments, transfers to receivable; owner alone voids, refunds, writes off, voids expenses. Product added move-line-between-folios and record-petty-cash-expense to receptionist. Say if you want the line elsewhere.
 - First-owner bootstrap (landing C): an empty hotel lets a system operator act as owner until the first staff member is added, then never again. Narrow by design; re-read if it ever feels wrong.
