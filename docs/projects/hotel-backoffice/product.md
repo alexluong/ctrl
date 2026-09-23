@@ -470,7 +470,8 @@ Command = one intent. `needs` = capability. `checks` = rules beyond "hotel match
 | `CreateContact / UpdateContact / EraseContact` | `booking.edit` (erase: `guests.erase`, owner only) | `contact.created` / `updated` / `erased` |
 | `RecordExpense {businessDate, categoryId, amount, method, description, reference?}` / `VoidExpense` | `expense.record` / `expense.void` | `expense.recorded` / `voided` → entry |
 | `Define / Update / Retire <SetupItem>` (Floor, RoomType, Room, RateTable, ChargeCategory, ChargeItem, BookingSource, Company), `SetHotelProfile`, `SetBookingRules` | `setup.edit` | `<item>.defined / updated / retired`; Room retire/type change also versions availability |
-| `CreateUser / UpdateUser / ResetPassword` | `users.manage` | `user.created / updated / password_reset` (identity) |
+| `CreateUser / UpdateUser / ResetPassword` | `users.manage` | `user.created / updated / password_reset` on `<hotelId>/user:<id>`; `user.created` carries the username, never the name (D-20); ResetPassword ends the person's live sessions |
+| ~~`DisableUser`~~ **deferred** | – | identity ≠ access: `DeactivateStaff` ends the position and live sessions, so an account with no membership signing in to an empty shell is harmless. If a lock is ever needed: `disabledAt` on the account checked at sign-in, never a delete (D-18 built note). |
 | `AddStaff {userId, role}` / `ChangeStaffRole {userId, role}` / `DeactivateStaff` / `ReactivateStaff` | `users.manage` | `staff.added / role_changed {role, from} / deactivated / reactivated` — refuse `staff.lastOwner`, `staff.alreadyStaff` |
 
 ~40 commands. Screens (§3) are compositions of these; nothing in the UI does what a command can't.
