@@ -47,6 +47,7 @@ Do **not** yet: domain code, ES infra, Hookdeck. Those wait on product + archite
 - Frontend: TS → React likely; coordinate w/ `collie-ui` (see README cross-ref).
 
 ## Log
+- 2026-09-23 — architect: auth landed ahead of order (fine). Answers: User/staff tier b, library owns row; system_operator ok; wipe staging log at Room flip; D-23 redaction.
 - 2026-09-23 — architect: rev 5. D-22 (two tiers) accepted by Alex; Room → CRUD+events first, then envelope, Booking/Stay, auth.
 
 - 2026-09-19 — session created.
