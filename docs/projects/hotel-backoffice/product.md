@@ -1,6 +1,6 @@
 # SoLex — Product / Domain Model (WS3)
 
-Owner: `solex-product`. **v0.1 draft, 2026-09-23** — built from `requirements.md` + `existing-system.md` (explore, through 2026-09-23) + D-4/D-5/D-6. Not yet reviewed with Alex; open policy points in §10. Event names here are the ES vocabulary; dev should not invent others.
+Owner: `solex-product`. **v1, 2026-09-23** — walked with Alex section by section (D-9…D-17 Proposed in `team/decisions.md`). Built from `requirements.md` + `existing-system.md` + D-4..D-8. Types in §6, commands in §11, events in §12 are the contract; dev should not invent others. Later-scope items are listed inline as "Later"/"Deferred".
 
 ## 1. Framing
 
@@ -103,6 +103,8 @@ Setup ──▶ Reservations (Booking, Stay, availability)
 How downstream uses Setup: (1) **lookup at command time** — e.g. posting item X copies X's current price onto the entry; later price changes never touch history. (2) **react to a Setup event** — only where supply changes: `room.retired` / `room.type_changed` version `availability:<hotel>` (D-8). Setup never reads downstream; its one guard ("can't retire a room with future nights") is a check in the command against the projection.
 
 ## 6. Aggregates, events, invariants
+
+**Shape of the system: CQRS + event sourcing.** Commands (§11) are the write side: validated intents that, if the rules pass, append events (§12) to a stream. Projections (§4, §7) are the read side: tables rebuilt from events, what every screen reads. Nothing writes a projection directly. Vocabulary: *command* = what someone wants to do · *event* = what happened · *aggregate* = the thing whose rules decide (Booking, Stay, Room, Ledger account…) · *projection* / *read model* = a query-shaped table.
 
 Format (agreed w/ Alex 2026-09-23): each thing = TypeScript type + events + rules. American English. Types are the contract for dev; field names are final unless a decision changes them.
 
@@ -361,22 +363,100 @@ Other projections: **TapeChart** (stays × rooms × dates + per-type availabilit
 
 - Model mirrors ezFolio's `reservation → reservation_room → traveller` chain deliberately (staff mental model), but names and shape are ours (D-5).
 - ezFolio item masters never seen and no longer pursued (D-6) — Setup context is designed fresh from explore's checklist; seed values (rooms, types, items, prices) come from Alex/client at onboarding.
-- **For dev**: single-writer DO per hotel for the Reservations context (availability rule); D1 for projections; bucket enum + event names above are the contract. No card fields anywhere.
+- **For dev**: storage per D-8 (D1 event log + projections, optimistic concurrency, `availability:<hotel>` stream, no Durable Object); types §6 + commands §11 + events §12 are the contract. No card fields anywhere.
 - **For architect**: policy points §10 need Alex; two are already in `team/questions.md`.
 
-## 10. Policy points (model as configurable; decide with Alex)
+## 10. Rules and policy (settled w/ Alex 2026-09-23; all live in Setup `BookingRules` / `HotelProfile` or as capability defaults, so the client can flip them)
 
-1. **Day boundary** — room charge for night N posts at fixed local time (ezFolio 23:59) vs at check-out. Affects "revenue today" basis (accrual per night vs cash at checkout). Recommend: post per night at a fixed roll time; dashboard shows both.
-2. **Overbooking** — hard block vs receptionist override with event. Recommend override (turnover days hit >100% today).
-3. **Guest ID at check-in** — enforce vs optional with warning. Depends on PA18 need.
-4. **PA18** — legally required? If yes, ID enforcement follows.
-5. **OTA commission basis** — OTA remits net (receivable = net) vs hotel pays commission out. Per Company setting.
-6. **VAT / red invoice** — out for v1 unless client says otherwise; tax/service % kept per ChargeItem at 0.
-7. **Cancellation / no-show charging** — per-channel policy or manual charge? Recommend manual `compensation` charge for v1.
-8. **Group billing default** — all buckets to master (today's usage) vs room-only to master (corporate norm). Default per Company.
+| # | rule | v1 |
+|---|---|---|
+| 1 | Hotel day | D-7. Business date rolls at `businessDayStart` 02:00. Room charge posts at the roll, or at check-in for the current night. Check-in before `checkInTime` 14:00 → optional early check-in item; checkout after `checkOutTime` 12:00 → optional late checkout item; after next roll → extra night (`stay.nights_changed`). Actual instants decide; typed dates are the plan. |
+| 2 | Overbooking | warn + explicit override (D-13) |
+| 3 | Cancellation / no-show | no automatic charge. Receptionist posts a compensation charge by hand if agreed. Deposit forfeit = explicit `ForfeitDeposit`. Cancel guards: not if checked in; reason required; charges moved off first. |
+| 4 | Guest ID | optional; PA18 export later |
+| 5 | Children | under `childAgeThreshold` (6) free, not counted against capacity |
+| 6 | Room after checkout | auto `room.marked_dirty` |
+| 7 | Check-out with balance | blocked unless remainder transferred to a company receivable |
+| 8 | Group billing default | routing from `Company.defaultRouting` (room → master, rest → own); editable per stay |
+| 9 | Rates | prefilled from `RateTable`; editable until the night posts; posted nights immutable |
+| 10 | Sensitive money actions | void, refund, write-off, transfer = `owner` capabilities by default |
+
+Deferred: OTA commission / gross-net · VAT / red invoice · discount approvals · receivable due dates.
+
+## 11. Command catalogue (canonical list of actions; dev builds and tests from this)
+
+Command = one intent. `needs` = capability. `checks` = rules beyond "hotel matches, entity exists". `emits` = events (Ledger entries implied for money).
+
+### Reservations
+| command | needs | checks | emits |
+|---|---|---|---|
+| `CreateBooking {kind, party, sourceId?, arrive, depart, requests[], notes?}` | `booking.create` | arrive < depart · qty ≥ 1 · availability per type (warn/override) · individual: room given + free | `booking.created`, `stay.created`×N, `folio.opened` (master if group, own per stay) |
+| `ChangeBookingParty / Notes / Requests` | `booking.edit` | open · requests: availability | `booking.party_changed` / `notes_changed` / `requests_changed` (+ `stay.created`/`stay.cancelled`) |
+| `CancelBooking {reason}` | `booking.cancel` | no stay checked in | `booking.cancelled`, `stay.cancelled`×N |
+| `CloseBooking` | `booking.edit` | all stays terminal · master folio 0 or transferred | `booking.closed`, `folio.closed` |
+| `AssignRoom {stayId, roomId, fromDate?}` | `stay.assign` | room type matches (warn) · room free those nights · not OOO · versions availability | `stay.room_assigned` |
+| `UnassignRoom {stayId}` | `stay.assign` | status booked | `stay.room_unassigned` |
+| `MoveStay {stayId, fromDate, roomId}` | `stay.move` | not checked out · unposted nights only · room free · versions availability | `stay.room_changed` |
+| `ChangeNights {stayId, add[], remove[]}` | `stay.assign` | not checked out · removed nights unposted · availability | `stay.nights_changed` |
+| `SetNightRate {stayId, date, amount}` | `booking.edit` | night unposted | `stay.rate_set` |
+| `AddGuest / RemoveGuest {stayId, guestId}` | `booking.edit` | not checked out | `stay.guest_added` / `guest_removed` |
+| `SetRouting {stayId, categoryId, target}` | `booking.edit` | group stay | `stay.routing_set` |
+| `CheckIn {stayId, guests[]?}` | `stay.check_in` | booked · tonight's room assigned, not OOO | `stay.checked_in`, `folio.charge_posted` (tonight's room) |
+| `CheckOut {stayId}` | `stay.check_out` | checkedIn · own folio 0 or transferred | `stay.checked_out`, `folio.closed`, `room.marked_dirty` |
+| `CancelStay {stayId, reason}` | `stay.cancel` | booked · folio has no unmoved charges | `stay.cancelled` |
+| `MarkNoShow {stayId}` | `stay.cancel` | booked · after arrival date | `stay.marked_no_show` |
+| `OverrideOverbooking {stayId}` | `stay.assign` (owner by default) | – | `stay.overbooking_overridden` |
+
+### Rooms
+| command | needs | checks | emits |
+|---|---|---|---|
+| `SetHousekeeping {roomId, clean|dirty}` | `room.set_status` | – | `room.marked_clean` / `marked_dirty` |
+| `TakeOutOfOrder {roomId, reason}` / `ReturnToService` | `room.set_out_of_order` | no checked-in stay tonight · versions availability | `room.taken_out_of_order` / `returned_to_service` |
+| `SetRoomNote` | `room.set_status` | – | `room.note_set` |
+
+### Billing (over Ledger)
+| command | needs | checks | emits |
+|---|---|---|---|
+| `PostCharge {stayId, categoryId, itemId?, description?, qty, unitPrice}` | `folio.post_charge` | target folio open (per routing) · category ≠ room | `folio.charge_posted` → `ledger.entry_posted` |
+| `VoidCharge {chargeId, reason}` | `folio.void` | folio open | `folio.charge_voided` → `ledger.entry_reversed` |
+| `MoveCharge {chargeId, toFolioId}` | `folio.move_line` | both folios open | `folio.charge_moved` → reversal + new entry |
+| `TakePayment {folioId, method, amount, kind deposit|settlement, ref?}` | `folio.take_payment` | folio open · amount > 0 | `folio.payment_received` → entry |
+| `Refund {folioId, method, amount, reason}` | `folio.refund` | ≤ payments | `folio.payment_refunded` → entry |
+| `ForfeitDeposit {folioId, amount, reason}` | `folio.post_charge` | deposit exists | `folio.deposit_forfeited` (= compensation charge) |
+| `TransferToReceivable {folioId, companyId, amount?}` | `folio.transfer_to_receivable` | folio open · amount ≤ balance | `folio.transferred_to_receivable`, `receivable.opened` → entry |
+| `CloseFolio {folioId}` | `folio.take_payment` | balance 0 | `folio.closed`, `ledger.account_closed` |
+| `RecordReceivablePayment {receivableId, method, amount, ref?}` | `receivable.record_payment` | open/partial · ≤ remaining | `receivable.payment_received` (+ `settled`) → entry |
+| `WriteOffReceivable {receivableId, reason}` | `receivable.write_off` | open/partial | `receivable.written_off` → entry |
+| `PostNightlyRoomCharges` (system, at roll) | system | per checked-in stay, tonight unposted | `folio.charge_posted`×N, night.posted = true |
+
+### Guests · Expenses · Setup · Users
+| command | needs | emits |
+|---|---|---|
+| `CreateGuest / UpdateGuest` | `booking.edit` | `guest.created` / `updated` |
+| `RecordExpense {businessDate, categoryId, amount, method, payee?, note?}` / `VoidExpense` | `expense.record` / `expense.void` | `expense.recorded` / `voided` → entry |
+| `Define / Update / Retire <SetupItem>` (Floor, RoomType, Room, RateTable, ChargeCategory, ChargeItem, BookingSource, ExpenseCategory, Company), `SetHotelProfile`, `SetBookingRules` | `setup.edit` | `<item>.defined / updated / retired`; Room retire/type change also versions availability |
+| `CreateUser / UpdateUser / DisableUser`, `SetUserRole` | `users.manage` | `user.created / updated / disabled / role_set` |
+
+~40 commands. Screens (§3) are compositions of these; nothing in the UI does what a command can't.
+
+## 12. Event index
+
+Envelope + naming per §6 conventions (D-10). Streams: `booking:*` `stay:*` `room:*` `folio:*` `receivable:*` `ledger:*` `guest:*` `expense:*` `setup:*` `user:*` + `availability:<hotel>` (serialisation only, D-8).
+
+`booking.` created · requests_changed · party_changed · notes_changed · cancelled · closed · stay_merged_in (reserved)
+`stay.` created · room_assigned · room_unassigned · room_changed · nights_changed · rate_set · guest_added · guest_removed · routing_set · checked_in · checked_out · cancelled · marked_no_show · overbooking_overridden
+`room.` defined · updated · retired · marked_clean · marked_dirty · taken_out_of_order · returned_to_service · note_set
+`folio.` opened · charge_posted · charge_voided · charge_moved · payment_received · payment_refunded · deposit_forfeited · transferred_to_receivable · closed
+`receivable.` opened · payment_received · settled · written_off
+`ledger.` account_opened · entry_posted · entry_reversed · account_closed
+`guest.` created · updated
+`expense.` recorded · voided
+`setup.` `<item>.defined / updated / retired` · hotel_profile_set · booking_rules_set
+`user.` created · updated · disabled · role_set
 
 ## Status
 
 - 2026-09-19 — not started.
 - 2026-09-23 — v0 draft from requirements + explore's ezFolio map. Aggregate list sent to architect.
 - 2026-09-23 — v0.1: D-6 folded — setup/admin persona, Catalogue → Setup context (HotelProfile, Room/Type/Floor defs, RateTable, ChargeItem, ChargeBehaviour, Company, BookingRules). Awaiting Alex on §10.
+- 2026-09-23 · **v1** — full session w/ Alex: multi-tenant (D-9), naming/envelope (D-10), Booking (D-11), Stay+nights (D-12/13), money + Ledger (D-14/15), roles/authz (D-16), screens (D-17), rules §10, command catalogue §11, event index §12.
