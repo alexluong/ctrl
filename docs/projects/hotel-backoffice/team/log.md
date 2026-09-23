@@ -219,3 +219,57 @@ whole path — adapter, Hotel, store, guard, code, translation.
 
 **Still open:** the Vietnamese on the new screens is mine and wants Alex's native pass. Staging's
 event log is still unwiped and still Alex's own call.
+
+---
+
+## dev — slice 2 (Setup minimum) landed in four (2026-09-23)
+
+Four landings, each pinged and reviewed: **A** room types + rate table, **B** guests + contacts with
+erasure, **C** staff/roles/capabilities, **D** the screens. solex `1245a45`, `86e6668`, `cef9f36`,
+`71402c8`, `f5591d1`, `b65acd2`. 173 tests.
+
+**A — room types and rates.** Room type ids are a slug of the name (`Phòng đôi` → `phong-doi`,
+`Double` → `double`) so the free strings slice 1 already wrote are adopted rather than orphaned; a
+rename never moves the id. Rates are half-open `[from, to)` and may not overlap, which SQLite
+cannot express — so it is a rule decided against a query taken inside the plan, same pattern as
+`roomFree`. Bookings price per night from the range each night falls in.
+
+**The one I got wrong and architect overruled.** I had an unpriced night book at 0 and be
+"flagged". Nothing rendered the flag, and slice 3 would have charged that zero, where it would have
+looked exactly like a cheap room. It now refuses with `rate.notFound`. A *typed* zero is still a
+real price (FOC) — that is the whole difference. Product aligned §10 row 9.
+
+**B — people.** Product ruled contacts stay their own record (not folded into Guest): two thirds of
+this hotel's business is companies, and the secretary who books never sleeps in the room. Both are
+tier (b) with one extra rule running through every line: **no personal data reaches an event.**
+Payloads carry an id; an edit carries the *names* of the changed fields. A scenario stringifies a
+whole guest stream and asserts the name, phone and ID number appear nowhere in it. Erasure
+overwrites the row and leaves a tombstone; asking twice is quiet; editing an erased person is
+refused; a rebuild cannot resurrect them, because their name was never in the log.
+
+D-23 paid for itself here — four new PII columns were redacted by the console the day the migration
+ran, with no second list to update.
+
+**C — roles.** `hotel_staff` per (hotel, user), read per request so a role revoked at 9am does not
+work at 5pm. **The capability check lives in the domain**, not the adapter: `ctx.must("setup.edit")`
+as the first line of each command. At the edge it would be a check the next server function forgets
+and one no scenario can reach. Bundles are written out per role rather than "owner = everything",
+so a new capability nobody can use is an obvious bug instead of one the owner silently acquired.
+Last active owner cannot be demoted or deactivated — it is the one lockout available.
+
+**The first-owner problem**, flagged for Alex: adding staff needs an owner, so an empty hotel could
+never get one. While a hotel has *no staff rows at all*, a system operator is treated as its owner,
+with a console warning; the moment anybody is added it stops for good. Rejected alternatives: a
+migration backfill guessing the hotel id (staging may set `SOLEX_HOTEL_ID`, so I would have been
+writing owner rows into the wrong tenant) and a seeded known password. Architect accepted it as
+narrow and recorded it in D-11. The bootstrap window on the dev database is now **closed** — Alex's
+owner row was added through the Setup screen itself.
+
+**D — screens.** `/setup` and `/guests`. The booking form takes its room types from Setup and
+previews the rate table live, so an unpriced night is visible *before* the guest is quoted a price
+rather than arriving as a refusal afterwards.
+
+**Still open:** Vietnamese across all of slice 2 is mine and wants Alex's pass. Staging's event log
+is still unwiped and still his call. No screen creates *accounts* yet — `create-user.mjs` does, and
+it now appends `staff.added` beside the membership row (architect: no tier-b write without its
+event, scripts included, or the first owner is the one person with no history).

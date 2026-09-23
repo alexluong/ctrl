@@ -104,6 +104,7 @@ Alex asked to see event-driven architecture working, to browse the events, and t
 ```
 src/routes/            file routes; index = room board, calendar = occupancy grid,
                        bookings = take a booking, stays.$id = the desk's loop,
+                       setup = room types/rates/rooms/staff, guests = people,
                        system.* = operator console
 src/server/hotel/      THE application layer: index.ts (the Hotel object), rooms/bookings/stays,
                        current.ts (composition root — the only caller of getDatabase)
@@ -114,6 +115,9 @@ src/server/testkit/    testHotel, memoryStore, fixedClock, countingIds, given.*,
 src/server/rules.ts    RuleError base — one catch covers every aggregate
 src/server/events/     stream.ts (ids), types.ts, upcast.ts
 src/server/rooms/      domain.ts (pure rules, tier b)
+src/server/setup/      domain.ts (room types, rate table, quoting — tier b)
+src/server/people/     domain.ts (guest + contact rules, PII never in payloads)
+src/server/staff/      domain.ts (roles, capability bundles, membership rules)
 src/server/auth/       options.ts (static) + index.ts (lazy instance), session.ts, api.ts, directory.ts
 src/server/booking/    domain.ts (pure) · dates.ts · input.ts (zod)
 src/server/stay/       domain.ts (pure aggregate: check-in/out, cancel, nights)
