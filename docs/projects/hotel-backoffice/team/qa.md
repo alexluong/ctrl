@@ -2,7 +2,7 @@
 
 > From 2026-09-24 the test plan lives in `../qa/` (`cases.md`, `runs.md`), owned by `solex-qa`. This file stays as the findings history and the checklist source.
 
-Architect reviews each slice dev lands. Worktree: `~/git/hub/alexluong/solex-architect` (detached, read-only; `git fetch && git checkout --detach origin/main`). Local walkthroughs: `SOLEX_DEV_USER=qa` in the worktree `.env` + a seeded `user` row (id `qa-local`, operator) → no sign-in form; `mise run dev` on port 7020. Findings newest first. Blocking = violates decision/spec/data safety; fixed before the next slice.
+Architect reviews each slice dev lands. Worktree: `~/git/hub/alexluong/solex-architect` (detached, read-only; `git fetch && git checkout --detach origin/main`). Local walkthroughs: `SOLEX_DEV_USER=qa` in the worktree `.env` + a seeded `user` row (id `qa-local`, operator) → no sign-in form; `mise run dev` on port 7020. Findings newest first. **Finding numbers (N*) are minted by solex-qa** from 2026-09-24 (clash on N12 that day: N12 = guest search in URL, N13 = mise re-applies `.env` over exported env); architect refers to theirs. Blocking = violates decision/spec/data safety; fixed before the next slice.
 
 ## Checklist per slice
 
