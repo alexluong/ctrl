@@ -6,6 +6,10 @@
 
 **Inputs:** `requirements.md` (primary — client's own words, EN translation + first read), `discovery.md` (Alex's answers, when present), `existing-system.md` (from solex-explore, when present).
 
+## Session agenda w/ Alex (set 2026-09-23 by architect)
+
+Exploration is complete (README → Existing system, incl. lifecycle & money). Alex will work through, in order: **1 schema · 2 roles/personas · 3 actions/interfaces · 4 rules/policy/logic (§10 + hotel day, see `team/questions.md`) · 5 events shape**. Drive each as a section of `product.md` v1; get Alex's decision per item and record it in `team/decisions.md` as Proposed → I accept. Hotel day / business date replaces the old "day boundary" question — read Alex's note in `discovery.md`.
+
 ## Current objective (2026-09-19)
 
 0. **D-4 framing:** client has a PMS today; SoLex is a rebuild for data ownership, core subset + enhancements. Model the *core* they actually use + the enhancements in `requirements.md`; don't model the whole PMS. Per D-5 (2026-09-20): **no migration** — model the domain fresh; "data to own" = going forward only.
