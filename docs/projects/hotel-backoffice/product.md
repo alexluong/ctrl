@@ -34,6 +34,7 @@ type Capability =
   | 'reports.view' | 'guests.view'
   | 'setup.edit' | 'users.manage'
 type Role = { id: RoleId; hotelId: HotelId; name: string; capabilities: Capability[] }
+// role hangs off the (hotel, user) membership pair, not the user: a person can be owner at one hotel and receptionist at another later (D-9)
 type User = { id: UserId; hotelId: HotelId; name: string; username: string; email?: string; roleId: RoleId; status: 'active' | 'disabled' }
 // identity (password, sessions) lives in Better Auth's mutable tables (D-11), NOT in the event log; membership + role changes are events (`user.*`). Sign-in by username for all roles, email optional; password reset by owner. Deactivated users stay in history, render as "(former)".
 ```
@@ -318,6 +319,8 @@ Rules: opened only from a folio transfer · payments ≤ amount · settled when 
 type Guest = { id: GuestId; hotelId: HotelId; name: string; phone?: string; email?: string; nationality?: string
   idDoc?: { type: 'cccd' | 'passport' | 'other'; number: string }; notes?: string }
 ```
+**PII columns (D-20 / D-23 redaction denylist):** `guests.name`, `guests.phone`, `guests.email`, `guests.nationality`, `guests.id_doc_type`, `guests.id_doc_number`, `guests.notes`; `contacts.name`, `contacts.phone`; `users.name`, `users.email`. Not PII: ids, timestamps, status. `guest.updated` payload carries changed *field names*, never values.
+
 Events: `guest.created` · `guest.updated` · `guest.erased` — **PII never enters event payloads** (D-20). Events carry `guestId` only; name/phone/idDoc live in a mutable `guests` table. Erasure = overwrite the row, log keeps a tombstone; replay still works. Same for `Booking.party.contactName/phone` → stored as a `contact` row referenced by id. Belongs to the hotel (D-9); reused across stays for history. ID capture optional in v1. Later: merge duplicates, PA18 police export, VIP class.
 
 ### Setup context (D-6) — what the hotel is made of
@@ -462,7 +465,7 @@ Envelope + naming per §6 conventions (D-12). **Two tiers (D-22)**: `booking.*` 
 `guest.` created · updated
 `expense.` recorded · voided
 `setup.` `<item>.defined / updated / retired` · hotel_profile_set · booking_rules_set
-`user.` created · updated · disabled · role_set
+`user.` created · updated · disabled · role_set · password_reset(byUserId) — access events; visible in History to owner only
 
 ## Status
 
