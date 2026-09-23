@@ -98,7 +98,7 @@ Setup ──▶ Reservations (Booking, Stay, availability)
 
 | context | owns | notes |
 |---|---|---|
-| **Setup** | HotelProfile, Floor, RoomType, Room definitions, RateTable, ChargeCategory + ChargeItem, BookingSource, ExpenseCategory, Company, BookingRules | reference data; upstream of everything, depends on nothing; seeded by admin SDK (D-9) |
+| **Setup** | HotelProfile, Floor, RoomType, Room definitions, RateTable, ChargeCategory + ChargeItem, BookingSource, Company, BookingRules (ExpenseCategory: v1 fixed in code, Setup screen if the client asks) | reference data; upstream of everything, depends on nothing; seeded by admin SDK (D-9) |
 | **Reservations** | Booking, Stay (nights), availability rule | the commercial + stay lifecycle |
 | **Rooms** | Room housekeeping / out-of-order state | definition comes from Setup |
 | **Billing** | charge / payment / transfer / deposit commands; folio + receivable *projections* | hotel vocabulary over the Ledger; no aggregates of its own |
@@ -349,7 +349,7 @@ Reference data, retire-not-delete, seeded by admin SDK (D-9). Each has `<name>.d
 - `ChargeCategory` — seeded room · roomSurcharge · minibar · laundry · compensation · extraService · restaurant; `room` reserved
 - `ChargeItem` — category, VN + EN name, unitPrice, active
 - `BookingSource` — walk-in, phone, Agoda, … (lookup only)
-- `ExpenseCategory` — groceries, incidental, hk overtime, advance, other
+- `ExpenseCategory` — **v1: fixed in code, not Setup data; Setup screen if the client asks** (D-21). Ids: `groceries`, `incidental`, `hk_overtime`, `advance`, `other`, + system-only `writeOff` (written-off receivables land there; not pickable by hand)
 - `Company` — name, contact, kind, default group routing `{category → own | master}`; commission/terms → later
 - `BookingRules` — childAgeThreshold 6, overbooking `warn` (override allowed), autoDirtyOnCheckout true, idEnforcement optional
 Rules: unique room numbers per hotel; retired items not selectable; can't retire a room with future nights; **can't retire a room type while any non-retired room references it** (refuse `roomType.inUse`; retire or re-type the rooms first — mirrors the room rule, and a retired type with live rooms would break availability counts); room type id = slug of name (`phong-doi`); rate ranges half-open `[from, to)`.
@@ -469,7 +469,7 @@ Command = one intent. `needs` = capability. `checks` = rules beyond "hotel match
 | `CreateGuest / UpdateGuest / EraseGuest` | `booking.edit` (erase: `guests.erase`, owner only) | `guest.created` / `updated` / `erased` |
 | `CreateContact / UpdateContact / EraseContact` | `booking.edit` (erase: `guests.erase`, owner only) | `contact.created` / `updated` / `erased` |
 | `RecordExpense {businessDate, categoryId, amount, method, payee?, note?}` / `VoidExpense` | `expense.record` / `expense.void` | `expense.recorded` / `voided` → entry |
-| `Define / Update / Retire <SetupItem>` (Floor, RoomType, Room, RateTable, ChargeCategory, ChargeItem, BookingSource, ExpenseCategory, Company), `SetHotelProfile`, `SetBookingRules` | `setup.edit` | `<item>.defined / updated / retired`; Room retire/type change also versions availability |
+| `Define / Update / Retire <SetupItem>` (Floor, RoomType, Room, RateTable, ChargeCategory, ChargeItem, BookingSource, Company), `SetHotelProfile`, `SetBookingRules` | `setup.edit` | `<item>.defined / updated / retired`; Room retire/type change also versions availability |
 | `CreateUser / UpdateUser / ResetPassword` | `users.manage` | `user.created / updated / password_reset` (identity) |
 | `AddStaff {userId, role}` / `ChangeStaffRole {userId, role}` / `DeactivateStaff` / `ReactivateStaff` | `users.manage` | `staff.added / role_changed {role, from} / deactivated / reactivated` — refuse `staff.lastOwner`, `staff.alreadyStaff` |
 
