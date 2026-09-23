@@ -27,7 +27,8 @@ Secrets (existing-system URL/login): `ctrl/secrets/hotel-backoffice.md` (gitigno
 
 ## Direction (2026-09-19)
 
-**Decided (D-3):** TypeScript on plain Cloudflare Workers. Go dropped — simplicity wins.
+**Decided (D-3):** TypeScript on plain Cloudflare Workers. Go dropped — simplicity wins. **Amended 2026-09-23:** TanStack Start + Drizzle + SQLite; Cloudflare = build target only, dev loop is Node + local SQLite. Staging live: https://solex-stg.collie.studio (`stack.md`).
+**Proposed (D-8, dev):** D1 for event log *and* projections, optimistic concurrency on `(stream_id, version)` instead of a Durable Object, projections in the same atomic batch, Hookdeck deferred. Awaiting Alex + product.
 **Decided (D-4):** client already has a PMS (**ezFolio** by ezCloud, the `:99` system). SoLex = rebuild driven by **data ownership**; core subset + enhancements, not feature parity. WS2 maps the PMS first via slow walkthrough w/ Alex.
 **Decided (D-5):** fresh start, migration deferred — ezFolio has no working export. Schema for the domain, not for an import.
 See `team/decisions.md`. Older Go notes below kept for context.
@@ -35,7 +36,7 @@ See `team/decisions.md`. Older Go notes below kept for context.
 
 - **Event sourcing** architecture — bookings/reservations as an event log, state derived from projections
 - **Simple full-stack app**, probably deployed on **Cloudflare** (Workers/Pages + D1/R2/Durable Objects TBD)
-- **Hookdeck** as the event system / source-of-truth-ish (Alex's intent, 2026-09-19; Hookdeck repos local — see `docs/machine.md`)
+- **Hookdeck** as the event system / source-of-truth-ish (Alex's intent, 2026-09-19; Hookdeck repos local — see `docs/machine.md`) — **2026-09-23: dev's D-8 says no role for the log (a DB's job, now D1); at most OTA-webhook ingest later.** Bullets below kept for context.
   - Open concern: ES needs a permanent, per-aggregate-ordered, replayable log. Hookdeck is retention-bound + ordered per connection → natural fit as **bus** (ingest, fan-out to projections, retries, replay-in-window). As **permanent store** only if long retention/export is available (internal knowledge?).
   - Candidate shape: Hookdeck = transport + short-term replay; Postgres/R2 = archive log fed by an "archive" destination; projections rebuild from archive.
   - Q for Alex: stock SaaS retention, or something that makes retention a non-issue?
@@ -104,9 +105,9 @@ This is the **Go-at-scale learning project**: backend-heavy, web back office, no
 
 Three parallel sessions, named agents: `solex-dev` (WS1), `solex-explore` (WS2), `solex-product` (WS3); `solex-architect` = cockpit. Profiles + protocol in `agents/`. Rules: each writes only its own file (above), commits in ctrl with `docs(hotel-backoffice/<ws>): …`, pulls before committing. Cross-WS findings go in the WS's own file under a "For other WSs" section; cockpit session merges into README.
 
-Ordering: ~~WS1 + WS3 can start now. WS2 needs Alex…~~ **WS2 complete 2026-09-20. WS3 v0 complete 2026-09-23** (`product.md`: 7 aggregates, event vocabulary, 8 policy points). WS1 blocked on `wrangler login`. Next: Alex decides §10 policy points; dev sanity-checks aggregates vs D1/DO.
+Ordering: ~~WS1 + WS3 can start now. WS2 needs Alex…~~ **WS2 complete 2026-09-20. WS3 v0 complete 2026-09-23** (`product.md`: 7 aggregates, event vocabulary, 8 policy points). **WS1 spike shipped 2026-09-23** (staging live, storage take = D-8 proposed). Next: Alex decides §10 policy points + D-8; product reconciles §6 with D-8.
 
-Later WS (not now): event-store design — Hookdeck-as-log vs bus + archive. Needs WS1 spike result + Hookdeck retention answer.
+~~Later WS (not now): event-store design — Hookdeck-as-log vs bus + archive.~~ Collapsed into D-8 (2026-09-23) if accepted.
 
 ### WS1 · `solex-dev` — repo + Workers/TS hello-world spike → `stack.md`
 
@@ -127,6 +128,7 @@ Later WS (not now): event-store design — Hookdeck-as-log vs bus + archive. Nee
 ## Status
 
 - 2026-07-10 — plan agreed, awaiting discovery brain-dump.
+- 2026-09-23 — **WS1 spike shipped** (9f54e73): TanStack Start + Drizzle + SQLite/D1 on Workers, https://solex-stg.collie.studio, $0. D-3 amended (CF = build target only). **D-8 proposed**: D1 log + projections, no DO, Hookdeck deferred. New Qs: hotel-local tz, staging auth.
 - 2026-09-23 — **D-7: hotel day = configurable business date; nights from timestamps + rules.** Closes day-boundary Q.
 - 2026-09-23 — explore answered architect's 10 lifecycle/money Qs (5e143b4): nightly posting, exclusive departure, debt-as-method, per-folio receivables, constructed folios, manual deposit forfeit. 5 items left for Alex walkthrough. **Exploration essentially complete.**
 - 2026-09-23 — product v0.1: Setup context added, in v1 core. **Blocked on Alex: §10 policy points.**

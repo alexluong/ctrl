@@ -8,7 +8,7 @@ Format: `- [ ] Q (asked by, date) → for: Alex | client`. Check off + answer in
 - [x] Admin account for ezFolio config screens? **Closed 2026-09-23** — not pursuing. Setup/config is a scope the rebuild owns, not something to reverse-engineer (Alex).
 - [ ] Which time zone is "hotel-local" for rendering dates? (dev, 2026-09-23 — surfaced by an SSR hydration bug) → Alex/client
 - [ ] Should staging get auth before it holds anything real? Public URL today. (dev, 2026-09-23) → Alex
-- [ ] Hookdeck: stock SaaS retention, or something making long retention a non-issue? Decides log vs bus. (architect, 2026-09-19) → Alex
+- [~] Hookdeck: stock SaaS retention, or something making long retention a non-issue? Decides log vs bus. (architect, 2026-09-19) → Alex — **moot if D-8 accepted** (log lives in D1)
 - [x] What is the system at `:99`? → **The PMS the client uses today.** (answered by Alex via explore, 2026-09-19)
 - [ ] Does the Excel workbook implied by `requirements.md` exist? Can we get it? (architect, 2026-09-19) → Alex/client
 - [ ] Whose hotel; relationship; who are the users (front desk / owner)? (architect, 2026-07-10) → Alex
@@ -17,7 +17,7 @@ Format: `- [ ] Q (asked by, date) → for: Alex | client`. Check off + answer in
 - [ ] Seasonal / per-night rate changes? VAT / red invoice? (architect, 2026-09-19) → client
 - [ ] Timeline / urgency? (architect, 2026-07-10) → Alex
 - [x] ~~Containers paid~~ moot — D-3 TS Workers, free tier.
-- [ ] `wrangler login` expired on MBP — Alex to run in solex-dev session. (dev, 2026-09-19) → Alex
+- [x] `wrangler login` expired on MBP — done 2026-09-23 (spike deployed).
 ## Decisions needed (Alex) — surfaced by explore, 2026-09-23
 
 - [x] **Hotel day / business date** → D-7: configurable roll (default 02:00) + rules; nights from timestamps. (Alex, 2026-09-23)
@@ -27,6 +27,7 @@ Format: `- [ ] Q (asked by, date) → for: Alex | client`. Check off + answer in
 - [ ] **Cancellation / no-show charging**: per-channel policy or manual `compensation` charge? Product recommends manual for v1. (product §10)
 - [ ] **Group billing default**: all buckets → master (today's usage) vs room-only → master (corporate norm)? Default per Company. (product §10)
 - [ ] **VAT / red invoice**: out for v1 unless client says otherwise? (product §10; also in open Qs)
+- [ ] **D-8 storage shape** (dev, 2026-09-23): D1 log + projections, optimistic concurrency, no DO, Hookdeck deferred. Accept? `team/decisions.md`.
 Product's recommendations for each are in `product.md` §10 — Alex can just accept/override there.
 
 ## Alex walkthrough needed (explore, 2026-09-23) — closes exploration
