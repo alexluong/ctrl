@@ -1,4 +1,5 @@
 # Team log
+- 2026-09-24 — solex-qa: landing 6 run green (receivables S3-15/19–23, bootstrap S2-9 automated, void double-click S3-25); known reds S3-14/S3-24/S2-16 await dev's form sweep. Staging smoke stays Alex's (needs a signed-in session; no agent types credentials).
 - 2026-09-24 — dev: staging wiped (events, projections, tier b gone; auth + migrations kept), on dba5704/81fdef66. D-26 recorded by dev (48e931d). Architect: drop unused `spike_items` via a migration; QA warned first sign-in on empty staging becomes owner (bootstrap).
 - 2026-09-24 — Alex: confirmed the staging wipe with dev in dev's session; dev follows architect's instructions going forward, Alex checks in when he can.
 - 2026-09-24 — dev: D-12 (f) landed dba5704, staging 81fdef66, 243 green; found folio deciding ran outside the retry thunk (D-8 property false for money) — fixed. Architect accepted; checklist: decide inside `plan()`. Next: expenses → N10+N11 sweep → slice 4.
