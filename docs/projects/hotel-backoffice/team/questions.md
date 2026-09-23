@@ -28,7 +28,7 @@ Format: `- [ ] Q (asked by, date) → for: Alex | client`. Check off + answer in
 - [x] **Group billing default** → `Company.defaultRouting` (room → master, rest → own), editable per stay (§10 #8).
 - [x] **VAT / red invoice** → deferred (D-16).
 - [x] **D-8 storage shape** — accepted de facto 2026-09-23 (Alex had dev build it).
-- [ ] **D-11 auth** — OIDC stance; which IdP (Pocket ID on homelab / Cloudflare Access / other)? Staging auth before Booking? (architect, 2026-09-23)
+- [ ] **D-11 auth** — app-owned username/password v1 (per D-20 answers) vs OIDC IdP; which IdP (Pocket ID on homelab / Cloudflare Access / other)? Staging auth before Booking? (architect, 2026-09-23)
 All §10 points closed in the 2026-09-23 product session; table in `product.md` §10.
 
 ## Alex walkthrough needed (explore, 2026-09-23) — closes exploration
