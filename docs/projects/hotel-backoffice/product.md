@@ -29,7 +29,7 @@ Setup/admin: onboard the hotel (identity, floors, rooms, types, bed types) · se
 
 ## 4. Home screens (projections, not reports)
 
-- **Room map** — now. Tiles by floor; colour = derived status; tile → check-in, balance, post charge, set dirty/clean/OOO.
+- **Room map** — now. Tiles by floor; color = derived status; tile → check-in, balance, post charge, set dirty/clean/OOO.
 - **Tape chart** — over time. Room × date grid, stay bars; drag = move/extend (emits `RoomChanged` / `StayDatesChanged`); shows per-type availability inline for quoting.
 Everything else hangs off these two.
 
@@ -46,13 +46,58 @@ Everything else hangs off these two.
 
 ## 6. Aggregates, events, invariants
 
-Conventions: dates are hotel-local calendar days (`YYYY-MM-DD`), no tz on dates; a stay covers nights `[arrive, depart)`; timestamps only on events (actor + time, gives ezFolio's "Show log" for free). Money in VND integers; USD display only.
+Format (agreed w/ Alex 2026-09-23): each thing = TypeScript type + events + rules. American English. Types are the contract for dev; field names are final unless a decision changes them.
 
-### Booking — the commercial envelope
-Fields: kind `individual | group`; party (Company? + contact person, or lead Guest); channel (`OTA | TA | WALK-IN | CORP` + Company as the specific OTA/agent); externalRef (OTA confirmation); saler; displayCode + colour; arrive/depart; requests `[ {roomType, bedType, qty, adults, children, ratePerNight} ]`; commission (% or amount; default from Channel); notes; status `open | cancelled | closed`.
-Events: `BookingCreated` · `BookingRequestsChanged` · `BookingPartyChanged` · `BookingCommissionSet` · `BookingNotesChanged` · `BookingCancelled` · `BookingClosed` · `StayMergedIntoBooking(stayId, fromBookingId)` (ezFolio "Ghép đoàn").
-Invariants: arrive < depart; every request qty ≥ 1; cancel cascades to all not-checked-in stays; close only when all stays are checked-out/cancelled/no-show and master folio balance is 0 or routed to a Receivable.
-Individual = one request qty 1, its RoomStay assigned at creation. Group = N requests, stays unassigned (waiting list) until `RoomAssigned`.
+### Conventions
+
+**Dates vs timestamps.** `LocalDate` = calendar day, no time/zone (`2026-09-23`) — used for *nights*: arrive/depart, `businessDate`, rate ranges. `Instant` = exact UTC moment — used for *when things happened*: `occurredAt`, actual check-in/out. A night is not a moment; D-7 converts one to the other once, at write time. `HotelProfile.timeZone` (e.g. `Asia/Ho_Chi_Minh`) is the only zone in play. Stay covers nights `[arrive, depart)` (depart exclusive). Money = VND integer; USD display only.
+
+**Event naming.** `<aggregate>.<past_tense_verb>`, lowercase, dotted, snake_case verbs: `booking.created`, `stay.room_assigned`, `folio.charge_posted`. Prefix = stream type; `folio.*` filters trivially.
+
+**Event envelope** (every event, every stream):
+```ts
+type Event<T extends string = string, P = unknown> = {
+  id: EventId                  // ulid — unique, time-sortable
+  hotelId: HotelId             // tenant key (D-9)
+  stream: string               // 'booking:<id>' — aggregate type + id
+  version: number              // position in stream; UNIQUE(stream, version) (D-8)
+  type: T                      // 'booking.created'
+  schemaVersion: number        // per-type payload version; never edit old rows
+  payload: P
+  occurredAt: Instant
+  businessDate: LocalDate      // hotel day it counts toward (D-7); stored, not re-derived
+  actor: { kind: 'user'; userId: UserId } | { kind: 'system'; job: string }
+  correlationId: string        // one per user action (one check-in → several events)
+  causationId?: EventId
+  commandId?: string           // client idempotency key; safe retries under D-8
+}
+```
+No `metadata` grab-bag; no `aggregateType` (in `stream`).
+
+### Booking — the commercial envelope (settled w/ Alex 2026-09-23)
+
+A group = one Booking holding N RoomStays (company, contact, requested types × qty; rooms assigned later or now). An individual = one Booking with one RoomStay, room picked at creation. Same shape, no special case. Two-level on purpose: master folio, group cancel, "20 adults across 15 rooms not yet assigned" all need the envelope.
+
+```ts
+type Booking = {
+  id: BookingId
+  hotelId: HotelId
+  kind: 'individual' | 'group'
+  party: { companyId?: CompanyId; contactName: string; phone?: string }
+  sourceId?: BookingSourceId   // Setup-defined list (walk-in, phone, Agoda…); lookup only, no logic
+  arrive: LocalDate
+  depart: LocalDate            // exclusive
+  requests: Array<{ roomTypeId: RoomTypeId; bedType: BedType; qty: number; adults: number; children: number; ratePerNight: Money }>
+  notes?: string
+  status: 'open' | 'cancelled' | 'closed'
+}
+```
+Events: `booking.created` · `booking.requests_changed` · `booking.party_changed` · `booking.notes_changed` · `booking.cancelled(reason)` · `booking.closed` · `booking.stay_merged_in(stayId, fromBookingId)` (reserved; ezFolio "Ghép đoàn", deferred).
+Rules: arrive < depart · every request qty ≥ 1 · cancel cascades to all stays not yet checked in · close only when every stay is terminal and the master folio is 0 or moved to a receivable · individual = one request qty 1, stay assigned at creation · group = N requests; UI defaults to assign-now (waiting list unused in practice) but late binding stays possible.
+
+**Deposit is not on Booking** — it is a folio payment of kind `deposit` (master folio for groups, stay folio for individuals). "Deposit expected" = a note in v1.
+
+**Deferred from Booking (later tickets):** OTA support (commission, gross/net, channel sync, external confirmation ref) · sales rep / "saler" · group label + color on tape chart · merge stay into group.
 
 ### RoomStay — one physical room for one span (ezFolio `reservation_room`)
 Fields: bookingId; roomType + bedType; roomId? (null = waiting list); arrive/depart; ratePerNight `[ {date, amount} ]` (per-night override is a thing today); adults/children (child < 6, policy); guests `[guestId]`; routing `{bucket → own | master}` (group stays only); flags `foc`, `isNet`, `locked`; status `booked → checkedIn → checkedOut | cancelled | noShow`.
@@ -108,7 +153,7 @@ Fields: date, category `groceries | incidental | hkOvertime | advance | other`, 
 
 | step | trigger event | projection |
 |---|---|---|
-| room status change | `StayCheckedIn` / `StayCheckedOut` / `RoomMarked*` / `RoomTakenOutOfOrder` | **RoomMap** (per-room derived status + colour) |
+| room status change | `StayCheckedIn` / `StayCheckedOut` / `RoomMarked*` / `RoomTakenOutOfOrder` | **RoomMap** (per-room derived status + color) |
 | dashboard updates | same + `RoomStayCreated` | **DashboardToday** (vacant, arrivals, departures, in-house, unpaid) |
 | occupancy % | stay events + room service events | **Occupancy** per night (used / sellable) |
 | revenue forecast | stay events + `StayRateSet` | **ForwardBook** (rooms sold × rate per night, by type) |
