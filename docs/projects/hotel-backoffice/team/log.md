@@ -538,3 +538,62 @@ Slice 4: `CreateUser` / `UpdateUser` / `DisableUser` (no accounts screen exists 
 is still the only way to make one), roles, history tabs. The **cron entry stays pre-go-live**: `main`
 is `@tanstack/react-start/server-entry` and a `scheduled` handler needs a custom entry around it;
 the lazy roll loses nothing but dashboard freshness on a request-less night (D-25).
+
+## solex-dev — slice 4: accounts, roles, histories (2026-09-24)
+
+Three landings. Staging is at `d006aa47`; `main` at `b364ccd`; 276 scenarios green.
+
+### What shipped
+
+**Accounts (`/accounts`, `/accounts/$id`).** Identity, and it is deliberately not the same thing as
+a position here: `hotel.users.*` creates the ability to sign in, `hotel.staff.*` grants the access.
+An account with no membership is somebody who can sign in and do nothing, which is a real state and
+one the owner can now see. Passwords cross the adapter boundary and go no further — hasher and row,
+never the log, never a response. I read the raw `events` table to confirm it.
+
+**Roles moved off Setup onto `/accounts`.** Two screens writing the same rows is how a role gets
+changed in one place and read from another. Setup now says so and links across.
+
+**A role change ends live sessions in the same batch** — architect's checklist line. `setRole` and
+`deactivate` both carry `also: [accounts.endSessions(userId)]`.
+
+**History tabs**, now on every entity: person (`/guests/$id`), account (`/accounts/$id`, which shows
+the `user:` and `staff:` streams as one list), and booking (`/bookings/$id`, the booking's stream
+plus its stay's — the booking's own is short, and a page that stopped at "taken" would look broken).
+The bookings list became `bookings.index.tsx` so the detail route is a sibling, not a child of a
+layout; that is the trap `/accounts` hit first.
+
+### Two bugs the history pages found
+
+**A guest created at check-in had a row and no `guest.created` event.** Their history was empty and
+an erasure would have been a tombstone with nothing before it — which is the record the Decree 13
+story rests on. `upsertGuests` now returns an event per guest and check-in spreads those streams
+into its batch. Architect audited every other insert/update in `src/server` afterwards and found no
+second instance; the checklist gained *every tier (b) row has a creating event*.
+
+**N17 (QA, blocking): a hyphenated username could be created and never signed in to.** Better Auth's
+username plugin re-validates at sign-in against `/^[a-zA-Z0-9_.]+$/`, narrower than ours, and our
+deliberately vague "wrong username or password" — which exists so nobody can enumerate staff — hid
+the real error. One exported `isUsername` now feeds both ends. Checklist: *where a library
+re-validates, it gets our rule, not its default.*
+
+### N18 — a save that changes nothing writes nothing
+
+QA's, blocking, fixed in the same landing as the booking tab. Pressing Save on `/accounts/$id`
+without touching anything wrote `user.updated {fields:["name","contactEmail"]}`. The rule counted a
+field as changed because the form *sent* it — and a correction form sends every box it draws,
+because it must: a screen may not decide on the user's behalf what counts as a change (N16). So the
+rules now hold the row and compare. A field changed when its value differs; an empty box over an
+empty column is not a change; a save that moves nothing refuses with `user.nothingToChange` and
+appends nothing. Guests and contacts already worked this way (`changedFields`) — accounts were the
+newest code and the odd one out, which is the shape to watch for on the next aggregate that grows an
+update command.
+
+### Waiting on Alex
+
+Unchanged from the slice-3 entry, plus the **accounts and booking screens' Vietnamese**. Still open:
+whether a receptionist should be able to refund at all.
+
+### Next
+
+Cron entry, still pre-go-live (D-25). Otherwise slice 4 is done.
