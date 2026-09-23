@@ -2,9 +2,11 @@
 
 Newest first. `date · commit · staging · cases · result · findings · blocking?`
 
+- 2026-09-24 · 624ac57 (+ e2e S2-16) · — · S2-16 · **fail** (`/guests?q=<name>`) · N12 ruled non-blocking, fix before go-live (latest slice 5); rule to product §6: PII never in a URL · N
+
 - 2026-09-24 · 624ac57 (+ e2e S3-24 sweep) · — · S3-24 · **fail** 6/6 screens, every form has no method · N11 ruled **blocking** (architect): fix = `method="post"` on all forms before slice 4. Open question: /guests search navigates to `?q=<name>` by design — same PII-in-URL class · **Y**
 
-- 2026-09-24 · 624ac57 (+ e2e ef6d242) · — · e2e: S3-13, S1-1, S1-2, S0-5 pass; S3-14 15/15 fail · N10 confirmed on every form (14 + empty room-type select); **N11** new: submit before hydration = native GET, fields in query string, nothing saved (booking form → guest name/phone in URL); **N12** mise shims re-apply `.env` over exported env (DATABASE_URL can't be overridden from a shell) · N (N11 borderline: PII in URL — asked architect)
+- 2026-09-24 · 624ac57 (+ e2e ef6d242) · — · e2e: S3-13, S1-1, S1-2, S0-5 pass; S3-14 15/15 fail · N10 confirmed on every form (14 + empty room-type select); **N11** new: submit before hydration = native GET, fields in query string, nothing saved (booking form → guest name/phone in URL); **N13** (was N12, renumbered: architect's N12 = guest search) mise shims re-apply `.env` over exported env (DATABASE_URL can't be overridden from a shell) · N (N11 borderline: PII in URL — asked architect)
 
 - 2026-09-23 · 624ac57 · — · S3-9, S3-12, S3-13, S2-3, S2-4, S1-2 · pass · N10 silent `required` block (non-blocking) · N
 - 2026-09-23 · f35bded · — · S1-1, S1-2, S1-5, S1-6, S1-13 · pass · N8 dev doesn't migrate, N9 checked-out style (both fixed 5b93104) · N

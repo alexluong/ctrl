@@ -26,7 +26,7 @@ Availability versioned on every supply/demand command · one batch per money com
 ## Log
 
 - 2026-09-24 — architect: profile created; plan + cases seeded.
-- 2026-09-24 — qa: worktree `solex-qa` taken over; e2e suite (solex ef6d242): S3-13, S1-1, S1-2, S0-5 green, S3-14 red (N10). Findings N11, N12. Cases S2-12..15, S3-16..24 added.
+- 2026-09-24 — qa: worktree `solex-qa` taken over; e2e suite (solex ef6d242): S3-13, S1-1, S1-2, S0-5 green, S3-14 red (N10). Findings N11, N13 (mise env). Cases S2-12..15, S3-16..24 added.
 
 ---
 

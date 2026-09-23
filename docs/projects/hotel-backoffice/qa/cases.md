@@ -53,6 +53,7 @@ Seeded 2026-09-24 by architect from the walkthroughs in `../team/qa.md`. `last r
 | S2-13 | §2 re-add staff | add a user already on staff | refused `staff.alreadyStaff` | scenario (todo verify) | — |
 | S2-14 | §2 last owner demote | demote the only active owner to receptionist | refused `staff.lastOwner` (deactivate is S2-8) | scenario (todo verify) | — |
 | S2-15 | D-20 contact erase owner-only | receptionist erases a contact | refused (`guests.erase`); owner: row blanked, `contact.erased {}` | scenario (todo verify) | — |
+| S2-16 | N12 no PII in URL (non-blocking, before go-live; dev latest slice 5) | search people by name on /guests | term sent in a server-fn body, results in client state; URL has no query | e2e:no-pii-in-url.spec "S2-16" | 624ac57 **fail** (`?q=<name>`) |
 | S2-11 | script emits event | `create-user.mjs --role` | `staff.added` beside the row, actor `system:bootstrap` | manual | f5591d1 pass |
 
 ## Slice 3 — money
