@@ -162,13 +162,17 @@ Routing and master-folio wording is dev's placeholder until Alex's pass; the e2e
 | S5-9 | Company whose agreement sends something else to the group bill | charges follow the company's agreement | Company.defaultRouting beats the built-in default | scenario only (groups.test, routing.test): no screen sets an agreement yet | db0c0e0 scenario |
 | S5-10 | On one group stay, desk sets **Tiền phòng** (room) to the guest's own bill, then checks in | the choice survives a reload; the room night lands on the guest's bill; group bill stays settled | a stay override beats the agreement (per category) | e2e "S5-10" + scenario | db0c0e0 pass |
 | S5-11 | Group stay whose own bill is settled checks out while the group bill still owes | check-out goes through; group bill still owes | §10 row 7: check-out guards the stay's own bill only | e2e "S5-11" | db0c0e0 pass |
-| S5-13 | Owner retires a company that has a future booking (no debt) | "Công ty này còn công nợ hoặc còn đặt phòng đang mở…" | §11: the open-booking half of company.inUse | e2e "S5-13" | db0c0e0 pass |
-| S5-15 | A company's only booking is checked in, paid, checked out; owner retires the company | retired without complaint | a finished booking is not an open one | e2e "S5-15" | db0c0e0 **fail** (N23: booking stays `booked` forever) |
+| S5-13 | Owner retires a company that has a future booking (no debt) | "Công ty này còn công nợ hoặc còn đặt phòng đang mở…" | §11 (product 7709bc1): company.inUse = a live stay or an unsettled master, never booking status | e2e "S5-13" | db0c0e0 pass |
+| S5-15 | A company's only booking is checked in, paid, checked out; owner retires the company | retired without complaint | a finished booking is not an open one; goes green with landing 3 (auto-close + inUse reads live stays / master) | e2e "S5-15" | db0c0e0 **fail** (N23: booking stays `booked` forever) |
+| S5-16 | Same as S5-8, database check | the room night on the group bill still names the room's stay; payments and transfers on the group bill name none | routing keeps the stay a charge came from (architect) | e2e "S5-8/S5-16" | db0c0e0 pass |
 
-### 5.1 closing a booking (landing 3; drafted)
+### 5.1 closing a booking (landing 3; drafted; product 7709bc1)
+
+A group closes only by the explicit close, refused while a stay is open or the group bill owes. An individual booking closes itself when its last stay ends.
 
 | ID | who / what they do | what they should see | rule | automated by | last run |
 |---|---|---|---|---|---|
 | S5-12a | Desk closes a group booking while one stay is still in-house or booked | refused, with a message saying stays are still open | §10 row 7a: every stay must be checked out or cancelled | todo | — |
 | S5-12b | Desk closes a group booking whose stays are all out but the group bill still owes | refused, with a message saying the group bill still owes | §10 row 7a: master must be 0 | todo | — |
-| S5-12c | Group bill paid or transferred to the company, all stays out; desk closes | booking shows closed; no more payments on the group bill; the company can now be retired (S5-13 turns green) | happy path | todo | — |
+| S5-12c | Group bill paid or transferred to the company, all stays out; desk closes | booking shows closed; no more payments on the group bill; the company can now be retired | happy path | todo | — |
+| S5-12d | An individual booking's only stay checks out (or is cancelled) | the booking shows closed right away, with no click | product 7709bc1 / architect: individual bookings close themselves in the same batch; projection must record `booking.closed` | todo | — |
