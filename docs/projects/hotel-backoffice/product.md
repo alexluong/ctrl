@@ -195,7 +195,7 @@ type Stay = {
 }
 ```
 Events: `stay.created` · `stay.room_assigned(roomId, fromDate?)` · `stay.room_unassigned` · `stay.room_changed(fromDate, roomId)` · `stay.nights_changed(added[], removed[])` · `stay.rate_set(date, amount)` · `stay.guest_added` · `stay.guest_removed` · `stay.routing_set(bucket, target)` · `stay.checked_in` · `stay.checked_out` · `stay.cancelled(reason)` · `stay.marked_no_show` · `stay.overbooking_overridden`.
-Rules: check-in needs tonight's room assigned and not out of order · check-out needs own folio at 0 or moved to a receivable · **early check-out** (before last night) drops every unposted night after the current business date in the same batch (`stay.nights_changed {removed}` then `stay.checked_out`) so they go back on sale — never implicit in `checked_out` · nights change only before check-out · posted nights are immutable (no rate/room change) · no-show only from `booked`, after arrival date · cancel only if not checked in, reason required, charges moved off first (ezFolio guards).
+Rules: **check-in normalizes the stay to today**: tonight (current business date) must be a night of the stay — early arrival (before `arrive`) adds nights `[today, arrive)` at the first night's rate, room must be free for them, availability versioned, warn + allow; late arrival drops unposted nights before today (posted ones stay). Emitted as `stay.nights_changed` before `stay.checked_in`. So a checked-in stay always holds ≥ 1 night and same-day in/out still charges tonight · check-in needs tonight's room assigned and not out of order · check-out needs own folio at 0 or moved to a receivable · **early check-out** (before last night) drops every unposted night after the current business date in the same batch (`stay.nights_changed {removed}` then `stay.checked_out`) so they go back on sale — never implicit in `checked_out` · nights change only before check-out · posted nights are immutable (no rate/room change) · no-show only from `booked`, after arrival date · cancel only if not checked in, reason required, charges moved off first (ezFolio guards).
 
 Assumptions (Alex 2026-09-23: business calls, not system-breaking; adjust later):
 - **Room move mid-stay**: `room_changed` rewrites `roomId` on unposted nights from that date; rate unchanged by default, editable. Different room type → UI warns, no auto-reprice.
@@ -391,6 +391,7 @@ Later: WaitingList (unassigned stays), Breakfast list, PA18 export, CommissionBy
 | 5 | Children | under `childAgeThreshold` (6) free, not counted against capacity |
 | 6 | Room after checkout | auto `room.marked_dirty {cause: checkout, stayId}` (reaction, in-batch) |
 | 6a | Early check-out | shortens the stay: unposted nights after today's business date removed (`stay.nights_changed`) and freed for sale; current night stays charged. Explicit event, not implied by `checked_out`. |
+| 6c | Early / late check-in | Check-in makes today the first unposted night: early arrival adds nights `[today, arrive)` (warn + allow, room must be free), late arrival drops unposted nights before today. A checked-in stay never has zero nights; check-out before the first night cannot happen (tonight is always held and charged). Guest who leaves same day still pays tonight; day-use is out of scope. |
 | 6b | Out-of-order room | assign to future nights: warn + allow. Check-in: refuse. Taking a room OOO under assigned nights: warn + allow. |
 | 7 | Check-out with balance | blocked unless remainder transferred to a company receivable |
 | 8 | Group billing default | routing from `Company.defaultRouting` (room → master, rest → own); editable per stay |
@@ -417,7 +418,7 @@ Command = one intent. `needs` = capability. `checks` = rules beyond "hotel match
 | `SetNightRate {stayId, date, amount}` | `booking.edit` | night unposted | `stay.rate_set` |
 | `AddGuest / RemoveGuest {stayId, guestId}` | `booking.edit` | not checked out | `stay.guest_added` / `guest_removed` |
 | `SetRouting {stayId, categoryId, target}` | `booking.edit` | group stay | `stay.routing_set` |
-| `CheckIn {stayId, guests[]?}` | `stay.check_in` | booked · tonight's room assigned, not OOO | `stay.checked_in`, `folio.charge_posted` (tonight's room) |
+| `CheckIn {stayId, guests[]?}` | `stay.check_in` | booked · tonight's room assigned, not OOO · early arrival: room free `[today, arrive)` (warn) | `stay.nights_changed` if today ∉ nights (versions availability), `stay.checked_in`, `folio.charge_posted` (tonight's room) |
 | `CheckOut {stayId}` | `stay.check_out` | checkedIn · own folio 0 or transferred | `stay.nights_changed {removed}` if leaving early (versions availability), `stay.checked_out`, `folio.closed`, `room.marked_dirty` |
 | `CancelStay {stayId, reason}` | `stay.cancel` | booked · folio has no unmoved charges | `stay.cancelled` |
 | `MarkNoShow {stayId}` | `stay.cancel` | booked · after arrival date | `stay.marked_no_show` |
@@ -512,14 +513,14 @@ type RoomMarkedClean   = { roomId: string }
 // (all stream ids prefixed <hotelId>/)
 // CreateBooking : booking:<id> (booking.created) · stay:<id> (stay.created) · availability:all (version++ if roomId given)
 // AssignRoom    : stay:<id> · availability:all
-// CheckIn       : stay:<id> · (slice 3 adds folio charge)
+// CheckIn       : stay:<id> (stay.nights_changed {added: [today..arrive-1] | removed: unposted < today} if today ∉ nights, then stay.checked_in) · availability:all if nights changed · (slice 3 adds folio charge)
 // CheckOut      : stay:<id> (stay.nights_changed {added: [], removed: [dates > businessDate(at)]} if any, then stay.checked_out) · availability:all if nights removed · rooms row update + room.marked_dirty {cause:'checkout', stayId} (reaction, in-batch, not on replay)
 // TakeOutOfOrder: rooms row + room.taken_out_of_order · availability:all (supply change; warn if a stay holds the room)
 // CancelStay    : stay:<id> · availability:all
 // CancelBooking : booking:<id> · stay:<id> ×N · availability:all
 ```
 
-Rules active in slice 1: arrive < depart · room free on every night `[arrive, depart)` · room not OOO at check-in (OOO at assign = warn only) · cancel only from `booked` · check-out only from `checkedIn` · early check-out frees nights after today's business date (`stay.nights_changed`, all nights unposted in slice 1). Overbooking per type: warn only (override event in slice 2).
+Rules active in slice 1: arrive < depart · room free on every night `[arrive, depart)` · room not OOO at check-in (OOO at assign = warn only) · cancel only from `booked` · check-out only from `checkedIn` · early check-out frees nights after today's business date (`stay.nights_changed`, all nights unposted in slice 1) · check-in normalizes nights to include today (early arrival adds, late arrival drops before-today) so a checked-in stay always has ≥ 1 night. Overbooking per type: warn only (override event in slice 2).
 
 ## 12. Event index
 
