@@ -34,14 +34,31 @@ def arrow(x1, y1, x2, y2, color="#1e1e1e", dash=False):
                 startBinding=None, endBinding=None, startArrowhead=None, endArrowhead="arrow",
                 strokeColor=color, strokeStyle="dashed" if dash else "solid", roundness={"type": 2}, lastCommittedPoint=None)
 
-def card(x, y, key, title, body, size=11, minw=0, pad=12, title_size=14):
-    """Box sized to its text. Returns (w, h)."""
+# card kinds: badge label, badge fill, box style — so a card reads as command / event / type / projection at a glance
+KIND = {
+    "type":       dict(label="TYPE",       fill="#495057", bg="#ffffff", dash=False, sw=1),
+    "command":    dict(label="COMMAND",    fill="#1971c2", bg="#ffffff", dash=False, sw=2),
+    "event":      dict(label="EVENT",      fill="#e8590c", bg="#fff9f4", dash=True,  sw=1),
+    "projection": dict(label="PROJECTION", fill="#2f9e44", bg="#f6fdf7", dash=False, sw=1),
+    "note":       dict(label="",           fill="#ffffff", bg="#ffffff", dash=False, sw=1),
+}
+
+def card(x, y, key, title, body, size=11, minw=0, pad=12, title_size=14, kind="type"):
+    """Box sized to its text, with a kind badge before the title. Returns (w, h)."""
+    k = KIND[kind]
+    bsize = max(8, title_size - 4)
+    lw, lh = tsize(k["label"], bsize)
+    badge_w, badge_h = (lw + 10, lh + 4) if k["label"] else (-8, 0)
     tw, th = tsize(title, title_size)
+    th = max(th, badge_h)
     bw, bh = tsize(body, size) if body else (0, 0)
-    w = max(tw, bw, minw) + 2 * pad
+    w = max(badge_w + 8 + tw, bw, minw) + 2 * pad
     h = pad + th + (8 + bh if body else 0) + pad
-    rect(x, y, w, h, bg="#ffffff", stroke=C[key])
-    text(x + pad, y + pad, title, size=title_size, color=C[key], bold=True)
+    rect(x, y, w, h, bg=k["bg"], stroke=C[key], dash=k["dash"], sw=k["sw"])
+    if k["label"]:
+        rect(x + pad, y + pad, badge_w, badge_h, bg=k["fill"], stroke=k["fill"])
+        text(x + pad + 5, y + pad + 2, k["label"], size=bsize, color="#ffffff", bold=True)
+    text(x + pad + badge_w + 8, y + pad, title, size=title_size, color=C[key], bold=True)
     if body:
         text(x + pad, y + pad + th + 8, body, size=size)
     return w, h
@@ -259,6 +276,13 @@ y = 30
 text(X0, y, "SoLex — domain model v1", size=32, bold=True); y += 48
 text(X0, y, "CQRS + event sourcing, two tiers (D-22).  tier a = event-sourced: the log is truth, state is a fold (Booking, Stay, Ledger).  tier b = event-notified: a mutable row is truth, every write still\n"
             "appends an event with the same envelope to the same log for history + projections, nothing folds it (Room, Setup, Guest, User).  Source of truth: product.md v1 (2026-09-23).", size=12, color="#555555"); y += 52
+# legend: one sample card per kind
+text(X0, y, "Card kinds", size=12, color="#555555", bold=True); y += 20
+lx = X0
+for kd, ttl, bdy in [("type", "Aggregate / row", "fields, rules"), ("command", "DoSomething {input}", "capability · checks · emits"),
+                     ("event", "aggregate.past_tense", "payload"), ("projection", "ReadModel", "what it answers -> screen")]:
+    w, h = card(lx, y, "sys", ttl, bdy, size=10, title_size=12, kind=kd); lx += w + 16
+y += h + 36
 
 # ---- mini-map of contexts + flow strip, side by side
 text(X0, y, "Contexts and dependencies (arrows = depends on / references; dashed = event reaction)", size=16, bold=True)
@@ -291,7 +315,7 @@ arrow(X0 + 640, mm_y + 134, X0 + 640, mm_y + 330, color=C["users"], dash=True); 
 fx = X0 + 1000; fy = mm_y
 steps = [("Command", "one intent, ~45 in the catalogue\ne.g. CheckIn {stayId}"), ("Capability check", "role = capability bundle\nserver-side, every command"), ("Rules / invariants", "the aggregate (tier a) or the\nrow guard (tier b) decides"), ("Events appended", "envelope: id, hotelId, stream, version,\ntype, schemaVersion, occurredAt,\nbusinessDate, actor (user:<id> | system:<job>),\ncorrelationId..."), ("Projections rebuilt", "same batch, synchronous (D-8)\nrebuild = re-fold the log"), ("Screens read projections", "Front Desk · Back Office · Setup")]
 for i, (t, b) in enumerate(steps):
-    w, h = card(fx, fy, "sys", t, b, size=11, minw=270)
+    w, h = card(fx, fy, "sys", t, b, size=11, minw=270, kind="note")
     if i < len(steps) - 1:
         arrow(fx + w / 2, fy + h, fx + w / 2, fy + h + 14)
     fy += h + 14
@@ -307,12 +331,12 @@ for key, title, sub in ROWS:
     tx = X0 + GAP; ty = inner_y
     text(tx, ty, "TYPES", size=11, color=C[key], bold=True); ty += 22
     for t, b in TYPES[key]:
-        w, h = card(tx, ty, key, t, b, size=11, minw=COL_TYPES_W - 2 * 12)
+        w, h = card(tx, ty, key, t, b, size=11, minw=COL_TYPES_W - 2 * 12, kind="type")
         ty += h + 12
     types_bottom = ty
     # commands column (cards in a grid, 3 per row)
     cx0 = X0 + GAP + COL_TYPES_W + GAP; cy = inner_y
-    text(cx0, cy, "COMMANDS   (needs = capability · checks · emits)", size=11, color=C[key], bold=True); cy += 22
+    text(cx0, cy, "COMMANDS   (capability = who may call · checks = refused if false · emits = events appended in one batch)", size=11, color=C[key], bold=True); cy += 22
     per_row = 3
     col_h = [0] * per_row
     row_y = cy
@@ -321,14 +345,14 @@ for key, title, sub in ROWS:
         if col == 0 and i > 0:
             row_y += max(col_h) + 12; col_h = [0] * per_row
         cx = cx0 + col * (CMD_CARD_W + 12)
-        body = "needs   " + wrap(needs, 44) + "\nchecks  " + wrap(checks, 44).replace("\n", "\n        ") + "\nemits   " + wrap(emits, 44).replace("\n", "\n        ")
+        body = "capability  " + wrap(needs, 40).replace("\n", "\n            ") + "\nchecks      " + wrap(checks, 40).replace("\n", "\n            ") + "\nemits       " + wrap(emits, 40).replace("\n", "\n            ")
         title_w = wrap(name, 44)
-        w, h = card(cx, row_y, key, title_w, body, size=10.5, minw=CMD_CARD_W - 24, title_size=12)
+        w, h = card(cx, row_y, key, title_w, body, size=10.5, minw=CMD_CARD_W - 24, title_size=12, kind="command")
         col_h[col] = max(col_h[col], h)
     cmd_bottom = row_y + max(col_h) + 16
     # events under commands, one card each
     ey = cmd_bottom
-    text(cx0, ey, "EVENTS   (name · payload; envelope adds id, hotelId, stream, version, occurredAt, businessDate, actor...)", size=11, color=C[key], bold=True); ey += 22
+    text(cx0, ey, "EVENTS   (name · payload; envelope adds id, hotelId, stream, version, occurredAt, businessDate, actor, correlationId)", size=11, color=C[key], bold=True); ey += 22
     per_row_e = 4
     EV_W = (COL_CMD_W - 12 - (per_row_e - 1) * 12) // per_row_e
     col_h = [0] * per_row_e
@@ -338,7 +362,7 @@ for key, title, sub in ROWS:
         if col == 0 and i > 0:
             row_y += max(col_h) + 10; col_h = [0] * per_row_e
         ex = cx0 + col * (EV_W + 12)
-        w, h = card(ex, row_y, key, name, wrap(payload, 34), size=10, minw=EV_W - 24, title_size=11.5, pad=10)
+        w, h = card(ex, row_y, key, name, "payload  " + wrap(payload, 30).replace("\n", "\n         "), size=10, minw=EV_W - 24, title_size=11.5, pad=10, kind="event")
         col_h[col] = max(col_h[col], h)
     ey = row_y + max(col_h) + 10
     bottom = max(types_bottom, ey) + GAP
@@ -367,7 +391,7 @@ proj = [
 ]
 px = X0; py = y; rowh = 0
 for i, (n, b, s) in enumerate(proj):
-    w, h = card(px, py, "sys", n, b + "\n-> " + s, size=11, minw=330)
+    w, h = card(px, py, "sys", n, b + "\n-> " + s, size=11, minw=330, kind="projection")
     rowh = max(rowh, h); px += 356
     if (i + 1) % 5 == 0:
         px = X0; py += rowh + 12; rowh = 0
@@ -375,9 +399,9 @@ y = py + rowh + 40
 
 text(X0, y, "Apps & roles", size=22, bold=True); text(X0 + 1000, y, "Scope", size=22, bold=True); y += 40
 apps = ("Front Desk   receptionist · owner\n  room map · tape chart · new booking · booking page · stay page\n  folio (print) · arrivals / departures · search\n\nBack Office  owner · receptionist (receivables, expenses - assumed)\n  dashboard · receivables · expenses · reports (owner)\n\nSetup        owner\n  CRUD per Setup item · users + roles\n\nroles v1: receptionist, owner (fixed capability bundles; custom later)\nowner-only by default: void · refund · write-off · transfer · reports · setup · users")
-card(X0, y, "sys", "Three apps, two roles", apps, size=11, minw=900)
+card(X0, y, "sys", "Three apps, two roles", apps, size=11, minw=900, kind="note")
 scope = ("v1     Setup · individual + group booking w/ inline availability · assign now or later · tape chart + room map\n       check-in/out · guests per stay · one charge flow · folio own/master + routing · cash / transfer / card-method\n       payments, deposits, refunds · receivables by company · hk state + OOO · dashboard + reports · expenses\n       history tabs · folio print · search\n\nlater  OTA support (commission, gross/net, sync) · discount approvals · VAT / red invoice · receivable due dates\n       group label + color · registration card print · PA18 export · breakfast / pickup lists · thank-you email\n       merge stay into group · inspected hk state · custom roles · per-staff activity · multi-currency\n\nnever  card data · restaurant POS · hk scheduling · key cards · hourly / day-use")
-card(X0 + 1000, y, "sys", "v1 / later / never", scope, size=11, minw=820)
+card(X0 + 1000, y, "sys", "v1 / later / never", scope, size=11, minw=820, kind="note")
 
 doc = {"type": "excalidraw", "version": 2, "source": "solex-product", "elements": els,
        "appState": {"gridSize": None, "viewBackgroundColor": "#ffffff"}, "files": {}}
