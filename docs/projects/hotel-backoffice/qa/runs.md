@@ -2,6 +2,8 @@
 
 Newest first. `date · commit · staging · cases · result · findings · blocking?`
 
+- 2026-09-24 · d607656 (e2e 423606d) · 38ecc5ac (not walked) · full e2e 84/84 pass; new S5-1..S5-5 (companies) pass; on d896f3c S3-20 was red from the spec (reached the statement by name; id is now the slug), fixed in e2e · N20 closed (dev d607656, scenario). **N21** history tabs don't group by correlationId (architect: they must; S4-3 pending). **N22** guest/contact/room type/rate unchanged saves are silent, accounts say "Không có thay đổi nào." (architect: uniform nothingToChange; scheduled 5.6) · N
+
 - 2026-09-24 · 4cb9908 (e2e aa34fd7) · be0647d5 (not walked) · full e2e 78/78 pass; S4-21 **pass** (N19 closed) · code read for S4-22..26: guest/contact/room type unchanged saves write nothing; **N20** an unchanged rate update still writes `setup.rate.updated` (`setup/domain.ts` rate update has no diff check; there is no rate edit screen yet, so only the command can hit it). Same class as N18 · N
 
 - 2026-09-24 · b364ccd (+ e2e aa34fd7) · d006aa47 (not walked) · full e2e 78: all pass except S4-21 · **N17** hyphen usernames created but never able to sign in (Better Auth default validator; fixed 7b9a923) · **N18** untouched account save wrote `user.updated` (fixed b364ccd) · **N19** contact created by a booking has a row and no `contact.created` event (S4-21 red; same class as guests-at-check-in) · N17 Y (fixed), N18 Y (fixed), N19 open

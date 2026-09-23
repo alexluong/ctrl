@@ -125,12 +125,39 @@ Category ids change once more to the client's list (groceries, incidental, hk_ov
 | S4-20 | Owner erases that guest (**Xoá dữ liệu**), then opens the guest's page | "Đã xoá thông tin"; history shows "Đã thêm khách" then "Đã xoá dữ liệu khách"; the name appears nowhere | D-20: erasure admits itself and keeps the history | e2e "S4-20" | 4cb9908 pass |
 | S4-21 | Checklist. Guest, room, room type, rate, staff, account and a contact typed on the booking form are all made through the screens, then the database is inspected | every row has a creating event; none has an empty history | D-22: every tier (b) row is born with an event | e2e "S4-21" (whole-DB check) | 4cb9908 pass (b364ccd **fail** N19) |
 | S4-22 | Checklist: the sign-in library checks the username with the same rule as account creation | a username that creation accepts signs in; one it refuses cannot exist | library re-validation = domain rule (N17 root cause) | e2e S4-17 + code (`auth/options.ts` calls `isUsername`) | 4cb9908 pass |
-| S4-23 | Desk opens a guest, changes nothing, saves | no new history line | unchanged save records nothing (as S4-10) | code (`people/domain.ts` update); test todo | 4cb9908 code pass |
-| S4-24 | Desk opens a contact, changes nothing, saves | no new history line | same | code; test todo | 4cb9908 code pass |
-| S4-25 | Owner edits a room type, changes nothing, saves | no new history line | same | code (`setup/domain.ts`); test todo | 4cb9908 code pass |
-| S4-26 | A rate is saved with nothing changed (no edit screen yet; command only) | no new history line | same | code | 4cb9908 **fail** (N20: writes `setup.rate.updated`) |
-| S4-3 | Any click that writes more than one line (check-out, void, payment) | every line from one click shares one correlationId; no line outside a group | one click = one group | scenario (folios.test void); e2e todo (DB check). The history table shows no correlationId column today | — |
+| S4-23 | Desk opens a guest, changes nothing, saves | no new history line | unchanged save records nothing (as S4-10) | code (`people/domain.ts` update); test todo. Silent, no "Không có thay đổi nào." (N22, scheduled 5.6) | 4cb9908 code pass |
+| S4-24 | Desk opens a contact, changes nothing, saves | no new history line | same | code; test todo; silent (N22) | 4cb9908 code pass |
+| S4-25 | Owner edits a room type, changes nothing, saves | no new history line | same | code (`setup/domain.ts`); test todo; silent (N22) | 4cb9908 code pass |
+| S4-26 | A rate is saved with nothing changed (no edit screen yet; command only) | no new history line | same | scenario (hotel/setup.test, dev d607656); silent (N22) | d607656 pass (4cb9908 **fail** N20) |
+| S4-3 | Any click that writes more than one line (check-out, void, payment) | every line from one click shares one correlationId; no line outside a group | one click = one history entry (architect: tabs group by correlationId, no raw column) | scenario (folios.test void); e2e todo (DB check now, screen once N21 lands) | pending history grouping (N21) |
 | S4-1 | A receptionist visits stay (void/refund), receivables (write-off), expenses (void), guests (erase) | owner-only buttons absent or replaced by a note; the commands still refuse if called directly | D-18 | partial: S4-16, S3-22; rest todo | — |
 | S4-2 | A deactivated person's session and a new sign-in attempt | session ended; sign-in refused | — | covered by S4-15 (session); refused sign-in todo | — |
 | S4-4 | Receptionist opens account create/edit/disable; the last owner tries to step down | refused / hidden; the last owner cannot step down (`staff.lastOwner`) | D-18, S2-8 | S4-16 + scenario | 4cb9908 pass |
 | S4-5 | Links and forms on /accounts and /guests | ids only in URLs; forms POST | N11, N12 | e2e no-get-forms, no-network-for-input include /accounts; no-pii-in-url covers /guests | 4cb9908 pass |
+
+## Slice 5 — companies and group bookings
+
+Plain-language, same reading as slice 4. Company names below are examples; the e2e uses stamped names.
+
+### 5.1a companies (d896f3c)
+
+| ID | who / what they do | what they should see | rule | automated by | last run |
+|---|---|---|---|---|---|
+| S5-1 | Owner opens **Thiết lập**, fills a name under **Công ty**, presses **Thêm công ty** | company listed with its id (the name made lowercase with hyphens) and a **Ngừng dùng** button | companies are defined, not typed at the desk | e2e:companies.spec "S5-1" | d607656 pass |
+| S5-2 | Desk checks a guest in and transfers the bill, picking the company from the list | bill settled; **Công nợ** lists the company by name; its statement heading shows the name | pick from the list; the name is shown, never the id | e2e "S5-2" | d607656 pass |
+| S5-3 | Owner presses **Ngừng dùng** on a company that still owes | "Công ty này còn công nợ hoặc còn đặt phòng đang mở. Hãy tất toán hoặc đóng trước."; the company stays live | §11: no retiring while a receivable is open | e2e "S5-3" | d607656 pass |
+| S5-4 | Company pays in full, then owner retires it; desk opens a transfer | retired without complaint; it's gone from the transfer list | retire once settled; retired ≠ choosable | e2e "S5-4" | d607656 pass |
+| S5-5 | Desk transfers a bill before any company exists | "Chưa khai báo công ty nào. Chủ khách sạn thêm trong phần Thiết lập." (not "Chọn công ty nhận công nợ.") | an empty list says who has to act (N10 class) | e2e:hotel.setup "S5-5" | d607656 pass |
+
+### 5.1 group bookings (drafted; runs when landing 2 screens land; domain 98f0989)
+
+| ID | who / what they do | what they should see | rule | automated by | last run |
+|---|---|---|---|---|---|
+| S5-6 | Desk makes one group booking for 3 rooms | 3 stays under one booking, one master folio | a group booking makes one stay per room | todo (e2e + scenario) | — |
+| S5-7 | Desk makes an individual booking for a company traveller, posts a charge | no master folio; the charge is on the guest's own folio; settled at check-out by transfer to the company | product §10 row 8 (4a77be0): routing and master only for groups | todo | — |
+| S5-8 | Group, company without default routing: room night + minibar | room charge on the master; minibar on the guest's own folio | built-in default: room → master, rest → own | todo | — |
+| S5-9 | Group, company whose default routing differs | charges follow the company's default | Company.defaultRouting beats built-in | todo | — |
+| S5-10 | Group, desk sets a per-stay routing for one category | that stay's charges in that category follow the override | stay override beats company default (per category) | todo | — |
+| S5-11 | One group stay checks out while the master still owes | check-out allowed once the stay's OWN folio is settled | §10 row 7: check-out guards own folio only | todo | — |
+| S5-12 | Desk closes the group booking while the master owes / while a stay is still in-house | refused, with a message; closes only when master is 0 and every stay is checked out or cancelled | §10 row 7a | todo | — |
+| S5-13 | Owner retires a company with an open booking (no debt) | refused "Công ty này còn công nợ hoặc còn đặt phòng đang mở…" | §11: open booking half of company.inUse | todo | — |
