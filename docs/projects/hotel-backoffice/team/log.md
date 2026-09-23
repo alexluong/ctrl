@@ -391,3 +391,144 @@ is deployed and only the dev database has ledger events, so it is a constant edi
 The first-owner bootstrap window is **closed**: Alex has a real `hotel_staff` owner row, added
 through the Setup screen. Charge categories are seeded. Room types `double`/`phong-doi` and rates
 exist, rooms 201 (out of order), 305, 402. Staging has none of this — no money events at all.
+
+## solex-dev — slice 3 finished: receivables, expenses, and the sweep (2026-09-24)
+
+Commits `10c57ed` → head. Staging `solex-stg.collie.studio`, latest version `0094e999`. 255 unit
+scenarios green, solex-qa's 27 browser tests green, `pnpm check` 0, build clean.
+
+### 6 — what companies owe (`10c57ed`)
+
+A debt that outlived the stay. Grain is the **company, not the folio** (D-16): a company with four
+stays pays one transfer against one balance, which is how they actually pay and what "what does ABC
+owe us" has to mean. A receivable is a ledger account like a folio, so the commands are the same
+shape — a vocabulary event in hotel words and a balanced entry in one batch.
+
+- A payment is **capped at the outstanding amount**. More is not a payment, it is a deposit from a
+  company that has none, and it would leave a receivable in credit that nothing downstream reads.
+- `receivable.settled` is emitted **explicitly** rather than left for a reader to infer from a
+  balance reaching zero. A projection that has to guess what an event meant will eventually guess
+  wrong.
+- A write-off **requires a reason** and lands in `expense:writeOff` — the debt becomes money lost,
+  which is what it was the moment it stopped being collectable. Owner only.
+- The list drops settled companies; the account and its statement stay. A page of zeroes is a page
+  nobody reads.
+- **Found while building the screen**: `transferToReceivable` had no UI anywhere, so nothing in the
+  app could create a receivable at all. Added the transfer control to the folio panel.
+
+### The double-click hole, and where the fix belongs (D-12 (f), `dba5704`)
+
+The receivable payment scenario caught it: the second click on a payment that *settled* a debt was
+refused as "payment against a settled receivable". The command id already stopped a double click
+writing twice — but only at the **unique index**, and the rules refuse before the write ever gets
+there. Same hole in `folio.void` (alreadyVoided) and the refund cap.
+
+I first fixed it locally in `receivables.ts` with a `replayOf` short-circuit. Architect ruled it
+right in kind, wrong in place: **`commit` does the lookup before the first `plan()`** and returns
+the original events; commands derive their answers from the events commit returns rather than from
+ids minted before it, so a second click gets the first click's payment id instead of one belonging
+to nothing.
+
+The ruling had a consequence it did not state, and this is the part worth remembering: folio and
+receivable commands were **reading, deciding and minting ids outside the plan thunk**, so nothing
+would ever have reached the new guard. All of that moved inside `plan()`. Side effect: a retry after
+a collision now genuinely re-reads and re-decides for money commands, which is the property
+`prepare` always claimed and quietly did not have. Architect made it a checklist rule — *every read
+and rule runs inside `plan()`, nothing minted before it*.
+
+Both double-click scenarios were checked by disabling the lookup: they fail without it, so they
+test the guard and not the rules.
+
+### 7 — money out (`35d6db9`, categories corrected after review)
+
+`expense.record` is the desk's and `expense.void` is the owner's: the receptionist pays the man who
+brings the gas cylinder, and deciding a payment never happened is not the desk's call. A drawer that
+stops matching the day's takings surfaces at midnight with nobody left to ask.
+
+- Categories are a **fixed list in the domain**, not Setup data. I first guessed seven generic ones;
+  architect sent me to the discovery notes, where the client's own list was sitting: đi chợ,
+  chi phí phát sinh, tăng ca buồng phòng, tạm ứng, khác (requirements §4.7, product §6). `writeOff`
+  is reserved from hand-posting, or an owner could file an ordinary purchase as a bad debt.
+- `description` is **required** where product §6 has an optional `note`: "Tạm ứng · 2,000,000" with
+  nobody's name on it is the row an owner cannot audit later. Architect accepted and product is
+  aligning; no `payee` column, the name goes in the description.
+- Voiding reverses in one batch carrying **today's** date — a correction that back-dates itself
+  changes a closed day's total. The row stays, struck through, with its reason.
+- Totals are summed **from the ledger**, where the reversal already cancelled a voided expense, so
+  nothing has to remember to filter. A debt written off on the receivables screen shows up in the
+  same totals under *Công nợ đã xoá*, which is the point of both being expenses.
+- Migration `0011` drops `spike_items` — as a migration, not a hand-run statement, so every database
+  stays the same shape and the log says when it went (architect's call).
+
+### The form sweep — three leaks and one silence (`9fd031b`)
+
+solex-qa's browser suite found all of it. Twenty forms, one pass:
+
+- **N10, a blocked submit must say why.** `required`, `min` and `step` make the browser refuse with
+  a bubble that vanishes on the next click and may never be drawn at all. An empty `required`
+  select (no room types yet, categories not seeded) and `step={1000}` against 650,000 produce a
+  button that silently does nothing. Every form is now `noValidate` and validates in the handler,
+  in field order.
+- **N11, submitting before hydration leaked PII.** A form with no method does a GET when the browser
+  handles it alone — every field into the query string and from there into Cloudflare's access log.
+  A guest's name and phone on /bookings; a **password** on /sign-in. Every form is `method="post"`.
+  It still cannot do anything useful that early; it just stops leaking while it fails.
+- **N12, `/guests?q=<name>`** was the same leak by another route. The search posts now and its
+  results live in component state. Architect had scheduled this for slice 5; I did it in the same
+  pass because I was already in that file.
+- `src/ui/form.tsx` holds the shared piece (`useFormNotice`, `firstProblem`, `isMoney`, `filled`)
+  so twenty forms say things one way and the reasoning lives in one comment.
+
+### Staging is throwaway until production exists (D-26)
+
+I had been holding the staging wipe for Alex on the grounds that a peer session cannot authorise a
+destructive data op. He asked why architect's word wasn't enough, and the answer is now D-26:
+**until production stands up, staging holds nothing worth protecting** and architect may call a
+wipe, reseed or redeploy. Production data and deploys, secrets, permission/config changes and
+rewriting shared history stay Alex's. He offered a separate throwaway `solex-dev` environment; I
+declined it — staging already is that, and a third wrangler config, D1 binding and deploy path buys
+nothing while D-26 holds.
+
+Wipe done: events, all projections and tier (b) rows; auth tables and `d1_migrations` kept. Staging
+comes back **signed in as owner**, because the first-owner bootstrap reopens while a hotel has no
+`hotel_staff` rows — worth knowing before anybody walks it.
+
+### Working with solex-qa
+
+They own `e2e/**` and push to the same repo, so a `pull --rebase` before pushing is now routine.
+Their suite wants `PORT_BASE+1` (7531); a stale vite dev server from 2026-09-23 squats on it here,
+so I run with `E2E_PORT=7621` rather than killing a process I did not start. Their `test.fail`
+marker on the empty-hotel setup spec now passes, which aborts the whole run until they remove it —
+I ran the suite by disabling it locally and restored their file untouched. Theirs to delete.
+
+### Waiting on Alex
+
+- **Vietnamese across slices 1–3 is still mine and wants his pass.** Now also the receivables and
+  expenses screens — *Công nợ*, *Chi phí*, *Ghi nhận thanh toán*, *Xoá nợ*, and every N10 message
+  written in the sweep.
+- **Whether a receptionist should refund at all** — still owner-only, alongside voiding.
+- The **folio screen** remains his review checkpoint; the money loop is now complete around it
+  (charge → pay → transfer → chase → write off → expense).
+
+### Closed since the last entry
+
+- Ledger stream id stays `<hotel>/ledger:<kind>:<id>`; product aligned to it.
+- Staging wipe: done, and no longer needs asking (D-26).
+- Expense category list: the client's own, not mine.
+
+### State of the databases
+
+**Dev** (local file): Alex is a real `hotel_staff` owner, bootstrap window closed. Charge categories
+seeded; room types `double`/`phong-doi`, rooms 201 (OOO), 305, 402; several stays through the full
+money loop; company `ABC` settled (500,000 transferred, 200,000 paid, 300,000 written off); one
+expense recorded under the retired id `supplies`, which now shows its raw id — the fallback
+working, and not something to edit away, because the log is the truth.
+
+**Staging**: wiped, migrated to `0011`, first-owner bootstrap open again. No money events.
+
+### Next
+
+Slice 4: `CreateUser` / `UpdateUser` / `DisableUser` (no accounts screen exists — `scripts/create-user.mjs`
+is still the only way to make one), roles, history tabs. The **cron entry stays pre-go-live**: `main`
+is `@tanstack/react-start/server-entry` and a `scheduled` handler needs a custom entry around it;
+the lazy roll loses nothing but dashboard freshness on a request-less night (D-25).

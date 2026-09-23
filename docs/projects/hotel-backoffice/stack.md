@@ -4,6 +4,7 @@ Owner: `solex-dev`. Repo: `alexluong/solex` (private), local at `~/git/hub/alexl
 
 ## Status
 
+- 2026-09-24 — **slice 3 complete**: ledger, folios, night roll, check-out guard, the bill, receivables and expenses. Every form swept for silent refusals and PII-in-URL (N10/N11/N12). 255 scenarios + solex-qa's 27 browser tests green. Staging on version `0094e999`, database wiped (D-26).
 - 2026-09-23 — **i18n in** (VN + EN, Vietnamese default, server-resolved; rule failures carry codes so they can be translated).
 - 2026-09-23 — **event-sourcing skeleton built and deployed**. Event store, first aggregate (Room), projections, and a system console for browsing the log and the database. All of it live on https://solex-stg.collie.studio, keyed by hotel per D-9.
 - 2026-09-23 — spike done and deployed. Repo bootstrapped, `fix`/`check` green, GitHub remote pushed.
@@ -172,6 +173,50 @@ the word "account": it sees a bill, a payment, what a company owes.
 Money inputs on screen use `step={1}` for the same reason — `step={1000}` makes 650,000 an invalid
 value in a browser and the submit is refused **silently**, which shipped in three forms before the
 folio screen found it.
+
+**The money loop, end to end** (built through 2026-09-24): the night roll or the desk puts a charge
+on a folio → the desk takes payment → whatever is left can be **transferred to a company
+receivable** at check-out → the company pays against one balance, or the owner **writes the debt
+off** with a reason → the write-off lands in `expense:writeOff` and reads in the expense totals
+beside the money the desk spent on gas. Receivables are grained by **company, not folio**: one
+balance is what "what does ABC owe us" has to mean. Expenses use a fixed category list in the
+domain — the client's own (đi chợ, chi phí phát sinh, tăng ca buồng phòng, tạm ứng, khác) — with
+`writeOff` reserved from hand-posting so a purchase cannot be filed as a bad debt.
+
+## Idempotency: the lookup happens before the rules (D-12 (f))
+
+A command id stops a double click writing twice. It used to do that at the **unique index**, which
+is too late: the rules refuse first, and a second click on the payment that settled a debt is a
+payment against a settled receivable, a second click on a void is a void of an already-voided
+charge. Both are the right answer to a new command and the wrong answer to the same one.
+
+`commit` now looks the command id up **before the first `plan()`** and returns the events the
+original attempt wrote. Two consequences that are easy to get wrong:
+
+1. **Every read and every rule runs inside `plan()`, and nothing is minted before it.** Deciding
+   outside the thunk puts the rules in front of the lookup, where they can refuse a repeat the
+   guard was meant to absorb. It also means a retry after a collision re-reads and re-decides,
+   which is the property the whole write path rests on.
+2. **Commands derive their answers from the events `commit` returns**, not from ids minted before
+   it — otherwise a second click is handed an id that belongs to nothing. `hotel/replay.ts` is the
+   three-line helper for reading an answer back out of what was written.
+
+## Forms: nothing refuses in silence, nothing leaks on the way (N10 / N11 / N12)
+
+Every form in the app carries `method="post"` and `noValidate`, and validates in its handler.
+
+- **`noValidate`** because the browser's own refusal is a bubble that vanishes on the next click and
+  may never be drawn at all — an empty `required` select or a `step` the amount does not divide by
+  produces a button that does nothing, which is indistinguishable from a broken app.
+- **`method="post"`** because a submit before React hydrates is handled by the browser alone, and a
+  form with no method does a **GET** — every field into the query string and from there into
+  Cloudflare's access log. That was a guest's name and phone on /bookings and a password on
+  /sign-in (D-20).
+- **PII never goes in a URL**, opaque ids are fine: the people search posts its term and keeps
+  results in component state rather than `?q=<name>`.
+
+`src/ui/form.tsx` holds the shared piece — `useFormNotice`, `firstProblem`, `isMoney`, `filled` —
+so twenty forms say things one way.
 
 ## Two tiers, and the guard that holds them together (D-22 / D-8)
 
@@ -350,7 +395,8 @@ Aggregates from `product.md` §6 map onto streams directly: `booking:<id>`, `sta
 ## Open questions
 
 - Which time zone is "hotel-local" for rendering? (Surfaced by the hydration bug; belongs to product.)
-- Does staging want authentication before it holds anything real? It is a public URL today, with a throwaway table.
+- Does staging want authentication before it holds anything real? It is a public URL today, with a throwaway database (D-26) — and after a wipe the first-owner bootstrap reopens, so the first person to sign in becomes owner.
+- The cron entry for the night roll (D-25) is still deferred: `main` is `@tanstack/react-start/server-entry` and a `scheduled` handler needs a custom entry around it. Pre-go-live.
 - `stg.solex.collie.studio` is available for ~$10/mo (Advanced Certificate Manager) if the naming matters. Currently not spent.
 
 ## For other WSs
