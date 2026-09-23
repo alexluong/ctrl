@@ -160,19 +160,58 @@ Events: `room.marked_dirty` · `room.marked_clean` · `room.taken_out_of_order(r
 Auto: `stay.checked_out` → `room.marked_dirty` (policy reaction).
 Map vocabulary (derived): vacant clean · vacant dirty · occupied clean · occupied dirty · out of order, + arriving / departing overlays.
 
-### Folio — charges and payments
-One folio per Stay (own) + one **master folio per group Booking**. A charge is posted *against a stay*; the stay's routing for that bucket decides which folio it lands on.
-Charge shape (one, for all types): `{stayId, date, bucket, itemId?, description, qty, unitPrice, discount?, tax?, serviceFee?, note, actor}`.
-Buckets (one enum, also = revenue report columns, folio tabs, routing switches): `room · roomSurcharge · minibar · laundry · compensation · extraService · telephone · restaurant`. Room charges are posted per night from the stay's rate (by the day-boundary reaction, §10). Early check-in / late check-out / breakfast / transfer / extra bed = `extraService` catalogue items (no multipliers).
-Payment: `{date, method cash | bankTransfer | card | complimentary, amount, kind deposit | settlement | refund, ref?, actor}`. **Card = method only; no card data ever.**
-Events: `ChargePosted` · `ChargeVoided(reason)` · `DiscountRequested(scope, pct|amount, reason)` · `DiscountApproved` · `DiscountRejected` · `PaymentReceived` · `PaymentRefunded` · `FolioTransferredToReceivable(debtorId, amount, dueDate)` · `FolioClosed`.
-Invariants: balance = Σcharges − Σdiscounts − Σpayments(deposit+settlement) + Σrefunds; void, don't edit; close only at 0 balance or after transfer; master folio closes after all stays out; deposit before arrival is a payment of kind `deposit` on the (master or own) folio.
+### Folio — charges and payments (settled w/ Alex 2026-09-23)
 
-### Receivable — debt that outlives the stay
-Fields: debtor (Company: OTA / TA / CORP / group contact), source folio, amount, dueDate, status `open | partial | settled | writtenOff`.
-Events: `ReceivableOpened` · `ReceivablePaymentReceived(method, amount)` · `ReceivableWrittenOff(reason)` · `ReceivableSettled`.
-Invariants: payments ≤ amount; overdue = open ∧ today > dueDate (derived).
-OTA commission: computed as projection `commissionRate × room revenue` per booking/channel; whether the OTA remits net (receivable = net) or hotel pays out is policy (§10) — affects only how the Receivable amount is derived, not the model.
+One **own folio** per Stay + one **master folio** per group Booking. A charge is posted *against a stay*; the stay's routing for that category decides which folio it lands on. Stay = one visit = one folio, as Alex put it.
+
+```ts
+type Folio = {
+  id: FolioId; hotelId: HotelId
+  owner: { kind: 'stay'; stayId: StayId } | { kind: 'booking'; bookingId: BookingId }   // own vs master
+  status: 'open' | 'closed'
+  // balance = Σ charges − Σ voided − Σ payments + Σ refunds  (derived)
+}
+
+type ChargeCategoryId = string   // Setup-defined list (`ChargeCategory`), seeded: room · roomSurcharge · minibar · laundry · compensation · extraService · restaurant. `room` is reserved: only the system posts it (nightly, D-7).
+
+type Charge = {
+  id: ChargeId; folioId: FolioId; stayId: StayId
+  businessDate: LocalDate      // which hotel day it counts for (D-7); occurredAt comes from the event
+  categoryId: ChargeCategoryId
+  itemId?: ChargeItemId        // Setup catalogue item; free text if absent
+  description: string
+  qty: number; unitPrice: Money
+  voided?: { reason: string; at: Instant }
+}
+
+type Payment = {
+  id: PaymentId; folioId: FolioId
+  businessDate: LocalDate
+  method: 'cash' | 'bankTransfer' | 'card'   // card = the word only. No card data. Ever.
+  kind: 'deposit' | 'settlement' | 'refund'
+  amount: Money
+  ref?: string                 // transfer reference
+}
+```
+Events: `folio.opened` · `folio.charge_posted` · `folio.charge_voided(reason)` · `folio.charge_moved(chargeId, toFolioId)` (ezFolio "Chuyển dịch vụ") · `folio.payment_received` · `folio.payment_refunded` · `folio.transferred_to_receivable(companyId, amount)` · `folio.closed`.
+Rules: never edit a charge — void and repost · a night's room charge posts once, at the roll (D-7), or at check-in for the current night · move charges only while both folios open · close only at 0 or after transfer · deposit = payment of kind `deposit` (master folio for groups, stay folio for individuals); forfeit = `folio.deposit_forfeited` posts a compensation charge against it.
+
+Simplifications vs ezFolio: dropped `telephone` category (dead) · discount = negative-priced line or void + repost, **no approval workflow in v1** (later ticket) · tax/service % not modelled as lines (VAT / red invoice → later) · FOC = rate 0, not a payment method · `debt` is not a payment method, it is the transfer-to-receivable action.
+
+### Receivable — debt that outlives the stay (settled w/ Alex 2026-09-23)
+
+```ts
+type Receivable = {
+  id: ReceivableId; hotelId: HotelId
+  debtorCompanyId: CompanyId
+  folioId: FolioId             // grain = one folio
+  amount: Money
+  status: 'open' | 'partial' | 'settled' | 'writtenOff'
+  // no due date in v1 (ezFolio has none; overdue = age)
+}
+```
+Events: `receivable.opened` · `receivable.payment_received(method, amount, ref?)` · `receivable.settled` · `receivable.written_off(reason)`.
+Rules: opened only from a folio transfer · payments ≤ amount · settled when paid in full.
 
 ### Guest — reusable profile
 Fields: name, gender, DOB, nationality, ID `{type CCCD | passport | licence | other, number, issueDate}`, visa?, phone, email, address, class `normal | vip1 | vip2 | returning`, note. History (stays, nights, spend) is a projection.
