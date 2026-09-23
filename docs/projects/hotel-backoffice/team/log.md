@@ -282,3 +282,97 @@ rather than arriving as a refusal afterwards.
 is still unwiped and still his call. No screen creates *accounts* yet — `create-user.mjs` does, and
 it now appends `staff.added` beside the membership row (architect: no tier-b write without its
 event, scripts included, or the first owner is the one person with no history).
+
+---
+
+## dev — slice 3 (money) through landing 5 (2026-09-23→24)
+
+Five landings, each pinged and accepted: **1** ledger core `61819a7`, **2** folios `c9bab9f` +
+atomicity fix `077088d`, **3** night roll `b3c7597`, **4** check-out guard `c36f36f`, **5** the
+folio screen `624ac57`. 232 tests, check 0, build clean, all pushed.
+
+**1 — the ledger (D-17).** Accounts, and immutable entries whose lines sum to zero. Tier (a), and
+the first place where that is not a preference: money has to be able to say what it said yesterday.
+One stream per account with the entry appended to every account it touches — so each stream is that
+account's statement and the version guard is per account. Balances are summed, never stored.
+Architect accepted the multi-append shape; product wrote it into §7/§12.
+
+**2 — folios.** Every command writes `folio.*` (what was sold) and `ledger.entry_posted` (what
+moved) in one batch. `room` is reserved for the night roll in the *domain*, with an explicit
+`system` flag rather than sniffing the actor string. Refunds are capped at payments received, not
+at the balance — a folio can be in credit for several reasons and refunding against that is how a
+till goes missing.
+
+**The flaw I shipped and caught ten minutes later:** voiding did the ledger reversal in one commit
+and marked the charge void in another. Between them, money back but the line still live — a bill
+that adds up to something other than the sum of what it shows. Now one batch, pinned by a test
+asserting both events share a correlation id. Architect made it a checklist line: *a money command
+is one batch and a test asserts shared correlationId*.
+
+**3 — the night roll (D-25).** One idempotent command, three callers: cron, the first request of
+each business date, and check-in. Two guarantees it lands once — a deterministic command id per
+(stay, night, **attempt**) hitting the UNIQUE index, and a read of what is already charged.
+
+**The attempt counter is not decoration.** Without it the id never changes, so a night whose charge
+was *voided* could never be posted again: the re-post was swallowed as a duplicate of the charge
+just taken off, and the room would have gone free for the rest of the stay. A test found it within
+a minute of the id being introduced.
+
+The lazy roll is **derived, not watermarked** — it asks which nights of in-house stays have no live
+room charge. A stored `lastRolledDate` is a second truth that a crash between posting and updating
+leaves permanently wrong with nothing to notice. Self-heals after an outage of any length; a
+three-day-outage test covers it. It runs as `system:night_roll` through a separate `systemHotel()`,
+so history does not claim the receptionist who opened a page at 07:00 posted the 02:00 charge.
+
+**4 — nobody leaves with the bill unpaid.** Check-out needs the folio settled or transferred to a
+company receivable. The balance is read *inside the plan under the folio stream's version*, and
+that stream is in the batch — a charge landing between read and write loses the race and the
+command re-runs. The availability guard's shape, with money. A credit balance passes: the hotel
+owing the guest is not a reason to keep them at the desk. Every scenario that ends with somebody
+leaving now pays first, through a `given.settled` fixture — which is what the desk does.
+
+**5 — the bill on the stay page.** Charges, payments, running balance; voided lines struck through
+but still there; void and refund offered to owners only. Walked in the browser: check-in posted
+650,000, two beers at 40,000 went on, check-out refused at 730,000, payment settled it, check-out
+closed the folio.
+
+**The bug that screen found, which had been live since slice 2.** `<input type="number" min={1}
+step={1000}>` makes 650,000 an *invalid* value — the valid ones are 1, 1001, 2001 — and the browser
+refuses the submit **silently**. Prefilling the payment box with the balance produced a button that
+did nothing: no error, no request. `useCommand`'s own comment says a screen that silently does
+nothing is indistinguishable from a broken one, and I had shipped exactly that in three forms
+(payment, booking rate, Setup rate) without noticing. All money fields are `step={1}` now.
+
+### Open, in the order architect set
+
+1. **Receivable side** — `transferToReceivable` is built and tested (it is what lets a company
+   booking check out); still to do: `receivable.record_payment`, `write_off` (owner), and a
+   receivables screen.
+2. **Expenses** — `expense.record` (receptionist, petty cash) / `expense.void` (owner).
+3. **Cron entry** — deferred to pre-go-live by architect and recorded in D-25. `main` is
+   `@tanstack/react-start/server-entry`, so a `scheduled` handler needs a custom entry wrapping the
+   framework's. Lazy alone is correct because it catches up; the cost is a stale dashboard on a
+   night with no requests, not lost revenue.
+
+### Waiting on Alex
+
+- **Vietnamese across slices 1–3 is mine** and wants his pass. The folio screen has the most of it:
+  *Còn nợ*, *Đã thanh toán*, *Ghi nhận thanh toán*, the void-reason prompt, the check-out refusal.
+- **Staging's event log** is still unwiped and still his call.
+- **Whether a receptionist should refund at all** — currently owner-only, alongside voiding.
+- The **folio screen itself** is his review checkpoint; architect asked for it clickable early for
+  exactly that.
+
+### Open question for product
+
+Account id shape. Their spec writes `<hotel>/account:receivable:<companyId>`; mine is
+`<hotel>/ledger:receivable:<companyId>` — the stream *kind* word differs, the rest matches, and
+mine follows §12's `ledger:*` stream list. Folio, cash and revenue accounts already use it. Nothing
+is deployed and only the dev database has ledger events, so it is a constant edit if they prefer
+`account:` — needs deciding **before the receivable side lands**.
+
+### State of the dev database (not staging)
+
+The first-owner bootstrap window is **closed**: Alex has a real `hotel_staff` owner row, added
+through the Setup screen. Charge categories are seeded. Room types `double`/`phong-doi` and rates
+exist, rooms 201 (out of order), 305, 402. Staging has none of this — no money events at all.

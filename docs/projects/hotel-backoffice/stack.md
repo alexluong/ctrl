@@ -103,9 +103,9 @@ Alex asked to see event-driven architecture working, to browse the events, and t
 
 ```
 src/routes/            file routes; index = room board, calendar = occupancy grid,
-                       bookings = take a booking, stays.$id = the desk's loop,
-                       setup = room types/rates/rooms/staff, guests = people,
-                       system.* = operator console
+                       bookings = take a booking, stays.$id = the desk's loop + the bill,
+                       setup = room types/rates/rooms/staff/charge categories,
+                       guests = people, system.* = operator console
 src/server/hotel/      THE application layer: index.ts (the Hotel object), rooms/bookings/stays,
                        current.ts (composition root — the only caller of getDatabase)
 src/server/store/      the Store port: index.ts (interface + sqliteStore), log, projections,
@@ -116,12 +116,15 @@ src/server/rules.ts    RuleError base — one catch covers every aggregate
 src/server/events/     stream.ts (ids), types.ts, upcast.ts
 src/server/rooms/      domain.ts (pure rules, tier b)
 src/server/setup/      domain.ts (room types, rate table, quoting — tier b)
+src/server/ledger/     domain.ts (accounts, balanced entries, reversal — tier a)
+src/server/folio/      domain.ts (charges, payments, refund ceiling, reserved `room`)
 src/server/people/     domain.ts (guest + contact rules, PII never in payloads)
 src/server/staff/      domain.ts (roles, capability bundles, membership rules)
 src/server/auth/       options.ts (static) + index.ts (lazy instance), session.ts, api.ts, directory.ts
 src/server/booking/    domain.ts (pure) · dates.ts · input.ts (zod)
 src/server/stay/       domain.ts (pure aggregate: check-in/out, cancel, nights)
 src/ui/command.tsx     useCommand + CommandError — one way to run a command and show a refusal
+src/ui/folio.tsx       the bill: charges, payments, void (owner), take payment
 src/server/system/     access.ts (operator gate), queries.ts, api.ts
 src/server/runtime/    node.ts | cloudflare.ts — the ONLY Cloudflare-aware files
 src/server/tenant.ts   current hotel (server-only; never import from a route)
@@ -147,6 +150,28 @@ Alex asked whether it was all hand-built. It was: ~350 lines, four routes and tw
 - The **event log, stream/type filters and the replay button** are not duplicative — no general-purpose database tool knows what an event stream is, or that projections are disposable.
 
 **The table browser also turned out to carry a cost.** Adding authentication put password hashes and live session tokens in the same database as the room board, and a browser that shows any table it finds showed those too. A session token on screen is not a record of a credential, it *is* the credential. Fixed by redacting on column name rather than table name, so a future table with a `token` column is covered the day it is added; `src/server/system/queries.test.ts` is the test that has to keep passing. Worth noting as an argument for the smaller console: the fewer generic surfaces, the fewer of these.
+
+## Money: one ledger, two vocabularies (D-16 / D-17)
+
+Folios, receivables and expenses are three views of one double-entry ledger. Reception never sees
+the word "account": it sees a bill, a payment, what a company owes.
+
+- **One stream per account**, and an entry is appended to *every* account it touches. Each account's
+  stream is therefore its own statement (`events.ofAccount(folio)` **is** the bill), and the version
+  guard is per account — closing a folio cannot race a charge landing on it. The projector upserts
+  by entry id, so N appends make one entry.
+- **Every command writes two families in one batch**: `folio.charge_posted` (what was sold: quantity,
+  description, category) and `ledger.entry_posted` (what moved: two balanced lines). Neither is
+  redundant and neither can exist without the other.
+- **Balances are never stored.** `balance(account)` sums the lines every time. A cached total is a
+  second source of truth that can disagree with the entries under it.
+- **Nothing is edited.** A wrong charge is voided: the line stays, struck through, with its reason,
+  and a reversing entry carries *today's* business date so yesterday's report does not move.
+- **Amounts are VND integers.** A fraction anywhere is a bug, not a rounding question.
+
+Money inputs on screen use `step={1}` for the same reason — `step={1000}` makes 650,000 an invalid
+value in a browser and the submit is refused **silently**, which shipped in three forms before the
+folio screen found it.
 
 ## Two tiers, and the guard that holds them together (D-22 / D-8)
 
