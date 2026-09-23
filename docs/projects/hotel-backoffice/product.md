@@ -112,7 +112,7 @@ Format (agreed w/ Alex 2026-09-23): each thing = TypeScript type + events + rule
 
 ### Conventions
 
-**Dates vs timestamps.** `LocalDate` = calendar day, no time/zone (`2026-09-23`) — used for *nights*: arrive/depart, `businessDate`, rate ranges. `Instant` = exact UTC moment — used for *when things happened*: `occurredAt`, actual check-in/out. A night is not a moment; D-7 converts one to the other once, at write time. `HotelProfile.timeZone` (e.g. `Asia/Ho_Chi_Minh`) is the only zone in play. Stay covers nights `[arrive, depart)` (depart exclusive). Money = VND integer; USD display only.
+**Dates vs timestamps.** `LocalDate` = calendar day, no time/zone (`2026-09-23`) — used for *nights*: arrive/depart, `businessDate`, rate ranges. `Instant` = exact UTC moment — used for *when things happened*: `occurredAt`, actual check-in/out. A night is not a moment; D-7 converts one to the other once, at write time. `HotelProfile.timeZone` is the only zone in play; hardcoded `Asia/Ho_Chi_Minh` until Setup lands (TODO D-7), `businessDate` computed in it. Stay covers nights `[arrive, depart)` (depart exclusive). Money = VND integer; USD display only.
 
 **Event naming.** `<aggregate>.<past_tense_verb>`, lowercase, dotted, snake_case verbs: `booking.created`, `stay.room_assigned`, `folio.charge_posted`. Prefix = stream type; `folio.*` filters trivially.
 
@@ -128,7 +128,7 @@ type Event<T extends string = string, P = unknown> = {
   payload: P
   occurredAt: Instant
   businessDate: LocalDate      // hotel day it counts toward (D-7); stored, not re-derived
-  actor: { kind: 'user'; userId: UserId } | { kind: 'system'; job: string }
+  actor: `user:${UserId}` | `system:${string}`   // one text value, two variants (D-12 amendment); resolved to a display name at read time
   correlationId: string        // one per user action (one check-in → several events)
   causationId?: EventId
   commandId?: string           // client idempotency key; safe retries under D-8

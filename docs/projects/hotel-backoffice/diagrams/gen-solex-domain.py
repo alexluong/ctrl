@@ -289,7 +289,7 @@ arrow(X0 + 380, mm_y + 112, X0 + 150, mm_y + 116, color=C["guest"], dash=True); 
 arrow(X0 + 640, mm_y + 134, X0 + 640, mm_y + 330, color=C["users"], dash=True); text(X0 + 648, mm_y + 300, "actor on every event", size=10, color=C["users"])
 
 fx = X0 + 1000; fy = mm_y
-steps = [("Command", "one intent, ~45 in the catalogue\ne.g. CheckIn {stayId}"), ("Capability check", "role = capability bundle\nserver-side, every command"), ("Rules / invariants", "the aggregate (tier a) or the\nrow guard (tier b) decides"), ("Events appended", "envelope: id, hotelId, stream, version,\ntype, schemaVersion, occurredAt,\nbusinessDate, actor, correlationId..."), ("Projections rebuilt", "same batch, synchronous (D-8)\nrebuild = re-fold the log"), ("Screens read projections", "Front Desk · Back Office · Setup")]
+steps = [("Command", "one intent, ~45 in the catalogue\ne.g. CheckIn {stayId}"), ("Capability check", "role = capability bundle\nserver-side, every command"), ("Rules / invariants", "the aggregate (tier a) or the\nrow guard (tier b) decides"), ("Events appended", "envelope: id, hotelId, stream, version,\ntype, schemaVersion, occurredAt,\nbusinessDate, actor (user:<id> | system:<job>),\ncorrelationId..."), ("Projections rebuilt", "same batch, synchronous (D-8)\nrebuild = re-fold the log"), ("Screens read projections", "Front Desk · Back Office · Setup")]
 for i, (t, b) in enumerate(steps):
     w, h = card(fx, fy, "sys", t, b, size=11, minw=270)
     if i < len(steps) - 1:
