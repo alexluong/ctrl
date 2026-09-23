@@ -319,7 +319,9 @@ type Receivable = {
   // no due date in v1 (ezFolio has none; overdue = age)
 }
 ```
-Events: `receivable.opened` · `receivable.payment_received(method, amount, ref?)` · `receivable.settled` · `receivable.written_off(reason)`.
+Receivable accounts open lazily like folios: first transfer emits `ledger.account_opened` on `<hotelId>/account:receivable:<companyId>`; no separate `receivable.opened`.
+
+Events: `receivable.payment_received(method, amount, ref?)` · `receivable.settled` · `receivable.written_off(reason)`.
 Rules: opened only from a folio transfer · payments ≤ amount · settled when paid in full.
 
 ### Guest — thin profile (settled w/ Alex 2026-09-23)
@@ -373,7 +375,7 @@ Every screen reads a projection; projections are rebuilt from events (§12). Syn
 | **FolioView** | per folio: lines (charges, payments), balance | `folio.*` | folio screen, print |
 | **Receivables** | per company: open amount, age, payments | `receivable.*` | Back Office |
 | **DashboardToday** | occupancy %, arrivals, departures, in-house, revenue posted, cash in, unpaid | StayNights, `ledger.*` | Back Office home |
-| **NightRollStatus** | per hotel: `lastRolledDate`, unposted nights for today | `folio.charge_posted`, `stay.*` | lazy roll check on first request after `businessDayStart` (D-25); Setup guard on `businessDayStart` change |
+| **UnpostedNights** (derived query, no watermark) | in-house nights for today's business date with no live room charge | StayNights, `folio.charge_posted/voided` | lazy night roll posts exactly these on any request after the roll — self-healing after outages (D-25); Setup guard on `businessDayStart` = "is this empty?" |
 | **ForwardBook** | per future night: rooms sold × rate, by type | StayNights | forecast |
 | **Revenue** | by business date × category × source × payment method | `ledger.*` + Setup lookups | reports |
 | **Expenses** | by category × period | `expense.*` | Back Office |
@@ -399,7 +401,7 @@ Later: WaitingList (unassigned stays), Breakfast list, PA18 export, CommissionBy
 
 | # | rule | v1 |
 |---|---|---|
-| 1 | Hotel day | D-7 + D-25. Business date rolls at `businessDayStart` 02:00. Room charge posts via `PostNightlyRoomCharges` (actor `system:night_roll`), idempotent per `(stayId, businessDate)`, fired **both** by cron at the roll and lazily on the first request after it (local dev: lazy only); check-in posts tonight through the same command. Changing `businessDayStart` is owner-only and refused while any night of the current business date is unposted. Check-in before `checkInTime` 14:00 → optional early check-in item; checkout after `checkOutTime` 12:00 → optional late checkout item; after next roll → extra night (`stay.nights_changed`). Actual instants decide; typed dates are the plan. |
+| 1 | Hotel day | D-7 + D-25. Business date rolls at `businessDayStart` 02:00. Room charge posts via `PostNightlyRoomCharges` (actor `system:night_roll`), idempotent per `(stayId, businessDate)` (entry id `night:<stayId>:<date>:<attempt>`, so a voided night can be re-posted), fired lazily on the first request after the roll by deriving "in-house nights with no live room charge" (no watermark, self-healing); cron at the roll deferred to pre-go-live, lazy alone loses no revenue; check-in posts tonight through the same command. Changing `businessDayStart` is owner-only and refused while any night of the current business date is unposted. Check-in before `checkInTime` 14:00 → optional early check-in item; checkout after `checkOutTime` 12:00 → optional late checkout item; after next roll → extra night (`stay.nights_changed`). Actual instants decide; typed dates are the plan. |
 | 2 | Overbooking | warn + explicit override (D-15) |
 | 3 | Cancellation / no-show | no automatic charge. Receptionist posts a compensation charge by hand if agreed. Deposit forfeit = explicit `ForfeitDeposit`. Cancel guards: not if checked in; reason required; charges moved off first. |
 | 4 | Guest ID | optional; PA18 export later |
@@ -455,7 +457,7 @@ Command = one intent. `needs` = capability. `checks` = rules beyond "hotel match
 | `TakePayment {folioId, method, amount, kind deposit|settlement, ref?}` | `folio.take_payment` | folio open · amount > 0 | `folio.payment_received` → entry |
 | `Refund {folioId, method, amount, reason}` | `folio.refund` | ≤ payments | `folio.payment_refunded` → entry |
 | `ForfeitDeposit {folioId, amount, reason}` | `folio.post_charge` | deposit exists | `folio.deposit_forfeited` (= compensation charge) |
-| `TransferToReceivable {folioId, companyId, amount?}` | `folio.transfer_to_receivable` | folio open · amount ≤ balance | `folio.transferred_to_receivable`, `receivable.opened` → entry |
+| `TransferToReceivable {folioId, companyId, amount?}` | `folio.transfer_to_receivable` | folio open · amount ≤ balance | `folio.transferred_to_receivable` (+ `ledger.account_opened` on first transfer for that company) → entry |
 | `CloseFolio {folioId}` | `folio.take_payment` | balance 0 | `folio.closed`, `ledger.account_closed` |
 | `RecordReceivablePayment {receivableId, method, amount, ref?}` | `receivable.record_payment` | open/partial · ≤ remaining | `receivable.payment_received` (+ `settled`) → entry |
 | `WriteOffReceivable {receivableId, reason}` | `receivable.write_off` | open/partial | `receivable.written_off` → entry |
@@ -549,7 +551,7 @@ Envelope + naming per §6 conventions (D-12). **Two tiers (D-22)**: `booking.*` 
 `room.` defined · updated · retired · marked_clean · marked_dirty · taken_out_of_order · returned_to_service · note_set
 `availability.` changed {cause} — version bump only
 `folio.` opened · charge_posted · charge_voided · charge_moved · payment_received · payment_refunded · deposit_forfeited · transferred_to_receivable · closed
-`receivable.` opened · payment_received · settled · written_off
+`receivable.` payment_received · settled · written_off — account opens via `ledger.account_opened`, lazily
 `ledger.` account_opened · entry_posted · entry_reversed · account_closed — on `<hotelId>/account:<id>`; entry events carry the full entry, appear once per touched account
 `guest.` created · updated · erased (tombstone, D-20)
 `contact.` created · updated · erased — same shape as guest; booker ≠ sleeper, kept separate
