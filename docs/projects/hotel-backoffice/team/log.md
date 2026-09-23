@@ -1,4 +1,5 @@
 # Team log
+- 2026-09-24 — dev: 5.1 landing 2 (group form, routing, master panel; staging 68192888, 309 green). Architect accepted; ruled CloseBooking = new explicit command with master + stays guards. Dev paused for compaction (276k) before landing 3.
 - 2026-09-24 — solex-qa: 84/84 e2e on d607656 (6b6635d); 5.1a cases S5-1..5 green; N21 (history grouping) + N22 (silent unchanged saves) numbered, both 5.6; landing 2 cases S5-6..13 drafted. Next N23.
 - 2026-09-24 — dev: 5.1 landing 1 group domain + N20 (staging 38ecc5ac, 301 green). Architect accepted. Landing 2 (group form, booking detail w/ master folio, per-stay routing) started; VN wording for own bill / master folio still Alex's — dev uses marked placeholders.
 - 2026-09-24 — solex-qa: plain-language S4 cases for Alex (beed8a1); 78/78 green on 4cb9908; N20 rate diff. Architect: history tabs group by correlationId; unchanged saves say so everywhere (dev, non-blocking).
