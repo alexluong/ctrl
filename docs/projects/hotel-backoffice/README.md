@@ -28,6 +28,7 @@ Secrets (existing-system URL/login): `ctrl/secrets/hotel-backoffice.md` (gitigno
 ## Direction (2026-09-19)
 
 **Decided (D-3):** TypeScript on plain Cloudflare Workers. Go dropped — simplicity wins. **Amended 2026-09-23:** TanStack Start + Drizzle + SQLite; Cloudflare = build target only, dev loop is Node + local SQLite. Staging live: https://solex-stg.collie.studio (`stack.md`).
+**Decided (D-9):** multi-tenant by design, one tenant in practice — everything keyed by `Hotel`, no cross-hotel data v1, tenant seeding via script, no self-signup/billing/super-admin.
 **Proposed (D-8, dev):** D1 for event log *and* projections, optimistic concurrency on `(stream_id, version)` instead of a Durable Object, projections in the same atomic batch, Hookdeck deferred. Awaiting Alex + product.
 **Decided (D-4):** client already has a PMS (**ezFolio** by ezCloud, the `:99` system). SoLex = rebuild driven by **data ownership**; core subset + enhancements, not feature parity. WS2 maps the PMS first via slow walkthrough w/ Alex.
 **Decided (D-5):** fresh start, migration deferred — ezFolio has no working export. Schema for the domain, not for an import.

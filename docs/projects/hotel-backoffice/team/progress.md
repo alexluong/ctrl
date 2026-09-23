@@ -44,7 +44,7 @@ Narrative record of what the team (and Alex) has done, by day. `log.md` is the t
 **Architect:** merged each wave into README; queued 8 policy points; asked dev for a storage sanity-check (DO per hotel vs D1); reviewed the board and sent the 10 questions; recorded D-6, D-7; wrote the business-date model; set product's agenda; merged dev's spike → D-3 amended, D-8 proposed, product pinged to reconcile §6.
 
 ## Decisions so far
-D-1 Go/no-VM/CF (superseded) · D-2 one owner per file · D-3 TS on plain Workers · D-4 rebuild for data ownership, core subset · D-5 fresh start, no migration · D-6 Setup scope + setup/admin persona · D-7 business date w/ configurable roll · D-8 (proposed) D1 log + projections, no DO, Hookdeck deferred. Full text: `decisions.md`.
+D-1 Go/no-VM/CF (superseded) · D-2 one owner per file · D-3 TS on plain Workers · D-4 rebuild for data ownership, core subset · D-5 fresh start, no migration · D-6 Setup scope + setup/admin persona · D-7 business date w/ configurable roll · D-8 (proposed) D1 log + projections, no DO, Hookdeck deferred · D-9 multi-tenant by design, one tenant. Full text: `decisions.md`.
 
 ## What Alex still owns
 - Product session (schema / roles / actions / rules / events) + §10 policy answers
