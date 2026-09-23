@@ -106,19 +106,21 @@ Naming: **Booking / Stay** (not Reservation / RoomStay). Streams `booking:*`, `s
 **The night is the unit.** A Stay is a list of nights; each night carries its room and its rate. A room move does *not* split the Stay (guest sees one visit, one bill, one checkout); it changes the room on the remaining nights.
 
 ```ts
+type Night = {                 // value inside Stay, not its own aggregate: no life of its own
+  date: LocalDate              // business date (D-7)
+  roomId?: RoomId              // empty until assigned; may differ night to night after a move
+  rate: Money
+  posted: boolean              // room charge already on the folio → night immutable
+}
 type Stay = {
   id: StayId
   hotelId: HotelId
   bookingId: BookingId
   roomTypeId: RoomTypeId
   bedType: BedType
-  nights: Array<{
-    date: LocalDate            // business date (D-7)
-    roomId?: RoomId            // empty until assigned; may differ night to night after a move
-    rate: Money
-    posted: boolean            // room charge already on the folio → night immutable
-  }>
+  nights: Night[]
   // arrive = first night, depart = last night + 1 — derived, not stored
+  // projections (tape chart, occupancy, forecast) are (roomId, date) rows derived from nights
   adults: number
   children: number             // < childAgeThreshold (Setup, default 6)
   guests: GuestId[]
