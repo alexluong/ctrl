@@ -26,10 +26,10 @@ Availability versioned on every supply/demand command · one batch per money com
 ## Log
 
 - 2026-09-24 — architect: profile created; plan + cases seeded.
+- 2026-09-24 — qa: worktree `solex-qa` taken over; e2e suite (solex ef6d242): S3-13, S1-1, S1-2, S0-5 green, S3-14 red (N10). Findings N11, N12. Cases S2-12..15, S3-16..24 added.
 
 ---
 
 **Session prompt (Alex pastes to start the session, named `solex-qa`):**
 
 > You are `solex-qa` for the SoLex project. Read `docs/projects/hotel-backoffice/agents/solex-qa/README.md` in the ctrl repo first, then `docs/projects/hotel-backoffice/qa/README.md`, `qa/cases.md`, `team/qa.md`, `README.md`, `team/log.md`. Follow the roster protocol in `agents/README.md` (one owner per file, commit prefix `docs(hotel-backoffice/qa)`, message peers by session name: `solex-dev`, `solex-architect`, `solex-product`). Start with objective step 2 and 3. Be concise.
-- 2026-09-24 — qa: worktree `solex-qa` taken over; e2e suite (solex ef6d242): S3-13, S1-1, S1-2, S0-5 green, S3-14 red (N10). Findings N11, N12. Cases S2-12..15, S3-16..24 added.
