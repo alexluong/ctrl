@@ -116,6 +116,7 @@ Later WS (not now): event-store design — Hookdeck-as-log vs bus + archive. Nee
 ## Status
 
 - 2026-07-10 — plan agreed, awaiting discovery brain-dump.
+- 2026-09-23 — product v0.1: Setup context added, in v1 core. **Blocked on Alex: §10 policy points.**
 - 2026-09-23 — **D-6: Setup is its own scope + third persona; no admin login.** Product to add Setup context.
 - 2026-09-23 — **product.md v0** (product). Aggregates: Booking→RoomStay, Room, Folio (own+master), Receivable, Guest, Catalogue, Expense. Key architectural ask: availability is cross-aggregate → single-writer DO per hotel for Reservations, not per-room streams. 8 policy points → questions.md.
 - 2026-09-23 — explore: flow board + 4 model-changing findings (group folio routing, two booking use cases, one charge shape / 8 buckets, config split). 3 decisions queued for Alex.
