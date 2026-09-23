@@ -730,3 +730,52 @@ adaptations to a control I changed — QA owns them and should overrule me freel
 **Next: 5.1 landing 1 (domain)** — group booking creates N stays from `requests[]`, `booking.party`
 gains `companyId`, master folio opens lazily on `folio:master:<bookingId>`, routing resolved at
 `postCharge`. `booking.groupNotSupported` in `booking/domain.ts` is the check to delete.
+
+## solex-dev — 5.1 landing 1: groups in the domain, plus N20 (2026-09-24)
+
+`98f0989` (groups) and `d607656` (N20), staging `38ecc5ac`. 301 green, build clean.
+
+### Groups
+
+`booking.groupNotSupported` is deleted. A booking carries `requests[]` and mints one stay per room:
+"ten doubles and two twins" is two requests and twelve stays. The array is the shape even for one
+room, so the wire does not change with the number of rooms. `booking.party` gains `companyId`;
+`kind` is read off the booking, not inferred from the stay count — a group of one is still a group.
+
+**Routing lives in its own pure module** (`src/server/folio/routing.ts`) with its own scenarios,
+because what costs money is *precedence*, not arithmetic: stay override → company agreement →
+fallback of room-to-master. `postCharge` resolves it inside the plan like every other fact (D-12 (f)).
+The master folio's id is the booking's and it opens on the first charge routed to it — never as a
+side effect of taking the booking (architect's stream shape: `<hotel>/ledger:folio:master:<bookingId>`).
+
+**Architect's ruling, recorded so it is not re-litigated:** routing is a **group-only** concept.
+`postCharge` resolves `own` unconditionally for an individual booking; a lone company traveller keeps
+the old path (own folio → transfer-to-receivable at check-out), even when their company has a routing
+table. I asked rather than guessed, because the literal reading of "else room → master" would have
+sent every individual's night charge to a master folio and left the check-out guard always seeing
+zero — gutting slice 3 rather than extending it. There is a scenario pinning exactly that case.
+
+`routeCharge` takes a `stayRouting` nothing supplies yet. That is the seam landing 2 plugs into, and
+it is a parameter rather than a half-written rule.
+
+Verified in the browser that individual bookings still create exactly one stay through the screen.
+
+### N20 (QA)
+
+`rateRules.update` was handed only `retiredAt`, so it was structurally unable to compare and always
+emitted `setup.rate.updated`. Now takes the row and diffs. Same cause as N18 twice over: **a command
+that reports what changed must be given the row.**
+
+QA also verified N19 (78/78 green on a fresh e2e db, S4-21 finds no orphans).
+
+### Standing, not done
+
+Architect's item (2) from QA's slice-4 close-out: every update command should *refuse* with
+`nothingToChange` and the screen say so, as accounts does — guest/contact/roomType/rate currently go
+silent. Scheduled 5.6. It converts N20's `same ? [] :` into a `check`, so it should land as one
+decision across four screens with its strings, not as a drive-by. Item (3), grouping history tabs by
+correlationId, also 5.6.
+
+**Next: 5.1 landing 2 (screens)** — group booking form, booking detail showing the master folio with
+pay/transfer/void, per-stay routing controls. The routing controls need Alex's words for "own bill"
+vs "master folio" before they are worth translating.
