@@ -171,3 +171,43 @@ zero-night stay?
 
 **Still not done:** screens — now to be written against `Hotel` from day one. Staging's event log
 still unwiped, still Alex's own call.
+
+---
+
+## dev — slice-1 screens, and N7 landed (2026-09-23)
+
+**N7 first, because product ruled while I was starting the screens.** Check-in now moves the stay
+onto today: an early walk-in gains the nights between today and the booked arrival, a late arrival
+loses the unposted ones before today, and posted nights are never touched. Nights being gained are
+nights being sold, so they go through the same freeness question `assignRoom` asks, under the
+availability guard. This closes the hole a scenario found last session — a checked-in stay now
+always holds at least tonight, so check-out can no longer empty it. The fold learned to shorten
+from the front as well as the back, and the stay projection moves `arrive` with its nights.
+
+One fixture changed meaning and had to be made honest: `given.booking` used to arrive *tomorrow*
+under the fixed clock, so every scenario that checked in was silently an early check-in. It now
+arrives today, and a scenario about arriving early or late has to say so.
+
+**The screens, written against `Hotel` from the first line** (solex `f35bded`):
+
+- `/calendar` — every room down the side, a fortnight across the top, one query for the window.
+  Nights held without a room get their own list underneath: they are sold, and no square on the
+  grid would otherwise show them.
+- `/bookings` — takes a booking and says **how many nights** it is next to the dates, as they are
+  typed. Product's ask. The count comes from the same `nightCount` the domain holds the nights
+  with, so the screen cannot disagree with what gets written.
+- `/stays/$id` — assign, check in (with the guests, by name, stored as ids), check out, cancel,
+  plus the nights held and the full history. Which buttons exist follows the status; what is
+  *allowed* is still the domain's answer, rendered as a translated code. A disabled button cannot
+  explain itself, and "the room is out of order" is something the desk needs to read.
+
+**N6 closed**: assigning an out-of-order room is still allowed — the desk sometimes knows
+something the system does not — but the stay page now says so instead of allowing it silently.
+
+**Verified in a browser, not just in tests**: booking taken → three nights held on 305 → checked
+in → checked out → 305 left dirty on the board → a second guest's early walk-in into 305 refused
+with *"Phòng đã có khách trong những đêm này."* That last one is the N7 guard firing through the
+whole path — adapter, Hotel, store, guard, code, translation.
+
+**Still open:** the Vietnamese on the new screens is mine and wants Alex's native pass. Staging's
+event log is still unwiped and still Alex's own call.

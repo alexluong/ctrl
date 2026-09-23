@@ -100,7 +100,9 @@ Alex asked to see event-driven architecture working, to browse the events, and t
 ### Where the code is, in one screen
 
 ```
-src/routes/            file routes; index = room board, system.* = operator console
+src/routes/            file routes; index = room board, calendar = occupancy grid,
+                       bookings = take a booking, stays.$id = the desk's loop,
+                       system.* = operator console
 src/server/hotel/      THE application layer: index.ts (the Hotel object), rooms/bookings/stays,
                        current.ts (composition root — the only caller of getDatabase)
 src/server/store/      the Store port: index.ts (interface + sqliteStore), log, projections,
