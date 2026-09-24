@@ -1,4 +1,5 @@
 # Team log
+- 2026-09-25 — QA confirms the define-room silent drop is gone on `8716fc2` (seed 3/3 without the retry, S5-41 define passed); architect closed it, no N number, stamp collision ruled out. Void on a closed bill: refused server-side, no defect.
 - 2026-09-25 — QA clean stop at 201k (solex a204175, ctrl 65bbadd, resume note in QA profile log). Define-room drop confirmed gone on 8716fc2 (in-flight getQuote before defineRoom in the one trace; stamp ruled out); no N number. Void on closed bill refused server-side, no defect. For product: vi ask dialog has Void and Cancel both 'Huỷ'. QA resume: full suite on current main first (G31/G13/G3/G5–G7 will break old specs), then file stay-history-merge and Clean/Dirty cases, then suite-wide rrweb capture.
 - 2026-09-25 — dev: **SetRoomType landed, G8's debt closed** (solex `c8b3528`, staging `e8ec202d`, 419 green). Select on every row of the Setup rooms table; allowed with a guest in the room (product's ruling — the nights already carry their price, a type after the sale is a label and tomorrow's bucket); versions `availability:all`, proved by a scenario watching the double go to 0 and the suite to 1 through `freeByType`; unknown and retired types are one refusal. **Wart flagged:** `setup.roomTypeInvalid` (product's spelling, SetRoomType) vs `room.typeUnknown` (defineRoom) — two codes for one fact, unruled. **Dev at a clean stop for compaction; resume note below.**
 - 2026-09-25 — BookingSource accepted (both landings, walk-in default, 414 green, staging c35d5e23). Numbering corrected: this is G30 + product §3, not G28 (G28 = company defaultRouting, still in the order). Dev's shared command-id fix is the likely cause of QA's define-room silent drop; QA re-verifying. Dev → SetRoomType.
@@ -1430,7 +1431,12 @@ pending.
   flight took the first's id and the server answered it as a repeat: nothing
   written, nothing refused, `ok` back. Now reused only when the attempt went
   unanswered and nothing else is waiting. `retryId` extracted + unit-tested.
-  Offered as the candidate for QA's (a); QA re-verifying on `c35d5e23`.
+  **Confirmed by QA on `8716fc2`** (seed 3/3 with the retry removed, S5-41
+  define passed); architect closed it with no N number. Their pre-fix trace
+  shows a `getQuote` from /bookings just before the /setup define — that call
+  is a read and does not take the retry slot, so the trace is consistent with
+  the diagnosis rather than proof of it. Recording that here in case it comes
+  back.
 - **SetRoomType** (`c8b3528`) — the G8 debt closed. Select on every row of the
   Setup rooms table; allowed with a guest in the room (product's ruling);
   versions availability, proved through `freeByType`; unknown and retired are
