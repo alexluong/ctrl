@@ -1408,7 +1408,7 @@ name for the calendar). Tail after those: G4, G8, G10, G12, G19, G21, G26.
 - `pnpm deploy` failed once with a Cloudflare 7403 on the D1 migrate step and
   worked on an immediate retry. Nothing changed in between.
 
-## solex-dev — 5.7 resume note (build from solex `e85263b`, staging `ee15dcb2`, 481 green)
+## solex-dev — 5.7 done, 5.8 begun (build from solex `a6df655`, staging `fbc74cdf`, 488 green)
 
 Kept current at the landing. Both repos pushed, tree clean, build clean,
 biome at the 4-warning baseline. **Migration 0019** (`booking_rules`) applied
@@ -1527,7 +1527,14 @@ stands on its own merits.
 
 **5.7 is complete.** Every C row in ux.md §6 is built.
 
-**Next: 5.8, the approval flow** (product.md §11 Approvals, ux.md G34-the-5.8-row
+**5.8 landing 1a — `RepriceCharge`** (`a6df655`). The only discount there is:
+void + repost at the agreed price, one batch, both lines on the bill, and
+**revenue moves with it** — which is the point of not having a discount
+field. `repricedFrom` ties the two lines. Refuses the price it already has;
+reason required. Owner only on `folio.void` until landing 3 turns it into
+Xin duyệt for the desk. `Ask` can carry a number beside its reason now.
+
+**Next: 5.8 landing 1b — the `Approval` aggregate** (product.md §11 Approvals, ux.md G34-the-5.8-row
 — note ux.md reuses the number "G34" for it, which is *not* the overbooking
 G34 just built). One rule: an owner-only money act the desk cannot do becomes
 a request from the same button. Desk's void / reprice / refund / write-off
