@@ -2,6 +2,8 @@
 
 Newest first. `date · commit · staging · cases · result · findings · blocking?`
 
+- 2026-09-24 · b531242 (e2e 9d2eaa4) · 7cfb5ced (not walked) · full e2e 96: all pass except S5-12a, S5-12b/c (N24, N25, queued for dev after compaction) · night-roll cron + HotelProfile backend: no regression; no case asserts an unposted night, so the hourly roll cannot race the suite · N
+
 - 2026-09-24 · 624b7dd (e2e e620c3f) · fd74a805 (not walked) · full e2e 96: all pass except S5-12c · S5-15 **pass** (N23 closed); new S5-12a, S5-12b, S5-12d ×2 pass; master closes with the booking (folio.closed + ledger.account_closed, both in events) and a payment on it is refused `ledger.accountClosed` · **N24** after Finish, the group bill on the booking page still shows its payment form (a closed stay folio hides its forms and says `folio.closed`); the form is only refused on submit · N (the ledger refuses; screen only)
 
 - 2026-09-24 · 624b7dd (e2e 9d2eaa4) · — · S5-12a, S5-12b re-specified · **fail** as expected · **N25** (architect ruling) the group page hides Finish while a room is open or the bill owes and copies both checks into the screen; Finish must stay pressable and the refusal say why (S0-5/N4). To dev with N24, after its re-brief · N
