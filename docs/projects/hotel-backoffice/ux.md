@@ -258,7 +258,7 @@ Conventions: `[Button]` fires a command, `(select)` `[_____]` inputs, `→ /rout
 ```
 No sign-up, no "forgot password" (owner resets, 4.13). Error text under the form. **Familiar to:** ezFolio login (username · password, vendor branding). Same shape.
 
-### 4.2 Room map `/` — home, receptionist's first screen
+### 4.2 Room map `/` — the desk's home (product.md §3 Home & inbox: the map *is* the desk's to-do list; no inbox)
 
 ```
 ┌ Sơ đồ phòng ───────────────────────────────── ● trống sạch ● bẩn ● ngừng SD ● đang ở ┐
@@ -517,7 +517,7 @@ Commands: `DefineRoomType` / `RetireRoomType` (refused `roomType.inUse`) · `Def
 **Familiar to:** ezFolio user admin under Hệ thống (not walked). Same idea; ours splits account from position (product.md §2).
 Role select on a row with no position → `AddStaff`; with one → `ChangeStaffRole` (refused `staff.lastOwner`) · `Reset password` → `ResetPassword` (ends sessions) · `Mark as former staff` → `DeactivateStaff` · `Bring back` → `ReactivateStaff` · `Create` → `CreateUser`. Built matches; prompt dialog for the new password (§6).
 
-### 4.14 Dashboard — in progress (5.3), Back Office home
+### 4.14 Owner home — Dashboard (in progress, 5.3) + Needs attention (spec'd, product.md §3 Home & inbox)
 
 ```
 ┌ Hôm nay 24/09 ───────────────────────────────────────────────────────────────────────┐
@@ -525,9 +525,15 @@ Role select on a row with no position → `AddStaff`; with one → `ChangeStaffR
 │ Tiền vào hôm nay: tiền mặt 2,400,000 · CK 1,800,000 · thẻ 0   │ Doanh thu đã ghi 5,600,000 │
 │ Công nợ công ty: 5,700,000 (2 công ty)   │ Chi hôm nay 450,000                        │
 │ 7 ngày tới: T4 60% · T5 75% · T6 90% · T7 95% · CN 70% · …    (forward book)         │
+├ Cần xử lý (4) ─ nav badge shows the same count ──────────────────────────────────────┤
+│ ⏰ Cty XYZ nợ 1,200,000 quá 30 ngày (từ 12/08)             → /receivables?company=xyz │
+│ ⛔ Phòng 305 ngừng sử dụng 9 ngày (AC hỏng)                 → /rooms/305              │
+│ 🛏 Cty ABC: 2 phòng chưa xếp, đến ngày mai                  → /bookings/:id           │
+│ 💸 Phòng 301 quá ngày đi, còn nợ 350,000                    → /stays/:id             │
+│ ✋ (later) Lễ tân xin huỷ dòng 30,000 — Minibar, lý do …    [Đồng ý] [Từ chối]        │
 └──────────────────────────────────────────────────────────────────────────────────────┘
 ```
-All reads over existing projections (Night, RoomBoard, ledger balances). Owner-only as a whole (architect's ruling, Q3 resolved). **Familiar to:** none as a page; the numbers come from ezFolio's room-map count buttons and the tape chart's bottom rows, so the top row should reuse those labels (Đang ở · Dự kiến đến · Dự kiến đi · Trống bẩn · Phòng sửa). Reports (revenue by category / method, occupancy over time, guest history) hang off this page, same slice.
+All reads over existing projections (Night, RoomBoard, ledger balances). Owner-only as a whole (architect's ruling, Q3 resolved). **Needs attention** = the `NeedsAttention` projection (product.md §3, §7): one row per open fact, clears itself when the fact stops being true, no dismiss; each row links to the screen that fixes it; thresholds (30 days receivable, 7 days OOO) in Setup rules. The approval row is the parked flow (product.md §8): grant / decline here, the desk sees the state on the bill line. Nothing here sends a message; notifications are a later async consumer over the same events (product.md §8). Additive per D-27: ezFolio has no inbox, and the dashboard's top rows stay where they are. **Familiar to:** none as a page; the numbers come from ezFolio's room-map count buttons and the tape chart's bottom rows, so the top row should reuse those labels (Đang ở · Dự kiến đến · Dự kiến đi · Trống bẩn · Phòng sửa). Reports (revenue by category / method, occupancy over time, guest history) hang off this page, same slice.
 
 ### 4.15 System `/system` (operator footnote)
 
@@ -622,6 +628,7 @@ Grouped for dev's 5.6 polish list. **P** = polish (small, no model change; slice
 | # | gap | kind | familiarity |
 |---|---|---|---|
 | G23 | Dashboard (4.14) | in progress (5.3) | n/a |
+| G33 | Owner home: Needs attention list + nav badge (`NeedsAttention` projection, product.md §3) | C (spec'd, after 5.3 dashboard) | n/a — additive, nothing moves |
 | G24 | Reports: revenue by category / method, occupancy over time | in progress (5.3, after dashboard) | mid — Báo cáo doanh thu |
 | G25 | Receivables: statement lines link to their stay / booking; settled companies under a toggle | P | high — receivables rows are bookings there |
 | G26 | Expenses: default range = current month | P | mid |

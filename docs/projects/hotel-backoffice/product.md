@@ -73,6 +73,29 @@ Screen → actions → command. Immediate scope only; capability in brackets whe
 | **Expenses** | record, void; by category / period |
 | **Reports** [owner] | revenue by category / source / method; occupancy over time; guest history |
 
+### Home & inbox (Alex 2026-09-24: "have we thought about notification? … or at least a home page?" — answer was no; this is the spec, additive per D-27: ezFolio has no inbox, nothing moves)
+| persona | home | shows |
+|---|---|---|
+| **desk** | Room map (§4) | tiles + today strip = status buttons with live counts (arrivals · departures · in-house · dirty · OOO; ux.md G6). No inbox: the map *is* the desk's to-do list. |
+| **owner** | Dashboard (§7 `DashboardToday`) + **Needs attention** list | numbers on top, list below; nav shows a badge = open `NeedsAttention` rows. |
+
+**`NeedsAttention`** = a projection over facts already in the log, one row per item, cleared when the fact stops being true (never "dismissed"; if the owner wants it gone, they fix it). Thresholds live in Setup `BookingRules` with defaults:
+```ts
+type AttentionItem = {
+  kind: 'receivable.aged' | 'room.ooo_long' | 'stay.unassigned_tomorrow' | 'stay.overstay_balance' | 'approval.pending'
+  subject: { stayId?: StayId; bookingId?: BookingId; roomId?: RoomId; companyId?: CompanyId; approvalId?: ApprovalId }
+  since: LocalDate; amount?: Money; detail: string   // detail rendered read-side from ids; never PII in the row (D-20)
+}
+```
+| kind | true when | default | fed by |
+|---|---|---|---|
+| `receivable.aged` | company open amount unpaid for > `receivableAgeDays` | 30 days | `Receivables` |
+| `room.ooo_long` | room out of order for > `oooDays` | 7 days | `room.taken_out_of_order` / `returned_to_service` |
+| `stay.unassigned_tomorrow` | stay booked, no room, arrives tomorrow or today | – | `StayNights` (rows with no room) |
+| `stay.overstay_balance` | stay checked in, depart date < today, folio balance > 0 | – | `StayNights`, `FolioView` |
+| `approval.pending` | an `approval.requested` with no grant / decline (§8 Later) | – | `approval.*` |
+Owner-only in v1 (dashboard ruling); the desk's share of these (unassigned tomorrow, overstay) is already visible on the calendar and the map. Nothing here sends anything; see Notifications (§8).
+
 ### Setup app [owner]
 CRUD per Setup item (§6), retire not delete. Users + roles management.
 
@@ -381,14 +404,27 @@ Every screen reads a projection; projections are rebuilt from events (§12). Syn
 | **Expenses** | by category × period | `expense.*` | Back Office |
 | **GuestHistory** | per guest: visits, nights, spend | `stay.*`, `ledger.*` | guest page |
 | **History** | per room / stay / folio: events with actor + time | all | "Show log" tabs (audit) |
+| **NeedsAttention** | one row per open item (§3 Home & inbox): aged receivable, long OOO, unassigned arriving tomorrow, overstay with balance, pending approval | `Receivables`, `room.*`, `StayNights`, `FolioView`, `approval.*` | owner home list + nav badge count |
 
 Later: WaitingList (unassigned stays), Breakfast list, PA18 export, CommissionByChannel, Deposits ledger.
 
 ## 8. Scope
 
 **v1:** Setup (onboarding, prices, catalogues, rules, users/roles) · individual + group booking with inline availability · assignment now or later · tape chart + room map · check-in/out · guests per stay (ID optional) · one charge flow over Setup-defined categories · folio own/master + routing · payments cash / transfer / card-method, deposits, refunds · receivables by company · room hk state + OOO · dashboard, revenue / occupancy / receivables reports · expenses · history/audit tabs · folio print · search.
-**Later:** **cash handover / day close** (today: manual — desk collects the day's cash and hands it to the owner daily; Alex 2026-09-24: "not sure how to handle this, may need a discussion with team"; candidate shape = `CloseShift {cashCounted}` → expected cash-in since last close vs counted, variance event, owner-visible; the Ledger already has the cash account so it is a report + one command; needs client conversation first) · OTA support (commission, gross/net, sync) · discount approvals · VAT / red invoice · receivable due dates · group label/color · registration card print · PA18 export · breakfast / pickup lists · thank-you email · merge stay into group · inspected hk state · custom roles · per-staff activity report · multi-currency beyond USD display.
+**Later:** **cash handover / day close** (today: manual — desk collects the day's cash and hands it to the owner daily; Alex 2026-09-24: "not sure how to handle this, may need a discussion with team"; candidate shape = `CloseShift {cashCounted}` → expected cash-in since last close vs counted, variance event, owner-visible; the Ledger already has the cash account so it is a report + one command; needs client conversation first) · OTA support (commission, gross/net, sync) · **approval flow** (shape pinned below; nothing in v1 changes) · VAT / red invoice · receivable due dates · group label/color · registration card print · PA18 export · breakfast / pickup lists · thank-you email · merge stay into group · inspected hk state · custom roles · per-staff activity report · multi-currency beyond USD display.
 **Never:** card data · restaurant POS · hk staff scheduling · key cards · hourly / day-use.
+
+**Approval flow (parked, shape pinned 2026-09-24 so the log is ready for it).** Tier a, stream `<hotelId>/approval:<id>`.
+```ts
+type ApprovalKind = 'discount' | 'void' | 'refund' | 'writeOff'
+type RequestApproval  = { kind: ApprovalKind; subject: { stayId?: StayId; folioId?: FolioId; chargeId?: ChargeId; receivableId?: ReceivableId }; amount: Money; reason: string }   // desk; needs the capability of the underlying command's *request* variant
+type GrantApproval    = { approvalId: ApprovalId }                 // owner
+type DeclineApproval  = { approvalId: ApprovalId; reason: string } // owner
+// events: approval.requested {kind, subject, amount, reason} · approval.granted · approval.declined {reason} · approval.expired {cause: 'checked_out'}
+```
+Rules: one open request per subject (`approval.alreadyOpen`); on grant the original command runs **in the same batch** with `approvalId` as evidence in its payload (e.g. `folio.charge_voided {…, approvalId}`), actor = the owner, `causationId` = the grant; decline just records; an open request **expires at check-out** of its stay (`approval.expired`, emitted by `CheckOut`'s reaction) — nothing is ever silently applied after the guest left. The desk sees request state on the stay page (bill line badge: "awaiting owner" / "declined: reason"); the owner sees it as `approval.pending` in Needs attention. Capabilities when built: `approval.request` (desk bundle), `approval.decide` (owner). v1: owner does the void / refund / write-off directly; a receptionist who needs one calls.
+
+**Notifications (deferred, one paragraph).** Anything that leaves the app — Zalo, Telegram, email, SMS — is an **async cursor consumer** over the same event log (`WHERE seq > last_seq`, D-8 clarification iv), never inline in a command, never a source of truth: the log says what happened, the consumer decides whom to tell. Sits in the Hookdeck / Queues slot D-8 already reserves for "slow or external consumers". First candidates when the client asks: `approval.requested` → owner's Zalo; `NeedsAttention` new row → owner daily digest; `stay.checked_in` → nothing (the map shows it). Payloads carry ids, the consumer resolves names at send time (D-20). Not designed further until the approval flow or a client ask forces it.
 
 ## 9. Dependencies on WS2 / for other WSs
 
@@ -476,7 +512,7 @@ Command = one intent. `needs` = capability. `checks` = rules beyond "hotel match
 | ~~`DisableUser`~~ **deferred** | – | identity ≠ access: `DeactivateStaff` ends the position and live sessions, so an account with no membership signing in to an empty shell is harmless. If a lock is ever needed: `disabledAt` on the account checked at sign-in, never a delete (D-18 built note). |
 | `AddStaff {userId, role}` / `ChangeStaffRole {userId, role}` / `DeactivateStaff` / `ReactivateStaff` | `users.manage` | `staff.added / role_changed {role, from} / deactivated / reactivated` — refuse `staff.lastOwner`, `staff.alreadyStaff` |
 
-~40 commands. Screens (§3) are compositions of these; nothing in the UI does what a command can't.
+~40 commands. Screens (§3) are compositions of these; nothing in the UI does what a command can't. Parked with shape pinned (not built, not in the count): `RequestApproval` / `GrantApproval` / `DeclineApproval` (§8).
 
 ## 11a. Slice 1 payloads — occupancy loop (pinned 2026-09-23 for dev; walk-in individual only)
 
