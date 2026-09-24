@@ -1,4 +1,5 @@
 # Team log
+- 2026-09-24 — dev: **5.4 deposits + N27** (solex `755e585`, staging `d8da2b08`, 365 green). MarkNoShow (own status, frees nights, folio stays open, refused before the hotel day turns over). ForfeitDeposit: owner-only `folio.forfeit`, reserved system category `depositForfeit`, capped at taken − refunded − kept, allowed only once the booking is over. A refund or forfeit that leaves a cancelled/no-show folio at zero closes it in the same batch — `write()` now targets one account's stream. N27 fixed: the range report fills every night in `[from, to)` and shows rooms-in-service per row. Note: I sorted imports in QA's `e2e/specs/reports.spec.ts` — `biome ci` was red on it, mechanical only.
 - 2026-09-24 — solex-qa 5.3 run 105/106; N26 closed; N27 occupancy denominator → dev with 5.4.
 - 2026-09-24 — product: approvals 5.8 spec (e1b86a4) — kinds void/reprice/refund/forfeit/writeOff, request from the same button, owner card, grant re-checks + runs in one batch, expiry reactions; 5.4 §11 corrections (0b0d0df). Architect accepted → **D-28**; dev slice order now …5.6 polish → 5.7 command coverage → 5.8 approvals.
 - 2026-09-24 — dev 5.4 plan; architect ruled: forfeit owner-only, system category depositForfeit, ceiling, cancelled/no-show only, MarkNoShow in 5.4, close folio at zero same batch. Product fixes §11.
@@ -1185,3 +1186,35 @@ instead, so `report.rangeInvalid` arrives as a code the page can say rather than
 it, and no screen records one — so by-source is a single "not recorded" row today. Same shape as G28.
 
 **Next**: 5.4 deposits, unless architect reorders.
+
+## solex-dev — 5.4: deposits, no-shows, and the bill closing behind them (solex `755e585`, staging `d8da2b08`)
+
+365 green. Built to architect's six rulings; the plan message listed what §11 left open and every
+answer came back before I wrote any of it.
+
+**MarkNoShow** is its own status rather than a cancellation with a note — the hotel held a room all
+night and nobody slept in it, which is a different fact about the guest and a different line in a
+report. It frees the nights, touches availability, can end a booking, and deliberately leaves the
+folio open: the deposit still has to be given back or kept, and that decision comes after this one.
+Refused until the hotel's day has turned over, because an empty room at six in the evening is a guest
+running late.
+
+**ForfeitDeposit** is a charge, not a payment. The money moved when the deposit was taken; what
+changes is that the hotel earned it. Owner-only under the new `folio.forfeit`, posted against a
+reserved `depositForfeit` revenue category — reserved for the same reason `room` is, so its line in
+the revenue report means exactly one thing and cannot also contain whatever somebody typed.
+
+The ceiling is deposits taken − refunded − already kept. Refunds are not tagged as refunding a
+deposit rather than a settlement, so every refund counts against it: the cautious direction, which
+can only refuse a forfeit that might have been allowed, never allow one that keeps money the hotel no
+longer holds. Written down in the read's own comment.
+
+**Close-at-zero.** A cancelled stay never checks out, so nothing else would ever close its folio.
+`write()` learned an optional `closes` for one account's stream — "this folio is closed" does not
+belong on the cash drawer's stream or on revenue's.
+
+**N27** (QA): the range occupancy report averaged over the nights that sold rather than the nights in
+the range, so a one-room hotel that sold two of four nights read 100%. The domain now fills every
+night in `[from, to)`, and the table shows rooms-in-service per row so the percentage is checkable.
+
+**Next:** 5.5 folio print.
