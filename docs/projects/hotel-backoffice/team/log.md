@@ -1,4 +1,5 @@
 # Team log
+- 2026-09-24 — dev: **5.3 landing 1 — dashboard** (solex `b789aa8`, staging `76130ae7`, 344 green). Occupancy (out-of-order rooms leave the denominator), arrivals expected/arrived, departures due/left, in-house, revenue sold today (voids excluded from the charge's own business date, wherever the void happened), money taken split deposits/settlements/refunds, seven nights forward. Owner-only; `auth.forbidden` mapped to data so a read's refusal is a card, not an error page. Reads in `store/reports.ts`, projections only. **Answer for product: `Company.defaultRouting` has no Setup control — never built, not a deliberate per-stay-only choice.** `folio/routing.ts` reads it as precedence step 2, landing 2 shipped only the per-stay override, and the `/setup` comment promising it "in 5.1" is stale. Small job (routing row per charge category on the company form); architect's call which slice.
 - 2026-09-24 — Alex: staff not tech-savvy, keep the UX similar-ish to ezFolio; Vietnamese wording iterates with the client, not a gate → **D-27**. Product to re-check ux.md against ezFolio screens; 5.6 ordered by familiarity; VN wording flag closed.
 - 2026-09-24 — product: ux.md review fixes applied (e2ff980): G29 = BookingRules only, G23/24 wip, C = 5.7 command coverage (G14/15/16/20/22/28/29/30), board self-check (467 elements, zero overlaps). Final; with Alex.
 - 2026-09-24 — product: ux.md + solex-ux board first complete draft (9c132b6). Architect review: G29 stale (HotelProfile built), G23/24 in progress, §11-command F rows are v1 scope → new 5.7 command-coverage pass after 5.6; board needs a bounds check. README pointer + Alex flag added.
@@ -1102,3 +1103,39 @@ in a zone renders the day before.
 re-renders every timestamp on the page without a reload.
 
 **Next:** 5.3 dashboard / reports.
+
+## solex-dev — 5.3 landing 1: the dashboard (solex `b789aa8`, staging `76130ae7`)
+
+344 green. Owner only, `reports.view`, business dates from the profile throughout.
+
+**What it shows.** Occupancy (sold / sellable tonight), arrivals split into arrived and still
+expected, departures split into gone and still in, in-house, what was sold today, what was actually
+taken (deposits and settlements), what was given back, and seven nights forward with what is already
+sold against today's sellable rooms.
+
+**Three rulings I made and would like checked.**
+
+1. A void is excluded from the business date the *charge* carries, wherever the void happened.
+   Counting it against today would make a closed day's revenue move after the fact, which is the
+   thing a business date exists to prevent (D-7).
+2. A room out of order leaves the occupancy denominator. Occupancy measured against rooms nobody can
+   let reads as a bad night every time something breaks.
+3. Refunds are shown beside money taken, not netted out of it. "Took 700k, gave back 100k" is a
+   truer day than "took 600k", and the schema already treats a refund as its own kind rather than a
+   negative payment.
+
+**The capability on a read.** `reports.view` throws in the domain like every other capability. A
+command turns that into `{ok:false, code}`; a loader that throws is an error page, which is the wrong
+answer for "this page is not yours". So the adapter maps that one refusal to data and the page shows
+Setup's owners-only card. Everything else still throws.
+
+**Reads.** `src/server/store/reports.ts` — `chargeTotal`, `paymentTotals`, `nightsSold`. All sums
+over a half-open `[from, to)` business-date range, all against projections, never the log (D-22 (a)).
+`nightsSold` counts `stay_nights`, the same table the calendar grid draws, so the dashboard and the
+grid cannot disagree about who is in tonight.
+
+**No ezFolio counterpart** for this page (D-27) — the reference shots are the range reports, whose
+shape (date range, "summarise by", table, totals row) landing 2 will follow.
+
+**Next:** landing 2 — revenue by category / source / method, occupancy over time, both over a
+business-date range.
