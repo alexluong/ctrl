@@ -217,15 +217,15 @@ Owner only. The dashboard is today. Revenue and occupancy take a range [from, to
 | S5-34 | Desk marks a stay booked for yesterday as nobody came | status no-show, the closed line for it; its nights freed; the deposit still on the bill and the keep form offered | no-show leaves the folio open | e2e deposits "S5-34"; marking twice is silent: scenario | 755e585 pass |
 | S5-35 | Owner on a cancelled stay with a 200 000 deposit keeps nothing typed, 250 000, then 50 000, then 150 001; refunds 150 000 | amount missing; too large; kept (credit 150 000 left); too large; refund brings it to zero and the bill closes with no forms left; revenue for today +50 000 | ceiling = taken − refunded − kept; close at zero | e2e deposits "S5-35" | 755e585 pass |
 | S5-36 | A tampered charge form posts the deposit-kept category | not offered in the list; refused `folio.categoryReserved` | reserved category, like room | e2e deposits "S5-36" | 755e585 pass (wording of the refusal speaks only of room charges: sent to product) |
-| S5-37 | Owner keeps the deposit on a cancelled group's bill | the same form on the group bill; the bill closes at zero | 5.4 | e2e deposits "S5-37" (fixme) | 755e585 **blocked** (N28: no screen cancels a group booking, and the group bill takes settlements only. Architect: intended, parked until ux G19 (deposit kind on the group bill, 5.6) and G14 (cancel booking screen, 5.7) land) |
+| S5-37 | Owner keeps the deposit on a cancelled group's bill | the same form on the group bill; the bill closes at zero | 5.4 | e2e deposits "S5-37" (fixme) | e85263b pass (N28 closed: G14 cancels a group, G19 takes a deposit on its bill; e2e cancel-booking) |
 | S5-38 | Revenue report over everything, with a kept deposit in it | the kept deposit appears as its own category line; the category reconciliation (S5-27) still matches the charges table | forfeit is a charge on a reserved category | e2e reports-range "S5-27" (runs after deposits) | 755e585 pass |
 
 Drafted for G14 (5.7), from the N28 ruling:
 
 | ID | who / what they do | what they should see | rule | automated by | last run |
 |---|---|---|---|---|---|
-| S5-39 | Desk cancels a group booking whose rooms are all still booked | every still-booked stay cancelled in one batch; booking cancelled; the group bill stays open for a refund or a kept deposit and closes at zero | architect N28 ruling | todo | — |
-| S5-40 | Desk cancels a group booking with one room checked in | refused `booking.stayCheckedIn`; nothing cancelled | same | todo | — |
+| S5-39 | Desk cancels a group booking whose rooms are all still booked | every still-booked stay cancelled in one batch; booking cancelled; the group bill stays open for a refund or a kept deposit and closes at zero | architect N28 ruling | todo | e85263b pass (e2e cancel-booking) |
+| S5-40 | Desk cancels a group booking with one room checked in | refused `booking.stayCheckedIn`; nothing cancelled | same | todo | e85263b pass (e2e cancel-booking) |
 | S5-41 | Owner voids a line on a checked-out guest's closed bill | refused with a reason on screen; no `folio.charge_voided` event (the Void button stays pressable, N25) | same | pass a204175 | e2e `void-closed.spec.ts` |
 
 
@@ -240,7 +240,7 @@ Architect rulings of 2026-09-25: the stay's history is one stream, the stay's ow
 | S5-44 | Desk moves a minibar line from one in-house room's bill to another's (G16) | the same line on the other bill, nothing struck through on the first; both balances move; revenue for the day unchanged; the history says "moved to another bill" | a move, not a void and repost | e2e move-history "S5-44" | 30dbec5 pass |
 | S5-45 | Desk tries to move a room night onto another guest's bill | refused `error.folio.roomChargeStays`; bill unchanged | a night stays with its stay | e2e move-history "S5-45" | 30dbec5 not settled (timed out under machine load) |
 | S5-46a | In a group, desk moves the guest's minibar line to the group's bill | the guest owes 0; the group's bill owes the night plus the minibar | stay ↔ master allowed both ways | e2e move-history "S5-46a" | 30dbec5 not settled (machine load) |
-| S5-46b | In a group, desk moves the room night from the group's bill to the room's | the group's bill owes 0; the room's bill owes the night | same | e2e move-history "S5-46b" | 30dbec5 **fail** (**N36**: the group's bill offers no Move; `master-folio` passes no move targets) |
+| S5-46b | In a group, desk moves the room night from the group's bill to the room's | the group's bill owes 0; the room's bill owes the night | same | e2e move-history "S5-46b" | e85263b pass (N36 fixed b4e501e) |
 | S5-47 | Desk confirms a move twice in one tick | moved once, no refusal | D-12 (f) | e2e move-history "S5-47" | 30dbec5 not settled (machine load) |
 
 ### 5.7 people (G22, solex fc17274)
@@ -248,7 +248,43 @@ Architect rulings of 2026-09-25: the stay's history is one stream, the stay's ow
 | ID | who / what they do | what they should see | rule | automated by | last run |
 |---|---|---|---|---|---|
 | S4-27 | Desk edits a guest's phone and nationality on their page | saved; "Guest details changed" in their history; the values stay after a reload | G22 | e2e people "S4-27" | 30dbec5 pass |
-| S4-28 | Desk saves an ID number with no type, then a type with no number | "Say which kind of ID that number is" on the page; then `error.guest.idDocIncomplete`; nothing recorded | page answers shape, domain answers the rule | e2e people "S4-28" | 30dbec5 **fail** (**N35**: type without number comes back "Một số thông tin không hợp lệ." — the schema refuses the empty number before the domain can) |
+| S4-28 | Desk saves an ID number with no type, then a type with no number | "Say which kind of ID that number is" on the page; then `error.guest.idDocIncomplete`; nothing recorded | page answers shape, domain answers the rule | e2e people "S4-28" | e85263b pass (N35 fixed b4e501e) |
 | S4-29 | A guest who stayed is erased | their page offers no form; the stay row and its link remain; their name appears nowhere | erasure keeps the facts, drops the person | e2e people "S4-29" | 30dbec5 pass |
 | S4-30 | Desk opens a booking's contact from the people list | a contact form (with company, no ID fields); no "where they stayed" list | contacts are not guests | e2e people "S4-30" | 30dbec5 pass |
+
+### 5.7 correcting a booking, nights, setup after the fact (G14 landing 2, G15, SetRoomType, G28, G29)
+
+| ID | who / what they do | what they should see | rule | automated by | last run |
+|---|---|---|---|---|---|
+| S5-48 | Desk moves a group booking to another contact and a company, then saves it unchanged | "moved to another party" in its history; the unchanged save is a quiet notice and records nothing | G14 | e2e cancel-booking "S5-48" | e85263b pass |
+| S5-49 | Desk saves a booking's notes | kept after a reload; "notes changed" in its history | G14 | e2e cancel-booking "S5-49" | e85263b pass |
+| S5-50 | Desk adds two rooms to a group, then takes one off (first with nothing picked, then with no reason) | 3 stays; "pick at least one room"; "say why"; then one fewer booked room, two history lines | G14 | e2e cancel-booking "S5-50" | e85263b pass |
+| S5-51 | Desk adds a night at a typed rate to a booked stay and re-prices another to 0, then types 12.5 | the night at 450 000; the free night at 0; "nights changed" and "night price set"; 12.5 refused on the page | G15 | e2e nights "S5-51" | e85263b pass |
+| S5-52 | Desk gives back a middle night, adds a detached one, then gives back down to the last | `nightsNotContiguous` twice; the last night cannot go (`nightsRequired`) | G15 | e2e nights "S5-52" | e85263b pass |
+| S5-53 | Desk re-prices or gives back tonight after check-in | `nightPosted` both times; the bill unchanged | G15 | e2e nights "S5-53" | e85263b pass |
+| S5-54 | Desk adds a night whose room is sold to the next guest | `stay.roomTaken` | G15 | e2e nights "S5-54" | e85263b pass |
+| S5-55 | Owner puts a room under a new type from Setup | the type shows after a reload; "room type changed" in the room's history | SetRoomType | e2e setup-changes "S5-55" | e85263b pass |
+| S5-56 | Owner sets a company's minibar to the group's bill; a group for that company posts minibar | the guest owes nothing; the group's bill owes the night plus the minibar | G28 | e2e setup-changes "S5-56" | e85263b pass |
+| S5-56b | Owner puts that category back to "the usual" | saved without a refusal; the agreement withdrawn | G28 | e2e setup-changes "S5-56b" | e85263b pass |
+| S5-57 | Owner turns off auto-dirty; a guest checks out | the room is not marked dirty | G29 | e2e house-rules "S5-57" | e85263b pass |
+| S5-58 | With an ID required, desk checks in with no ID, then one CCCD between two guests | `stay.idRequired`; half an ID refused on the page; then checked in, the number on that guest's page | G29 | e2e house-rules "S5-58" | e85263b pass (**N37** fixed 7279fc1: check-in had no ID field, so the rule bricked check-in) |
+| S3-34 | Desk submits Add-to-bill twice in one tick | posted once, no refusal | D-12 (f) | e2e money-loop "S3-34" | e85263b pass (N33 fixed 46a699e) |
+
+### 5.8 group routing, needs attention, availability (G32, G33, G34, G35)
+
+| ID | who / what they do | what they should see | rule | automated by | last run |
+|---|---|---|---|---|---|
+| S5-59 | Room 1's minibar set on its own page; the column swept to the group's bill; swept again | room 1 keeps its own (marked); room 2 moves; the column reads back the group's answer; the second sweep writes nothing | G32 | e2e group-routing "S5-59" | e85263b pass |
+| S5-60 | The column swept to the group's bill, then to the guest's | both rooms move each time; no "set for this room" mark | G32 | e2e group-routing "S5-60" | e85263b pass (**N38** fixed d37bae1: sweeps wrote per-room overrides, so rooms stuck) |
+| S5-61 | Room 1 set on its own; the column swept, then back to "as agreed" | room 1 keeps its own; room 2 back on the agreement | G32 (d37bae1 reading) | e2e group-routing "S5-61" | e85263b pass |
+| S5-62 | An individual booking | no group routing table | G32 | e2e group-routing "S5-62" | e85263b pass |
+| S5-63 | A guest arriving tomorrow (and a one-night arrival today) with no room | listed with a link; the badge equals the list; assigning the room removes it on the next load | G33 | e2e attention "S5-63", "S5-63b" | e85263b pass |
+| S5-64 | A room out of order past the threshold (event dated back) | listed with its reason; leaves when back in service | G33 | e2e attention "S5-64" | e85263b pass |
+| S5-65 | A checked-in guest whose departure is today still owes | not listed as an overstay | G33 | e2e attention "S5-65" | pending run (**N39** fixed d37bae1) |
+| S5-66 | A group asks for 3 of a 2-room type with 1 sold | refused "2 short on <night>"; "Take it anyway" books it; every stay's history records the override | G34 | e2e availability "S5-66" | e85263b **fail** (**N42**: the override event is stored but not shown in the stay's history) |
+| S5-67 | A type full this week; a booking of it next month | booked | G34: only added nights are checked | e2e availability "S5-67" | e85263b pass |
+| S5-68 | The only room of a fully-booked type is taken out of order | allowed | G34: supply never refuses | e2e availability "S5-68" | e85263b pass |
+| S5-69 | The same room booked twice for one night | `stay.roomTaken`, not overbooked | G34 | e2e availability "S5-69" | e85263b pass |
+| S5-70 | 3 adults in a room that sleeps 2; then 2 adults + 2 children | "That room sleeps 2. You have asked for 3." with no override; then booked | G35 | e2e availability "S5-70" | e85263b pass |
+| S5-71 | Owner looks for the overbooking rule in House rules | a refuse / warn / allow control | G34 | e2e availability "S5-71" | e85263b **fail** (**N40**: no control; only the default applies) |
 

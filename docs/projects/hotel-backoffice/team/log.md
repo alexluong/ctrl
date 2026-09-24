@@ -1408,7 +1408,7 @@ name for the calendar). Tail after those: G4, G8, G10, G12, G19, G21, G26.
 - `pnpm deploy` failed once with a Cloudflare 7403 on the D1 migrate step and
   worked on an immediate retry. Nothing changed in between.
 
-## solex-dev — 5.7 done, 5.8 begun (build from solex `a6df655`, staging `fbc74cdf`, 488 green)
+## solex-dev — 5.8 landing 1 done (build from solex `a0beb3c`, staging `3c208a6a`, 502 green)
 
 Kept current at the landing. Both repos pushed, tree clean, build clean,
 biome at the 4-warning baseline. **Migration 0019** (`booking_rules`) applied
@@ -1534,7 +1534,31 @@ field. `repricedFrom` ties the two lines. Refuses the price it already has;
 reason required. Owner only on `folio.void` until landing 3 turns it into
 Xin duyệt for the desk. `Ask` can carry a number beside its reason now.
 
-**Next: 5.8 landing 1b — the `Approval` aggregate** (product.md §11 Approvals, ux.md G34-the-5.8-row
+**5.8 landing 1 — the `Approval` aggregate** (`a0beb3c`, migration 0020).
+Five kinds; **the grant and the act are one batch** (the folio's and the
+receivables' write helpers take the approval's append and stamp `approvalId`
+onto what they write); the act is **re-decided at grant time**, and if it
+refuses now nothing is written and the request stays open; one open request
+per subject; requesting needs no capability of its own (whoever cannot run
+the command is who needs it) while deciding is the new owner-only
+`approval.decide`; an open request expires **in the same batch as the
+check-out that ended it**. 13 scenarios.
+
+**QA N40 / N41 / N42** (`e17d85b`) — the overbooking select joined House
+rules (now five dials, all read by something); a refusal's `date` detail is
+formatted like every other date; and the overbooking override's history line
+was present-but-unreadable (its payload is a type id and a list of dates, and
+the history prints an id only when the page can name it and dropped date
+lists entirely) — the stay page names room types now and a night list reads
+as its first night plus a count. **Told QA my N42 diagnosis may be wrong** and
+asked them to say so if the line is still absent.
+
+**Next: 5.8 landing 2** — the owner's card. `approval.pending` joins Needs
+attention, the row opens a card (what · who · amount · reason) with Duyệt →
+`GrantApproval` and Từ chối + reason → `DeclineApproval`. Then **landing 3**:
+the desk's Void / Reprice / Refund / write-off buttons render as **Xin duyệt**
+when the actor lacks the capability, with *đang chờ duyệt* / *từ chối: reason*
+badges on the line. (product.md §11 Approvals, ux.md G34-the-5.8-row
 — note ux.md reuses the number "G34" for it, which is *not* the overbooking
 G34 just built). One rule: an owner-only money act the desk cannot do becomes
 a request from the same button. Desk's void / reprice / refund / write-off
