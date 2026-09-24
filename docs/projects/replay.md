@@ -81,6 +81,27 @@ Other ideas (architect): TTS narration from captions; diff two replays of the sa
 3. Publish via Claude artifacts first; a self-hosted player on collielab only if needed.
 4. Dogfood on SoLex feature work.
 
+## Lab prototype (2026-09-25): `~/code/replay-lab`
+
+A working scratch prototype, local git only (no remote). Alex: "extremely similar to what I'm looking for"; the remaining gaps are UX (guided demo, like SoLex's player).
+
+- `node demo.js` films a tiny todo app (~23 s) → `out/todo-demo/` + `out/todo-demo.replay`.
+- **Recorder** captures five streams on one clock: rrweb DOM (every keystroke), console + uncaught errors, network (timing, headers, fetch/xhr bodies ≤64 KB), storage (cookie snapshots on change; local/session writes via an in-page `Storage.prototype` patch), steps (`say()`). Plus the Playwright trace.
+- **Player**: a single HTML file. Replay + caption on the left; Steps / Console / Network / Storage tabs on the right, following playback; clicking a row seeks; storage shows the state at the current time, rebuilt from its change log.
+- **`.replay` zip**: `manifest.json`, `rrweb.json`, `steps.json`, `console.json`, `network.json`, `storage.json`, `trace.zip`. Ours: manifest / steps / console / network / storage. rrweb's standard format: `rrweb.json`. Playwright's: `trace.zip`. For 23 s: ~37 KB of data; the trace is 377 KB of the 384 KB zip.
+- vs Playwright trace viewer: trace = snapshots around each action, a debugger UI, MB-sized. Here: continuous watchable replay, captions, synced devtools-like panels, trace optional.
+
+## Proposed SDK / DX (not built yet)
+
+- Packages: `@replay/core` (format, recorder, zip), `@replay/playwright` (capture adapter), `@replay/player`, `replay` CLI.
+- Ways in:
+  1. **Playwright fixture**: `use: { replay: 'on' | 'retain-on-failure' }`; `test.step` titles become markers automatically; optional `replay.say()`.
+  2. **`replay.attach(context)`** for scripts and agents.
+  3. **CLI**: `run`, `open`, `summarize`, `frame`, `publish`.
+- Don't wrap `click`/`type`. A **showcase mode** (slowMo + highlight injected on pointer-down + pause after `say()`) gives demo pacing without learning a new API.
+- LLM usage: writing = a library + a skill/instructions (LLMs write Playwright well). Reading needs tools: `summarize` (text timeline of steps + network errors + console + storage changes) and `frame --step N` (PNG), so an agent can check its own demo. MCP later, thin: `publish` / `list` for agents without a shell.
+- Hosted: upload the `.replay` zip → a link; a static player loads it; link-only by default, team-private later.
+
 ## Open questions
 
 - Name / repo.
