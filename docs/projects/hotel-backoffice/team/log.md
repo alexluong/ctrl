@@ -1,4 +1,5 @@
 # Team log
+- 2026-09-24 — dev: **5.6 G3 + G5–G7** (solex `32202ab`, staging `3f0afbcd`, 365 green). G3: no browser `prompt()`/`confirm()` left — one `<Ask>` native dialog, five sites. G5–G7: room map tiles carry type code + guest, eight status buttons with live counts filter it, tile click opens the Chi tiết panel (rate, dates, nights, guest, company, note, Còn lại, quick charge per Setup category, mark clean/dirty, links to stay + room). Counts and colours derived, never stored. **Dev at a clean stop for compaction; resume note below.** Next: G31 → G13 → G9 → G18/G25 → G1/G2.
 - 2026-09-24 — dev: 5.6 G3 landed (44c6c1a, staging c78cec1c): every browser prompt/confirm replaced by one native-dialog `<Ask>`; empty reason still refused by the rule. Accepted. Next G5–G7 room map as one commit; architect pointed dev at product's `diagrams/ezfolio-flow/room-map.html` for the count definitions and Chi tiết fields so one implementation serves both flows.
 - 2026-09-24 — dev: **5.5 print done** (solex e7f1dd1, staging d96ba0c4, 365 green). Architect accepted; ruled voided lines stay off the printout (paper = what is owed, reconciles with ledger). Dev → 5.6 polish, G3 first. QA: print cases after R1/R2.
 - 2026-09-24 — dev: **5.5 complete — the bill on paper** (solex `e7f1dd1`, staging `d96ba0c4`, 365 green). `/print/stay/<id>` + `/print/booking/<id>`, own routes, ezFolio report house style (letterhead / centred title / printed-on-by / lines / totals / three signatures), `@media print`, no VAT, no event. Voided lines are left off the printout (they are not owed and the totals already exclude them); charges − payments + refunds = balance, so the sheet reconciles with the ledger. Next: 5.6 polish in familiarity order.
@@ -1314,3 +1315,42 @@ The scaffolding is deleted; re-do it the same way if the sheet changes.
 **Nothing to unit-test here.** No new rule, no new state: the adapters compose
 existing reads and the sheet is markup. The coverage that matters is QA's — a
 bill with a deposit, a refund and a voided line, and the group sheet.
+
+## solex-dev — 5.6 resume note (build from solex `32202ab`, staging `3f0afbcd`)
+
+365 green, build clean, working tree clean, both repos pushed. No migrations in
+this stretch.
+
+### Landed in 5.6 so far
+
+- **G3** (`44c6c1a`) — `src/ui/ask.tsx`, a native `<dialog>`, replaces five
+  `prompt()`/`confirm()` calls: void a folio line, void an expense, reset a
+  password, erase a guest, erase a contact. Mounted only while the question is
+  open, so `onClose` can only mean no. It judges nothing (N14/N25 intact).
+- **G5–G7** (`32202ab`) — the room map. `getRoomMap()` and `getRoomPanel(id)`
+  in `src/server/api/rooms.ts`; `src/ui/room-panel.tsx`; `src/routes/index.tsx`
+  rewritten. The eight filters are one `FILTERS` record of predicates used
+  twice (count + filter) so they cannot disagree; they overlap deliberately
+  (leaving today counts as in house too), which is ezFolio's arithmetic and
+  product's mockup. Tile state is exclusive, most urgent first.
+- Also 5.5 before it: `e7f1dd1`, the printed bill.
+
+### Next, in architect's order
+
+G31 (check-out settle dialog + money strip) → G13 (search / list filters) →
+G9 (tape-chart per-type rows, grouping, 7/14/30) → G18 (folio shows category
+names, not ids) → G25 (receivables rows link to their stay/booking; settled
+companies behind a toggle) → G1/G2 (nav grouping, `/` = "Sơ đồ phòng", one
+name for the calendar). Tail after those: G4, G8, G10, G12, G19, G21, G26.
+
+### Worth knowing before picking it up
+
+- **Verifying UI without a dev server.** No port of mine is free and no agent
+  signs in, so both landings were eyeballed by rendering a static harness
+  (`src/styles.css` inlined into an HTML file) and shooting it with Playwright
+  from `e2e/` (the workspace that has it installed). Two real fixes came out of
+  it. Scaffolding is deleted each time; re-do it the same way.
+- **G8 is half done**: the define-a-room form is folded into a `<details>` on
+  the map. Moving it to Setup with a room-type select is still open.
+- `pnpm deploy` failed once with a Cloudflare 7403 on the D1 migrate step and
+  worked on an immediate retry. Nothing changed in between.
