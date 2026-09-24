@@ -280,11 +280,13 @@ Architect rulings of 2026-09-25: the stay's history is one stream, the stay's ow
 | S5-62 | An individual booking | no group routing table | G32 | e2e group-routing "S5-62" | e85263b pass |
 | S5-63 | A guest arriving tomorrow (and a one-night arrival today) with no room | listed with a link; the badge equals the list; assigning the room removes it on the next load | G33 | e2e attention "S5-63", "S5-63b" | e85263b pass |
 | S5-64 | A room out of order past the threshold (event dated back) | listed with its reason; leaves when back in service | G33 | e2e attention "S5-64" | e85263b pass |
-| S5-65 | A checked-in guest whose departure is today still owes | not listed as an overstay | G33 | e2e attention "S5-65" | pending run (**N39** fixed d37bae1) |
-| S5-66 | A group asks for 3 of a 2-room type with 1 sold | refused "2 short on <night>"; "Take it anyway" books it; every stay's history records the override | G34 | e2e availability "S5-66" | e85263b **fail** (**N42**: the override event is stored but not shown in the stay's history) |
+| S5-65 | A checked-in guest whose departure is today still owes | not listed as an overstay | G33 | e2e attention "S5-65" | e85263b pass (N39 fixed d37bae1) |
+| S5-66 | A group asks for 3 of a 2-room type with 1 sold | refused "2 short on <night>"; "Take it anyway" books it; every stay's history records the override | G34 | e2e availability "S5-66" | e17d85b **fail** (**N42**: the override event is on the stay's stream with stay.created's correlation id, but the page never shows it; N41 fixed e17d85b: the date in the refusal is formatted) |
 | S5-67 | A type full this week; a booking of it next month | booked | G34: only added nights are checked | e2e availability "S5-67" | e85263b pass |
 | S5-68 | The only room of a fully-booked type is taken out of order | allowed | G34: supply never refuses | e2e availability "S5-68" | e85263b pass |
 | S5-69 | The same room booked twice for one night | `stay.roomTaken`, not overbooked | G34 | e2e availability "S5-69" | e85263b pass |
 | S5-70 | 3 adults in a room that sleeps 2; then 2 adults + 2 children | "That room sleeps 2. You have asked for 3." with no override; then booked | G35 | e2e availability "S5-70" | e85263b pass |
-| S5-71 | Owner looks for the overbooking rule in House rules | a refuse / warn / allow control | G34 | e2e availability "S5-71" | e85263b **fail** (**N40**: no control; only the default applies) |
+| S5-71 | Owner looks for the overbooking rule in House rules | a refuse / warn / allow control | G34 | e2e availability "S5-71" | e17d85b pass (N40 fixed e17d85b) |
+| S5-72 | Overbooking set to "refused, by everybody"; the owner asks for 2 of a 1-room type | refused "1 short"; taking it anyway is refused too; nothing booked | G34 rule `refuse` | e2e availability "S5-72" | e17d85b pass |
+| S5-73 | Overbooking set to "anybody's to allow"; the owner takes 2 of a 1-room type anyway | booked; `stay.overbooking_overridden` on both stays (the flag is still required) | G34 rule `allow` | e2e availability "S5-73" | e17d85b pass (receptionist under `allow` not yet automated) |
 

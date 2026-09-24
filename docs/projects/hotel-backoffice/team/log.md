@@ -1408,7 +1408,7 @@ name for the calendar). Tail after those: G4, G8, G10, G12, G19, G21, G26.
 - `pnpm deploy` failed once with a Cloudflare 7403 on the D1 migrate step and
   worked on an immediate retry. Nothing changed in between.
 
-## solex-dev — 5.8 landing 1 done (build from solex `a0beb3c`, staging `3c208a6a`, 502 green)
+## solex-dev — 5.8 complete (build from solex `5603ad8`, staging `58d588e2`, 510 green)
 
 Kept current at the landing. Both repos pushed, tree clean, build clean,
 biome at the 4-warning baseline. **Migration 0019** (`booking_rules`) applied
@@ -1553,12 +1553,29 @@ lists entirely) — the stay page names room types now and a night list reads
 as its first night plus a count. **Told QA my N42 diagnosis may be wrong** and
 asked them to say so if the line is still absent.
 
-**Next: 5.8 landing 2** — the owner's card. `approval.pending` joins Needs
-attention, the row opens a card (what · who · amount · reason) with Duyệt →
-`GrantApproval` and Từ chối + reason → `DeclineApproval`. Then **landing 3**:
-the desk's Void / Reprice / Refund / write-off buttons render as **Xin duyệt**
-when the actor lacks the capability, with *đang chờ duyệt* / *từ chối: reason*
-badges on the line. (product.md §11 Approvals, ux.md G34-the-5.8-row
+**5.8 landing 2** (`41f2d3b`) — `approval.pending` is the first row of Needs
+attention, as a **card** with both answers on it: this is the one row on that
+page that is a question, and a person is at the desk waiting. Approve runs the
+act; Refuse asks why and the reason lands on the line.
+
+**5.8 landing 3** (`5603ad8`) — Void and Reprice read **"Ask the owner"** for a
+receptionist, same place, same reason field; the line then carries *waiting
+for the owner* / *the owner said no — reason*, and both buttons go while a
+request is open. **Refund and the receivables write-off are not converted** —
+still owner-only buttons with no Xin duyệt. That is the one piece of §11 still
+outstanding.
+
+**QA N42 is still open and my first diagnosis was wrong.** Ruled out with
+evidence: the event is in the log (QA), the read returns it (probe), and the
+component renders it from those exact inputs — proved by
+`src/ui/history.test.tsx`, **the first rendering test in this suite**
+(`renderToStaticMarkup`, no DOM, so it fits a server-only suite). What is left
+is between the read and the component on the real page; QA is checking whether
+the server-rendered loader payload contains the event.
+
+**Next:** Refund and write-off as Xin duyệt, to finish §11 — then there is no
+unbuilt row left in product.md's command catalogue. After that the queue is
+whatever architect or QA raises; nothing in ux.md §6 is outstanding. (product.md §11 Approvals, ux.md G34-the-5.8-row
 — note ux.md reuses the number "G34" for it, which is *not* the overbooking
 G34 just built). One rule: an owner-only money act the desk cannot do becomes
 a request from the same button. Desk's void / reprice / refund / write-off
