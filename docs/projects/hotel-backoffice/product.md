@@ -32,6 +32,7 @@ type Capability =
   | 'receivable.record_payment' | 'receivable.write_off'
   | 'expense.record' | 'expense.void'
   | 'reports.view' | 'guests.view' | 'guests.erase'   // erase: owner only (D-20)
+  | 'approval.decide'                                  // owner; 5.8. No `approval.request`: the desk bundle requests by definition
   | 'setup.edit' | 'users.manage'
 type Role = { id: RoleId; hotelId: HotelId; name: string; capabilities: Capability[] }
 // role hangs off the (hotel, user) membership pair, not the user: a person can be owner at one hotel and receptionist at another later (D-9)
@@ -42,7 +43,7 @@ type User = { id: UserId; hotelId: HotelId; name: string; username: string; emai
 - Every command declares the capability it needs; the handler checks it against the actor. Audit = event `actor` + capability.
 - **v1 ships two fixed bundles** (as built, slice 3):
   - `receptionist`: `booking.create/edit/cancel` · `stay.assign/check_in/check_out/move/cancel` · `room.set_status/set_out_of_order` · `folio.post_charge/move_line/take_payment/transfer_to_receivable` · `receivable.record_payment` · `expense.record` (petty cash: desk buys water, records it — client-flag assumption) · `guests.view`
-  - `owner`: everything above + `folio.void/refund` · `receivable.write_off` · `expense.void` · `reports.view` · `setup.edit` · `users.manage` · `guests.erase`
+  - `owner`: everything above + `folio.void/refund` · `receivable.write_off` · `expense.void` · `reports.view` · `setup.edit` · `users.manage` · `guests.erase` · `approval.decide` (5.8)
   - No `ledger.*` capability: ledger ops are internal, reached only through folio / receivable / expense commands.
 - Custom roles / editing bundles in Setup → later; the model already allows it because a role *is* a capability list.
 - No approval workflows in v1 (discount approval → later ticket). Admin SDK (D-9) sits outside the apps, for seeding/tenant creation.
@@ -61,7 +62,7 @@ Screen → actions → command. Immediate scope only; capability in brackets whe
 | **New booking** | individual: room + dates + guest → done (one stay, assigned). Group: company, dates, types × qty, assign now (default) or later. **Source** (select of live `BookingSource`, ezFolio's Nguồn; sits next to "Billed to"): default `walk-in`; when a company is picked and the source is still the default, flip it to `company`; never blank. Shown on the bookings list column and the booking header |
 | **Booking page** | edit party / notes, add / remove stays, assign rooms, cancel w/ reason, master folio; **group routing table** (rooms × categories, ezFolio's group panel, D-27) = `SetRouting` per stay, applied only to stays still on the company default — a per-stay override stays (ux.md G32, 5.7) |
 | **Stay page** | guests, nights (room + rate per night), check in, check out, move, extend, cancel / no-show, own folio. **Check out opens a settle dialog** (ezFolio's quickout shape, D-27): balance · method · amount · ref, last option "Công nợ → company" = `TakePayment` *or* `TransferToReceivable`, **then** `CheckOut` — two commands in sequence, never one batch; if `CheckOut` refuses, the payment stands and the dialog says so; the dialog never decides whether check-out is allowed (ux.md G31, 5.7) |
-| **Folio** | lines; post charge (catalogue item or free text); void [owner]; move line to another folio; take payment (cash / transfer / card); deposit; refund [owner]; transfer remainder to company; close; **print** |
+| **Folio** | lines; post charge (catalogue item or free text); void [owner]; reprice [owner] (= void + repost at a new price, the only "discount"); move line to another folio; take payment (cash / transfer / card); deposit; refund [owner]; transfer remainder to company; close; **print**. **5.8 desk request:** the same void / reprice / refund controls render for the desk as **"Xin duyệt"** with the same reason field → `RequestApproval`; the line / bill then carries a badge *đang chờ duyệt* / *từ chối: <reason>* (`approval.*` on the folio view). No new screen. Same on Receivables for write-off |
 | **Arrivals / departures today** | lists off the map; one-click check in / out |
 | **Search** | booking / stay by guest name, phone, company |
 
@@ -93,8 +94,8 @@ type AttentionItem = {
 | `room.ooo_long` | room out of order for > `oooDays` | 7 days | `room.taken_out_of_order` / `returned_to_service` |
 | `stay.unassigned_tomorrow` | stay booked, no room, arrives tomorrow or today | – | `StayNights` (rows with no room) |
 | `stay.overstay_balance` | stay checked in, depart date < today, folio balance > 0 | – | `StayNights`, `FolioView` |
-| `approval.pending` | an `approval.requested` with no grant / decline (§8 Later) | – | `approval.*` |
-Owner-only in v1 (dashboard ruling); the desk's share of these (unassigned tomorrow, overstay) is already visible on the calendar and the map. Nothing here sends anything; see Notifications (§8).
+| `approval.pending` | an `approval.requested` with no grant / decline (5.8) | – | `approval.*` |
+Owner-only in v1 (dashboard ruling); the desk's share of these (unassigned tomorrow, overstay) is already visible on the calendar and the map. Nothing here sends anything; see Notifications (§8). **Owner approval card (5.8):** an `approval.pending` row opens one card — what (kind + the line / bill / company), who asked, amount, reason, **[Duyệt]** → `GrantApproval`, **[Từ chối + reason]** → `DeclineApproval`. The badge count *is* the notification: the owner opens the app.
 
 ### Setup app [owner]
 CRUD per Setup item (§6), retire not delete. Users + roles management.
@@ -411,20 +412,12 @@ Later: WaitingList (unassigned stays), Breakfast list, PA18 export, CommissionBy
 ## 8. Scope
 
 **v1:** Setup (onboarding, prices, catalogues, rules, users/roles) · individual + group booking with inline availability · assignment now or later · tape chart + room map · check-in/out · guests per stay (ID optional) · one charge flow over Setup-defined categories · folio own/master + routing · payments cash / transfer / card-method, deposits, refunds · receivables by company · room hk state + OOO · dashboard, revenue / occupancy / receivables reports · expenses · history/audit tabs · folio print · search.
-**Later:** **cash handover / day close** (today: manual — desk collects the day's cash and hands it to the owner daily; Alex 2026-09-24: "not sure how to handle this, may need a discussion with team"; candidate shape = `CloseShift {cashCounted}` → expected cash-in since last close vs counted, variance event, owner-visible; the Ledger already has the cash account so it is a report + one command; needs client conversation first) · OTA support (commission, gross/net, sync) · **approval flow** (shape pinned below; nothing in v1 changes) · VAT / red invoice · receivable due dates · group label/color · registration card print · PA18 export · breakfast / pickup lists · thank-you email · merge stay into group · inspected hk state · custom roles · per-staff activity report · multi-currency beyond USD display.
+**Later:** **cash handover / day close** (today: manual — desk collects the day's cash and hands it to the owner daily; Alex 2026-09-24: "not sure how to handle this, may need a discussion with team"; candidate shape = `CloseShift {cashCounted}` → expected cash-in since last close vs counted, variance event, owner-visible; the Ledger already has the cash account so it is a report + one command; needs client conversation first) · OTA support (commission, gross/net, sync) · VAT / red invoice · receivable due dates · group label/color · registration card print · PA18 export · breakfast / pickup lists · thank-you email · merge stay into group · inspected hk state · custom roles · per-staff activity report · multi-currency beyond USD display.
 **Never:** card data · restaurant POS · hk staff scheduling · key cards · hourly / day-use.
 
-**Approval flow (parked, shape pinned 2026-09-24 so the log is ready for it).** Tier a, stream `<hotelId>/approval:<id>`.
-```ts
-type ApprovalKind = 'discount' | 'void' | 'refund' | 'writeOff'
-type RequestApproval  = { kind: ApprovalKind; subject: { stayId?: StayId; folioId?: FolioId; chargeId?: ChargeId; receivableId?: ReceivableId }; amount: Money; reason: string }   // desk; needs the capability of the underlying command's *request* variant
-type GrantApproval    = { approvalId: ApprovalId }                 // owner
-type DeclineApproval  = { approvalId: ApprovalId; reason: string } // owner
-// events: approval.requested {kind, subject, amount, reason} · approval.granted · approval.declined {reason} · approval.expired {cause: 'checked_out'}
-```
-Rules: one open request per subject (`approval.alreadyOpen`); on grant the original command runs **in the same batch** with `approvalId` as evidence in its payload (e.g. `folio.charge_voided {…, approvalId}`), actor = the owner, `causationId` = the grant; decline just records; an open request **expires at check-out** of its stay (`approval.expired`, emitted by `CheckOut`'s reaction) — nothing is ever silently applied after the guest left. The desk sees request state on the stay page (bill line badge: "awaiting owner" / "declined: reason"); the owner sees it as `approval.pending` in Needs attention. Capabilities when built: `approval.request` (desk bundle), `approval.decide` (owner). v1: owner does the void / refund / write-off directly; a receptionist who needs one calls.
+**Approval flow → slice 5.8, v1 (Alex 2026-09-24: "keep it simple, but actionable"). Spec in §11 Approvals.** One rule: *an owner-only money act the desk cannot do becomes a request from the same button.*
 
-**Notifications (deferred, one paragraph).** Anything that leaves the app — Zalo, Telegram, email, SMS — is an **async cursor consumer** over the same event log (`WHERE seq > last_seq`, D-8 clarification iv), never inline in a command, never a source of truth: the log says what happened, the consumer decides whom to tell. Sits in the Hookdeck / Queues slot D-8 already reserves for "slow or external consumers". First candidates when the client asks: `approval.requested` → owner's Zalo; `NeedsAttention` new row → owner daily digest; `stay.checked_in` → nothing (the map shows it). Payloads carry ids, the consumer resolves names at send time (D-20). Not designed further until the approval flow or a client ask forces it.
+**Notifications (deferred, one paragraph).** Anything that leaves the app — Zalo, Telegram, email, SMS — is an **async cursor consumer** over the same event log (`WHERE seq > last_seq`, D-8 clarification iv), never inline in a command, never a source of truth: the log says what happened, the consumer decides whom to tell. Sits in the Hookdeck / Queues slot D-8 already reserves for "slow or external consumers". First candidates when the client asks: `approval.requested` → owner's Zalo (5.8 ships without it: the badge count is the notification); `NeedsAttention` new row → owner daily digest; `stay.checked_in` → nothing (the map shows it). Payloads carry ids, the consumer resolves names at send time (D-20). Not designed further until the approval flow or a client ask forces it.
 
 ## 9. Dependencies on WS2 / for other WSs
 
@@ -490,6 +483,7 @@ Command = one intent. `needs` = capability. `checks` = rules beyond "hotel match
 |---|---|---|---|
 | `PostCharge {stayId, categoryId, itemId?, description?, qty, unitPrice}` | `folio.post_charge` | target folio open (per routing) · category ≠ room | `folio.charge_posted` → `ledger.entry_posted` |
 | `VoidCharge {chargeId, reason}` | `folio.void` | folio open | `folio.charge_voided` → `ledger.entry_reversed` |
+| `RepriceCharge {chargeId, unitPrice, reason}` (5.8; the only "discount": no discount concept in the ledger) | `folio.void` | folio open · unitPrice ≥ 0 · ≠ current | `folio.charge_voided` + `folio.charge_posted {…, repricedFrom: chargeId}` → reversal + entry, one batch |
 | `MoveCharge {chargeId, toFolioId}` | `folio.move_line` | both folios open | `folio.charge_moved` → reversal + new entry |
 | `TakePayment {folioId, method, amount, kind deposit|settlement, ref?}` | `folio.take_payment` | folio open · amount > 0 | `folio.payment_received` → entry |
 | `Refund {folioId, method, amount, reason}` | `folio.refund` | ≤ payments | `folio.payment_refunded` → entry |
@@ -512,7 +506,25 @@ Command = one intent. `needs` = capability. `checks` = rules beyond "hotel match
 | ~~`DisableUser`~~ **deferred** | – | identity ≠ access: `DeactivateStaff` ends the position and live sessions, so an account with no membership signing in to an empty shell is harmless. If a lock is ever needed: `disabledAt` on the account checked at sign-in, never a delete (D-18 built note). |
 | `AddStaff {userId, role}` / `ChangeStaffRole {userId, role}` / `DeactivateStaff` / `ReactivateStaff` | `users.manage` | `staff.added / role_changed {role, from} / deactivated / reactivated` — refuse `staff.lastOwner`, `staff.alreadyStaff` |
 
-~40 commands. Screens (§3) are compositions of these; nothing in the UI does what a command can't. Parked with shape pinned (not built, not in the count): `RequestApproval` / `GrantApproval` / `DeclineApproval` (§8).
+### Approvals — tier **a**, stream `<hotelId>/approval:<id>` (slice 5.8, after 5.7; v1 unless Alex says later)
+One rule: **an owner-only money act the desk cannot do becomes a request from the same button.** Kinds = exactly the owner-only money commands: `void` (VoidCharge) · `reprice` (RepriceCharge) · `refund` (Refund) · `writeOff` (WriteOffReceivable). No discount kind: PostCharge already refuses `unitPrice < 0` (`folio.priceInvalid`), so there is no free discount path; `reprice` *is* the discount approval.
+```ts
+type ApprovalKind = 'void' | 'reprice' | 'refund' | 'writeOff'
+type ApprovalSubject = { chargeId: ChargeId } | { folioId: FolioId } | { receivableId: ReceivableId }   // the subject carries the amount; only refund / writeOff carry one explicitly
+type Approval = { id: ApprovalId; hotelId; kind; subject; stayId?: StayId; bookingId?: BookingId; amount?: Money; unitPrice?: Money; reason: string;
+                  status: 'open' | 'granted' | 'declined' | 'expired'; requestedBy: UserId; decidedBy?: UserId; decidedAt?: Instant }
+```
+| command | needs | checks | emits |
+|---|---|---|---|
+| `RequestApproval {kind, subject, amount? \| unitPrice?, reason}` | the desk bundle (no capability: whoever *cannot* run the underlying command may request it; an owner just runs the command) | subject exists and open (folio open / receivable unsettled) · **one open request per subject** (`approval.alreadyOpen`) · same payload rules as the underlying command (refund ≤ payments, reprice ≠ current) | `approval.requested {kind, subject, stayId?, bookingId?, amount?, unitPrice?, reason}` |
+| `GrantApproval {approvalId}` | `approval.decide` | status open · underlying command still valid (re-checked now, not at request time) | `approval.granted` **+ the underlying command's events in the same batch**, each carrying `approvalId` (e.g. `folio.charge_voided {…, approvalId}`), actor = the owner, `causationId` = the grant. If the underlying command refuses, nothing is written and the card shows the refusal; the request stays open |
+| `DeclineApproval {approvalId, reason}` | `approval.decide` | status open | `approval.declined {reason}` |
+| *(reaction)* `CheckOut` of the stay, `CloseBooking` for master-folio subjects, `receivable.settled` for write-offs | – | any open request on the subject | `approval.expired {cause: 'checked_out' \| 'booking_closed' \| 'settled'}` — nothing is ever applied after the guest left |
+Projections: `FolioView` / `Receivables` line badge from `approval.*` (open → *đang chờ duyệt*, declined → *từ chối: reason*, granted → the line simply changes); `NeedsAttention.approval.pending`; `History` on the stay shows the request and the decision. Exactly-once on grant = the stream version guard + `commandId` (D-8); that is why this is tier a, not a row.
+
+**5.8 landings:** (1) domain — `Approval` aggregate, four kinds, `RepriceCharge`, expiry reactions, projections; (2) owner — Needs attention row → card → Duyệt / Từ chối; (3) desk — the three folio controls + receivables write-off render as Xin duyệt when the actor lacks the capability, badges on lines / bill. Each landing is testable alone; (3) can ship before (2) with the owner deciding from the stay page's History if needed.
+
+~42 commands. Screens (§3) are compositions of these; nothing in the UI does what a command can't.
 
 ## 11a. Slice 1 payloads — occupancy loop (pinned 2026-09-23 for dev; walk-in individual only)
 
@@ -598,6 +610,7 @@ Envelope + naming per §6 conventions (D-12). **Two tiers (D-22)**: `booking.*` 
 `setup.` `<item>.defined / updated / retired` · hotel_profile_set · booking_rules_set
 `user.` created · updated · password_reset(byUserId) — identity events; visible in History to owner only
 `staff.` added {userId, role} · role_changed {userId, role, from} · deactivated · reactivated — membership per (hotel, user), stream `<hotelId>/staff:<userId>`; no names in payloads
+`approval.` requested {kind, subject, stayId?, bookingId?, amount?, unitPrice?, reason} · granted · declined {reason} · expired {cause} — 5.8, stream `<hotelId>/approval:<id>`; granted is followed in the same batch by the underlying command's events carrying `approvalId`
 
 ## Status
 

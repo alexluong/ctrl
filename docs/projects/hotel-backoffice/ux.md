@@ -413,7 +413,7 @@ Built: grid, legend, unassigned list. Missing: availability-by-type row, click-e
 | Add to bill | `PostCharge` (room category is system-only, not in the select) |
 | Record payment (settlement / deposit) | `TakePayment` |
 | Refund 👑 | `Refund` (≤ payments received) |
-| Void 👑 | `VoidCharge` |
+| Void 👑 / Reprice 👑 | `VoidCharge` / `RepriceCharge` (5.8: for the desk these render as **Xin duyệt** with the same reason field → `RequestApproval`; badge on the line: đang chờ duyệt / từ chối: reason) |
 | Move to the company | `TransferToReceivable` |
 | Move line (target) | `MoveCharge` |
 | Print (target) | read |
@@ -530,10 +530,10 @@ Role select on a row with no position → `AddStaff`; with one → `ChangeStaffR
 │ ⛔ Phòng 305 ngừng sử dụng 9 ngày (AC hỏng)                 → /rooms/305              │
 │ 🛏 Cty ABC: 2 phòng chưa xếp, đến ngày mai                  → /bookings/:id           │
 │ 💸 Phòng 301 quá ngày đi, còn nợ 350,000                    → /stays/:id             │
-│ ✋ (later) Lễ tân xin huỷ dòng 30,000 — Minibar, lý do …    [Đồng ý] [Từ chối]        │
+│ ✋ Lễ tân Linh xin huỷ dòng Minibar 30,000 — "khách không dùng"  [Duyệt] [Từ chối + lý do] │
 └──────────────────────────────────────────────────────────────────────────────────────┘
 ```
-All reads over existing projections (Night, RoomBoard, ledger balances). Owner-only as a whole (architect's ruling, Q3 resolved). **Needs attention** = the `NeedsAttention` projection (product.md §3, §7): one row per open fact, clears itself when the fact stops being true, no dismiss; each row links to the screen that fixes it; thresholds (30 days receivable, 7 days OOO) in Setup rules. The approval row is the parked flow (product.md §8): grant / decline here, the desk sees the state on the bill line. Nothing here sends a message; notifications are a later async consumer over the same events (product.md §8). Additive per D-27: ezFolio has no inbox, and the dashboard's top rows stay where they are. **Familiar to:** none as a page; the numbers come from ezFolio's room-map count buttons and the tape chart's bottom rows, so the top row should reuse those labels (Đang ở · Dự kiến đến · Dự kiến đi · Trống bẩn · Phòng sửa). Reports (revenue by category / method, occupancy over time, guest history) hang off this page, same slice.
+All reads over existing projections (Night, RoomBoard, ledger balances). Owner-only as a whole (architect's ruling, Q3 resolved). **Needs attention** = the `NeedsAttention` projection (product.md §3, §7): one row per open fact, clears itself when the fact stops being true, no dismiss; each row links to the screen that fixes it; thresholds (30 days receivable, 7 days OOO) in Setup rules. The approval row is slice 5.8 (product.md §11 Approvals): one card per request (what · who · amount · reason), Duyệt → `GrantApproval` runs the void / reprice / refund / write-off in the same batch; Từ chối records the reason; the desk sees the state as a badge on the line. Nothing here sends a message; notifications are a later async consumer over the same events (product.md §8). Additive per D-27: ezFolio has no inbox, and the dashboard's top rows stay where they are. **Familiar to:** none as a page; the numbers come from ezFolio's room-map count buttons and the tape chart's bottom rows, so the top row should reuse those labels (Đang ở · Dự kiến đến · Dự kiến đi · Trống bẩn · Phòng sửa). Reports (revenue by category / method, occupancy over time, guest history) hang off this page, same slice.
 
 ### 4.15 System `/system` (operator footnote)
 
@@ -629,6 +629,7 @@ Grouped for dev's 5.6 polish list. **P** = polish (small, no model change; slice
 |---|---|---|---|
 | G23 | Dashboard (4.14) | in progress (5.3) | n/a |
 | G33 | Owner home: Needs attention list + nav badge (`NeedsAttention` projection, product.md §3) | C (spec'd, after 5.3 dashboard) | n/a — additive, nothing moves |
+| G34 | Approval flow 5.8: desk Xin duyệt on void / reprice / refund / write-off, owner card, expiry at check-out (product.md §11 Approvals) | 5.8 | n/a — ezFolio has none; the client asked for discount approval |
 | G24 | Reports: revenue by category / method, occupancy over time | in progress (5.3, after dashboard) | mid — Báo cáo doanh thu |
 | G25 | Receivables: statement lines link to their stay / booking; settled companies under a toggle | P | high — receivables rows are bookings there |
 | G26 | Expenses: default range = current month | P | mid |
