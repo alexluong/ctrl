@@ -1,4 +1,5 @@
 # Team log
+- 2026-09-24 — dev: **5.5 complete — the bill on paper** (solex `e7f1dd1`, staging `d96ba0c4`, 365 green). `/print/stay/<id>` + `/print/booking/<id>`, own routes, ezFolio report house style (letterhead / centred title / printed-on-by / lines / totals / three signatures), `@media print`, no VAT, no event. Voided lines are left off the printout (they are not owed and the totals already exclude them); charges − payments + refunds = balance, so the sheet reconciles with the ledger. Next: 5.6 polish in familiarity order.
 - 2026-09-24 — Alex: go on both — product draws the ezFolio look-alike desk flow (HTML mockups, `diagrams/ezfolio-flow/`, shell + Sơ đồ + Chi tiết modal first, then booking editor, status lists, Tình hình); QA records R1/R2 flow videos.
 - 2026-09-24 — architect: Alex found ux.md §4 ASCII wireframes too dense. Drew Stay (4.7) as an annotated HTML mockup template (artifact FnYDkwHfpSed7wtQmzgL3L); product reviewed (go, 9 fixes applied). Alex: still dense; also floated an ezFolio-look-alike flow variant for a client demo (deferred; mockups before any build). **Decision (Alex): record short flow videos of the built app instead of drawing.** QA owns a Playwright "journeys" suite: video per flow, data seeded off-camera, caption bar per step, 20–60 s, local dev only, output `solex/e2e/recordings/` (gitignored), re-recordable after each slice. First two: R1 desk walk-in check-in→check-out, R2 owner morning. HTML template kept as a later option; ux.md unchanged. Product + QA compacted and re-briefed (72k/71k); dev still 327k.
 - 2026-09-24 — solex-qa 5.4 run 111/112 (1 skipped); N27 closed; N28 (group forfeit unreachable) ruled = G19 (5.6) + G14 (5.7), group cancel semantics pinned.
@@ -1271,3 +1272,43 @@ refund ever carries its target. Progress flag for Alex is architect's.
 
 - `bookings.sourceId` has no writer (by-source report is one "not recorded" row) — 5.7 with G28.
 - `Company.defaultRouting` has no Setup control — G28, 5.7.
+
+## solex-dev — 5.5 landing 2: the printed bill (2026-09-24)
+
+`e7f1dd1`, staging `d96ba0c4`, 365 green. Two routes, one sheet component, one
+`@media print` block.
+
+**Routes.** `print.stay.$id.tsx` and `print.booking.$id.tsx`, not
+`stays.$id.print.tsx` — the latter turns the two biggest route files into
+layouts so a document can inherit furniture it then has to hide.
+
+**Reads.** A new `src/server/api/print.ts` with two narrow adapters rather than
+a reuse of `getStay`, which drags history, every room and the routing table
+across the wire for a page that draws none of it. Each returns the letterhead
+(`hotel.profile.get()`), a printed-at stamp taken on the server so the markup
+hydrates to what was rendered, the addressee, and `folios.statement()`.
+Read-only by construction: printing is not something that happened to the
+hotel, so there is no event and nothing to refuse beyond being signed in.
+
+**The one judgement worth recording: a voided line is left off the printout.**
+On screen it stays, struck through, because the folio is a record of what
+happened. On paper it is a line the guest does not owe, and the totals already
+exclude it — printing it invites an argument about a number that is not in the
+sum. Charges (un-voided) − payments + refunds = the balance, so the sheet
+reconciles with the ledger, which is the property the reports are held to.
+
+**Shape (D-27).** No folio printout exists in `screens/`, so this follows the
+house style of the report printouts: hotel block top-left, title centred,
+printed-on / printed-by top-right, lines table, totals hanging off the right,
+three signature blocks (Người lập biểu / Trưởng bộ phận / Giám đốc). No VAT and
+no red-invoice fields — that is a conversation with the client's accountant.
+
+**Verified visually**, not only by tsc: a throwaway vitest that rendered the
+sheet with `react-dom/server` and Playwright shots in both `screen` and `print`
+media. Two fixes came out of it — the muted grey the screen uses for table
+headings prints as a smudge, and the description column needed the slack.
+The scaffolding is deleted; re-do it the same way if the sheet changes.
+
+**Nothing to unit-test here.** No new rule, no new state: the adapters compose
+existing reads and the sheet is markup. The coverage that matters is QA's — a
+bill with a deposit, a refund and a voided line, and the group sheet.
