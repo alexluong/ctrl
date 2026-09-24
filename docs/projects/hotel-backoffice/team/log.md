@@ -1428,7 +1428,7 @@ dev + remote; 0018 (`stay_guests`) before it. Nothing pending.
   `ui/routing.tsx`, which **G32 reuses one level down**. `.row` inside a card
   lays out like `form.row` now.
 - **vi pass 2** (`74f99e3`) — product's 24 pairs for G16 and G22, verbatim.
-- **G29** (`36b7d5a`-ish, in the same push) — `BookingRules` did not exist at
+- **G29** (`3e9b447`) — `BookingRules` did not exist at
   all. Row carries all five of product's settings; **the form shows the two
   that something reads** (architect's ruling (b): a control that changes
   nothing is a lie told where the owner cannot check it). Wired:
