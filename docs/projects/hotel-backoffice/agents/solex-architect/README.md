@@ -32,7 +32,7 @@ Alex: "work with Dev on this and make sure to help with review/QA as we go." Per
 
 ## Session ops (Alex's standing asks, 2026-09-24)
 
-- **Context (Alex 2026-09-25, supersedes the 250k/200k rule):** no manual compaction cycles. Sessions run continuously and auto-compact; every agent keeps a resume note current in its profile log at each landing/milestone as the safety net. Architect re-briefs in one message after any restart. Session ids: dev `local_94ba0f28-75c1-4021-b985-cff336fc9aeb`, qa `local_0640ecfd-d1c2-4094-9c55-9ba59e066319`, product `local_6a799d7c-a89c-4af6-a987-c0d7579a5b29`. The hourly context-watch cron is retired.
+- **Context (Alex 2026-09-25, temporarily suspends the 250k/200k rule until the first full iteration is done):** no manual compaction cycles for now. Sessions run continuously and auto-compact; every agent keeps a resume note current in its profile log at each landing/milestone as the safety net. Architect re-briefs in one message after any restart. Session ids: dev `local_94ba0f28-75c1-4021-b985-cff336fc9aeb`, qa `local_0640ecfd-d1c2-4094-9c55-9ba59e066319`, product `local_6a799d7c-a89c-4af6-a987-c0d7579a5b29`. The hourly context-watch cron is retired.
 - **Questions go to architect, not Alex** (dev/QA/product); architect escalates only breaking calls. Alex checks in when he can.
 - **Local dev = Node only**: `mise run setup` then `mise run dev` (SQLite `data/solex.db`); Docker stack torn down 2026-09-24 (orphan postgres from the spike removed; compose `up/down/logs` tasks remain unused).
 - Architect worktree `~/git/hub/alexluong/solex-architect` (detached, read-only); QA owns `../solex-qa`.
