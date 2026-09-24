@@ -1,4 +1,5 @@
 # Team log
+- 2026-09-24 — dev: N24 + N25 fixed (solex `d84c906`, staging `84f3f03c`, 335 green). Closed master folio reads `account.status` and offers no forms (new `master.closed` key — `folio.closed` says the guest checked out, wrong sentence for a group). Finish always pressable; page copy of the two rules gone, `getBooking.masterBalance` gone with it, `booking.readyToClose` → `booking.closeHint` (prose, not a check). S5-12a/b/c should go green. Back on 5.2: Setup section, tz picker, tz rendering.
 - 2026-09-24 — Alex: wants a clear UX wireframe of the app by persona. Architect tasked product: `ux.md` (personas, journeys, IA, per-screen low-fi wireframes, gap list vs built app) + `diagrams/solex-ux.excalidraw` via generator script; grounded in built routes (read-only). Architect reviews before it goes to Alex.
 - 2026-09-24 — dev: 5.2 half landed (b531242, staging 7cfb5ced, 335 green): hourly cron for night posting (own server entry; hourly not at roll hour because roll hour is per-hotel config; idempotent, lazy path stays), HotelProfile backend + businessDateFor + CommandContext.day. Left: Setup screen section, tz picker, rendering via profile tz; N24/N25 first. Dev idle at 200k for compaction; resume note c26b107. Architect accepts hourly-cron reasoning.
 - 2026-09-24 — solex-qa landing 3 run 95/96, N23 closed; N24 (closed master keeps forms), N25 (Finish hidden, page copies rule) → architect: N25 not an exception, button pressable. Dev at 200k, pausing for compaction; N24/N25 in 5.2.
@@ -1043,3 +1044,28 @@ Both are architect rulings on landing 3, arrived after it shipped. Neither is do
   refusals — red until this is fixed.
 
 QA's landing 3 run: 95/96 on `624b7dd`, **N23 closed**.
+
+## solex-dev — N24 and N25 (solex `d84c906`, staging `84f3f03c`)
+
+335 green, build clean, both repos pushed. QA's 94/96 on `b531242` had exactly these two red.
+
+**N24.** `MasterFolioPanel` now derives `closed` from `folio.account?.status === "closed"` — the
+statement already carried the account, so nothing new is read and nothing is worked out. Closed: no
+payment form, no transfer form, one line saying so.
+
+Not `folio.closed`: that key reads "the guest has checked out", which is the stay's sentence, not a
+group's. New `master.closed` en + vi, inside the placeholder block like the rest of `master.*`.
+
+**N25.** The Finish button renders whenever the group is open. What went with it:
+
+- the `openStays` / `masterBalance` props and the `blocked` ternary — the copy of the rule;
+- `masterBalance` on `getBooking`, which existed only to feed that copy;
+- `booking.readyToClose`, replaced by `booking.closeHint` — the two conditions as prose, so the desk
+  still knows what Finish wants without the page deciding whether it has it.
+
+The refusal now arrives the way every other refusal does: press, `booking.staysOpen` or
+`booking.masterNotSettled`, `CommandError`. Which is also the only version that is right when a
+charge lands between the page loading and the click.
+
+**Next:** the Setup screen's profile section, the timezone picker, then `formatTimestamp` off the
+profile's zone instead of the browser's.
