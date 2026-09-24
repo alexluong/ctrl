@@ -1468,8 +1468,10 @@ routing table → G33 owner home + Needs attention → 5.8.
 `src/styles.css` into a static HTML harness in the scratchpad, screenshot with
 Playwright run from `solex/e2e` (a `file://` URL — the scratchpad http server
 is gone), read the PNG, delete the harness. Used on the move dialog this
-stretch; it caught that `dialog.ask` styled `input` but not `select`, so the
-picker was half-width.
+stretch, and it confirmed the dialog and the two-button action cell. The one
+real catch there came from reading the CSS rather than the picture:
+`dialog.ask` sized `input` and not `select`, so the picker needed its own
+width rule.
 
 ## solex-dev — 5.7 resume note, superseded (build from solex `c8b3528`, staging `e8ec202d`)
 
