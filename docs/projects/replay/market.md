@@ -149,3 +149,49 @@ This fits Alex's framing: worth building for his own use, not a market bet. The 
 - Verify the Playwright 1.61–1.63 details (step subtitles/params in reporting) against the release notes.
 - Try tracelane and ProofShot hands-on (about 15 min each) to confirm the gaps.
 - Check whether the rrweb network plugin works in the Playwright/`exposeBinding` setup the lab uses.
+
+## Open-core models
+
+Addendum 2026-09-25. Question: how do comparable tools split CLI / self-host / hosted, and what do they charge for? Sources are listed at the end of this section. Items marked unverified are flagged.
+
+| Tool | Client / player | Server | Paid / hosted gates | Self-host footprint | Notes |
+|---|---|---|---|---|---|
+| **[asciinema](https://github.com/asciinema/asciinema-server)**: **closest analog** (recorder CLI + file format + player + public server) | player Apache-2.0; CLI GPLv3 | Apache-2.0 | none. asciinema.org is free, funded by donations | container + **Postgres required**. Single-user mode skips SMTP; login links go to the logs | CLI points at any server via `ASCIINEMA_SERVER_URL` |
+| [Cap](https://github.com/capsoftware/cap) (OSS Loom) | desktop app | AGPLv3 (whole repo) | free = personal use, 5-min links. $29/yr commercial desktop; Pro $12/user/mo (storage, custom domain, teams); SAML +$199/mo | Next.js + Postgres + S3 + compose | nearest *paid* analog |
+| [OpenReplay](https://openreplay.com/pricing/) | tracker OSS | AGPLv3 + proprietary EE | SSO/SCIM, audit, multi-tenant, unlimited sessions | compose/k8s; OSS self-host capped ~50K sessions/mo | cap on self-host |
+| [PostHog](https://posthog.com/docs/self-host) | MIT | MIT except `ee/` | paid add-ons | "hobby" compose only; k8s support dropped; no guarantees | self-host effectively downgraded |
+| [Sentry](https://develop.sentry.dev/self-hosted/) | SDKs (license unverified) | FSL, converts to Apache-2.0 after 2 years (since 2023) | cloud tiers; self-host = "Business plan without limits" | compose, 16 GB RAM min | FSL called "not open source" |
+| [Highlight](https://github.com/highlight/highlight) | in repo | Apache-2.0 except `enterprise/` | enterprise self-host | Docker "hobby", 8 GB RAM | acquired by LaunchDarkly; OSS in maintenance only |
+| [Plausible](https://plausible.io/blog/community-edition) | script | AGPLv3 (was MIT until 2020) | funnels, SSO, API are cloud-only | CE, 2 releases/yr | relicense accepted |
+| [Excalidraw](https://plus.excalidraw.com/pricing) | MIT | collab server MIT | Excalidraw+ $6–7/user: persistence, rooms, history | static core | no backlash |
+| Vaultwarden / Gitea / Forgejo | — | AGPL / MIT / GPLv3 | — | **single binary + SQLite** | the self-host experience to copy |
+| [Cal.com](https://cal.com/blog/cal-com-goes-closed-source-why), [tldraw](https://tldraw.dev/community/license), Bitwarden SDK | — | relicensed: closed (Apr 2026) / custom license + watermark / non-free SDK clause, later fixed | — | — | backlash cases |
+| rrweb Cloud | MIT lib | closed | hosted ingest/search | — | 30K sessions/mo free, then $1.60/1K |
+| ProofShot, tracelane | MIT / Apache-2.0 | none | none (tracelane: GitHub Sponsors) | local only | — |
+
+Name clash: a second **tracelane** exists (`tracelane/tracelane`, an "AI agent flight recorder", Apache-2.0).
+
+**Copy:**
+- **asciinema's shape:** a permissive format and player, one server codebase, a public instance, and the CLI pointed at any server via one env var (`REPLAY_SERVER`). Single-user login without SMTP.
+- **One binary + SQLite** (Vaultwarden, Gitea). This is the main way to stand out against the compose sprawl of Sentry, PostHog, Cap and OpenReplay. It supports the Go single-binary idea.
+- **Charge for what costs money to host, not for features:** private sharing, retention, storage, team seats (Cap, Excalidraw+). Self-host gets everything ("self-host = top tier without limits", as Sentry does it).
+- **Free tier shaped like Jam's:** unlimited viewers; cap only uploads, length or retention.
+- SSO only as a later add-on, if a team customer ever shows up.
+
+**Avoid:**
+- Crippling self-host (OpenReplay's cap, PostHog's "hobby").
+- A proprietary `ee/` folder: solo maintenance burden, and it breaks "one codebase, 3 modes".
+- A free tier limited to personal use (Cap).
+- Custom licenses (tldraw).
+- **Relicensing later** (Cal.com, tldraw, Gitea → Forgejo fork). Pick once.
+
+**License recommendation:** **MIT on everything, server included.**
+- The real risk that someone resells a tiny tool is close to zero.
+- MIT gets the most adoption and embedding, which matters most for the format, player and recorder. It also fits Alex embedding the core in his own IDE/harness.
+- The advantage is running the instance, not owning the code.
+- Fallback if competing hosts ever worry him: **AGPL for the server only, MIT for the rest** (the Plausible/Vaultwarden split). It's OSI-approved, but some companies ban AGPL internally.
+- **Skip FSL/BSL.** Not OSI-approved, and the time-delayed conversion only pays off at VC scale.
+
+Unverified: Sentry SDK and Plausible script licenses, PostHog's container count, asciinema's CLI auth flow (believed to be install-ID token + `asciinema auth` URL), whether Highlight's hosted service still runs.
+
+Sources: [asciinema self-hosting](https://docs.asciinema.org/manual/server/self-hosting/), [Sentry FSL](https://blog.sentry.io/introducing-the-functional-source-license-freedom-without-free-riding/), [PostHog helm sunset](https://posthog.com/blog/sunsetting-helm-support-posthog), [Plausible relicense (LWN)](https://lwn.net/Articles/834120/), [Cal.com AGPL/EE](https://cal.com/blog/changing-to-agplv3-and-introducing-enterprise-edition), [Forgejo GPL (LWN)](https://lwn.net/Articles/986998/), [Bitwarden SDK (Register)](https://www.theregister.com/2024/11/04/bitwarden_gpls_password_manager/), [Cap pricing](https://cap.so/pricing), [Jam pricing](https://jam.dev/pricing), [rrweb pricing](https://rrweb.com/pricing), [Highlight → LaunchDarkly](https://highlight.io/blog/joining-launchdarkly).

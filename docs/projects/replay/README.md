@@ -83,7 +83,7 @@ Full scan (2026-09-25): [market.md](market.md). Closest: Playwright screencast c
 - Shape: an **agent MCP** that generates a narrated, seekable demo during development, locally (a single-file player) or pushed to a hosted player to share (in a PR, with the team, from cloud dev). A hosted, team-private version is a possible later extra, not the goal.
 - Not PR/CI-centric, and not "demos for marketing".
 - How it differs from Playwright trace viewer (dev debugging, snapshots per action, MB-sized zip): continuous watchable playback, captions written by the agent, a UI built for review, ~150 KB.
-- Nearest threats if it were ever a product: cloud browsers (Browserbase session replay is rrweb-based) adding sharing; agent platforms building it in (Codex/Copilot attach screenshots today).
+- Nearest threats if it were ever a product: cloud browsers adding sharing (note: Browserbase and Steel dropped rrweb for video, 2025–26; see [market.md](market.md)); agent platforms building it in (Codex/Copilot attach screenshots today).
 - Design lean: **script, then render** (agent writes a short journey, the tool runs it cleanly) as the core; recording the agent's live browser session is a stretch goal (needs trimming of retries and dead time).
 
 ## Minimal first version
@@ -103,7 +103,74 @@ A working scratch prototype, local git only (no remote). Alex: "extremely simila
 - **`.replay` zip**: `manifest.json`, `rrweb.json`, `steps.json`, `console.json`, `network.json`, `storage.json`, `trace.zip`. Ours: manifest / steps / console / network / storage. rrweb's standard format: `rrweb.json`. Playwright's: `trace.zip`. For 23 s: ~37 KB of data; the trace is 377 KB of the 384 KB zip.
 - vs Playwright trace viewer: trace = snapshots around each action, a debugger UI, MB-sized. Here: continuous watchable replay, captions, synced devtools-like panels, trace optional.
 
-## Proposed SDK / DX (not built yet)
+## Native Playwright comparison (lab 4e69660)
+
+`native-demo.js` → `out/native/`. The same journey, using only Playwright 1.63: `recordVideo` + `showActions`, `page.screencast.showChapter()` title cards, `tracing.group()` per step, and a `<video>` page with WebVTT chapters.
+- Gotcha: `page.screencast.start()` recorded an 800×500 page inside a 1280×800 frame. Context-level `recordVideo` is full size.
+- Chapter cards blur or cover the page for ~2 s. Our caption bar leaves the page visible.
+- Size: 1.2 MB video + 3.9 MB trace, vs ~40 KB of rrweb data.
+- The video and the trace are separate views and don't play in sync. There's no storage timeline.
+- The trace viewer won't render in the Claude desktop browser pane (service worker registration fails). It works in a normal browser or with `show-trace`.
+- **Takeaway:** native gives ~70% for free. What's missing is **one synced view + a small shareable file**. Fallback where rrweb is fragile: play the real video in our player with synced panels (hybrid).
+
+## No-Playwright recorder (lab caf9d31, `src/inpage.js`)
+
+A plain `<script>` (rrweb UMD + `inpage.js`) that the app injects in record mode (`node app/server.js --record`, :7103).
+- Widget: ● Record / caption + Step / ■ Stop & save. Saving POSTs to the server and produces the same `.replay` + player. `window.replay.say()` works for agents or from the console.
+- In-page capture:
+  - console: patched methods + `error` / `unhandledrejection`
+  - fetch/XHR: patched, with bodies
+  - the document request: from the navigation timing entry
+  - local/session storage: `Storage.prototype` patch
+  - cookies: `document.cookie` polling
+- Survives full page loads: on `pagehide` the buffer is parked in sessionStorage and resumed on the next page. Tested with a reload mid-recording.
+- Hand-recorded in the browser pane: 36 s, 4 steps, 4.4 KB zip.
+- Limits vs Playwright:
+  - no HttpOnly cookies
+  - no static-asset requests or browser-level "Failed to load resource" errors
+  - cookies shared per host across ports (a SoLex cookie leaked in)
+  - viewport = the user's window size
+- **Architecture this implies:**
+  - **core** = in-page recorder + `.replay` format + player, with **no Playwright dependency**
+  - **adapters:**
+    - Playwright fixture: most complete, reproducible
+    - browser extension: `chrome.debugger` for full network + HttpOnly cookies
+    - in-app dev script: lets humans record too
+    - CDP/agent browsers (Chrome DevTools MCP, Claude in Chrome) injecting the script
+
+## CLI + server (proposed; Alex likes it)
+
+Alex: "a CLI that allows a server people can log in/sign up to and upload".
+- **CLI** (run via npx):
+  - `replay login`: device-code flow like `gh auth login`
+  - `publish x.replay [--private]` → link
+  - `ls` / `rm` / `open`
+  - `serve`: self-host
+  - `summarize` / `frame`: agent self-check
+- **One server codebase, three modes:**
+  - local `replay serve`: no auth
+  - self-hosted for a team: accounts, API tokens
+  - Alex's hosted instance: adds billing for private/team
+- **Server:** accounts, teams, upload, list, visibility (public/unlisted/team), expiry, player page. SQLite + disk for self-host; S3 for hosted.
+- **Agents:** `REPLAY_TOKEN` env → `replay publish` from any harness. The widget's Stop & save uploads the same way.
+- Candidate for Alex's "bigger Go project" goal: one Go binary with server + CLI + embedded player.
+- Open-core precedents (license split, what to gate): [market.md § Open-core models](market.md#open-core-models).
+
+## Ideas: backend capture + test cases (Alex, 2026-09-25)
+
+**Backend capture** (inspired by ProofShot's synced server logs). Options, cheapest first:
+1. **Server logs:** the runner spawns the dev server (`replay run -- npm run dev`) and timestamps stdout/stderr on the replay clock. This adds a Server tab.
+2. **Correlation:** our fetch patch (or Playwright `extraHTTPHeaders`) adds a W3C `traceparent` to each request, and the app logs the trace ID. Clicking a network row then shows that request's server logs.
+3. **OTel spans:** the runner hosts a local OTLP receiver and the app exports spans (handler, SQL, outbound calls). This gives a per-request waterfall inside the replay. It's the most "BE replay", but needs app instrumentation.
+4. **DB diff:** a snapshot per step (easy with SQLite, e.g. SoLex), shown like the storage panel: "what rows changed at this step".
+5. **Backend-only replay:** API steps (fetch/curl) as the script, with captions. Same player without the DOM pane, showing req/res + logs + spans + DB diff.
+
+**Test-case tie-in:** test case = spec (steps + expected). The agent writes the journey from it, the steps map 1:1 to `test.step`/`say()`, and each run's `.replay` is attached as evidence next to the case.
+- Link via a Playwright annotation (`{type:'case', description:'N29'}`).
+- Prior art: TestRail/Qase/Xray (screenshot/video attachments), Allure (per-step attachments, OSS).
+- Dogfood: SoLex's `qa/cases.md` already has case IDs.
+
+
 
 - Packages: `@replay/core` (format, recorder, zip), `@replay/playwright` (capture adapter), `@replay/player`, `replay` CLI.
 - Ways in:
@@ -117,4 +184,6 @@ A working scratch prototype, local git only (no remote). Alex: "extremely simila
 ## Open questions
 
 - Name / repo.
+- License split: MIT for core/adapters/player/CLI; server MIT vs AGPL. Lean: MIT everywhere, AGPL server as fallback; skip FSL/BSL ([market.md](market.md#open-core-models)).
+- Go (single binary: server + CLI + embedded player) vs TS monorepo. The recorder/player stay JS either way.
 - ~~Does an "agent demo recorder" MCP already exist?~~ Answered in [market.md](market.md): several are video-only; none are DOM replays.
