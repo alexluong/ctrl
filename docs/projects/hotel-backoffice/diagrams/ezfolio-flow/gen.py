@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """ezFolio look-alike flow for SoLex — demo mockups (no build). Run from this dir: python3 gen.py
 Writes ezfolio.css + index.html + one page per screen. Sample data is invented; no guest PII.
+D-29: English labels; ezFolio Vietnamese term in brackets only where it aids recognition.
 Reference: ../../screens/fd-*.png (gitignored, PII) + ../../existing-system.md. Rules: ../../product.md, ../../ux.md.
 """
 from pathlib import Path
@@ -121,23 +122,23 @@ table.map tr:last-child td{border:0}
 """
 
 # ---------------------------------------------------------------- shared shell
-TABS = [("Lễ tân", "shell.html", True), ("Buồng", "room-map.html#buong", False),
-        ("Báo cáo", "index.html#later", False), ("Hệ thống", "index.html#later", False)]
+TABS = [("Front desk (Lễ tân)", "shell.html", True), ("Housekeeping (Buồng)", "room-map.html#housekeeping", False),
+        ("Reports (Báo cáo)", "index.html#later", False), ("System (Hệ thống)", "index.html#later", False)]
 
-def topbar(active="Lễ tân"):
+def topbar(active="Front desk (Lễ tân)"):
     t = ''.join(f'<a href="{h}" class="{"on" if n == active else ""}">{n}</a>' for n, h, _ in TABS)
     return (f'<div class="topbar"><span class="hotel">⌂ SOLEX HOTEL</span>{t}'
-            f'<span class="right"><span>In</span><span>Linh · lễ tân</span><span>⏻</span></span></div>')
+            f'<span class="right"><span>Print</span><span>Linh · desk</span><span>⏻</span></span></div>')
 
-RIBBON_BIG = [("▦", "Sơ đồ", "room-map.html"), ("▤", "Tình hình", "index.html#todo"),
-              ("👤", "Khách lẻ", "index.html#todo"), ("👥", "Khách đoàn", "index.html#todo"),
-              ("⇲", "Khách sẽ đến", "index.html#todo"), ("⇱", "Khách sẽ đi", "index.html#todo"),
-              ("⇄", "Đổi phòng", "index.html#todo"), ("🔍", "Tìm kiếm", "index.html#todo")]
+RIBBON_BIG = [("▦", "Room map", "room-map.html"), ("▤", "Tape chart", "index.html#todo"),
+              ("👤", "Walk-in", "index.html#todo"), ("👥", "Group", "index.html#todo"),
+              ("⇲", "Arriving", "index.html#todo"), ("⇱", "Departing", "index.html#todo"),
+              ("⇄", "Move room", "index.html#todo"), ("🔍", "Search", "index.html#todo")]
 RIBBON_GRPS = [
-    ("Dịch vụ", [("Giặt là", "", False), ("Minibar", "", False), ("Nhà hàng", "", True)]),
-    ("Thống kê", [("Đến trong ngày", "index.html#todo", False), ("Đi trong ngày", "index.html#todo", False), ("Tổng hợp đặt phòng", "", True)]),
-    ("Danh sách", [("Khách đang lưu trú", "index.html#todo", False), ("Hủy đặt phòng", "index.html#todo", False), ("Đ.phòng chưa gán", "index.html#todo", False)]),
-    ("PA18", [("Kết xuất PA18", "", True), ("Quản lý khách ở", "", True)]),
+    ("Services", [("Laundry", "", False), ("Minibar", "", False), ("Restaurant", "", True)]),
+    ("Today", [("Arrivals today", "index.html#todo", False), ("Departures today", "index.html#todo", False), ("Booking summary", "", True)]),
+    ("Lists", [("In house", "index.html#todo", False), ("Cancelled", "index.html#todo", False), ("Unassigned", "index.html#todo", False)]),
+    ("PA18", [("Export PA18", "", True), ("Guest registry", "", True)]),
 ]
 
 def ribbon(mark=False):
@@ -149,14 +150,14 @@ def ribbon(mark=False):
     return f'<div class="ribbon">{big}{grps}</div><div class="logo">ez<b>FOLIO</b></div>'
 
 def page(title, sub, body, notes, cant, links, crumb="index.html"):
-    return f"""<!doctype html><html lang="vi"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+    return f"""<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{title}</title><link rel="stylesheet" href="ezfolio.css">
 <div class="wrap">
-<div class="crumb"><a href="{crumb}">← Mục lục</a></div>
+<div class="crumb"><a href="{crumb}">← Index</a></div>
 <h1>{title}</h1><p class="sub">{sub}</p>
 {body}
 <div class="notes">{notes}</div>
-<div class="cant"><b>Không sao chép được:</b>{cant}</div>
+<div class="cant"><b>Not replicated:</b>{cant}</div>
 <div class="foot">{links}</div>
 </div></html>"""
 
@@ -166,37 +167,37 @@ SHELL_BODY = f"""
   <div data-n="1">{topbar()}</div>
   <div data-n="2">{ribbon()}</div>
   <div class="page" style="min-height:120px;color:var(--muted);font-size:13px">
-    Nội dung màn hình (Sơ đồ, Tình hình, danh sách …) hiện ở đây. Tab và ribbon giữ nguyên ở mọi màn hình.
+    Screen content (room map, tape chart, lists …) renders here. Tabs and ribbon are the same on every screen.
   </div>
 </div>
-<div class="legend"><span class="n">n</span>ghi chú bên dưới · <span class="tag same">giữ</span> như ezFolio, chạy trên lệnh/đọc của SoLex · <span class="tag later">sau</span> có trong SoLex nhưng chưa ở bản demo · <span class="tag drop">bỏ</span> không có (gạch ngang trên ribbon)</div>
+<div class="legend"><span class="n">n</span>note below · <span class="tag same">keep</span> as ezFolio, over a SoLex command/read · <span class="tag later">later</span> exists in SoLex, not in the demo · <span class="tag drop">drop</span> not available (struck through on the ribbon)</div>
 """
 
 SHELL_NOTES = """
-<div><h3><span class="n">1</span>Thanh tab trên cùng</h3>
-<p>Giữ 4 tab ezFolio: <b>Lễ tân · Buồng · Báo cáo · Hệ thống</b>. Bỏ <b>Kinh doanh</b> (chỉ có Công ty → nằm ở Lễ tân › Danh sách), <b>Nhà hàng</b> (POS không dùng; vẫn có dòng "nhà hàng" trên hoá đơn), <b>Kiểm toán</b> (không có night audit: ngày khách sạn tự lật lúc giờ đã đặt trong Thiết lập).</p>
+<div><h3><span class="n">1</span>Top tabs</h3>
+<p>Keep 4 ezFolio tabs: <b>Front desk · Housekeeping · Reports · System</b>. Drop <b>Sales (Kinh doanh)</b> (only Companies → lives under Front desk › Lists), <b>Restaurant (Nhà hàng)</b> (POS unused; the folio keeps a restaurant line), <b>Audit (Kiểm toán)</b> (no night audit: the hotel day rolls itself at the hour set in Setup).</p>
 <table class="map"><tr><th>tab</th><th>maps to</th><th></th></tr>
-<tr><td>Lễ tân</td><td>ribbon dưới: Sơ đồ · Tình hình · đặt phòng · danh sách</td><td><span class="tag same">giữ</span></td></tr>
-<tr><td>Buồng</td><td>cùng Sơ đồ, lọc sẵn BẨN; nút Sạch/Bẩn → <code>SetHousekeeping</code>; Phòng sửa → <code>TakeOutOfOrder</code>/<code>ReturnToService</code></td><td><span class="tag same">giữ</span></td></tr>
-<tr><td>Báo cáo</td><td>bảng chủ (doanh thu, công suất, công nợ) — đọc từ projection, chỉ chủ thấy</td><td><span class="tag later">sau</span></td></tr>
-<tr><td>Hệ thống</td><td>Thiết lập (phòng, loại phòng, khoản mục, giờ lật ngày) + Tài khoản</td><td><span class="tag later">sau</span></td></tr>
+<tr><td>Front desk (Lễ tân)</td><td>ribbon below: room map · tape chart · new booking · lists</td><td><span class="tag same">keep</span></td></tr>
+<tr><td>Housekeeping (Buồng)</td><td>same room map, DIRTY filter preselected; Clean/Dirty → <code>SetHousekeeping</code>; Out of order → <code>TakeOutOfOrder</code>/<code>ReturnToService</code></td><td><span class="tag same">keep</span></td></tr>
+<tr><td>Reports (Báo cáo)</td><td>owner dashboard (revenue, occupancy, receivables) — projections, owner-only</td><td><span class="tag later">later</span></td></tr>
+<tr><td>System (Hệ thống)</td><td>Setup (rooms, room types, charge categories, day-roll hour) + Accounts</td><td><span class="tag later">later</span></td></tr>
 </table></div>
-<div><h3><span class="n">2</span>Ribbon Lễ tân</h3>
-<table class="map"><tr><th>nút</th><th>maps to</th><th></th></tr>
-<tr><td>Sơ đồ</td><td>đọc <code>RoomBoard</code> → màn 2</td><td><span class="tag same">giữ</span></td></tr>
-<tr><td>Tình hình</td><td>đọc <code>Calendar</code> (tape chart) → màn 5</td><td><span class="tag same">giữ</span></td></tr>
-<tr><td>Khách lẻ</td><td><code>CreateBooking{kind:'individual'}</code> rồi <code>CheckIn</code> — ezFolio vào thẳng folio đã CHECKIN; SoLex 2 bước trên cùng một form (đặt → nhận phòng), vì nhận phòng là sự kiện có quy tắc (phòng tối nay phải sẵn sàng)</td><td><span class="tag same">giữ</span></td></tr>
-<tr><td>Khách đoàn</td><td><code>CreateBooking{kind:'group', requests[]}</code> — cùng form: công ty · nguồn · ngày · số phòng theo loại; phòng gán sau</td><td><span class="tag same">giữ</span></td></tr>
-<tr><td>Khách sẽ đến / sẽ đi · Đến/Đi trong ngày · Khách đang lưu trú · Hủy đặt phòng · Đ.phòng chưa gán</td><td>một màn danh sách, tab <code>status=</code> → màn 4 (đọc <code>StayList</code>)</td><td><span class="tag same">giữ</span></td></tr>
-<tr><td>Đổi phòng</td><td><code>MoveStay</code> — từ hoá đơn/lượt ở (màn 3), không có màn riêng</td><td><span class="tag same">giữ</span></td></tr>
-<tr><td>Tìm kiếm</td><td>tìm theo tên · SĐT · mã đặt phòng → màn 4</td><td><span class="tag same">giữ</span></td></tr>
-<tr><td>Giặt là · Minibar (sổ đăng ký)</td><td>đọc các dòng hoá đơn theo khoản mục; ghi nhận vẫn từ ô phòng (màn 2)</td><td><span class="tag later">sau</span></td></tr>
-<tr><td>Tổng hợp đặt phòng</td><td>Báo cáo (chủ)</td><td><span class="tag later">sau</span></td></tr>
-<tr><td>Nhà hàng · PA18 · Quản lý khách ở</td><td>ngoài phạm vi v1 (PA18: product.md §8)</td><td><span class="tag drop">bỏ</span></td></tr>
+<div><h3><span class="n">2</span>Front desk ribbon</h3>
+<table class="map"><tr><th>button</th><th>maps to</th><th></th></tr>
+<tr><td>Room map (Sơ đồ)</td><td>read <code>RoomBoard</code> → screen 2</td><td><span class="tag same">keep</span></td></tr>
+<tr><td>Tape chart (Tình hình)</td><td>read <code>Calendar</code> → screen 5</td><td><span class="tag same">keep</span></td></tr>
+<tr><td>Walk-in (Khách lẻ)</td><td><code>CreateBooking{kind:'individual'}</code> then <code>CheckIn</code> — ezFolio lands in a folio already CHECKIN; SoLex is two steps on one form (book → check in) because check-in is a ruled event (tonight's room must be in service)</td><td><span class="tag same">keep</span></td></tr>
+<tr><td>Group (Khách đoàn)</td><td><code>CreateBooking{kind:'group', requests[]}</code> — same form: company · source · dates · rooms per type; rooms assigned later</td><td><span class="tag same">keep</span></td></tr>
+<tr><td>Arriving / Departing · Arrivals / Departures today · In house · Cancelled · Unassigned</td><td>one list screen, <code>status=</code> tabs → screen 4 (read <code>StayList</code>)</td><td><span class="tag same">keep</span></td></tr>
+<tr><td>Move room (Đổi phòng)</td><td><code>MoveStay</code> — from the folio / stay (screen 3), no separate screen</td><td><span class="tag same">keep</span></td></tr>
+<tr><td>Search (Tìm kiếm)</td><td>by name · phone · booking code → screen 4</td><td><span class="tag same">keep</span></td></tr>
+<tr><td>Laundry · Minibar (registers)</td><td>read folio lines by category; posting still happens from the room tile (screen 2)</td><td><span class="tag later">later</span></td></tr>
+<tr><td>Booking summary</td><td>Reports (owner)</td><td><span class="tag later">later</span></td></tr>
+<tr><td>Restaurant · PA18 · Guest registry</td><td>out of v1 scope (PA18: product.md §8)</td><td><span class="tag drop">drop</span></td></tr>
 </table></div>
 """
-SHELL_CANT = " Kinh doanh, Nhà hàng, Kiểm toán, thẻ từ (ĐỌC/XÓA THẺ): ngoài phạm vi. Tab ribbon là vỏ; mọi nút bên trong chạy trên lệnh/đọc đã có, giao diện không giữ quy tắc nào."
-SHELL_LINKS = '<a href="room-map.html">Tiếp: 2 · Sơ đồ →</a>'
+SHELL_CANT = " Sales, Restaurant, Audit tabs and key cards (ĐỌC/XÓA THẺ): out of scope. Tabs and ribbon are a shell; every button inside runs on an existing command or read — the UI holds no rule."
+SHELL_LINKS = '<a href="room-map.html">Next: 2 · Room map →</a>'
 
 # ---------------------------------------------------------------- 2. room map
 # rooms: (number, type/bed code, status) — invented layout, 40 rooms
@@ -211,8 +212,8 @@ ROOMS = [
  ("406","DLX6 / DBL","in"),("407","DLX5 / DBL","in"),("408","DLX5 / DBL","arr"),("409","DLX5 / DBL","in"),("410","DLXT / TWN","in"),
  ("501","SUPD / DBL","arr"),("502","STD2 / DBL","in"),
 ]
-ST = [("all","TẤT CẢ"),("ready","SẴN SÀNG"),("arr","DỰ KIẾN ĐẾN"),("in","ĐANG Ở"),("dep","DỰ KIẾN ĐI"),
-      ("occdirty","CÓ KHÁCH BẨN"),("vacdirty","TRỐNG BẨN"),("ooo","PHÒNG SỬA")]
+ST = [("all","ALL"),("ready","READY"),("arr","ARRIVING"),("in","IN HOUSE"),("dep","DEPARTING"),
+      ("occdirty","OCCUPIED DIRTY"),("vacdirty","VACANT DIRTY"),("ooo","OUT OF ORDER")]
 cnt = {k: sum(1 for r in ROOMS if r[2] == k) for k, _ in ST}
 cnt["all"] = len(ROOMS)
 # ezFolio's ĐANG Ở count includes departing/occupied-dirty rooms (all in-house); keep that reading
@@ -221,8 +222,8 @@ cnt_in_display = cnt["in"] + cnt["dep"] + cnt["occdirty"]
 def stbar():
     b = ''.join(f'<a class="st {k}" href="#">{n}({cnt_in_display if k=="in" else cnt[k]})</a>' for k, n in ST)
     return (f'<div class="stbar" data-n="1"><span class="date">24/09/2026</span>{b}'
-            f'<span class="tools">FILTER · ▦ · 🖶 <span class="st key1" style="text-decoration:line-through">ĐỌC THẺ</span>'
-            f'<span class="st key2" style="text-decoration:line-through">XÓA THẺ</span></span></div>')
+            f'<span class="tools">FILTER · ▦ · 🖶 <span class="st key1" style="text-decoration:line-through">READ CARD</span>'
+            f'<span class="st key2" style="text-decoration:line-through">ERASE CARD</span></span></div>')
 
 def tiles():
     out, floor = '', None
@@ -230,33 +231,33 @@ def tiles():
         f = num[0]
         if f != floor:
             if floor is not None: out += '</div>'
-            out += f'<div class="floor">Tầng {f}</div><div class="tiles">'
+            out += f'<div class="floor">Floor {f}</div><div class="tiles">'
             floor = f
         sel = ' sel' if num == "110" else ''
-        out += f'<a class="tile {st}{sel}" href="#chi-tiet" title="{code}"><small>{code}</small><b>{num}</b></a>'
+        out += f'<a class="tile {st}{sel}" href="#detail" title="{code}"><small>{code}</small><b>{num}</b></a>'
     return out + '</div>'
 
 MODAL = """
-<div class="modal" id="chi-tiet">
-  <div class="mh">Chi tiết <span class="act">⎘ ĐẶT PHÒNG</span><span class="x">✕</span></div>
+<div class="modal" id="detail">
+  <div class="mh">Detail (Chi tiết) <span class="act">⎘ BOOK (ĐẶT PHÒNG)</span><span class="x">✕</span></div>
   <div class="mtabs" data-n="3"><span class="on">CHECKIN ROOM</span><span style="text-decoration:line-through;color:var(--muted)">ADVANCE POST ROOM CHARGE</span></div>
   <div class="mbody">
-    <div class="card" data-n="4"><a class="lk" href="index.html#todo">🔍 XEM CHI TIẾT</a>
-      <div class="kv"><span>Phòng</span><span>110</span></div>
-      <div class="kv"><span>Giá</span><span>1,100,000</span></div>
-      <div class="kv"><span>Ngày đến</span><span>18/09/2026 20:11</span></div>
-      <div class="kv"><span>Ngày đi</span><span>28/09/2026 12:00</span></div>
-      <div class="kv"><span>Đêm</span><span>10</span></div>
-      <div class="kv"><span>Trạng thái</span><span>CHECKIN</span></div>
+    <div class="card" data-n="4"><a class="lk" href="index.html#todo">🔍 VIEW DETAIL (XEM CHI TIẾT)</a>
+      <div class="kv"><span>Room</span><span>110</span></div>
+      <div class="kv"><span>Rate</span><span>1,100,000</span></div>
+      <div class="kv"><span>Arrival</span><span>18/09/2026 20:11</span></div>
+      <div class="kv"><span>Departure</span><span>28/09/2026 12:00</span></div>
+      <div class="kv"><span>Nights</span><span>10</span></div>
+      <div class="kv"><span>Status</span><span>CHECKIN</span></div>
     </div>
     <div class="card">
-      <div class="lab">Tên khách</div><div class="val">NGUYỄN VĂN A 0903 xxx xxx</div>
-      <div class="lab">Công ty</div><div class="val">—</div>
-      <div class="lab">Ghi chú <span style="float:right;color:#c00">🖫</span></div>
+      <div class="lab">Guest</div><div class="val">NGUYEN VAN A 0903 xxx xxx</div>
+      <div class="lab">Company</div><div class="val">—</div>
+      <div class="lab">Note <span style="float:right;color:#c00">🖫</span></div>
       <textarea>20h in</textarea>
     </div>
   </div>
-  <div class="bal">Còn lại: 350,000 ⎆</div>
+  <div class="bal">Balance (Còn lại): 350,000 ⎆</div>
   <div class="mfoot" data-n="5"><span>DIRTY</span><span>MINIBAR</span><span>LAUNDRY</span><span>COMPENSATION</span><span>EXTRA SERVICE</span></div>
 </div>
 """
@@ -264,76 +265,76 @@ MODAL = """
 MAP_BODY = f"""
 <div class="ez">
   {topbar()}{ribbon()}
-  <div class="page" id="buong">
+  <div class="page" id="housekeeping">
     {stbar()}
     <div data-n="2">{tiles()}</div>
   </div>
-  <div class="arrowline">▼ bấm ô <b>110</b> → hộp "Chi tiết" (mở đè lên sơ đồ, vẽ tách ra đây để đọc)</div>
+  <div class="arrowline">▼ click tile <b>110</b> → "Detail" box (opens over the map; drawn apart here for reading)</div>
   <div class="fade">{MODAL}</div>
 </div>
-<div class="legend"><span class="n">n</span>ghi chú bên dưới · gạch ngang = bỏ · màu ô = trạng thái, đúng bảng màu ezFolio · số liệu mẫu, không phải khách thật</div>
+<div class="legend"><span class="n">n</span>note below · struck through = dropped · tile colour = status, ezFolio's palette · sample data, no real guests</div>
 """
 
 MAP_NOTES = f"""
-<div><h3><span class="n">1</span>Nút trạng thái có số đếm</h3>
-<p>Cùng 8 nút, cùng màu, cùng thứ tự. Số đếm và màu ô đều <b>suy ra</b> từ phòng (sạch/bẩn, ngừng SD) + các đêm của lượt ở — không lưu trạng thái riêng (product.md §6 Room: "derived, never stored"). Bấm nút = lọc ô.</p>
-<table class="map"><tr><th>nút</th><th>maps to (đọc <code>RoomBoard</code>)</th></tr>
-<tr><td>TẤT CẢ</td><td>mọi phòng đang định nghĩa</td></tr>
-<tr><td>SẴN SÀNG</td><td>trống · sạch · không ai đến hôm nay</td></tr>
-<tr><td>DỰ KIẾN ĐẾN</td><td>lượt ở <i>booked</i> có đêm nay, phòng đã gán</td></tr>
-<tr><td>ĐANG Ở</td><td>lượt ở <i>checkedIn</i> tối nay (gồm cả sắp đi / có khách bẩn, như ezFolio đếm)</td></tr>
-<tr><td>DỰ KIẾN ĐI</td><td>checkedIn, đêm cuối là hôm qua</td></tr>
-<tr><td>CÓ KHÁCH BẨN / TRỐNG BẨN</td><td>housekeeping = dirty, có / không có khách</td></tr>
-<tr><td>PHÒNG SỬA</td><td><code>room.outOfOrder</code></td></tr>
-<tr><td>Ngày 24/09</td><td>chỉ hiển thị; không đổi được (xem "không sao chép")</td></tr>
+<div><h3><span class="n">1</span>Status buttons with live counts</h3>
+<p>Same 8 buttons, colours and order (ezFolio: TẤT CẢ · SẴN SÀNG · DỰ KIẾN ĐẾN · ĐANG Ở · DỰ KIẾN ĐI · CÓ KHÁCH BẨN · TRỐNG BẨN · PHÒNG SỬA). Counts and tile colours are <b>derived</b> from the room (clean/dirty, out of order) + the stays' nights — no stored status (product.md §6 Room: "derived, never stored"). Click = filter tiles.</p>
+<table class="map"><tr><th>button</th><th>maps to (read <code>RoomBoard</code>)</th></tr>
+<tr><td>ALL</td><td>every defined room</td></tr>
+<tr><td>READY</td><td>vacant · clean · nobody arriving today</td></tr>
+<tr><td>ARRIVING</td><td>stay <i>booked</i> with tonight in its nights, room assigned</td></tr>
+<tr><td>IN HOUSE</td><td>stay <i>checkedIn</i> tonight (includes departing / occupied dirty, as ezFolio counts)</td></tr>
+<tr><td>DEPARTING</td><td>checkedIn, last night was yesterday</td></tr>
+<tr><td>OCCUPIED DIRTY / VACANT DIRTY</td><td>housekeeping = dirty, with / without a guest</td></tr>
+<tr><td>OUT OF ORDER</td><td><code>room.outOfOrder</code></td></tr>
+<tr><td>Date 24/09</td><td>display only; cannot be changed (see "not replicated")</td></tr>
 </table></div>
-<div><h3><span class="n">2</span>Ô phòng</h3>
-<p>Mã loại / giường trên, số phòng dưới, màu = trạng thái. Xếp theo tầng. Bấm ô → hộp <b>Chi tiết</b>. Tam giác góc ô của ezFolio (thẻ từ / ghi chú) không vẽ.</p>
-<h3><span class="n">3</span>Đầu hộp Chi tiết</h3>
-<table class="map"><tr><th>nút</th><th>maps to</th><th></th></tr>
-<tr><td>ĐẶT PHÒNG</td><td><code>CreateBooking{{kind:'individual', room:110}}</code> — form đặt phòng, phòng điền sẵn</td><td><span class="tag same">giữ</span></td></tr>
-<tr><td>CHECKIN ROOM</td><td><code>CheckIn{{stayId}}</code> (phòng tối nay phải sẵn sàng; đến sớm → cộng đêm nay, cảnh báo)</td><td><span class="tag same">giữ</span></td></tr>
-<tr><td>ADVANCE POST ROOM CHARGE</td><td>không có: tiền phòng do hệ thống ghi lúc nhận phòng và lúc lật ngày; khoản mục <i>room</i> bị khoá với mọi người</td><td><span class="tag drop">bỏ</span></td></tr>
+<div><h3><span class="n">2</span>Room tiles</h3>
+<p>Type / bed code on top, room number below, colour = status. Grouped by floor. Click → <b>Detail</b> box. ezFolio's corner triangles (key card / note flags) are not drawn.</p>
+<h3><span class="n">3</span>Detail box header</h3>
+<table class="map"><tr><th>button</th><th>maps to</th><th></th></tr>
+<tr><td>BOOK (ĐẶT PHÒNG)</td><td><code>CreateBooking{{kind:'individual', room:110}}</code> — booking form with the room prefilled</td><td><span class="tag same">keep</span></td></tr>
+<tr><td>CHECKIN ROOM</td><td><code>CheckIn{{stayId}}</code> (tonight's room must be in service; early arrival → adds tonight, warns)</td><td><span class="tag same">keep</span></td></tr>
+<tr><td>ADVANCE POST ROOM CHARGE</td><td>none: the room charge is posted by the system at check-in and at the day roll; the <i>room</i> category is locked for everyone</td><td><span class="tag drop">drop</span></td></tr>
 </table>
-<h3><span class="n">4</span>Thân hộp</h3>
-<table class="map"><tr><th>ô</th><th>maps to</th></tr>
-<tr><td>Phòng · Giá · Ngày đến/đi · Đêm · Trạng thái · Tên khách · Công ty</td><td>đọc lượt ở tối nay của phòng (<code>Stay</code> + <code>Booking.party</code>); Giá = giá đêm nay</td></tr>
-<tr><td>Ghi chú + 🖫</td><td><code>SetRoomNote</code> (ghi chú của phòng; ghi chú đặt phòng ở màn 3)</td></tr>
-<tr><td>Còn lại</td><td>đọc số dư folio (tổng − cọc − đã trả); ⎆ → màn 3 (hoá đơn)</td></tr>
-<tr><td>XEM CHI TIẾT</td><td>→ màn 3 (booking editor / lượt ở)</td></tr>
+<h3><span class="n">4</span>Detail box body</h3>
+<table class="map"><tr><th>field</th><th>maps to</th></tr>
+<tr><td>Room · Rate · Arrival / Departure · Nights · Status · Guest · Company</td><td>read the room's stay tonight (<code>Stay</code> + <code>Booking.party</code>); Rate = tonight's night rate</td></tr>
+<tr><td>Note + 🖫</td><td><code>SetRoomNote</code> (the room's note; the booking note lives on screen 3)</td></tr>
+<tr><td>Balance (Còn lại)</td><td>read folio balance (total − deposit − paid); ⎆ → screen 3 (folio)</td></tr>
+<tr><td>VIEW DETAIL</td><td>→ screen 3 (booking editor / stay)</td></tr>
 </table>
-<h3><span class="n">5</span>Nút nhanh</h3>
-<table class="map"><tr><th>nút</th><th>maps to</th></tr>
-<tr><td>DIRTY</td><td><code>SetHousekeeping{{dirty}}</code> (Buồng: cùng nút, thêm CLEAN)</td></tr>
-<tr><td>MINIBAR · LAUNDRY · COMPENSATION · EXTRA SERVICE</td><td><code>PostCharge</code> với khoản mục chọn sẵn; danh sách nút = các khoản mục trong Thiết lập (tên/giá của khách sạn), nên COMPENSATION = "Đền bù" nếu họ đặt vậy. Mỗi nút mở một dòng: món · SL · đơn giá → ghi vào hoá đơn theo định tuyến (đoàn: HĐ khách hay HĐ đoàn)</td></tr>
+<h3><span class="n">5</span>Quick buttons</h3>
+<table class="map"><tr><th>button</th><th>maps to</th></tr>
+<tr><td>DIRTY</td><td><code>SetHousekeeping{{dirty}}</code> (Housekeeping tab: same button plus CLEAN)</td></tr>
+<tr><td>MINIBAR · LAUNDRY · COMPENSATION · EXTRA SERVICE</td><td><code>PostCharge</code> with the category preselected; the button list = the charge categories in Setup (the hotel's own names and prices). Each opens one line: item · qty · unit price → posted to the folio per routing (group: guest folio or master folio)</td></tr>
 </table></div>
 """
-MAP_CANT = " ĐỌC/XÓA THẺ (thẻ từ ngoài phạm vi, vĩnh viễn) · chọn ngày trên sơ đồ (sơ đồ = bây giờ; theo ngày là Tình hình, product.md §4) · ADVANCE POST ROOM CHARGE (tiền phòng là khoản mục hệ thống, §6) · Giá không sửa tại chỗ (đổi giá đêm = <code>SetNightRate</code> có lý do, màn 3)."
-MAP_LINKS = '<a href="shell.html">← 1 · Khung</a><a href="index.html#todo">Tiếp: 3 · Booking editor (chưa vẽ) →</a>'
+MAP_CANT = " READ / ERASE CARD (key cards out of scope, permanently) · date picker on the map (the map is now; over time is the tape chart, product.md §4) · ADVANCE POST ROOM CHARGE (room charge is a system category, §6) · Rate not editable in place (a night's price change = <code>SetNightRate</code> with a reason, screen 3)."
+MAP_LINKS = '<a href="shell.html">← 1 · Shell</a><a href="index.html#todo">Next: 3 · Booking editor (not drawn yet) →</a>'
 
 # ---------------------------------------------------------------- index
-INDEX = f"""<!doctype html><html lang="vi"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+INDEX = f"""<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>SoLex ezFolio Flow</title><link rel="stylesheet" href="ezfolio.css">
 <div class="wrap">
-<h1>SoLex — luồng "giống ezFolio"</h1>
-<p class="sub">Mockup cho buổi demo: màn hình lễ tân hằng ngày, <b>đúng hình dạng ezFolio</b>, chạy trên lệnh/đọc đã có của SoLex (giao diện không giữ quy tắc nào). Để so "như cũ" với luồng SoLex (<code>ux.md</code>). Không phải bản dựng. Số liệu mẫu, không có khách thật.</p>
+<h1>SoLex — the "same as ezFolio" flow</h1>
+<p class="sub">Demo mockups for the client: the desk's daily screens in <b>ezFolio's shapes</b>, running on SoLex's existing commands and reads (the UI holds no rule). To compare "same as before" with the SoLex flow (<code>ux.md</code>). Not a build. Sample data; no real guests. Labels in English (D-29); ezFolio's Vietnamese term in brackets where it helps recognise the original.</p>
 <div class="idx">
-  <a href="shell.html"><b>1 · Khung</b><small>tab trên + ribbon Lễ tân; nút nào giữ / sau / bỏ</small></a>
-  <a href="room-map.html"><b>2 · Sơ đồ + Chi tiết</b><small>nút trạng thái có số đếm, ô phòng, hộp Chi tiết với Còn lại + nút nhanh</small></a>
-  <a class="todo" id="todo" href="#todo"><b>3 · Booking editor</b><small>3 khung khách · đặt phòng · tiền; tab; Thao tác; Show log; Fast checkout → quickout — chờ duyệt 1+2</small></a>
-  <a class="todo" href="#todo"><b>4 · Danh sách theo trạng thái</b><small>tab status=, lẻ/đoàn, thứ tự cột ezFolio — chờ</small></a>
-  <a class="todo" href="#todo"><b>5 · Tình hình (tape chart)</b><small>phòng theo loại, dòng dùng/trống/% — chờ</small></a>
+  <a href="shell.html"><b>1 · Shell</b><small>top tabs + Front desk ribbon; which buttons keep / later / drop</small></a>
+  <a href="room-map.html"><b>2 · Room map + Detail</b><small>status buttons with live counts, room tiles, Detail box with Balance + quick buttons</small></a>
+  <a class="todo" id="todo" href="#todo"><b>3 · Booking editor</b><small>three panels guest · booking · money; tabs; actions; show log; fast checkout → quickout — after review of 1+2</small></a>
+  <a class="todo" href="#todo"><b>4 · Status lists</b><small>status= tabs, individual / group, ezFolio column order — pending</small></a>
+  <a class="todo" href="#todo"><b>5 · Tape chart</b><small>rooms by type, used / free / % rows — pending</small></a>
 </div>
-<div class="legend" id="later"><span class="tag same">giữ</span> như ezFolio, trên lệnh/đọc SoLex · <span class="tag later">sau</span> có trong SoLex, không ở demo · <span class="tag drop">bỏ</span> ngoài phạm vi (thẻ từ, thẻ tín dụng, giảm giá/FOC/thuế, nhà hàng, night audit)</div>
-<p class="sub" style="margin-top:16px">Mỗi màn: mockup trước, ghi chú dưới (≤5), mỗi nút một dòng "maps to", một dòng "không sao chép được" và vì sao. Vẽ theo <code>screens/fd-*.png</code> (không commit) + <code>existing-system.md</code>; quy tắc theo <code>product.md</code>. Sinh bởi <code>gen.py</code> — không sửa tay HTML.</p>
+<div class="legend" id="later"><span class="tag same">keep</span> as ezFolio, over SoLex commands/reads · <span class="tag later">later</span> in SoLex, not in the demo · <span class="tag drop">drop</span> out of scope (key cards, card fields, discount/FOC/tax, restaurant, night audit)</div>
+<p class="sub" style="margin-top:16px">Each screen: mockup first, notes below (≤5), one "maps to" line per control, one "not replicated" line with the reason. Drawn from <code>screens/fd-*.png</code> (not committed) + <code>existing-system.md</code>; rules per <code>product.md</code>. Generated by <code>gen.py</code> — do not hand-edit the HTML.</p>
 </div></html>"""
 
 (OUT / "ezfolio.css").write_text(CSS.strip() + "\n")
 (OUT / "index.html").write_text(INDEX)
-(OUT / "shell.html").write_text(page("1 · Khung — tab + ribbon Lễ tân",
-    "Vỏ chung của mọi màn. Rendered as: Linh (lễ tân). Tham chiếu: đầu trang <code>fd-room-map.png</code>.",
+(OUT / "shell.html").write_text(page("1 · Shell — tabs + Front desk ribbon",
+    "Common shell of every screen. Rendered as: Linh (desk). Reference: header of <code>fd-room-map.png</code>.",
     SHELL_BODY, SHELL_NOTES, SHELL_CANT, SHELL_LINKS))
-(OUT / "room-map.html").write_text(page("2 · Sơ đồ + hộp Chi tiết",
-    "Màn hình mặc định của lễ tân. Rendered as: Linh. Tham chiếu: <code>fd-room-map.png</code>, <code>fd-room-detail-panel.png</code>.",
+(OUT / "room-map.html").write_text(page("2 · Room map (Sơ đồ) + Detail box",
+    "The desk's default screen. Rendered as: Linh. Reference: <code>fd-room-map.png</code>, <code>fd-room-detail-panel.png</code>.",
     MAP_BODY, MAP_NOTES, MAP_CANT, MAP_LINKS))
 print("ok", cnt, "in-display", cnt_in_display)
