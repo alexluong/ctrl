@@ -226,4 +226,5 @@ Drafted for G14 (5.7), from the N28 ruling:
 |---|---|---|---|---|---|
 | S5-39 | Desk cancels a group booking whose rooms are all still booked | every still-booked stay cancelled in one batch; booking cancelled; the group bill stays open for a refund or a kept deposit and closes at zero | architect N28 ruling | todo | — |
 | S5-40 | Desk cancels a group booking with one room checked in | refused `booking.stayCheckedIn`; nothing cancelled | same | todo | — |
+| S5-41 | Owner voids a line on a checked-out guest's closed bill | refused with a reason on screen; no `folio.charge_voided` event (the Void button stays pressable, N25) | same | pass a204175 | e2e `void-closed.spec.ts` |
 
