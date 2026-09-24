@@ -65,7 +65,23 @@ Other ideas (architect): TTS narration from captions; diff two replays of the sa
 - Meticulous, Replay.io: proprietary.
 - Cypress/Checkly session-replay add-ons.
 
+## Direction (Alex, 2026-09-25)
+
+- **A cool project for Alex's own use**, not a money idea. No need to validate a market.
+- Shape: an **agent MCP** that generates a narrated, seekable demo during development, locally (a single-file player) or pushed to a hosted player to share (in a PR, with the team, from cloud dev). A hosted, team-private version is a possible later extra, not the goal.
+- Not PR/CI-centric, and not "demos for marketing".
+- How it differs from Playwright trace viewer (dev debugging, snapshots per action, MB-sized zip): continuous watchable playback, captions written by the agent, a UI built for review, ~150 KB.
+- Nearest threats if it were ever a product: cloud browsers (Browserbase session replay is rrweb-based) adding sharing; agent platforms building it in (Codex/Copilot attach screenshots today).
+- Design lean: **script, then render** (agent writes a short journey, the tool runs it cleanly) as the core; recording the agent's live browser session is a stretch goal (needs trimming of retries and dead time).
+
+## Minimal first version
+
+1. Extract `support.ts` + `rrweb.ts` from SoLex into its own repo; rrweb as an npm dependency.
+2. An MCP wrapper: `record → step(caption) → finish` → `player.html`.
+3. Publish via Claude artifacts first; a self-hosted player on collielab only if needed.
+4. Dogfood on SoLex feature work.
+
 ## Open questions
 
-- OSS package (`playwright-rrweb`-style) vs product (hosted share/diff)?
-- Does something close to QA's #1–3 already exist? Needs a prior-art search before building.
+- Name / repo.
+- Does an "agent demo recorder" MCP already exist? Quick prior-art check before extracting.
