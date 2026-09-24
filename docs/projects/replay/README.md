@@ -184,7 +184,42 @@ Alex: "a CLI that allows a server people can log in/sign up to and upload".
 - Prior art: TestRail/Qase/Xray (screenshot/video attachments), Allure (per-step attachments, OSS).
 - Dogfood: SoLex's `qa/cases.md` already has case IDs.
 
+## Backend capture spike (lab 710b194): works end to end
 
+Run with `node run.js [--logs | --otel]`. The app runs as a **child process** on :7105 and the journey lives in `journeys/todo.js`.
+- **`--logs`**: the child's stdout/stderr, line by line, stamped on the replay clock → `server.json` `{t, stream, text, traceId}`.
+- **`--otel`** (implies `--logs`):
+  - The runner hosts an OTLP/HTTP JSON receiver on :7104.
+  - The app starts with Node's **zero-code auto-instrumentation** (`--experimental-loader @opentelemetry/instrumentation/hook.mjs --import @opentelemetry/auto-instrumentations-node/register`, OTEL_* env, http + undici only).
+  - Output → `spans.json` `{traceId, spanId, parentSpanId, name, kind, service, start, end, status, attributes}`.
+- **Correlation:**
+  - The in-page fetch patch adds a W3C `traceparent` to same-origin requests.
+  - Playwright copies it onto the network row.
+  - **The browser request is the root span.** Verified.
+- **Demo extras in the app:**
+  - a custom `db.*` span via `@opentelemetry/api` (a no-op without the SDK)
+  - a trace-id log prefix
+  - an outbound call to a "report worker" that returns 503
+- **Example** (`/api/report`): browser GET 117 ms → server GET 66 ms (error) → db select 10 ms + POST report-worker 46 ms (error) → worker POST /render 41 ms. All 6 API requests are correlated and the logs carry the trace id.
+- **Size:**
+  - browser only: 38.4 KB raw / 7.5 KB zipped
+  - with logs + otel: 51.7 KB / 9.9 KB zipped (+~30%); `spans.json` is 2.8 KB for 17 spans
+  - Real apps with ORM/SQL instrumentation will produce far more spans, so cap or sample per request. Still tiny next to trace.zip (390 KB).
+- **Player:**
+  - **Server** tab: logs on the timeline, stderr in red, the trace id links to that request's network row.
+  - Network rows show "⧉ trace". Clicking one shows a **waterfall**: browser root, then the server span, db (green), outbound (grey), errors in red, indented by parent; then that request's logs.
+  - "Click the 500 → see why" takes one click.
+  - Deeper traces will need collapse/zoom.
+- **Opt-in:** `server.json`/`spans.json` are written only when enabled and listed in the manifest. The player hides the Server tab and trace links when they're absent. When off, it costs nothing.
+- **Gotchas:**
+  1. For ESM apps, `--import …/register` alone doesn't instrument `import { createServer } from "node:http"`. The **loader hook is required**. Without it, spans become separate roots and logs have no trace id.
+  2. The receiver's keep-alive sockets hold the runner open, so it needs an explicit `process.exit`.
+  3. Clocks: `Date.now()` works when everything is on one machine. Remote or containerized backends need clock-offset estimation.
+  4. Document and static requests carry no `traceparent` (only fetch is patched). They're filtered out of the waterfall.
+- **Not done:** per-step SQLite DB diff.
+- **Fits** the opt-in shape: `replay run --logs|--otel` or the fixture option `backend: 'logs'|'otel'`.
+
+## Proposed SDK / DX (not built yet)
 
 - Packages: `@replay/core` (format, recorder, zip), `@replay/playwright` (capture adapter), `@replay/player`, `replay` CLI.
 - Ways in:
