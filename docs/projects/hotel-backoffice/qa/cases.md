@@ -217,6 +217,13 @@ Owner only. The dashboard is today. Revenue and occupancy take a range [from, to
 | S5-34 | Desk marks a stay booked for yesterday as nobody came | status no-show, the closed line for it; its nights freed; the deposit still on the bill and the keep form offered | no-show leaves the folio open | e2e deposits "S5-34"; marking twice is silent: scenario | 755e585 pass |
 | S5-35 | Owner on a cancelled stay with a 200 000 deposit keeps nothing typed, 250 000, then 50 000, then 150 001; refunds 150 000 | amount missing; too large; kept (credit 150 000 left); too large; refund brings it to zero and the bill closes with no forms left; revenue for today +50 000 | ceiling = taken − refunded − kept; close at zero | e2e deposits "S5-35" | 755e585 pass |
 | S5-36 | A tampered charge form posts the deposit-kept category | not offered in the list; refused `folio.categoryReserved` | reserved category, like room | e2e deposits "S5-36" | 755e585 pass (wording of the refusal speaks only of room charges: sent to product) |
-| S5-37 | Owner keeps the deposit on a cancelled group's bill | the same form on the group bill; the bill closes at zero | 5.4 | e2e deposits "S5-37" (fixme) | 755e585 **blocked** (N28: no screen cancels a group booking, and the group bill takes settlements only, so there is never a deposit on it to keep) |
+| S5-37 | Owner keeps the deposit on a cancelled group's bill | the same form on the group bill; the bill closes at zero | 5.4 | e2e deposits "S5-37" (fixme) | 755e585 **blocked** (N28: no screen cancels a group booking, and the group bill takes settlements only. Architect: intended, parked until ux G19 (deposit kind on the group bill, 5.6) and G14 (cancel booking screen, 5.7) land) |
 | S5-38 | Revenue report over everything, with a kept deposit in it | the kept deposit appears as its own category line; the category reconciliation (S5-27) still matches the charges table | forfeit is a charge on a reserved category | e2e reports-range "S5-27" (runs after deposits) | 755e585 pass |
+
+Drafted for G14 (5.7), from the N28 ruling:
+
+| ID | who / what they do | what they should see | rule | automated by | last run |
+|---|---|---|---|---|---|
+| S5-39 | Desk cancels a group booking whose rooms are all still booked | every still-booked stay cancelled in one batch; booking cancelled; the group bill stays open for a refund or a kept deposit and closes at zero | architect N28 ruling | todo | — |
+| S5-40 | Desk cancels a group booking with one room checked in | refused `booking.stayCheckedIn`; nothing cancelled | same | todo | — |
 
