@@ -263,6 +263,37 @@ Alex: "what about backend features, not UI?"
 - **Tracetest**: trace-based assertions
 - Keploy: API capture/replay
 
+## Naming (open, 2026-09-25)
+
+"Replay" is a working name only: Alex says it doesn't fit, and it collides with Replay.io.
+
+**Umbrella candidate: Collie.**
+- Alex's personal brand since 2021 ("Collie Studio"; later collielab and collie-ui). Named after his border collie.
+- The "herding agents" reading is a coincidence and a bonus, not the origin.
+- Convention under discussion: Collie umbrella + plainly named modules (Collie Replay, later Board/Review/Cases); npm `@collie/*`; one `collie` CLI with subcommands. "Collie Studio" could be the eventual workspace app. No suite is planned now.
+- Collisions:
+  - [AltanS/collie](https://github.com/AltanS/collie) (~1.1k★): a mobile terminal for coding agents on herdr, i.e. the same space.
+  - [meshcloud/collie-cli](https://github.com/meshcloud/collie-cli): a `collie` command.
+  - The bare `collie` npm package is taken (unrelated).
+  - Fine for personal/team use; recheck before any public launch.
+
+**Standalone name pass** (checked npm, GitHub, brew, local commands, fileinfo, DNS; domains and trademarks not registrar-verified):
+- **Free on npm:** rushes, outtake, playthru, cutroom, foley.
+- **Most dictionary names are taken on npm:** take, reel, slate, exhibit, witness, receipt, rewind, retrace, tape.
+- **Eliminated:**
+  - `take`: oh-my-zsh `take` = mkdir+cd, installed on Alex's machine. Only a problem as a *bare CLI*; `.take` as a file extension is clean.
+  - `tape`: charmbracelet VHS uses `.tape`.
+  - `witness`: the in-toto `witness` attestation CLI.
+  - `dailies`: an active npm package "release decisions for AI changes", adjacent space.
+  - rewind/retrace: screen-memory apps.
+- **Top picks:**
+  - **rushes** (film: raw footage reviewed daily, before anything is final): npm free, clean CLI, `.rush` ext; only collision is rushes.co, a small filmmaker video platform.
+  - **outtake**
+  - **exhibit** (needs an npm scope)
+- **Suite names (film theme), if ever:** Editbay, Cutroom, Picturelock (all free on npm); Backlot is risky (brekkylab/backlot = local SaaS emulator for agents).
+
+**File format:** a plain zip (magic `PK`) with `manifest.json` (format name + version) and NDJSON streams; a custom extension for "open with"; a `--zip` export. Extension candidates: `.take`, `.rush`, `.reel` (none has a fileinfo entry).
+
 ## Proposed SDK / DX (not built yet)
 
 - Packages: `@replay/core` (format, recorder, zip), `@replay/playwright` (capture adapter), `@replay/player`, `replay` CLI.
@@ -276,7 +307,7 @@ Alex: "what about backend features, not UI?"
 
 ## Open questions
 
-- Name / repo.
+- Name / repo: see § Naming.
 - License split: MIT for core/adapters/player/CLI; server MIT vs AGPL. Lean: MIT everywhere, AGPL server as fallback; skip FSL/BSL ([market.md](market.md#open-core-models)).
 - Go (single binary: server + CLI + embedded player) vs TS monorepo. The recorder/player stay JS either way.
 - ~~Does an "agent demo recorder" MCP already exist?~~ Answered in [market.md](market.md): several are video-only; none are DOM replays.
