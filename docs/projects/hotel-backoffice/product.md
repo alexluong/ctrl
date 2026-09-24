@@ -59,8 +59,8 @@ Screen → actions → command. Immediate scope only; capability in brackets whe
 | **Room map** (home) | every room's state *now*; tile → check in, post charge, take payment, mark clean/dirty, out of order |
 | **Tape chart** | rooms × dates; per-type availability inline; drag a stay = move room / extend (`stay.room_changed` / `stay.nights_changed`); click empty cell → new booking |
 | **New booking** | individual: room + dates + guest → done (one stay, assigned). Group: company, dates, types × qty, assign now (default) or later |
-| **Booking page** | edit party / notes, add / remove stays, assign rooms, cancel w/ reason, master folio |
-| **Stay page** | guests, nights (room + rate per night), check in, check out, move, extend, cancel / no-show, own folio |
+| **Booking page** | edit party / notes, add / remove stays, assign rooms, cancel w/ reason, master folio; **group routing table** (rooms × categories, ezFolio's group panel, D-27) = `SetRouting` per stay, applied only to stays still on the company default — a per-stay override stays (ux.md G32, 5.7) |
+| **Stay page** | guests, nights (room + rate per night), check in, check out, move, extend, cancel / no-show, own folio. **Check out opens a settle dialog** (ezFolio's quickout shape, D-27): balance · method · amount · ref, last option "Công nợ → company" = `TakePayment` *or* `TransferToReceivable`, **then** `CheckOut` — two commands in sequence, never one batch; if `CheckOut` refuses, the payment stands and the dialog says so; the dialog never decides whether check-out is allowed (ux.md G31, 5.7) |
 | **Folio** | lines; post charge (catalogue item or free text); void [owner]; move line to another folio; take payment (cash / transfer / card); deposit; refund [owner]; transfer remainder to company; close; **print** |
 | **Arrivals / departures today** | lists off the map; one-click check in / out |
 | **Search** | booking / stay by guest name, phone, company |
