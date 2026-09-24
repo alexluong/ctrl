@@ -1408,7 +1408,7 @@ name for the calendar). Tail after those: G4, G8, G10, G12, G19, G21, G26.
 - `pnpm deploy` failed once with a Cloudflare 7403 on the D1 migrate step and
   worked on an immediate retry. Nothing changed in between.
 
-## solex-dev — 5.7 resume note (build from solex `ae22949`, staging `1c653f15`, 464 green)
+## solex-dev — 5.7 resume note (build from solex `d37bae1`, staging `bca132da`, 475 green)
 
 Kept current at the landing. Both repos pushed, tree clean, build clean,
 biome at the 4-warning baseline. **Migration 0019** (`booking_rules`) applied
@@ -1492,8 +1492,35 @@ stands on its own merits.
   range by definition. `receivableAgeDays` and `oooDays` joined the G29 form
   in the same commit, which is when something finally read them.
 
-**Next, in architect's order:** **G34** overbooking → **G35** capacity →
-5.8. ~~**G33**~~ (owner home + Needs attention; this is where `receivableAgeDays` and
+- **G34** (`2978428`) — the overbooking check.
+  Every command that adds demand checks the nights it adds, per type, against
+  the rooms in service: create, add rooms to a group, ChangeNights add, early
+  check-in. Refusal `availability.overbooked` **carrying numbers** — `short`
+  and `date` — which needed `RuleError` to be able to carry a detail payload
+  and `CommandResult` / `useCommand` / `CommandError` to pass it through.
+  Four things it is careful about: only the nights added; supply-side commands
+  never refuse; a room double-held stays `stay.roomTaken` (so the per-room
+  check runs first, in both `create` and `changeNights`); never silent — the
+  override is a flag and even `allow` requires it. New capability
+  `stay.overbook`, owner default. "Take it anyway" is on the new-booking form
+  only; the nights form and check-in take the flag but do not offer it.
+  **Two fixture findings**: `given.booking` in a hotel with no rooms was
+  selling a room that did not exist, and `groups.test.ts` was booking twelve
+  of them. `given.rooms(h, n)` exists now and those hotels have rooms.
+- **QA N38** (`d37bae1`) — **G32's sweep was wrong.** Writing each stay's own
+  routing entry made every swept room look deliberately set, so a second sweep
+  moved nothing and only "As agreed" could undo it. The group's decision lives
+  on the *booking* now (`booking.routing_set` / `routing_cleared`), and a stay
+  reads it unless told otherwise. Product's rule became the lookup order —
+  stay → booking → company → default — instead of something the sweep had to
+  implement. Behaviour change from what I first told QA: "As agreed" no longer
+  clears a room's own setting.
+- **QA N39** (same) — departure day is not an overstay.
+
+**Next:** **G35** capacity (`adults ≤ RoomType.capacity`, children never
+counted, refuse `stay.overCapacity` at create / requests / CheckIn, new
+`SetOccupancy {stayId, adults, children}` → `stay.occupancy_set`), then 5.8.
+~~**G33**~~ (owner home + Needs attention; this is where `receivableAgeDays` and
 `oooDays` join the G29 form) → **G34** overbooking → **G35** capacity → 5.8.
 G34/G35 are spec'd in product.md (ctrl `847ff15`) and accepted by architect:
 override is an `override?: true` flag on the adding command, `OverrideOverbooking`
@@ -1504,10 +1531,9 @@ G35: `adults ≤ RoomType.capacity`, children never counted, refuse
 `stay.overCapacity`, new `SetOccupancy {stayId, adults, children}`.
 
 **Open:**
-- `pnpm i18n:report` at **24** en-only keys: G28's four, G29's ten, G32's
-  eight, plus `people.idNumberMissing` and `error.stay.idRequired`. **Product
-  was unreachable when I tried to send the first batch** — resend all of them
-  at the next landing.
+- `pnpm i18n:report` at **40** en-only keys: G28, G29, G32, G33 and G34.
+  **Product has been unreachable every time I have tried**, so none of these
+  have been handed over. Send the whole set when they come back.
 - `bookings.sourceId` on rows written before G30 stays null; no backfill.
 - **solex `main` is shared** — QA pushes e2e there. Rebased onto `f4308ad`
   this stretch; always fetch + rebase.
