@@ -1,4 +1,5 @@
 # Team log
+- 2026-09-25 — dev: **SetRoomType landed, G8's debt closed** (solex `c8b3528`, staging `e8ec202d`, 419 green). Select on every row of the Setup rooms table; allowed with a guest in the room (product's ruling — the nights already carry their price, a type after the sale is a label and tomorrow's bucket); versions `availability:all`, proved by a scenario watching the double go to 0 and the suite to 1 through `freeByType`; unknown and retired types are one refusal. **Wart flagged:** `setup.roomTypeInvalid` (product's spelling, SetRoomType) vs `room.typeUnknown` (defineRoom) — two codes for one fact, unruled. **Dev at a clean stop for compaction; resume note below.**
 - 2026-09-25 — BookingSource accepted (both landings, walk-in default, 414 green, staging c35d5e23). Numbering corrected: this is G30 + product §3, not G28 (G28 = company defaultRouting, still in the order). Dev's shared command-id fix is the likely cause of QA's define-room silent drop; QA re-verifying. Dev → SetRoomType.
 - 2026-09-25 — dev: **5.7 G28 — BookingSource, both landings + a silent-drop fix** (solex `8716fc2`, staging `c35d5e23`, 414 green, migration 0017 dev + remote). Landing 1: `BookingSource` as a tier-b Setup entity per product `50a07b7` — name + one of four fixed buckets (the client's WALK-IN · OTA · TA · CORP), slug id, retire refused by nothing (a booking keeps the id it was taken with), `seedDefaults` for the v1 ten, Setup screen section. **`CreateBooking` now writes `walk-in` when nobody said**, so revenue-by-source has no "not recorded" row going forward; the payload keeps `sourceId?` and the report keeps its null bucket for what came before. Landing 2: source select beside "Billed to" (picking a company flips an *untouched* default to `company`, never a set one), name on the bookings list column and the booking header. **Numbering:** architect has been calling this G28, but ux.md's G28 is the company `defaultRouting` control — this work is really G30 + product §3's New-booking row; flagged for a docs fix. **Also fixed (QA (a) candidate):** one `useCommand` serves a whole screen, and its retry slot was shared, so a second command started while another was in flight took the first's id and the server answered it as a repeat — nothing written, nothing refused, `ok` back, form clears. Now an id is reused only when its attempt went unanswered and nothing else is waiting; `retryId` extracted and unit-tested. Offered as a candidate, not a confirmed repro. Also rebased twice onto QA's e2e pushes — solex main is shared now.
 - 2026-09-25 — D-30: rrweb journeys are the standing review format (Alex: 'definitely prioritize the rrweb journeys, build them out as we continue testing'). QA briefed: suite-wide capture behind env flag + one showcase journey per accepted landing.
@@ -1396,7 +1397,70 @@ name for the calendar). Tail after those: G4, G8, G10, G12, G19, G21, G26.
 - `pnpm deploy` failed once with a Cloudflare 7403 on the D1 migrate step and
   worked on an immediate retry. Nothing changed in between.
 
-## solex-dev — 5.7 resume note (build from solex `a48c254`, staging `589cca66`, 398 green)
+## solex-dev — 5.7 resume note (build from solex `c8b3528`, staging `e8ec202d`, 419 green)
+
+Written at architect's clean-stop for compaction. Both repos pushed, working
+tree clean, `pnpm build` clean, biome at the 4-warning baseline. **Migration
+0017** (`booking_sources`) applied dev + remote in this stretch; nothing
+pending.
+
+**Landed since the `a48c254` note:**
+- **G15 landing 2** (`c6f5d36`) — the stay page's nights table edits itself:
+  per-night rate field + Save, per-night "Give it back", one card below adds a
+  night at either end. Adapters only; the unbroken run / empty stay / posted
+  night come back as codes. `posted` drawn as a pill (the fact, not the rule).
+- **G20** (`ee8513b`) + follow-up (`f6c98a4`) — booking form is one line per
+  kind of room, so a mixed group is one booking; new read
+  `hotel.calendar.freeByType(from, to)` (rooms left per type per night):
+  **unassigned nights subtracted** (a group is sold as stays without rooms),
+  OOO in neither number, **free returned signed** because nothing refuses an
+  oversold group. Follow-up pointed the tape chart's free-of-this-type row and
+  the hotel-wide free row at the same read; `used` and occupancy % stay
+  room-based. Kind select moved above the lines, and switching back to
+  individual drops all but the first line.
+- **G30/BookingSource** (`79f0a60` + `5a86ebc`) — architect called it G28; the
+  real ux.md G28 (company `defaultRouting`) is still outstanding. Tier-b Setup
+  entity, four fixed buckets, slug id, retire refused by nothing,
+  `seedDefaults` for the v1 ten, Setup section. **`CreateBooking` writes
+  `walk-in` when nobody said.** Source select beside "Billed to" (flip fires
+  only on an untouched default), name on the list column and booking header.
+- **Command-id fix** (`8716fc2`) — one `useCommand` serves a whole screen and
+  its retry slot was shared, so a second command started while another was in
+  flight took the first's id and the server answered it as a repeat: nothing
+  written, nothing refused, `ok` back. Now reused only when the attempt went
+  unanswered and nothing else is waiting. `retryId` extracted + unit-tested.
+  Offered as the candidate for QA's (a); QA re-verifying on `c35d5e23`.
+- **SetRoomType** (`c8b3528`) — the G8 debt closed. Select on every row of the
+  Setup rooms table; allowed with a guest in the room (product's ruling);
+  versions availability, proved through `freeByType`; unknown and retired are
+  one refusal, `setup.roomTypeInvalid`.
+
+**Next, in architect's order:** G16 → G22 → **G28 = company `defaultRouting`**
+→ G29 → G32 → G33, with QA's (b) stay-page history merged with its folio
+stream and (c) housekeeping badge Clean/Dirty only, folded in when their N
+numbers arrive.
+
+**Open:**
+- `pnpm i18n:report` at **65** en-only keys. Product session is not running, so
+  no Vietnamese batch is coming; en-only stands (D-29).
+- **Code wart flagged, unruled:** `setup.roomTypeInvalid` (SetRoomType) and
+  `room.typeUnknown` (defineRoom) are two codes for one fact.
+- `bookings.sourceId` on rows written before G30 stays null; no backfill. The
+  revenue report's null bucket exists for exactly those.
+- QA has not walked G14 landing 1/2, G15, G20 or G30 through the screens.
+- **solex `main` is shared now** — QA pushes e2e there. I rebased local
+  landings onto their pushes twice this stretch; always `git fetch` + rebase
+  before pushing.
+- Cloudflare 7403 on the D1 migrate step did not recur this stretch.
+
+**Verification technique** (no dev server, no staging sign-in): inline
+`src/styles.css` into a static HTML harness in the scratchpad, screenshot with
+Playwright run from `solex/e2e` (use a `file://` URL — the scratchpad http
+server is gone), read the PNG, delete the harness. Used this stretch on the
+nights table and the group form; caught nothing new, which is itself worth
+knowing.
+
+## solex-dev — 5.7 resume note, superseded (build from solex `a48c254`, staging `589cca66`)
 
 Written 2026-09-24 at architect's clean-stop for compaction. Everything below landed and is pushed on both repos.
 
