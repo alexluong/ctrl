@@ -55,10 +55,10 @@ def chip(x, y, label, color):
 # screens: key -> (app, title, route, personas, regions)   region = (label, kind) kind: "" built, "gap" target-only, "own" owner-only
 SCREENS = {
     "map": ("fd", "Room map · Sơ đồ phòng", "/", "RO", [
-        ("today strip: arrivals · departures · occupancy", "gap"),
-        ("floors → tiles: number · hk state · [tonight's guest]", ""),
-        ("tile → /rooms/:id  ·  quick panel: mark clean/dirty → SetHousekeeping", "gap"),
-        ("quick panel: open stay · check out → CheckOut · OOO → TakeOutOfOrder", "gap"),
+        ("status buttons w/ counts (ezFolio): Tất cả · Sẵn sàng · Dự kiến đến · Đang ở · Dự kiến đi · Trống bẩn · Phòng sửa → filter", "gap"),
+        ("floors → tiles: type code · number · hk state · [tonight's guest]", ""),
+        ("tile → quick panel = ezFolio Chi tiết modal: room · rate · dates · guest · company · note · Còn lại", "gap"),
+        ("panel buttons: Mark dirty → SetHousekeeping · per-category charge → PostCharge · Đặt phòng · Xem chi tiết → /stays/:id", "gap"),
         ("[+ New booking] → /bookings", ""),
         ("define room → DefineRoom  (move to Setup)", ""),
     ]),
@@ -73,7 +73,7 @@ SCREENS = {
     "cal": ("fd", "Calendar · Lịch phòng", "/calendar", "RO", [
         ("← earlier · today · later →  (14 nights)", ""),
         ("grid rooms × nights: booked / in / out-held / free / OOO; cell → /stays/:id", ""),
-        ("availability per type row (quoting)", "gap"),
+        ("rows grouped by room type · window 7/14/30 · bottom rows used · free · % (ezFolio Tình hình)", "gap"),
         ("click empty cell → new booking prefilled", "gap"),
         ("unassigned nights: [Assign a room] → /stays/:id", ""),
         ("drag bar → MoveStay / ChangeNights", "gap"),
@@ -84,7 +84,7 @@ SCREENS = {
         ("room (decide later) | group: rooms qty", ""),
         ("[Take the booking] → CreateBooking → /stays/:id | /bookings/:id", ""),
         ("list: guest · dates · nights · status · [Open stay]", ""),
-        ("search name / phone / company · filters", "gap"),
+        ("status lists as tabs (ezFolio): sẽ đến · đến hôm nay · đang ở · đi hôm nay · đã huỷ · search name / phone / company", "gap"),
     ]),
     "booking": ("fd", "Booking · Đặt phòng (đoàn)", "/bookings/:id", "RO", [
         ("header: contact · status · dates · nights", ""),
@@ -92,13 +92,15 @@ SCREENS = {
         ("group's bill: lines · void → VoidCharge · [Record payment] → TakePayment · [Move to company] → TransferToReceivable", "own"),
         ("stays: dates · room · status · [Open stay] → /stays/:id", ""),
         ("[Cancel booking] → CancelBooking · edit notes · add/remove stays", "gap"),
+        ("routing table all rooms × categories → SetRouting (ezFolio group panel)", "gap"),
         ("History", ""),
     ]),
     "stay": ("fd", "Stay · Lượt lưu trú", "/stays/:id", "RO", [
         ("header: guest · status · dates · room · phone   ⚠ room OOO", ""),
         ("room (select) [Assign] → AssignRoom / [Move] → MoveStay", ""),
         ("guests [+] → AddGuest · [Check in] → CheckIn · reason [Cancel] → CancelStay", ""),
-        ("[Check out] → CheckOut", ""),
+        ("[Check out] → settle dialog (ezFolio quickout): method · amount · ref | Công nợ → TakePayment / TransferToReceivable, then CheckOut", "gap"),
+        ("money strip: Tổng · Đặt cọc · Đã trả · Còn lại", "gap"),
         ("routing (group): category → own | master → SetRouting", ""),
         ("bill: lines · [Add to bill] → PostCharge · [Record payment] → TakePayment · refund → Refund · void → VoidCharge", "own"),
         ("bill: company (select) [Move to the company] → TransferToReceivable", ""),
@@ -182,7 +184,7 @@ JOURNEYS = [
 # ---------------------------------------------------------------- drawing
 X0, Y = 0, 0
 text(X0, Y, "SoLex — UX map by persona", size=28, bold=True); Y += 40
-text(X0, Y, "generated from ux.md · IA map (top) → screen wireframes (middle) → journeys (bottom). Red = not built yet (ux.md §6). Orange = owner-only control.", size=12, color="#495057"); Y += 26
+text(X0, Y, "generated from ux.md · IA map (top) → screen wireframes (middle) → journeys (bottom). Red = not built yet (ux.md §6; D-27: shapes follow ezFolio). Orange = owner-only control.", size=12, color="#495057"); Y += 26
 # legend
 lx = X0
 for k, (c, name) in PERSONA.items():
