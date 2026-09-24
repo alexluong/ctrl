@@ -1,6 +1,15 @@
 # replay (candidate) — Playwright journeys → seekable HTML replay
 
-Status: **evaluating** (2026-09-25) as a possible product or OSS project. No repo yet.
+Status: **going ahead as a personal tool** (2026-09-25). Lab prototype at `~/code/replay-lab`; no public repo yet. Market scan: [market.md](market.md).
+
+## Positioning (Alex, 2026-09-25): decided
+
+- A **simple tool Alex wants to use and share with his team**. Making money is not the goal; a subscription only covers the cost of private/team hosting.
+- **Local runner / self-hostable** first: record → `.replay` → open or serve it yourself.
+- **Public sharing** option: upload to a hosted player → a link.
+- **Paid, optional**: private, team-based sharing (workspaces, access control).
+- **The core is embeddable**: built so it can later be part of Alex's own IDE/agent-harness feature.
+- Market check (market.md): a real but narrow gap; others are converging on video (Playwright screencast chapters, ProofShot, Cursor/Devin). Our niche: one synced view (replay + console + network + storage + captions), a small file, and agent self-check.
 Origin: built inside SoLex ([hotel-backoffice](../hotel-backoffice/README.md)) by solex-qa in ~1h, because Alex wanted a seekable HTML "session replay as demo" instead of screen recordings.
 Source: `alexluong/solex` @ a204175 (commits 84bd446, d290e53), `e2e/journeys/`. Briefed by solex-architect + solex-qa.
 
