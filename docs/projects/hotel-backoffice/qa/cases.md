@@ -168,11 +168,24 @@ Routing and master-folio wording is dev's placeholder until Alex's pass; the e2e
 
 ### 5.1 closing a booking (landing 3, solex 624b7dd; product 7709bc1)
 
-A group closes only by the explicit close, refused while a stay is open or the group bill owes. An individual booking closes itself when its last stay ends. Finish stays pressable while either condition holds, and the refusal says which one is in the way (architect ruling N25, per S0-5/N4; 624b7dd hides the button instead).
+A group closes only by the explicit close, refused while a stay is open or the group bill owes. An individual booking closes itself when its last stay ends. Finish stays pressable while either condition holds, and the refusal says which one is in the way (architect ruling N25, per S0-5/N4; fixed d84c906). A closed group bill shows `master.closed` and no payment or transfer form (N24, fixed d84c906).
 
 | ID | who / what they do | what they should see | rule | automated by | last run |
 |---|---|---|---|---|---|
-| S5-12a | Desk closes a group booking while one stay is still in-house or booked | Finish is pressable; pressing it is refused with `booking.staysOpen`; booking stays booked | §10 row 7a: every stay must be checked out or cancelled | e2e booking-close "S5-12a" | 624b7dd **fail** (N25: button hidden) |
-| S5-12b | Desk closes a group booking whose stays are all out but the group bill still owes | Finish is pressable; pressing it is refused with `booking.masterNotSettled`; booking stays booked | §10 row 7a: master must be 0 | e2e booking-close "S5-12b/c" | 624b7dd **fail** (N25: button hidden) |
-| S5-12c | Group bill paid or transferred to the company, all stays out; desk closes | booking shows "Đã kết thúc" with a "booking closed" history row; the group bill is closed in the same batch, so a payment on it is refused (`ledger.accountClosed`) and its payment form is gone; the company can now be retired | happy path; architect: master closes with the booking | e2e booking-close "S5-12b/c" | 624b7dd **fail** (N24: the closed group bill still shows its payment form; the payment itself is refused) |
+| S5-12a | Desk closes a group booking while one stay is still in-house or booked | Finish is pressable; pressing it is refused with `booking.staysOpen`; booking stays booked | §10 row 7a: every stay must be checked out or cancelled | e2e booking-close "S5-12a" | d84c906 pass (N25 closed) |
+| S5-12b | Desk closes a group booking whose stays are all out but the group bill still owes | Finish is pressable; pressing it is refused with `booking.masterNotSettled`; booking stays booked | §10 row 7a: master must be 0 | e2e booking-close "S5-12b/c" | d84c906 pass (N25 closed) |
+| S5-12c | Group bill paid or transferred to the company, all stays out; desk closes | booking shows "Đã kết thúc" with a "booking closed" history row; the group bill is closed in the same batch, and it offers no payment or transfer form, only a line saying it is closed; the company can now be retired | happy path; architect: master closes with the booking | e2e booking-close "S5-12b/c" | d84c906 pass (N24 closed) |
 | S5-12d | An individual booking's only stay checks out (or is cancelled) | the booking shows closed right away, with no click; history has "booking closed"; the database row says `closed` | product 7709bc1 / architect: individual bookings close themselves in the same batch; projection must record `booking.closed` | e2e booking-close "S5-12d" ×2 (check-out, cancel) | 624b7dd pass |
+
+### 5.2 the hotel's own settings (solex 5485e9e)
+
+Setup opens with the hotel's name, time zone and the hour the business day starts. Owner only. History timestamps read in the hotel's zone; calendar dates stay plain days.
+
+| ID | who / what they do | what they should see | rule | automated by | last run |
+|---|---|---|---|---|---|
+| S5-17 | Owner saves the hotel's name for the first time, then changes only the day-start hour, then saves with nothing changed | first save recorded as the hotel being defined; the second records only the hour as changed; the untouched save records nothing (still silent, N22) | profile compared against the row (N18, N20) | e2e hotel-profile "S5-17" | 5485e9e pass |
+| S5-18 | Owner saves with an empty name; a tampered form sends an unknown zone or hour 25 | refused with `setup.nameRequired`, `setup.timeZoneInvalid`, `setup.rollHourInvalid`; nothing recorded; no check on the page before sending | D-24 (b); N25 | e2e hotel-profile "S5-18" | 5485e9e pass |
+| S5-19 | Owner changes the zone, then goes to a room's history without reloading; then changes it back | timestamps move with the zone and come back; the hotel's default zone can be picked again | zone read in the root loader, refreshed by the command | e2e hotel-profile "S5-19" | 5485e9e **fail** (N26: the default zone Asia/Ho_Chi_Minh is not in the runtime's list, which names it Asia/Saigon; once another zone is saved it cannot be chosen again) |
+| S5-20 | Owner moves the day-start hour | nights already posted are never posted again; the next roll uses the new boundary | D-25 | scenario `hotelDay.test` roll at 02:00, `night.test` "does not post the same night twice" | 5485e9e pass (code) |
+| S5-21 | The hourly cron runs twice in one hour | nothing extra posted | D-25 idempotent per (stay, night, attempt) | scenario `night.test` "does not post the same night twice", "catches up nights a missed cron never posted" | 5485e9e pass (code) |
+
