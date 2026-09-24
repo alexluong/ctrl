@@ -86,6 +86,20 @@ Full scan (2026-09-25): [market.md](market.md). Closest: Playwright screencast c
 - Nearest threats if it were ever a product: cloud browsers adding sharing (note: Browserbase and Steel dropped rrweb for video, 2025–26; see [market.md](market.md)); agent platforms building it in (Codex/Copilot attach screenshots today).
 - Design lean: **script, then render** (agent writes a short journey, the tool runs it cleanly) as the core; recording the agent's live browser session is a stretch goal (needs trimming of retries and dead time).
 
+## Context: Alex's workspace vision (background only, not a suite plan)
+
+Alex has a longer-term idea for an agent workspace: agent management, ticketing, PR review, test-case management, with proof/replay as one component. This is not a plan to build a suite. It explains why the core should be embeddable. Reference points (checked 2026-09-25):
+- **[Kandev](https://github.com/kdlbs/kandev):**
+  - AGPL-3.0; one Go binary with an embedded TS web UI; 837★, v0.95.1 (2026-09-22).
+  - Kanban board with tickets imported from GitHub, Jira, Linear and others; a worktree per task; multi-step workflows with approval gates; a review workspace (editor, terminal, changes, live browser preview, PR links); a task MCP; a plugin system.
+  - Runs 20+ agent CLIs via ACP.
+  - **No test cases or proof/recording.** Natural fit: a replay artifact tab next to Changes, uploaded through its MCP or a plugin.
+- **[herdr](https://github.com/herdrdev/herdr):**
+  - Apache-2.0 Rust TUI, "the runtime your coding agents live on"; ~40.6k★, v0.9.1.
+  - A tmux-like multiplexer for agents: sessions that persist in the background, several SSH machines, agent state per pane, a socket API.
+  - It's the layer that runs the agents, not a task/PR surface. Proof would plug in only as a plugin pane or a link.
+- Similar tools: Vibe Kanban (Apache-2.0, ~28k★), Claude Squad, Crystal (now Nimbalyst), Sculptor, Conductor (closed source).
+
 ## Minimal first version
 
 1. Extract `support.ts` + `rrweb.ts` from SoLex into its own repo; rrweb as an npm dependency.
