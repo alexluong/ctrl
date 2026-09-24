@@ -168,11 +168,11 @@ Routing and master-folio wording is dev's placeholder until Alex's pass; the e2e
 
 ### 5.1 closing a booking (landing 3, solex 624b7dd; product 7709bc1)
 
-A group closes only by the explicit close, refused while a stay is open or the group bill owes. An individual booking closes itself when its last stay ends. As built, the group page does not offer "Finish" while either condition holds: the card says which one is in the way, in the refusal's own words.
+A group closes only by the explicit close, refused while a stay is open or the group bill owes. An individual booking closes itself when its last stay ends. Finish stays pressable while either condition holds, and the refusal says which one is in the way (architect ruling N25, per S0-5/N4; 624b7dd hides the button instead).
 
 | ID | who / what they do | what they should see | rule | automated by | last run |
 |---|---|---|---|---|---|
-| S5-12a | Desk closes a group booking while one stay is still in-house or booked | no Finish button; the card says a room is still open (`booking.staysOpen`) | §10 row 7a: every stay must be checked out or cancelled | e2e booking-close "S5-12a" | 624b7dd pass |
-| S5-12b | Desk closes a group booking whose stays are all out but the group bill still owes | no Finish button; the card says the group bill is not settled (`booking.masterNotSettled`) | §10 row 7a: master must be 0 | e2e booking-close "S5-12b/c" | 624b7dd pass |
+| S5-12a | Desk closes a group booking while one stay is still in-house or booked | Finish is pressable; pressing it is refused with `booking.staysOpen`; booking stays booked | §10 row 7a: every stay must be checked out or cancelled | e2e booking-close "S5-12a" | 624b7dd **fail** (N25: button hidden) |
+| S5-12b | Desk closes a group booking whose stays are all out but the group bill still owes | Finish is pressable; pressing it is refused with `booking.masterNotSettled`; booking stays booked | §10 row 7a: master must be 0 | e2e booking-close "S5-12b/c" | 624b7dd **fail** (N25: button hidden) |
 | S5-12c | Group bill paid or transferred to the company, all stays out; desk closes | booking shows "Đã kết thúc" with a "booking closed" history row; the group bill is closed in the same batch, so a payment on it is refused (`ledger.accountClosed`) and its payment form is gone; the company can now be retired | happy path; architect: master closes with the booking | e2e booking-close "S5-12b/c" | 624b7dd **fail** (N24: the closed group bill still shows its payment form; the payment itself is refused) |
 | S5-12d | An individual booking's only stay checks out (or is cancelled) | the booking shows closed right away, with no click; history has "booking closed"; the database row says `closed` | product 7709bc1 / architect: individual bookings close themselves in the same batch; projection must record `booking.closed` | e2e booking-close "S5-12d" ×2 (check-out, cancel) | 624b7dd pass |
