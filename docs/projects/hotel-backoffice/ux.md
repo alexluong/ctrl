@@ -227,16 +227,397 @@ Owner-only screens render a "this is the owner's" page for a receptionist rather
 
 ## 4. Screens — low-fi wireframes
 
-_(written after the route read; see draft 2)_
+Conventions: `[Button]` fires a command, `(select)` `[_____]` inputs, `→ /route` navigates, ⓘ hint text, 👑 owner-only (greyed for the desk). "Built" notes say what origin/main does on 2026-09-24 when it differs. Every entity page ends with the same **History** table (version · event · details · when · who), drawn once in 4.9.
+
+### 4.0 Shell (every screen)
+
+```
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ SoLex  Room map  Calendar  Bookings | People  Receivables  Expenses | Setup  Accounts   [vi ▾]  Linh  [Sign out] │
+└──────────────────────────────────────────────────────────────────────────────┘
+```
+- Three groups = the three apps (§3.1). Setup, Accounts only for owners; System only for the operator flag.
+- Built: flat order Calendar · Bookings · Rooms · People · Receivables · Expenses · Setup · Accounts; no grouping; home is `/` = room board but it sits third.
+- Locale select and "signed in as" on the right; sign out.
+
+### 4.1 Sign in `/sign-in`
+
+```
+┌──────────────────────────────┐
+│ Đăng nhập                    │
+│ ⓘ Dùng tài khoản do chủ …    │
+│ Tên đăng nhập [__________]   │
+│ Mật khẩu      [__________]   │
+│            [Đăng nhập]       │  → signIn (Better Auth), then → /
+└──────────────────────────────┘
+```
+No sign-up, no "forgot password" (owner resets, 4.13). Error text under the form.
+
+### 4.2 Room map `/` — home, receptionist's first screen
+
+```
+┌ Sơ đồ phòng ───────────────────────────────── ● trống sạch ● bẩn ● ngừng SD ● đang ở ┐
+│ Hôm nay: 4 đến · 3 đi · 12/20 phòng có khách                      [+ Đặt phòng mới] │
+│                                                                                       │
+│ Tầng 3   ┌─301─┐ ┌─302─┐ ┌─303─┐ ┌─305─┐                                              │
+│          │ Ng. │ │  ✓  │ │ 🧹  │ │ ⛔  │   tile: number · state colour · guest name    │
+│          │ đi  │ │     │ │     │ │ AC  │   badge "đến"/"đi" today                      │
+│          └─────┘ └─────┘ └─────┘ └─────┘   click → /rooms/:id (built) / quick panel    │
+│ Tầng 2   ┌─201─┐ ┌─202─┐ ...                                                          │
+│                                                                                       │
+│ ┌ quick panel (target, on tile click) ──────────────────────────────────────────────┐ │
+│ │ 302 Deluxe · trống sạch        [Đặt phòng mới cho 302]  [Đánh dấu bẩn]  [Ngừng SD] │ │
+│ │ 301 · Nguyễn Văn A · đi hôm nay · nợ 350,000     [Mở lượt ở]  [Trả phòng]          │ │
+│ └────────────────────────────────────────────────────────────────────────────────────┘ │
+│ ▸ Định nghĩa phòng (setup, collapsed)  số [__] tầng [__] loại (select)  [Định nghĩa]  │
+└───────────────────────────────────────────────────────────────────────────────────────┘
+```
+| region | shows | control → command |
+|---|---|---|
+| header | title, legend, today's counts (arrivals / departures / occupancy) | `+ New booking` → `/bookings` |
+| floors | projection `RoomBoard`: rooms by floor; tile = number, housekeeping / OOO, and (target) tonight's guest + arrive/depart badge | tile → `/rooms/:id` (built) ; target: quick panel |
+| quick panel (target) | the tile's stay and balance | `Mark clean/dirty` → `SetHousekeeping`; `Take OOO` → `TakeOutOfOrder`; `Open stay` → `/stays/:id`; `Check out` → `CheckOut` |
+| define room | setup-ish form at the bottom | `Define room` → `DefineRoom` (built here; belongs in Setup, §6) |
+
+Built: tiles show only number + housekeeping state; no guest, no today counts, no quick panel, no legend for "in house"; room type is a free-text input on the define form.
+
+### 4.3 Room `/rooms/:id`
+
+```
+┌ Phòng 305  [Deluxe] ─ Tầng 3 · v12 · ngừng sử dụng — AC hỏng ──── ← Sơ đồ phòng ┐
+│ ┌ Housekeeping ───────────────┐ ┌ Out of order ───────────────────────────────┐ │
+│ │ [Đánh dấu Trống sạch] [Bẩn] │ │ lý do [__________] [Ngừng sử dụng]           │ │
+│ └─────────────────────────────┘ │  or  [Đưa vào sử dụng lại]                   │ │
+│ ┌ Ghi chú ───────────────────┐ └──────────────────────────────────────────────┘ │
+│ │ [________________] [Lưu]   │  ⓘ target: "guest in 305 tonight: … / next arrival …" │
+│ └────────────────────────────┘                                                    │
+│ History (4.9)                                                                     │
+└───────────────────────────────────────────────────────────────────────────────────┘
+```
+`Mark …` → `SetHousekeeping` · `Take out of order` → `TakeOutOfOrder` (warns when a future stay is assigned; refused if checked in tonight) · `Return` → `ReturnToService` · `Save note` → `SetRoomNote`. Built matches; missing: who is in the room now / next (§6).
+
+### 4.4 Calendar `/calendar` — tape chart
+
+```
+┌ Tình trạng phòng ── ← Trước · Hôm nay · Sau → ─────────────────────────────────────┐
+│ Phòng │ T2 22 │ T3 23 │[T4 24]│ T5 25 │ … 14 nights …                               │
+│ 301   │ ░Nguyễn A░░░░░│       │ ▓Trần B▓▓▓▓▓▓▓│                                     │
+│ 302   │       │       │ ░░ Cty ABC ░░░░░░░░░░ │                                     │
+│ 305 ⛔│ ▒▒▒▒ ngừng sử dụng ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒                                       │
+│ Deluxe còn │  2  │  1  │  0  │  3  │   ⓘ target: per-type availability row           │
+│ legend: đã đặt · đang ở · đã trả (giữ đêm) · trống · ngừng SD                        │
+│ ┌ Đêm chưa xếp phòng ⓘ đã bán, chưa lên lưới ─────────────────────────────────────┐ │
+│ │ Cty ABC · 24/09 → 27/09 · Deluxe            [Xếp phòng] → /stays/:id             │ │
+│ └───────────────────────────────────────────────────────────────────────────────────┘ │
+└───────────────────────────────────────────────────────────────────────────────────────┘
+```
+| region | shows | control |
+|---|---|---|
+| nav | 14-day window from `?from` | earlier / today / later (read) |
+| grid | projection `Night` rows × rooms; cell colour by stay status; OOO rows | cell → `/stays/:id`; room → `/rooms/:id`; **target**: click empty cell → new booking prefilled; drag bar → `MoveStay` / `ChangeNights` |
+| availability row (target) | free rooms per type per night, for quoting on the phone | – |
+| unassigned | stays with nights but no room | `Assign a room` → `/stays/:id` |
+
+Built: grid, legend, unassigned list. Missing: availability-by-type row, click-empty-cell, drag (§6, drag is a later ticket).
+
+### 4.5 Bookings `/bookings` — list + new booking
+
+```
+┌ Đặt phòng mới ⓘ phòng có thể chọn ngay hoặc vào ngày đến ────────────── Lịch phòng → ┐
+│ Đặt cho (● Một khách  ○ Đoàn)     Tính cho (select: Không — khách trả | Cty ABC …)    │
+│ Khách [__________]  Điện thoại [________]                                             │
+│ Đến [24/09] Đi [26/09]  = 2 đêm   ⓘ 2 đêm có giá từ bảng giá  / ⚠ 1 đêm chưa có giá   │
+│ Người lớn [2] Trẻ em [0]  Loại phòng (select)  Giá/đêm [ từ bảng giá ]                │
+│ Phòng (select: Quyết định sau | 302 | 303 | 305 — ngừng SD)   |  Đoàn: Số phòng [6]   │
+│ Ghi chú [__________________________]                                                  │
+│                                                              [Nhận đặt phòng]         │
+├ Danh sách đặt phòng ──────────────────────────────────────────────────────────────────┤
+│ Khách / ĐT        │ Ngày          │ Đêm │ Trạng thái │ lượt ở                         │
+│ Nguyễn A  09xx    │ 24/09 → 26/09 │ 2   │ Đã đặt     │ [Mở lượt ở] → /stays/:id       │
+│ Cty ABC           │ 01/10 → 04/10 │ 3   │ Đã đặt     │ [Mở] [Mở] [Mở] …               │
+│ ⓘ target: search box (name / phone / company), filter today's arrivals               │
+└───────────────────────────────────────────────────────────────────────────────────────┘
+```
+`Take the booking` → `CreateBooking` (individual: → `/stays/:id`; group: → `/bookings/:id`). Live quote = `getQuote` read (rate table, §10). Built matches the form; list has no search / filter (§6). Group form takes one room type × qty (mixed types later).
+
+### 4.6 Booking `/bookings/:id` — the group hub
+
+```
+┌ Cty ABC  [Đã đặt] ─ 01/10 → 04/10 · 3 đêm · 09xx ──────────────────── ← Đặt phòng ┐
+│ Ghi chú: …                                                                          │
+│ ┌ Kết thúc đoàn ⓘ cần mọi phòng trống và hoá đơn đoàn đã thanh toán ─[Kết thúc]──┐  │
+│ ┌ Hoá đơn đoàn ─ nợ 4,500,000 ⓘ dòng đến đây theo routing, không nhập tay ───────┐  │
+│ │ đêm │ nội dung        │ SL │ đơn giá │ thành tiền │ 👑[Huỷ]                        │  │
+│ │ 1/10│ room 301        │ 1  │ 800,000 │ 800,000    │                               │  │
+│ │ 1/10│ Đặt cọc · CK    │    │         │ -2,000,000 │                               │  │
+│ │ Thanh toán: cách (select) số tiền [____] tham chiếu [____]  [Ghi nhận thanh toán] │  │
+│ │ Chuyển công nợ: công ty (select)  [Chuyển công nợ công ty]                        │  │
+│ └───────────────────────────────────────────────────────────────────────────────────┘  │
+│ ┌ Lượt lưu trú của đặt phòng này ─────────────────────────────────────────────────┐  │
+│ │ 01/10 → 04/10 · phòng 301 · Đang ở        [Mở lượt ở] → /stays/:id               │  │
+│ │ 01/10 → 04/10 · chưa xếp   · Đã đặt       [Mở lượt ở]                            │  │
+│ │ ⓘ target: [+ thêm phòng] [Huỷ đặt phòng, lý do]                                   │  │
+│ └───────────────────────────────────────────────────────────────────────────────────┘  │
+│ History (4.9)                                                                        │
+└──────────────────────────────────────────────────────────────────────────────────────┘
+```
+`Finish` → `CloseBooking` (group only; refused `booking.staysOpen` / `booking.masterNotSettled`) · master payment → `TakePayment` on master folio · transfer → `TransferToReceivable` · void 👑 → `VoidCharge`. Missing: cancel booking, add/remove stays, edit party/notes, deposit kind on master (§6).
+
+### 4.7 Stay `/stays/:id` — the desk's working screen
+
+```
+┌ Nguyễn Văn A  [Đang ở] ─ 24/09 → 26/09 · 2 đêm · phòng 301 · 09xx ────── ← Lịch phòng ┐
+│ ⚠ Phòng này đang ngừng sử dụng — AC hỏng. Khách vẫn ở.                                 │
+│ ┌ Hành động ─────────────────────────────────────────────────────────────────────────┐ │
+│ │ Phòng (select 301 | 302 …)  [Đổi phòng] / [Xếp phòng]                               │ │
+│ │ booked:  Ai ở: [Nguyễn Văn A] [Trần B] [+ thêm khách]   ⓘ đến sớm: cộng đêm nay     │ │
+│ │          [Nhận phòng]              Huỷ: lý do [______] [Huỷ lượt ở]                  │ │
+│ │ in:      [Trả phòng] ⓘ đêm sau hôm nay được bán lại, phòng thành bẩn                │ │
+│ └─────────────────────────────────────────────────────────────────────────────────────┘ │
+│ ┌ (đoàn) Khoản chi tính vào đâu ─ Ăn sáng: (Theo thoả thuận|HĐ khách|HĐ đoàn) … ─────┐ │
+│ ┌ Hoá đơn ─ nợ 350,000 ─────────────────────────────────────────────────────────────┐ │
+│ │ đêm  │ nội dung         │ SL │ đơn giá │ thành tiền │                               │ │
+│ │ 24/09│ Phòng            │ 1  │ 800,000 │ 800,000    │ 👑[Huỷ]                       │ │
+│ │ 24/09│ Minibar · nước   │ 2  │ 15,000  │ 30,000     │ 👑[Huỷ]  (target: [Chuyển dòng])│ │
+│ │ 24/09│ Đặt cọc · tiền mặt│   │         │ -480,000   │                               │ │
+│ │ Thêm: khoản mục (select) nội dung [____] SL [1] đơn giá [____]  [Thêm vào hoá đơn]  │ │
+│ │ Thanh toán: loại (Thanh toán|Đặt cọc|👑Hoàn tiền) cách (select) số tiền [__] tham chiếu [__] [Ghi nhận] │ │
+│ │ ⓘ 👑 có thể hoàn tối đa 480,000                                                      │ │
+│ │ Chuyển công nợ: công ty (select) [Chuyển công nợ công ty]  ⓘ công ty nợ thay khách  │ │
+│ │ (target) [In hoá đơn]                                                               │ │
+│ └─────────────────────────────────────────────────────────────────────────────────────┘ │
+│ ┌ Đêm đang giữ ─ đêm │ phòng │ giá ─ 24/09 301 800,000 · 25/09 301 800,000 ───────────┐ │
+│ Đã nhận phòng với: Nguyễn Văn A, Trần B                                                │
+│ History (4.9)                                                                          │
+└────────────────────────────────────────────────────────────────────────────────────────┘
+```
+| control | command |
+|---|---|
+| Assign / Move room | `AssignRoom` / `MoveStay` |
+| + guest, Check in | `AddGuest`, `CheckIn` (normalizes nights to include today, posts tonight's room) |
+| Cancel the stay | `CancelStay` |
+| Check out | `CheckOut` (refused while the bill owes; early: frees remaining nights) |
+| routing selects (group) | `SetRouting` |
+| Add to bill | `PostCharge` (room category is system-only, not in the select) |
+| Record payment (settlement / deposit) | `TakePayment` |
+| Refund 👑 | `Refund` (≤ payments received) |
+| Void 👑 | `VoidCharge` |
+| Move to the company | `TransferToReceivable` |
+| Move line (target) | `MoveCharge` |
+| Print (target) | read |
+| Extend / shorten nights (target) | `ChangeNights`; per-night price → `SetNightRate` |
+
+Built: everything except move line, print, change nights / night rate, no-show; charge rows show the category id not its name; void / refund reason via browser prompt.
+
+### 4.8 People `/guests`, `/guests/:id`
+
+```
+┌ Khách và người liên hệ ⓘ khách đã ở; người liên hệ đã đặt ──────────────────────────┐
+│ Tìm [tên hoặc số điện thoại] [Tìm]      (POST body, never in the URL — §10 PII)      │
+│ Khách lưu trú          │ ĐT     │ CMND/CCCD │            Người liên hệ │ ĐT │         │
+│ Nguyễn Văn A → /guests/:id │ 09xx │ 0123…   │ 👑[Xoá dữ liệu] │ Cty ABC · 09xx │ 👑[Xoá] │
+│ + Thêm khách: tên [__] ĐT [__] quốc tịch [__] [Thêm khách]  │ + Thêm liên hệ: tên ĐT [Thêm] │
+└──────────────────────────────────────────────────────────────────────────────────────┘
+/guests/:id: name [guest|contact] · phone · (erased: "Đã xoá" + hint) · History (4.9). No commands.
+```
+`Search` → read · `Add guest` → `CreateGuest` · `Add contact` → `CreateContact` · `Erase` 👑 → `EraseGuest` / `EraseContact` (confirm dialog). Missing: guest history (stays for this person), contact detail link, edit name/phone (`UpdateGuest`), police/PA18 export = later.
+
+### 4.9 History block (bottom of room / stay / booking / person / account)
+
+```
+┌ Diễn biến ⓘ mọi thay đổi, cũ nhất trước, và ai làm ──────────────────────────────────┐
+│ v │ sự kiện            │ chi tiết                        │ khi nào       │ ai          │
+│ 3 │ Nhận phòng         │ target: "phòng 301, 2 khách"    │ 24/09 14:02   │ Linh        │
+│ 4 │ Ghi nhận thanh toán│ built: raw JSON payload          │ 24/09 14:05   │ Linh        │
+└──────────────────────────────────────────────────────────────────────────────────────┘
+```
+Read only. Built shows the payload as raw JSON; target renders one sentence per event type (ids → names resolved on the read side, never in the event).
+
+### 4.10 Receivables `/receivables`
+
+```
+┌ Công nợ công ty ⓘ hoá đơn đi cùng khách, tiền chưa đi cùng ───────────────────────────┐
+│ Công ty │ Liên hệ        │ Còn nợ     │ Từ      │                                      │
+│ Cty ABC │ Nguyễn A, …    │ 4,500,000  │ 04/10   │ [Mở] → ?company=abc                  │
+│ Cty XYZ │ …              │ 1,200,000  │ 12/08   │ [Mở]                                 │
+├ Cty ABC · còn nợ 4,500,000 ─ Lịch sử ────────────────────────────────────────────────┤
+│ 04/10 │ Chuyển từ HĐ đoàn #… │ 4,500,000                                              │
+│ 15/10 │ Thanh toán · CK VCB  │ -2,000,000                                             │
+│ Ghi nhận thanh toán: cách (Chuyển khoản) số tiền [2,500,000] tham chiếu [VCB 01/10] [Ghi nhận] │
+│ 👑 Xoá nợ: lý do [công ty giải thể] [Xoá nợ] ⓘ chỉ khi chắc chắn không thu được       │
+│ (settled) ✓ Đã thanh toán đủ.                                                         │
+└───────────────────────────────────────────────────────────────────────────────────────┘
+```
+`Record payment` → `RecordReceivablePayment` (→ `receivable.settled` at 0) · `Write off` 👑 → `WriteOffReceivable` (becomes an expense). Built matches. Target additions: link each statement line to its stay/booking; settled companies visible under a toggle; due dates = later.
+
+### 4.11 Expenses `/expenses`
+
+```
+┌ Chi phí ⓘ khách sạn đã trả cho gì, từ quỹ nào ──────────────────────────────────────┐
+│ Từ [01/09] Đến [30/09] [Hiện]                                    Tổng: 3,450,000    │
+│ ngày  │ khoản mục   │ nội dung · tham chiếu   │ cách      │ số tiền   │              │
+│ 24/09 │ Tạp hoá     │ bình gas 12kg · HĐ 55   │ tiền mặt  │ 450,000   │ 👑[Huỷ]      │
+│ 20/09 │ Xoá nợ      │ Cty XYZ giải thể        │ –         │ 1,200,000 │ (system)     │
+│ ┌ Ghi nhận một khoản chi ⓘ lễ tân ghi, chỉ chủ mới huỷ ──────────────────────────┐   │
+│ │ khoản mục (select) nội dung [__] số tiền [__] cách (select) ngày [24/09] tham chiếu [__] [Ghi nhận] │
+│ Theo khoản mục: Tạp hoá 1,250,000 · Phát sinh 400,000 · Xoá nợ 1,200,000 · …        │
+└──────────────────────────────────────────────────────────────────────────────────────┘
+```
+`Record it` → `RecordExpense` · `Void` 👑 → `VoidExpense`. Built matches (categories fixed in code). Target: default period = current month; cash-handover / day-close block parked (product.md §8).
+
+### 4.12 Setup `/setup` 👑
+
+```
+┌ Thiết lập ⓘ khách sạn được tạo từ gì; mọi thứ khác đọc từ đây ──────────────────────┐
+│ Loại phòng      tên │ id │ ngủ │ [Thu hồi]        + tên [__] ngủ [2] [Thêm loại phòng] │
+│ Bảng giá        loại │ từ │ đến (exclusive) │ giá │ [Thu hồi]                            │
+│                 + loại (select) từ [__] đến [__] giá [__] [Thêm giá]  ⚠ không chồng lấn │
+│ Khoản mục       Phòng (system) · Minibar · Giặt ủi · …        [Thêm danh sách chuẩn]    │
+│ Công ty         tên │ id │ MST │ ĐT │ [Thu hồi]   + tên MST ĐT ghi chú [Thêm công ty]   │
+│                 (target) routing mặc định: Phòng → HĐ đoàn, còn lại → HĐ khách         │
+│ Phòng (read)    số → /rooms/:id │ tầng │ loại     ⓘ định nghĩa trên sơ đồ phòng         │
+│ Nhân viên       → chuyển sang Tài khoản                                                │
+│ (target) Hồ sơ khách sạn: tên, giờ bắt đầu ngày làm việc; Quy tắc đặt phòng           │
+└──────────────────────────────────────────────────────────────────────────────────────┘
+```
+Commands: `DefineRoomType` / `RetireRoomType` (refused `roomType.inUse`) · `DefineRate` / `RetireRate` · seed → `DefineChargeCategory`×N · `DefineCompany` / `RetireCompany` (refused `company.inUse`) · Room rows read. Missing: company `defaultRouting`, HotelProfile / BookingRules forms, floors, charge items catalogue, booking sources (§6).
+
+### 4.13 Accounts `/accounts`, `/accounts/:id` 👑
+
+```
+┌ Tài khoản ⓘ ai đăng nhập được; tài khoản không phải chức vụ ────────────────────────┐
+│ Người        │ tên đăng nhập │ vai trò              │ đang đăng nhập │                 │
+│ Linh → /accounts/:id │ linh  │ (Lễ tân ▾)           │ 2              │ [Đặt lại MK] [Cho nghỉ] │
+│ Tuấn         │ tuan          │ (Chủ khách sạn ▾)    │ 1              │ [Đặt lại MK]  (last owner: locked) │
+│ Cũ (former)  │ hoa           │ Lễ tân · cũ          │ 0              │ [Đưa lại]       │
+│ + Tạo tài khoản: tên [__] tên ĐN [__] mật khẩu [__] email [tuỳ chọn] vai trò (select) [Tạo] │
+└──────────────────────────────────────────────────────────────────────────────────────┘
+/accounts/:id: name · username · email; edit name/email [Lưu] → UpdateUser; History (user.* + staff.*).
+```
+Role select on a row with no position → `AddStaff`; with one → `ChangeStaffRole` (refused `staff.lastOwner`) · `Reset password` → `ResetPassword` (ends sessions) · `Mark as former staff` → `DeactivateStaff` · `Bring back` → `ReactivateStaff` · `Create` → `CreateUser`. Built matches; prompt dialog for the new password (§6).
+
+### 4.14 Dashboard — target only (Back Office home)
+
+```
+┌ Hôm nay 24/09 ───────────────────────────────────────────────────────────────────────┐
+│ Đang ở 12/20 (60%) │ Đến 4 (2 chưa xếp phòng) │ Đi 3 (1 còn nợ) │ Phòng bẩn 5 · ngừng SD 1 │
+│ Tiền vào hôm nay: tiền mặt 2,400,000 · CK 1,800,000 · thẻ 0   │ Doanh thu đã ghi 5,600,000 │
+│ Công nợ công ty: 5,700,000 (2 công ty)   │ Chi hôm nay 450,000                        │
+│ 7 ngày tới: T4 60% · T5 75% · T6 90% · T7 95% · CN 70% · …    (forward book)         │
+└──────────────────────────────────────────────────────────────────────────────────────┘
+```
+All reads over existing projections (Night, RoomBoard, ledger balances). Receptionist sees the top row only; money rows 👑. Reports (revenue by category / method, occupancy over time, guest history) hang off this page = later slice.
+
+### 4.15 System `/system` (operator footnote)
+
+Overview (event count, rebuild projections, event types, streams, tables) · Events log with filters · Tables browser. Vietnamese already; not a hotel screen.
 
 ---
 
 ## 5. Vietnamese labels
 
-_(draft 2)_
+Dev's i18n keys cover every built screen; the wireframes above use the built `vi` strings. Labels that exist only in this document (target features) are marked **new** and are proposals for Alex's language pass:
+
+| concept | key (built) | vi (built) | note |
+|---|---|---|---|
+| nav Room map / Calendar / Bookings / People / Receivables / Expenses / Setup / Accounts / System | `nav.*` | Phòng · Lịch phòng · Đặt phòng · Khách & liên hệ · Công nợ · Chi phí · Thiết lập · Tài khoản · Hệ thống | "Phòng" for home reads as a room list; suggest **Sơ đồ phòng** (= `board.title`) |
+| Room board | `board.title` | Sơ đồ phòng | |
+| Calendar | `calendar.title` | Tình trạng phòng | nav says "Lịch phòng" — pick one |
+| New booking / list | `booking.title` / `booking.listTitle` | Đặt phòng mới / Danh sách đặt phòng | |
+| Bill / group's bill | `folio.title` / `master.title` | Hoá đơn / Hoá đơn đoàn | dev flagged wording not final |
+| Check in / out, assign, move | `stay.checkIn/checkOut/assignRoom/moveRoom` | Nhận phòng / Trả phòng / Xếp phòng / Đổi phòng | |
+| Add to bill / record payment / void / move to company | `folio.post/take/void/transfer` | Thêm vào hoá đơn / Ghi nhận thanh toán / Huỷ / Chuyển công nợ công ty | |
+| Take the booking / Finish group | `booking.submit` / `booking.close` | Nhận đặt phòng / Kết thúc | |
+| Receivables: record / write off | `receivable.recordPayment/writeOff` | Ghi nhận thanh toán / Xoá nợ | |
+| Expense record | `expense.record` | Ghi nhận một khoản chi | |
+| OOO / return / mark state | `room.takeOutOfOrder/returnToService/mark` | Ngừng sử dụng / Đưa vào sử dụng lại / Đánh dấu {state} | |
+| statuses | `status.*`, `stayStatus.*`, `bookingStatus.*` | Trống sạch · Bẩn · Ngừng sử dụng; Đã đặt · Đang ở · Đã trả phòng · Đã huỷ; Đã đặt · Đã huỷ · Đã kết thúc | calendar legend lacks "đã trả, còn giữ đêm" wording (QA N9) |
+| methods / payment kinds | `method.*`, `payment.*` | Tiền mặt · Chuyển khoản · Thẻ; Đặt cọc · Thanh toán · Hoàn tiền | |
+| roles | `role.*` | Chủ khách sạn · Lễ tân | |
+| Today's arrivals / departures | – | **new**: Đến hôm nay / Đi hôm nay | 4.2, 4.14 |
+| In house | – | **new**: Đang có khách | tile legend 4.2 |
+| Quick panel: open stay | – | **new**: Mở lượt ở (reuse `booking.openStay`) | |
+| Move line to another bill | – | **new**: Chuyển dòng sang hoá đơn khác | 4.7 |
+| Print bill | – | **new**: In hoá đơn | 4.7 |
+| Extend / shorten | – | **new**: Đổi ngày ở | 4.7 |
+| No-show | – | **new**: Khách không đến | 4.7 |
+| Cancel booking | – | **new**: Huỷ đặt phòng | 4.6 |
+| Availability by type | – | **new**: Còn trống theo loại | 4.4 |
+| Dashboard | – | **new**: Hôm nay | 4.14 |
+| Company default routing | – | **new**: Khoản chi tính vào đâu (mặc định) (reuse `routing.title`) | 4.12 |
+| Hotel profile / booking rules | – | **new**: Hồ sơ khách sạn / Quy tắc đặt phòng | 4.12 |
 
 ---
 
-## 6. Gap list — built today vs. this document
+## 6. Gap list — built (origin/main 2026-09-24) vs. this document
 
-_(draft 2)_
+Grouped for dev's 5.6 polish list. **P** = polish (small, no model change), **F** = feature slice (needs a command that exists in §11 but has no UI), **L** = later (parked in product.md §8).
+
+### 6.1 Navigation and shell
+| # | gap | kind |
+|---|---|---|
+| G1 | Nav is flat; group into Front Desk · Back Office · Setup; put Room map first and make `/` say "Sơ đồ phòng" not "Phòng" | P |
+| G2 | Calendar nav label "Lịch phòng" vs page title "Tình trạng phòng"; pick one | P |
+| G3 | Browser `prompt()` / `confirm()` for void reason, refund reason, erase, new password → inline forms/dialogs | P |
+| G4 | History tables show raw JSON payload → one sentence per event type, ids resolved to names | P |
+
+### 6.2 Room map (home)
+| # | gap | kind |
+|---|---|---|
+| G5 | Tiles show only housekeeping; add tonight's guest name, in-house colour, arrive/depart badge (read from Night projection) | P |
+| G6 | Today strip: arrivals · departures · occupancy counts (§3 "Arrivals / departures today") | P |
+| G7 | Tile quick panel: mark clean/dirty, open stay, check out, new booking for this room, without leaving the map | P |
+| G8 | "Define a room" form lives on the map; move to Setup (room type as select, not free text) | P |
+
+### 6.3 Calendar
+| # | gap | kind |
+|---|---|---|
+| G9 | Per-type availability row for quoting (§3 tape chart) | P |
+| G10 | Click an empty cell → new booking with room + dates prefilled | P |
+| G11 | Drag a bar to move / extend (`MoveStay`, `ChangeNights`) | L (ticket) |
+| G12 | Legend / style for "checked out, night still held" (QA N9) | P |
+
+### 6.4 Bookings and stays
+| # | gap | kind |
+|---|---|---|
+| G13 | Search bookings / stays by name, phone, company (§3 Search); list filters (today, in house) | P |
+| G14 | Booking page: cancel booking with reason (`CancelBooking`), edit notes/party, add / remove stays | F |
+| G15 | Stay page: extend / shorten (`ChangeNights`), per-night price (`SetNightRate`), no-show (`MarkNoShow`) | F |
+| G16 | Folio: move line to another bill (`MoveCharge`, in the receptionist bundle), forfeit deposit | F |
+| G17 | Folio: print | F |
+| G18 | Folio rows show category id → show name | P |
+| G19 | Master folio: deposit kind on payment form (built always settlement) | P |
+| G20 | Group form: one room type × qty; mixed types per group | F |
+| G21 | Room page: who is in it tonight / next arrival | P |
+
+### 6.5 People
+| # | gap | kind |
+|---|---|---|
+| G22 | Edit guest / contact details (`UpdateGuest`, `UpdateContact`); contact detail link; guest's stays on their page | F |
+
+### 6.6 Back Office
+| # | gap | kind |
+|---|---|---|
+| G23 | Dashboard (4.14) | F |
+| G24 | Reports: revenue by category / method, occupancy over time | F |
+| G25 | Receivables: statement lines link to their stay / booking; settled companies under a toggle | P |
+| G26 | Expenses: default range = current month | P |
+| G27 | Cash handover / day close | L (needs client conversation) |
+
+### 6.7 Setup
+| # | gap | kind |
+|---|---|---|
+| G28 | Company `defaultRouting` control (dev's own stale comment says "5.1") | F |
+| G29 | HotelProfile (business day start) and BookingRules forms | F |
+| G30 | Floors, charge items catalogue, booking sources — §6 setup items with no UI | F |
+
+Proposed 5.6 polish scope = every **P** row (G1–G10, G12, G13, G18, G19, G21, G25, G26). **F** rows become tickets; **L** stays parked.
+
+---
+
+## 7. Open for Alex
+
+1. Nav grouping and the two label collisions (G1, G2).
+2. Quick panel on the room map vs. always going through the room page: the panel is my recommendation for the desk's "two clicks to money".
+3. Dashboard row split: money rows owner-only, occupancy rows for everyone?
+4. Wording pass on **new** labels in §5 and on "Hoá đơn / Hoá đơn đoàn".

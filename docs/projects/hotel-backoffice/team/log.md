@@ -1,4 +1,5 @@
 # Team log
+- 2026-09-24 — dev: **5.2 done** (solex `5485e9e`, staging `42ef30f3`, 335 green). Setup opens with the hotel itself (name / zone / roll hour); zone picker from `Intl.supportedValuesOf` with a fallback that always keeps the current answer; hour is a 0–23 select. Timestamps now render in the hotel's zone, not UTC — `getHotelZone` in the root loader, carried on `useI18n` beside the locale, `formatTimestamp(value, locale, timeZone)`. Calendar dates stay UTC (they are days, not instants). Next: 5.3 reports.
 - 2026-09-24 — dev: N24 + N25 landed (d84c906, staging 84f3f03c, 335 green); ready-to-close display dropped for a static hint + refusal. Architect accepted. QA verifying. Dev → Setup profile section, tz picker, profile-zone rendering.
 - 2026-09-24 — dev: N24 + N25 fixed (solex `d84c906`, staging `84f3f03c`, 335 green). Closed master folio reads `account.status` and offers no forms (new `master.closed` key — `folio.closed` says the guest checked out, wrong sentence for a group). Finish always pressable; page copy of the two rules gone, `getBooking.masterBalance` gone with it, `booking.readyToClose` → `booking.closeHint` (prose, not a check). S5-12a/b/c should go green. Back on 5.2: Setup section, tz picker, tz rendering.
 - 2026-09-24 — Alex: wants a clear UX wireframe of the app by persona. Architect tasked product: `ux.md` (personas, journeys, IA, per-screen low-fi wireframes, gap list vs built app) + `diagrams/solex-ux.excalidraw` via generator script; grounded in built routes (read-only). Architect reviews before it goes to Alex.
@@ -1070,3 +1071,30 @@ charge lands between the page loading and the click.
 
 **Next:** the Setup screen's profile section, the timezone picker, then `formatTimestamp` off the
 profile's zone instead of the browser's.
+
+## solex-dev — 5.2 complete (solex `5485e9e`, staging `42ef30f3`)
+
+**The Setup section.** First on the page, above the things the hotel is made of, because those are
+read in this hotel's terms. Name, zone, the hour the day starts. Nothing is checked before it is
+sent: an empty name and an impossible hour are rules with codes, and asking them here would be the
+same rule written twice (N25). New keys `setup.hotel*`, `setup.timeZone`, `setup.rollHour*`,
+`setup.saveHotel`, plus `error.setup.timeZoneInvalid` / `error.setup.rollHourInvalid`, en + vi.
+
+**The picker.** `knownTimeZones()` in `src/server/api/setup.ts` asks `Intl.supportedValuesOf`, the
+same question `isTimeZone` asks: a zone this runtime cannot format is a business date the hotel
+cannot compute. A runtime without it falls back to the zone in use plus the default, so the current
+answer is never the one missing from the list. The hour is a select of 0–23 — shape, not judgement.
+
+**Rendering in the hotel's zone.** `formatTimestamp` took `(value, locale)` and pinned UTC; it now
+takes the zone. It arrives once, in the root loader (`getHotelZone`, which reads the profile row
+directly rather than building the hotel — the root loader runs before every page and a lazy night
+roll is not what a page load is for), and rides on `useI18n` beside the locale. Seven call sites.
+Two people in two countries looking at one history now see one clock, and it is the hotel's.
+
+Calendar dates are untouched and still UTC: a `YYYY-MM-DD` is a day, not an instant, and reading it
+in a zone renders the day before.
+
+`router.invalidate()` after a command already refetches the root loader, so saving a new zone
+re-renders every timestamp on the page without a reload.
+
+**Next:** 5.3 dashboard / reports.
