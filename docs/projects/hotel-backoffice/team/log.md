@@ -1583,7 +1583,7 @@ unbuilt command. The open items are QA's N42 (diagnosis still open, see above)
 and the 5.8 pieces product.md itself defers — notifications, and the approval
 card's "what" naming the line rather than the kind. **Architect and product
 have been unreachable for the whole of 5.8**; both need briefing on what
-landed, and product has 39+ en-only keys waiting. (product.md §11 Approvals, ux.md G34-the-5.8-row
+landed, and product has **73** en-only keys waiting. (product.md §11 Approvals, ux.md G34-the-5.8-row
 — note ux.md reuses the number "G34" for it, which is *not* the overbooking
 G34 just built). One rule: an owner-only money act the desk cannot do becomes
 a request from the same button. Desk's void / reprice / refund / write-off
