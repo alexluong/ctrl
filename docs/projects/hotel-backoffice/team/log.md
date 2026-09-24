@@ -1408,7 +1408,7 @@ name for the calendar). Tail after those: G4, G8, G10, G12, G19, G21, G26.
 - `pnpm deploy` failed once with a Cloudflare 7403 on the D1 migrate step and
   worked on an immediate retry. Nothing changed in between.
 
-## solex-dev — 5.8 complete (build from solex `1b6850f`, staging `745a54d8`, 512 green)
+## solex-dev — 5.8 complete (build from solex `2f54f6d`, staging `9518ea8a`, 513 green)
 
 Kept current at the landing. Both repos pushed, tree clean, build clean,
 biome at the 4-warning baseline. **Migration 0019** (`booking_rules`) applied
@@ -1577,6 +1577,14 @@ The chase left behind `src/ui/history.test.tsx`, **the first rendering test in
 this suite** (`renderToStaticMarkup`, no DOM, so it fits a server-only suite).
 Worth knowing for e2e: after an override the URL moves to the group page
 before it renders.
+
+**QA N44 / N45** (`2f54f6d`) — the owner's approval card said a raw user id,
+the kind of act and the desk's reason, and nothing about *what*: no line, no
+room, no guest, and no amount, because a void carries none of its own (the
+money is the line's). It now reads as the decision, with the room linking to
+the stay; who asked is resolved to a name in the adapter the way the history
+does it. New read `guestsOfStay` — G22's link the other way round. N45:
+`folio.nothingToChange` had no sentence and printed its key.
 
 **QA N43** (`1b6850f`) — both buttons on a bill line read "Ask the owner" for
 a receptionist, side by side, one opening the reprice dialog and one the void
