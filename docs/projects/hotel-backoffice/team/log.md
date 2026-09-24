@@ -1618,6 +1618,10 @@ meaning, and I took the meaning out of the label. Now "Ask to reprice" /
 they came from, with the two that are sentence fragments flagged — so the
 handover does not live only in a message product never received.
 
+**QA's full suite is green on `8130240`** — desk 154/154, receptionist 12/12,
+print (S5-80/81) and room map (S5-82..84) included, and their page-wide
+raw-key net found nothing, so the eight event names hold. **No open N.**
+
 **Next: nothing is queued.** ux.md §6 has no outstanding row and §11 has no
 unbuilt command. The open items are QA's N42 (diagnosis still open, see above)
 and the 5.8 pieces product.md itself defers — notifications, and the approval
