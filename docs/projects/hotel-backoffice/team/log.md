@@ -1408,7 +1408,88 @@ name for the calendar). Tail after those: G4, G8, G10, G12, G19, G21, G26.
 - `pnpm deploy` failed once with a Cloudflare 7403 on the D1 migrate step and
   worked on an immediate retry. Nothing changed in between.
 
-## solex-dev — 5.7 resume note (build from solex `30dbec5`, staging `a2476da4`, 437 green)
+## solex-dev — 5.7 resume note (build from solex `b4e501e`, staging `0d257c28`, 448 green)
+
+Kept current at the landing. Both repos pushed, tree clean, build clean,
+biome at the 4-warning baseline. **Migration 0019** (`booking_rules`) applied
+dev + remote; 0018 (`stay_guests`) before it. Nothing pending.
+
+**Landed since the `30dbec5` note:**
+- **G28** (`f82ea14`) — `Company.defaultRouting` has decided which bill every
+  group charge lands on since 5.1 and had no control, so hotels got the
+  fallback whatever they had agreed. Companies are a card each now: eight
+  categories is eight selects and a four-column row has nowhere to put them.
+  **Three answers per category**, not two — "not said" is the common one and
+  means fall through, and picking it back is how an agreement is withdrawn.
+  Their other fields became editable in the same form (the update command
+  replaces the row, so it has to be sent them anyway) — `UpdateCompany`'s
+  first caller. No select for `depositForfeit`: that charge is posted onto the
+  bill its command names and never consults routing. Selects live in
+  `ui/routing.tsx`, which **G32 reuses one level down**. `.row` inside a card
+  lays out like `form.row` now.
+- **vi pass 2** (`74f99e3`) — product's 24 pairs for G16 and G22, verbatim.
+- **G29** (`36b7d5a`-ish, in the same push) — `BookingRules` did not exist at
+  all. Row carries all five of product's settings; **the form shows the two
+  that something reads** (architect's ruling (b): a control that changes
+  nothing is a lie told where the owner cannot check it). Wired:
+  `autoDirtyOnCheckout` (§10 rule 6 is a dial now) and `idEnforcement`
+  ("required" refuses a check-in where nobody handed a document over — one
+  between them, not one each, `stay.idRequired`). `bookingRules.get()` never
+  answers null, so the defaults live in one place instead of `?? 6` at every
+  read site. Both read inside the plan (D-12 (f)). `overbooking` is
+  refuse | warn | allow after product's G34 spec.
+- **QA N33** (`46a699e`) — **a regression I caused in 8716fc2.** Refusing to
+  reuse a command id while anything was in flight is exactly the state a
+  double-submit is in, so the second submit got a fresh id and met a rule that
+  had already happened ("already settled") — or, for `PostCharge`, which has
+  no such rule, would have posted the charge twice. Both that and the original
+  silent drop are the same missing fact, *which* command this is, and only the
+  caller knows it. `run` takes a **key** now and the slots are per key; where a
+  screen has one per row the key names the row. Key is required, so the
+  compiler found all 56 call sites.
+- **QA N34 / N35 / N36** (`b4e501e`) — revenue "by source" names the channel
+  (hotel's name, then the standard list, then the id); the ID-number adapter
+  check is gone so `guest.idDocIncomplete` can be said instead of
+  "input.invalid"; the group's master bill has a Move picker at last, offering
+  the booking's own rooms, which is what made "master → stay" reachable.
+- **N29/N30/N31 verified by QA** on the screens; G16's S5-44 passes.
+
+**N32 is parked as environmental.** QA found the machine at load ~190 with
+five `pyenv exec python3 -c …` shims spinning at 60–70%, reading a stdin that
+never closes. One leftover was mine — the old `http.server 7913` scratchpad
+server — and is killed. The others belong to other sessions (ebutler-qa,
+replay-lab, /tmp) and I left them alone. Under that load QA's rerun hung 5 of
+10; the suite already runs `--workers=1`, and staging walks have never shown
+it. The client half of the fix (`run` no longer awaits `router.invalidate`)
+stands on its own merits.
+
+**Next, in architect's order:** **G32** (group page routing table — reuse
+`ui/routing.tsx`, per stay, empty option meaning "as the company agreed") →
+**G33** (owner home + Needs attention; this is where `receivableAgeDays` and
+`oooDays` join the G29 form) → **G34** overbooking → **G35** capacity → 5.8.
+G34/G35 are spec'd in product.md (ctrl `847ff15`) and accepted by architect:
+override is an `override?: true` flag on the adding command, `OverrideOverbooking`
+retired unbuilt, gate on `BookingRules.overbooking` + new capability
+`stay.overbook`, refuse `availability.overbooked {roomTypeId, date, short}`,
+only nights the command adds are checked, supply-side commands never refuse.
+G35: `adults ≤ RoomType.capacity`, children never counted, refuse
+`stay.overCapacity`, new `SetOccupancy {stayId, adults, children}`.
+
+**Open:**
+- `pnpm i18n:report` at **15** en-only keys, all G28/G29. **Product was
+  unreachable when I tried to send them** — the list with its context is in
+  my outbox intent, resend at the next landing.
+- `bookings.sourceId` on rows written before G30 stays null; no backfill.
+- **solex `main` is shared** — QA pushes e2e there. Rebased onto `f4308ad`
+  this stretch; always fetch + rebase.
+
+**Verification technique** (no dev server, no staging sign-in): inline
+`src/styles.css` into a static HTML harness in the scratchpad, screenshot with
+Playwright run from `solex/e2e` (a `file://` URL), read the PNG, **delete the
+harness script from `e2e/` afterwards** — biome lints it and it will fail the
+check if left. Used on the move dialog, the person page and the company card.
+
+## solex-dev — 5.7 resume note, superseded (build from solex `30dbec5`, staging `a2476da4`)
 
 Kept current at the landing. Both repos pushed, tree clean, `pnpm build`
 clean, biome at the 4-warning baseline. **Migration 0018** (`stay_guests`)
