@@ -1,4 +1,5 @@
 # Team log
+- 2026-09-24 — dev: **5.3 landing 2 — revenue + occupancy reports** (solex `cecd997`, staging `424f6139`, 349 green). Revenue reads the ledger's revenue accounts with architect's effective-date rule (a reversal takes the date of the entry it reverses; cash keeps its own day); `range()` is one helper and the dashboard is it over today. Cuts: by category, by booking source, by payment method. Occupancy by night and room type vs today's sellable rooms. Range in the URL; `report.rangeInvalid` is a rule. **N26 fixed** (zones ∪ {default, saved, UTC}, de-duped by canonical spelling). **Note for product/architect: nothing sets `bookings.sourceId` — no screen records a source — so the by-source report is one "not recorded" row until a control exists. Sibling of G28; suggest the same slice.**
 - 2026-09-24 — product: home & inbox spec (76d2594): desk home = room map + status strip; owner home = dashboard + NeedsAttention projection (aged receivables >30d, OOO >7d, unassigned tomorrow, overstay with balance, pending approvals; thresholds in BookingRules; ids only) + nav badge; approval flow shape pinned in §8, parked; notifications = async consumer, deferred. ux.md 4.14 = Owner home, G33 (C, v1 after 5.3). Architect accepted: inbox in v1 (5.7), approvals stay parked.
 - 2026-09-24 — Alex: notifications / manager approval / home page? Architect: none designed; approvals parked (§8). Tasked product to spec (not build) per-persona home pages, an owner "needs attention" inbox projection, a log-shaped approval flow (request → grant/decline → original command with approval id), push as a deferred async consumer (D-8 Hookdeck slot).
 - 2026-09-24 — solex-qa 5.2 run 97/98; N24/N25 closed; N26 (zone list alias Asia/Saigon vs Ho_Chi_Minh) → dev. Dashboard/report cases next.
@@ -1145,3 +1146,37 @@ shape (date range, "summarise by", table, totals row) landing 2 will follow.
 
 **Next:** landing 2 — revenue by category / source / method, occupancy over time, both over a
 business-date range.
+
+## solex-dev — 5.3 landing 2: the range reports (solex `cecd997`, staging `424f6139`)
+
+349 green. Owner only, business dates throughout, `[from, to)` half-open everywhere.
+
+**Revenue is now the ledger's**, on architect's ruling (c). An entry's *effective* date is its own,
+unless it reverses another, in which case it is the reversed entry's — so a void nets against the day
+the charge was earned, while the ledger keeps saying the reversal happened when it happened. Cash
+reads `businessDate` as-is, which is what puts a refund on the day the money left the drawer.
+`range()` is the single helper; the dashboard's "sold today" is `range()` over today, so the two
+cannot drift.
+
+Two scenarios pin the rule: a charge on the 23rd voided on the 25th leaves the 23rd smaller and the
+25th untouched; a refund on the 25th of a payment taken on the 23rd leaves the 23rd's cash alone.
+
+**Three cuts**: by charge category (a revenue account carries its category, so it is a group-by, not
+a walk through charges), by booking source, and how the money arrived — the last one labelled as a
+different question, because it is.
+
+**Occupancy** by night and by room type, against the rooms the hotel can let *today*. Nothing records
+how many rooms were out of order last Tuesday, so that is the only denominator available and the page
+says which it is.
+
+**The range lives in the URL.** An owner asking the office "what did we do last month" should be able
+to send the question, not just the answer.
+
+**One adapter rule worth knowing**: `read()` is for a page that asks nothing — the only thing that
+can go wrong is being the wrong person. A read the reader typed input for goes through `command()`
+instead, so `report.rangeInvalid` arrives as a code the page can say rather than an error page.
+
+**Gap found, not filled**: nothing sets `bookings.sourceId`. The column exists, the report groups by
+it, and no screen records one — so by-source is a single "not recorded" row today. Same shape as G28.
+
+**Next**: 5.4 deposits, unless architect reorders.
