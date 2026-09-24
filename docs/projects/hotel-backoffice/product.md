@@ -249,7 +249,7 @@ type Room = {
 }
 // occupied / vacant / arriving / departing are DERIVED from stays' nights, never stored
 ```
-Events: `room.marked_dirty` · `room.marked_clean` · `room.taken_out_of_order(reason)` · `room.returned_to_service` · `room.note_set`. (Definition events live in Setup: `room.defined/updated/retired`.)
+Events: `room.marked_dirty` · `room.marked_clean` · `room.taken_out_of_order(reason)` · `room.returned_to_service` · `room.note_set`. (Definition events live in Setup: `room.defined/updated/retired/type_changed`; `SetRoomType` §11, 5.7.)
 Auto: `stay.checked_out` → `room.marked_dirty` (policy reaction).
 Map vocabulary (derived): vacant clean · vacant dirty · occupied clean · occupied dirty · out of order, + arriving / departing overlays.
 
@@ -501,6 +501,7 @@ Command = one intent. `needs` = capability. `checks` = rules beyond "hotel match
 | `CreateContact / UpdateContact / EraseContact` | `booking.edit` (erase: `guests.erase`, owner only) | `contact.created` / `updated` / `erased` |
 | `RecordExpense {businessDate, categoryId, amount, method, description, reference?}` / `VoidExpense` | `expense.record` / `expense.void` | `expense.recorded` / `voided` → entry |
 | `Define / Update / Retire <SetupItem>` (Floor, RoomType, Room, RateTable, ChargeCategory, ChargeItem, BookingSource), `SetHotelProfile`, `SetBookingRules` | `setup.edit` | `<item>.defined / updated / retired`; Room retire/type change also versions availability |
+| `SetRoomType {roomId, roomTypeId}` (5.7, with G14/G15 edits; G8) | `setup.edit` | `room.type_changed {roomId, roomTypeId}`; versions availability (supply bucket moves). Refused if the type is unknown or retired (`setup.roomTypeInvalid`). **Allowed with a checked-in stay**: the stay's nights already carry their price; the type is a label + future-availability bucket. Until 5.7: define the room again under the right type, retire the old one |
 | `DefineCompany {name, defaultRouting?} / UpdateCompany / RetireCompany` | `setup.edit` | `company.defined / updated / retired`; retire refused while the company has a live stay or an unsettled master folio (`company.inUse`) |
 | `CreateUser / UpdateUser / ResetPassword` | `users.manage` | `user.created / updated / password_reset` on `<hotelId>/user:<id>`; `user.created` carries the username, never the name (D-20); ResetPassword ends the person's live sessions |
 | ~~`DisableUser`~~ **deferred** | – | identity ≠ access: `DeactivateStaff` ends the position and live sessions, so an account with no membership signing in to an empty shell is harmless. If a lock is ever needed: `disabledAt` on the account checked at sign-in, never a delete (D-18 built note). |
@@ -599,7 +600,7 @@ Envelope + naming per §6 conventions (D-12). **Two tiers (D-22)**: `booking.*` 
 
 `booking.` created · requests_changed · party_changed · notes_changed · cancelled · closed · stay_merged_in (reserved)
 `stay.` created · room_assigned · room_unassigned · room_changed · nights_changed · rate_set · guest_added · guest_removed · routing_set · checked_in · checked_out · cancelled · marked_no_show · overbooking_overridden
-`room.` defined · updated · retired · marked_clean · marked_dirty · taken_out_of_order · returned_to_service · note_set
+`room.` defined · updated · retired · type_changed · marked_clean · marked_dirty · taken_out_of_order · returned_to_service · note_set
 `availability.` changed {cause} — version bump only
 `folio.` opened · charge_posted · charge_voided · charge_moved · payment_received · payment_refunded · deposit_forfeited · transferred_to_receivable · closed
 `receivable.` payment_received · settled · written_off — account opens via `ledger.account_opened`, lazily
