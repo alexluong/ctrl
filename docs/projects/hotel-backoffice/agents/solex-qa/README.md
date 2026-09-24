@@ -43,6 +43,8 @@ Availability versioned on every supply/demand command · one batch per money com
 
 - 2026-09-25 — qa: 5.8 walked (e2e pushed). N43 closed; N44 (thin approval card, raw user id) and N45 (raw key on a same-price reprice) filed. Dev is idle and led by QA. **Resume:** retest N44/N45; re-film journeys R1/R2 on the current screens (map panel, settle dialog, merged history); print S5-4x; the map/panel backlog; a receptionist under overbooking `allow` (second pass). Next free N46.
 
+- 2026-09-25 — qa: full suite green on 8130240 (desk 154, receptionist 12; e2e 28b2ee5). Raw-key net over every text node. Print and room-map backlog done. No open N. **Resume:** walk whatever dev lands next; a receptionist under overbooking `allow` (second pass); the 92 English-only keys wait on product (dev's handover `agents/solex-dev/notes/2026-09-25-vi-pass-3-handover.md`). If defineRoomType fails in a full run again, its error now names the refusal (seen twice at 5 red, never reproduced alone). Next free N46.
+
 ---
 
 **Session prompt (Alex pastes to start the session, named `solex-qa`):**

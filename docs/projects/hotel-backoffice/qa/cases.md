@@ -304,3 +304,13 @@ The desk asks from the same button; the owner answers from Needs attention. The 
 | S5-79 | Owner reads a void request on the card | who asks by name; the room, the line and its amount; the reason | 5.8 | e2e approval.last "S5-79" | 2f54f6d pass (N44 fixed 2f54f6d: "<name> asks to take off · <line> · <amount> · room <n> · <guest> — <reason>", the room links to the stay) |
 | S3-22 | Desk opens a company's statement | "Ask the owner to write it off"; no owners-only note | 5.8 | e2e receptionist.last | 1b6850f pass |
 
+### 5.5 print, 5.6 map (backlog)
+
+| ID | who / what they do | what they should see | rule | automated by | last run |
+|---|---|---|---|---|---|
+| S5-80 | Desk prints a guest's bill with a voided minibar, a laundry line and a 100 000 payment | the guest, the room; no voided line; total charges = night + laundry; paid 100 000; balance due the difference; "By: QA"; on paper, no app bar and no Print button | 5.5 | e2e print "S5-80" | 8130240 pass |
+| S5-81 | Desk prints a group's invoice | the group's title, its room, the night on the group's bill | 5.5 | e2e print "S5-81" | 8130240 pass |
+| S5-82 | Desk presses each of the eight status filters on the room map | the tiles shown equal the count on the button, every time | G5 | e2e room-map "S5-82" | 8130240 pass |
+| S5-83 | A guest arriving today is checked in | "arriving" drops by one and "in house" rises by one; the tile moves between them | G5 | e2e room-map "S5-83" | 8130240 pass |
+| S5-84 | Desk marks a room left dirty by a check-out clean from its panel | the panel reads Clean; the tile is no longer dirty; "vacant dirty" drops by one | G6/G7 | e2e room-map "S5-84" | 8130240 pass |
+
