@@ -58,7 +58,7 @@ Screen → actions → command. Immediate scope only; capability in brackets whe
 |---|---|
 | **Room map** (home) | every room's state *now*; tile → check in, post charge, take payment, mark clean/dirty, out of order |
 | **Tape chart** | rooms × dates; per-type availability inline; drag a stay = move room / extend (`stay.room_changed` / `stay.nights_changed`); click empty cell → new booking |
-| **New booking** | individual: room + dates + guest → done (one stay, assigned). Group: company, dates, types × qty, assign now (default) or later |
+| **New booking** | individual: room + dates + guest → done (one stay, assigned). Group: company, dates, types × qty, assign now (default) or later. **Source** (select of live `BookingSource`, ezFolio's Nguồn; sits next to "Billed to"): default `walk-in`; when a company is picked and the source is still the default, flip it to `company`; never blank. Shown on the bookings list column and the booking header |
 | **Booking page** | edit party / notes, add / remove stays, assign rooms, cancel w/ reason, master folio; **group routing table** (rooms × categories, ezFolio's group panel, D-27) = `SetRouting` per stay, applied only to stays still on the company default — a per-stay override stays (ux.md G32, 5.7) |
 | **Stay page** | guests, nights (room + rate per night), check in, check out, move, extend, cancel / no-show, own folio. **Check out opens a settle dialog** (ezFolio's quickout shape, D-27): balance · method · amount · ref, last option "Công nợ → company" = `TakePayment` *or* `TransferToReceivable`, **then** `CheckOut` — two commands in sequence, never one batch; if `CheckOut` refuses, the payment stands and the dialog says so; the dialog never decides whether check-out is allowed (ux.md G31, 5.7) |
 | **Folio** | lines; post charge (catalogue item or free text); void [owner]; move line to another folio; take payment (cash / transfer / card); deposit; refund [owner]; transfer remainder to company; close; **print** |
@@ -175,7 +175,7 @@ type Booking = {
   hotelId: HotelId
   kind: 'individual' | 'group'
   party: { companyId?: CompanyId; contactId: ContactId }   // contact PII in mutable table, not in events (D-20)
-  sourceId?: BookingSourceId   // Setup-defined list (walk-in, phone, Agoda…); lookup only, no logic
+  sourceId: BookingSourceId    // channel the booking came through; Setup list (below); lookup only, no logic. Command defaults it to `walk-in` when absent (payload stays `sourceId?` under the §11a freeze) so revenue-by-source never has a "not recorded" row
   arrive: LocalDate
   depart: LocalDate            // exclusive
   requests: Array<{ roomTypeId: RoomTypeId; bedType: BedType; qty: number; adults: number; children: number; ratePerNight: Money }>
@@ -371,7 +371,7 @@ Reference data, retire-not-delete, seeded by admin SDK (D-9). Each has `<name>.d
 - `RateTable` — `{roomTypeId, bedType, dateRange | dayOfWeek, ratePerNight}`; no overlapping ranges
 - `ChargeCategory` — seeded room · roomSurcharge · minibar · laundry · compensation · extraService · restaurant; `room` reserved
 - `ChargeItem` — category, VN + EN name, unitPrice, active
-- `BookingSource` — walk-in, phone, Agoda, … (lookup only)
+- `BookingSource` — **tier b Setup entity, retire not delete** (channels change; the client adds an OTA without a deploy): `{ id: BookingSourceId; hotelId; name: string; kind: 'direct' | 'ota' | 'agent' | 'company'; retired?: true }`; id = slug of the name like RoomType. `kind` is the coarse bucket ezFolio calls Nguồn (WALK-IN · OTA · TA · CORP, counts seen 61 · 21 · 1 · 161) so reports roll up the same way the client is used to; `name` is the channel. **v1 seed** (from the OTAs actually in the client's debtor list, existing-system.md 06): `walk-in` (direct) · `phone` (direct) · `zalo-facebook` (direct) · `agoda` · `booking-com` · `expedia` · `traveloka` · `trip-com` (all `ota`) · `agent` (agent; the travel-agency catch-all) · `company` (company). "Repeat guest" is not a source — it is a guest fact, GuestHistory. Source ≠ payer: an OTA that settles later is *also* a `Company` (that is how ezFolio's receivable list mixes Agoda with corporates); `sourceId` says where the booking came from, `party.companyId` says who is billed. Events: `setup.booking_source.defined / updated / retired`; retire refused while… nothing — old bookings keep the id, the form just stops offering it. Built in 5.7 with G28.
 - `ExpenseCategory` — **v1: fixed in code, not Setup data; Setup screen if the client asks** (D-21). Ids: `groceries`, `incidental`, `hkOvertime`, `advance`, `other`, + system-only `writeOff` (written-off receivables land there; not pickable by hand)
 - `Company` — tier b Setup entity, built first in slice 5: `{ id: CompanyId; hotelId; name: string; defaultRouting?: Partial<Record<ChargeCategoryId, 'own' | 'master'>> }`. `companyId` on Booking.party, Contact and transfer-to-receivable references it; no free-text company names. Kind/contact/commission/terms → later
 - `BookingRules` — childAgeThreshold 6, overbooking `warn` (override allowed), autoDirtyOnCheckout true, idEnforcement optional
