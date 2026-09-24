@@ -2,6 +2,8 @@
 
 Newest first. `date · commit · staging · cases · result · findings · blocking?`
 
+- 2026-09-24 · cecd997 (e2e 1974ee6) · 424f6139 (not walked) · full e2e 106: all pass except S5-30 · N26 closed (S5-19 green). New S5-22..29 pass; revenue by category reconciles exactly with the charges table minus voids; S5-31, S5-32 by scenario · **N27** `/reports/occupancy` lists only nights with something sold (`nightsSold` groups `stay_nights`), so an unsold night has no row and the average divides by the sold nights only: one room sold on 2 of 4 nights in a 1-room hotel reads 100%, not 50%. The dashboard's week ahead already fills empty nights; the range report does not · N (report is wrong, no money moves)
+
 - 2026-09-24 · 5485e9e (e2e 41e2287) · 42ef30f3 (not walked) · full e2e 98: all pass except S5-19 · N24, N25 closed (d84c906; e2e fea4133 dropped the payment attempt on the closed bill, its form is gone now). New S5-17, S5-18 pass; S5-20, S5-21 by scenario · **N26** Setup's zone list comes from `Intl.supportedValuesOf`, which names Vietnam's zone Asia/Saigon, not the default Asia/Ho_Chi_Minh; the default is prepended only while it is the saved zone, so after switching away the owner can never pick it again (Asia/Saigon works, but stores a different name than the default). UTC is also not offered · N
 
 - 2026-09-24 · b531242 (e2e 9d2eaa4) · 7cfb5ced (not walked) · full e2e 96: all pass except S5-12a, S5-12b/c (N24, N25, queued for dev after compaction) · night-roll cron + HotelProfile backend: no regression; no case asserts an unposted night, so the hourly roll cannot race the suite · N
