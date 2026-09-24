@@ -219,6 +219,50 @@ Run with `node run.js [--logs | --otel]`. The app runs as a **child process** on
 - **Not done:** per-step SQLite DB diff.
 - **Fits** the opt-in shape: `replay run --logs|--otel` or the fixture option `backend: 'logs'|'otel'`.
 
+## Backend-feature demos (lab 4f680ea)
+
+Alex: "what about backend features, not UI?"
+
+**Framing:** a backend demo = **stimulus → effects**, narrated.
+- Stimuli: API calls, CLI, messages, time.
+- Effects: responses, spans, logs, DB changes, outbound calls (webhooks/3rd-party), queue messages.
+- The recording's **stage is pluggable**: `ui` (rrweb) | `http` (cards) | `terminal` (future, asciinema-like). The side panels are shared across stages.
+
+**Built:**
+- **Demo feature:** the todo app now uses `node:sqlite`.
+  - `POST /api/webhooks` registers an endpoint; every created todo is delivered as a signed webhook (HMAC sha256, `x-webhook-attempt` header).
+  - Backoff 300/600/1200 ms, dead-lettered after 4 attempts; `GET /api/deliveries`.
+- **`r.http.get/post/…`:** HTTP goes through Playwright's `context.request` (cookies shared with the browser). That path emits **no** context request events and **doesn't appear in library-mode traces** (verified: `trace.network` is empty), so we record the call ourselves and add a `traceparent`.
+- **`r.catcher`** (`src/backend.js`): a local webhook receiver.
+  - Programmable, e.g. `respond([500, 500])`.
+  - Records `{t, method, path, headers, body, status, traceId, parentSpanId}` → `inbound.json`.
+- **`dbWatch`:** polls the app's SQLite file read-only every 120 ms → row-level insert/update (changed cols before→after)/delete → `db.json`.
+  - Caveat: polling can miss short-lived states (`pending`/`sending`). A trigger/CDC hook would be exact.
+- **`r.until(fn)`** waits for async effects. `export const stage = "http"` in a journey means no page at all.
+- **Player `http` stage:** a card timeline (step banners, API request→response, "Received" webhook cards with signature/attempt/answered status, DB diff cards) on its own play/scrub clock (1/2/4×). Clicking an API card opens its waterfall.
+
+**Result** (`journeys/webhooks.js`, `node run.js --journey webhooks --otel`, 13 s):
+- 3 scenarios:
+  - delivered on the first try
+  - flaky receiver (500, 500, then 200 on attempt 3)
+  - receiver down → dead after 4 attempts
+- **Retries keep the originating request's trace** (Node AsyncLocalStorage context survives `setTimeout`). One waterfall for `POST /api/todos` shows: app span → db insert → 4× `webhook.deliver` → outbound POST → "receiver answered 503", spaced out by the backoff.
+- The catcher's hits join the tree via their `traceparent` parent span id. The trace's server logs sit underneath (a warn per retry, an error when dead).
+- **Size:** 6.8 KB zipped without trace.zip (raw: db 4 KB, inbound 7 KB, spans 15 KB).
+
+**Gaps / next:**
+- queue taps (OTel messaging spans or a broker tap)
+- Postgres watch (logical replication/triggers vs polling)
+- `terminal` stage for CLI features
+- assertions shown as ✓/✗ cards (`r.expect`)
+- collapsing repeated payloads (done for retry attempts)
+
+**Prior art to check:**
+- Hurl / Bruno / Postman runs: scripted API calls, no narration or backend view
+- Runme / notebooks
+- **Tracetest**: trace-based assertions
+- Keploy: API capture/replay
+
 ## Proposed SDK / DX (not built yet)
 
 - Packages: `@replay/core` (format, recorder, zip), `@replay/playwright` (capture adapter), `@replay/player`, `replay` CLI.
