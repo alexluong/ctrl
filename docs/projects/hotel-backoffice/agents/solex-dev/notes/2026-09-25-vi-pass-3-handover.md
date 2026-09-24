@@ -1,6 +1,6 @@
-# vi pass 3 — the 84 keys waiting (from solex-dev)
+# vi pass 3 — the 92 keys waiting (from solex-dev)
 
-Written at solex `a129a06` because product has been unreachable for the whole
+Written at solex `8130240` because product has been unreachable for the whole
 of 5.7's tail and 5.8. This is the handover so it does not live only in an
 undelivered message. Regenerate with `pnpm i18n:report` in solex, or with
 `untranslated()` from `src/i18n/messages.ts` for the text as well.
@@ -51,6 +51,10 @@ continuation, which may want a different shape in Vietnamese; if so, change
 `attention.approvalPending` with them and say so.
 
 ## The keys
+
+Includes the eight `eventType.*` names added in `8130240` — six for the
+approval events and two (`stay.routing_set` / `_cleared`) that had been
+printing their own type in a stay's history since routing was built.
 
 ```
 attention.title = Needs attention
@@ -115,6 +119,14 @@ folio.reprice = Reprice
 folio.repriceTitle = Charge this at a different price
 folio.repriceHint = The line is taken off and put back at the price you agreed, both shown on the bill. It is the only discount there is — and the month-end sees it, which a percentage in a box would not.
 folio.newPrice = New unit price
+eventType.stay.routing_set = Where a charge goes changed
+eventType.stay.routing_cleared = Back to what was agreed
+eventType.booking.routing_set = The group agreed who pays
+eventType.booking.routing_cleared = The group's agreement withdrawn
+eventType.approval.requested = Asked the owner
+eventType.approval.granted = The owner approved it
+eventType.approval.declined = The owner said no
+eventType.approval.expired = The request ran out — the guest had gone
 error.approval.notFound = That request is not there any more.
 error.approval.notOpen = That request has already been answered, or the guest has left. Nothing was applied.
 error.approval.alreadyOpen = Somebody has already asked the owner about this. One question at a time.

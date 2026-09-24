@@ -1408,7 +1408,7 @@ name for the calendar). Tail after those: G4, G8, G10, G12, G19, G21, G26.
 - `pnpm deploy` failed once with a Cloudflare 7403 on the D1 migrate step and
   worked on an immediate retry. Nothing changed in between.
 
-## solex-dev — 5.8 complete (build from solex `a129a06`, staging `a171e94d`, 515 green)
+## solex-dev — 5.8 complete (build from solex `8130240`, staging `e00bc289`, 517 green)
 
 Kept current at the landing. Both repos pushed, tree clean, build clean,
 biome at the 4-warning baseline. **Migration 0019** (`booking_rules`) applied
@@ -1578,6 +1578,15 @@ this suite** (`renderToStaticMarkup`, no DOM, so it fits a server-only suite).
 Worth knowing for e2e: after an override the URL moves to the group page
 before it renders.
 
+**Every event has a name too** (`8130240`). QA's e2e net — which fails a spec
+if any alert shows a bare key — covers a class the codes test does not: keys
+built at render time. The biggest is the history's `eventType.<type>`, and
+eight events had no name. Six were that afternoon's approvals; **`stay.routing_set`
+and `routing_cleared` had been printing their own type in a stay's history
+since routing was built**, because nobody had opened a stay's history after
+changing its routing. Guarded the same way, reading the literals at the point
+of emission (D-12: there is no enum, and a type is never renamed).
+
 **Every refusal has a sentence now** (`a129a06`). N45 was one missing
 message; auditing the rest found **seven more**, all written the same
 afternoon — the five approval refusals and G32's two. A code with no entry
@@ -1601,7 +1610,7 @@ dialog. Landing 3's idea is that the control does not move and does not change
 meaning, and I took the meaning out of the label. Now "Ask to reprice" /
 "Ask to take off".
 
-**The 84 en-only keys are written down** at
+**The 92 en-only keys are written down** at
 `agents/solex-dev/notes/2026-09-25-vi-pass-3-handover.md`, grouped by where
 they came from, with the two that are sentence fragments flagged — so the
 handover does not live only in a message product never received.
@@ -1611,7 +1620,7 @@ unbuilt command. The open items are QA's N42 (diagnosis still open, see above)
 and the 5.8 pieces product.md itself defers — notifications, and the approval
 card's "what" naming the line rather than the kind. **Architect and product
 have been unreachable for the whole of 5.8**; both need briefing on what
-landed, and product has **84** en-only keys waiting (written down, see above). (product.md §11 Approvals, ux.md G34-the-5.8-row
+landed, and product has **92** en-only keys waiting (written down, see above). (product.md §11 Approvals, ux.md G34-the-5.8-row
 — note ux.md reuses the number "G34" for it, which is *not* the overbooking
 G34 just built). One rule: an owner-only money act the desk cannot do becomes
 a request from the same button. Desk's void / reprice / refund / write-off
