@@ -1,7 +1,7 @@
 # replay (candidate) — Playwright journeys → seekable HTML replay
 
 Status: **evaluating** (2026-09-25) as a possible product or OSS project. No repo yet.
-Origin: built inside SoLex ([hotel-backoffice](hotel-backoffice/README.md)) by solex-qa in ~1h, because Alex wanted a seekable HTML "session replay as demo" instead of screen recordings.
+Origin: built inside SoLex ([hotel-backoffice](../hotel-backoffice/README.md)) by solex-qa in ~1h, because Alex wanted a seekable HTML "session replay as demo" instead of screen recordings.
 Source: `alexluong/solex` @ a204175 (commits 84bd446, d290e53), `e2e/journeys/`. Briefed by solex-architect + solex-qa.
 
 ## What exists (SoLex prototype)
@@ -59,6 +59,9 @@ Other ideas (architect): TTS narration from captions; diff two replays of the sa
 
 ## Prior art to check
 
+Full scan (2026-09-25): [market.md](market.md). Closest: Playwright screencast chapters + trace viewer, tracelane, ProofShot. Verdict: real but narrow gap; build on rrweb 2.x.
+
+
 - Playwright trace viewer: per-action DOM snapshots, dev-oriented, not a single shareable file.
 - rrweb / rrweb-player: the raw pieces.
 - Storybook interaction stories.
@@ -105,4 +108,4 @@ A working scratch prototype, local git only (no remote). Alex: "extremely simila
 ## Open questions
 
 - Name / repo.
-- Does an "agent demo recorder" MCP already exist? Quick prior-art check before extracting.
+- ~~Does an "agent demo recorder" MCP already exist?~~ Answered in [market.md](market.md): several are video-only; none are DOM replays.
