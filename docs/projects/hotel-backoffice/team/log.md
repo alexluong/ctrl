@@ -945,3 +945,47 @@ Two i18n keys for the refusals are still mine, to be written with the landing.
 5. Two i18n keys for the refusals.
 
 Booking detail shows "ready to close" and the button (group only). Check-out stays unchanged.
+
+## 5.1 landing 3 — a booking that ends (solex `624b7dd`)
+
+Built. All five items, nothing else. 322 scenarios green, build clean, deployed to staging
+(`fd74a805`).
+
+**Individual bookings** close themselves in the same batch as the last stay's `checked_out` or
+`cancelled`. `decide.closeWithLastStay` is the pure half; `closesWithThisStay` in `stays.ts` reads
+the booking stream and the sibling stay rows inside the plan and returns the append. Both check-out
+and stay-cancel call it. One scenario asserts the reaction shares the check-out's `correlationId`,
+which is the grouping N21 will read.
+
+**Groups** close only via `hotel.bookings.close`, a new `booking.close` capability in both bundles
+(desk work per §5). Refuses `booking.staysOpen` and `booking.masterNotSettled`, both answered inside
+the plan.
+
+**One thing I added that was not in the five, and why.** `appendAcross` drops any stream that
+contributes no events, so including the master stream purely for its version would have been a guard
+with no teeth — the balance read would not have been protected at all. So the close **also appends
+`folio.closed` + `ledger.account_closed` to the master folio**, exactly as check-out closes a stay's
+folio at zero. That makes the version real and is the same rule the stay side already follows: a bill
+nobody can post to again. Flagging it rather than burying it; say if you want it out.
+
+**N23 fixed.** `bookingsOfCompany` is gone. Two queries replace it: `liveStaysOfCompany` (stays
+joined to bookings, status in booked/checkedIn) and `masterBookingsOfCompany` (its non-cancelled
+groups, whose master balances `retire` then asks the ledger for one by one). Three scenarios pin it —
+retire succeeds after an individual company guest checks out and pays, refuses while somebody is in
+a room, refuses while a group's master still owes.
+
+`projectBooking` gained the `booking.closed` case. `bookingStatus.closed` was needed to render it.
+
+**One existing scenario changed**, and it is the behaviour being replaced, not a test bent to fit:
+`scenarios.test.ts` "books a room, checks in, and checks out" asserted the booking stayed `booked`
+after check-out. It now asserts `closed`.
+
+**Five new i18n keys, not two**: the two refusals, plus `bookingStatus.closed`,
+`eventType.booking.closed` and the panel's three strings (`booking.closeTitle`,
+`booking.readyToClose`, `booking.close`) — a button and a status need words to be rendered at all.
+All of them sit inside the "WORDING NOT FINAL (Alex's pass)" block with the rest of the group
+vocabulary.
+
+**N16 reading on the button**: the page does not offer it while either condition fails, and says
+which one is in the way using the refusal's own string. The codes still exist for the race — a
+routed charge can land between the page loading and the click.
