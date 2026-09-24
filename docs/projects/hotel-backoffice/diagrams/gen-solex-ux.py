@@ -42,6 +42,7 @@ APP = {"fd": ("#1971c2", "#e7f5ff", "Front Desk"), "bo": ("#2f9e44", "#ebfbee", 
        "su": ("#e8590c", "#fff4e6", "Setup"), "sys": ("#495057", "#f1f3f5", "System (operator)")}
 PERSONA = {"R": ("#1971c2", "receptionist"), "O": ("#e8590c", "owner / manager"), "S": ("#862e9c", "setup admin (owner hat)")}
 GAP_C = "#c92a2a"     # not built yet
+WIP_C = "#1971c2"     # in progress (5.3)
 OWN_C = "#e8590c"     # owner-only control
 
 def chip(x, y, label, color):
@@ -127,12 +128,12 @@ SCREENS = {
         ("by category totals", ""),
         ("cash handover / day close (parked §8)", "gap"),
     ]),
-    "dash": ("bo", "Dashboard · Hôm nay", "(none)", "RO", [
-        ("in house · arrivals · departures · dirty · OOO", "gap"),
-        ("cash in today by method · revenue posted", "gap"),
-        ("companies owing · expenses today", "gap"),
-        ("forward book 7 days", "gap"),
-        ("reports: revenue by category / method · occupancy over time", "gap"),
+    "dash": ("bo", "Dashboard · Hôm nay", "(5.3 in progress · owner-only)", "O", [
+        ("in house · arrivals · departures · dirty · OOO", "wip"),
+        ("cash in today by method · revenue posted", "wip"),
+        ("companies owing · expenses today", "wip"),
+        ("forward book 7 days", "wip"),
+        ("reports: revenue by category / method · occupancy over time", "wip"),
     ]),
     "setup": ("su", "Setup · Thiết lập", "/setup", "S", [
         ("room types: name · id · sleeps · [Retire] → RetireRoomType · [Add] → DefineRoomType", ""),
@@ -141,7 +142,8 @@ SCREENS = {
         ("companies: name · tax code · phone · [Retire] → RetireCompany · [Add] → DefineCompany", ""),
         ("company default routing", "gap"),
         ("rooms (read) → /rooms/:id", ""),
-        ("hotel profile · booking rules · floors · charge items · sources", "gap"),
+        ("hotel profile: name · time zone · roll hour [Save] → SetHotelProfile", ""),
+        ("booking rules · floors · charge items · sources", "gap"),
     ]),
     "accounts": ("su", "Accounts · Tài khoản", "/accounts", "S", [
         ("person → /accounts/:id · username · role (select) → AddStaff / ChangeStaffRole · sessions", ""),
@@ -186,7 +188,8 @@ lx = X0
 for k, (c, name) in PERSONA.items():
     lx += chip(lx, Y, k, c) + 4; text(lx, Y, name, size=11, color=c); lx += tsize(name, 11)[0] + 24
 lx += chip(lx, Y, "gap", GAP_C) + 4; text(lx, Y, "target, not built", size=11, color=GAP_C); lx += tsize("target, not built", 11)[0] + 24
-lx += chip(lx, Y, "👑", OWN_C) + 4; text(lx, Y, "owner-only", size=11, color=OWN_C)
+lx += chip(lx, Y, "👑", OWN_C) + 4; text(lx, Y, "owner-only", size=11, color=OWN_C); lx += tsize("owner-only", 11)[0] + 24
+lx += chip(lx, Y, "wip", WIP_C) + 4; text(lx, Y, "in progress (5.3)", size=11, color=WIP_C)
 Y += 40
 
 # ---- IA map
@@ -206,7 +209,7 @@ for app, keys in IA_COLS:
     yy = Y + 52
     for k in keys:
         _, title, route, personas, regions = SCREENS[k]
-        gap = all(r[1] == "gap" for r in regions)
+        gap = all(r[1] in ("gap", "wip") for r in regions)
         rect(cx + 12, yy, col_w - 24, 30, bg="#ffffff", stroke=GAP_C if gap else c, dash=gap)
         text(cx + 20, yy + 4, title.split(" · ")[0], size=12, bold=True, color=GAP_C if gap else "#1e1e1e")
         text(cx + 20, yy + 18, route, size=9, color="#868e96")
@@ -247,19 +250,23 @@ for i, k in enumerate(order):
     yy = y + 48
     for wrapped, kind in lines:
         rh = len(wrapped) * 14 + 8
-        stroke = {"gap": GAP_C, "own": OWN_C}.get(kind, "#adb5bd")
-        rect(x + 10, yy, wf_w - 20, rh, bg="#fff5f5" if kind == "gap" else ("#fff4e6" if kind == "own" else "#f8f9fa"), stroke=stroke, dash=(kind == "gap"))
+        stroke = {"gap": GAP_C, "own": OWN_C, "wip": WIP_C}.get(kind, "#adb5bd")
+        rect(x + 10, yy, wf_w - 20, rh, bg={"gap": "#fff5f5", "own": "#fff4e6", "wip": "#e7f5ff"}.get(kind, "#f8f9fa"), stroke=stroke, dash=(kind in ("gap", "wip")))
         text(x + 16, yy + 4, "\n".join(wrapped), size=10, color=GAP_C if kind == "gap" else "#1e1e1e")
         yy += rh + 4
     pos[k] = (x, y, wf_w, h)
     col_y[col] = y + h + 30
 Y = max(col_y) + 20
 
-# nav arrows between wireframes (side-to-side, best effort straight lines)
-for a, b, label in NAV:
-    ax, ay, aw, ah = pos[a]; bx, by, bw, bh = pos[b]
-    gap = label.startswith("(gap)")
-    arrow(ax + aw, ay + 20, bx, by + 20, color=GAP_C if gap else "#868e96", dash=gap, label=label)
+# navigation between screens, as a list (arrows across a 4-column grid cross other boxes and cannot be read)
+text(X0, Y, "Navigation between screens", size=14, bold=True); Y += 22
+nav_lines = [f"{SCREENS[a][1].split(' · ')[0]:<10} → {SCREENS[b][1].split(' · ')[0]:<10}  {label}" for a, b, label in NAV]
+half = (len(nav_lines) + 1) // 2
+for i, chunk in enumerate((nav_lines[:half], nav_lines[half:])):
+    body = "\n".join(chunk); w, h = tsize(body, 11)
+    rect(X0 + i * (wf_w + 30), Y, wf_w, h + 16, bg="#f8f9fa", stroke="#adb5bd")
+    text(X0 + i * (wf_w + 30) + 10, Y + 8, body, size=11)
+Y += tsize("\n".join(nav_lines[:half]), 11)[1] + 46
 
 # ---- journeys
 text(X0, Y, "3 · Journeys — screen → command chains (ux.md §2)", size=18, bold=True); Y += 34
@@ -280,6 +287,19 @@ for name, p, steps in JOURNEYS:
     Y += 60
 
 text(X0, Y + 10, "not built yet: dashboard · reports · search · quick panel · availability row · cancel booking · change nights · move line · print · company routing · profile/rules — see ux.md §6", size=11, color=GAP_C)
+
+# self-check: no two screen boxes overlap; every small text sits inside some rectangle (headings and legend excepted)
+def _box(e): return (e["x"], e["y"], e["x"] + e["width"], e["y"] + e["height"])
+def _inside(i, o): return o[0] - 1 <= i[0] and o[1] - 1 <= i[1] and o[2] + 1 >= i[2] and o[3] + 1 >= i[3]
+rects = [e for e in els if e["type"] == "rectangle"]
+big = [_box(e) for e in rects if e["strokeWidth"] == 2 and e["height"] > 60]
+for i, a in enumerate(big):
+    for b in big[i + 1:]:
+        if a[0] < b[2] and b[0] < a[2] and a[1] < b[3] and b[1] < a[3] and not (_inside(a, b) or _inside(b, a)):
+            raise SystemExit(f"overlap {a} {b}")
+loose = [t["text"][:30] for t in els if t["type"] == "text" and t["fontSize"] < 13 and t["fontSize"] not in (11,) and t["y"] > 100
+         and not any(_inside(_box(t), _box(r)) for r in rects)]
+if loose: raise SystemExit(f"text outside boxes: {loose}")
 
 out = {"type": "excalidraw", "version": 2, "source": "gen-solex-ux.py", "elements": els,
        "appState": {"viewBackgroundColor": "#ffffff", "gridSize": None}, "files": {}}

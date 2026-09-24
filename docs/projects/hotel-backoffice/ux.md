@@ -189,8 +189,8 @@ product.md §2 says three apps. The built app has one flat nav; §6 lists the di
  Room map   /                Receivables  /receivables    Setup /setup     /system…
  Calendar   /calendar        Expenses     /expenses       Accounts /accounts   (operator only)
  Bookings   /bookings        People       /guests
-   New booking               Dashboard    (gap)
-   Booking   /bookings/:id   Reports      (gap)
+   New booking               Dashboard    (5.3 in progress)
+   Booking   /bookings/:id   Reports      (5.3)
    Stay      /stays/:id
    Room      /rooms/:id
 ```
@@ -211,7 +211,7 @@ product.md §2 says three apps. The built app has one flat nav; §6 lists the di
 | Expenses | `/expenses` | ✓ record | ✓ + void | by category / period |
 | Accounts | `/accounts`, `/accounts/:id` | – | ✓ | logins; reset password |
 | Setup | `/setup` | – | ✓ | room types, rates, categories, companies, staff |
-| Dashboard, Reports | – | – | ✓ | **gap** |
+| Dashboard, Reports | – | – | ✓ | in progress (5.3) |
 | System | `/system…` | – | – | operator |
 
 Owner-only screens render a "this is the owner's" page for a receptionist rather than 404, so the desk learns where things live.
@@ -477,10 +477,11 @@ Read only. Built shows the payload as raw JSON; target renders one sentence per 
 │                 (target) routing mặc định: Phòng → HĐ đoàn, còn lại → HĐ khách         │
 │ Phòng (read)    số → /rooms/:id │ tầng │ loại     ⓘ định nghĩa trên sơ đồ phòng         │
 │ Nhân viên       → chuyển sang Tài khoản                                                │
-│ (target) Hồ sơ khách sạn: tên, giờ bắt đầu ngày làm việc; Quy tắc đặt phòng           │
+│ Hồ sơ khách sạn: tên · múi giờ · giờ chuyển ngày [Lưu] → SetHotelProfile (built 5.2)   │
+│ (target) Quy tắc đặt phòng                                                            │
 └──────────────────────────────────────────────────────────────────────────────────────┘
 ```
-Commands: `DefineRoomType` / `RetireRoomType` (refused `roomType.inUse`) · `DefineRate` / `RetireRate` · seed → `DefineChargeCategory`×N · `DefineCompany` / `RetireCompany` (refused `company.inUse`) · Room rows read. Missing: company `defaultRouting`, HotelProfile / BookingRules forms, floors, charge items catalogue, booking sources (§6).
+Commands: `DefineRoomType` / `RetireRoomType` (refused `roomType.inUse`) · `DefineRate` / `RetireRate` · seed → `DefineChargeCategory`×N · `DefineCompany` / `RetireCompany` (refused `company.inUse`) · Room rows read. `Save` → `SetHotelProfile` (name, time zone, roll hour; built 5.2). Missing: company `defaultRouting`, BookingRules form, floors, charge items catalogue, booking sources (§6).
 
 ### 4.13 Accounts `/accounts`, `/accounts/:id` 👑
 
@@ -496,7 +497,7 @@ Commands: `DefineRoomType` / `RetireRoomType` (refused `roomType.inUse`) · `Def
 ```
 Role select on a row with no position → `AddStaff`; with one → `ChangeStaffRole` (refused `staff.lastOwner`) · `Reset password` → `ResetPassword` (ends sessions) · `Mark as former staff` → `DeactivateStaff` · `Bring back` → `ReactivateStaff` · `Create` → `CreateUser`. Built matches; prompt dialog for the new password (§6).
 
-### 4.14 Dashboard — target only (Back Office home)
+### 4.14 Dashboard — in progress (5.3), Back Office home
 
 ```
 ┌ Hôm nay 24/09 ───────────────────────────────────────────────────────────────────────┐
@@ -506,7 +507,7 @@ Role select on a row with no position → `AddStaff`; with one → `ChangeStaffR
 │ 7 ngày tới: T4 60% · T5 75% · T6 90% · T7 95% · CN 70% · …    (forward book)         │
 └──────────────────────────────────────────────────────────────────────────────────────┘
 ```
-All reads over existing projections (Night, RoomBoard, ledger balances). Receptionist sees the top row only; money rows 👑. Reports (revenue by category / method, occupancy over time, guest history) hang off this page = later slice.
+All reads over existing projections (Night, RoomBoard, ledger balances). Owner-only as a whole (architect's standing ruling; §7 Q3 asks whether the occupancy row should open to the desk). Reports (revenue by category / method, occupancy over time, guest history) hang off this page, same slice.
 
 ### 4.15 System `/system` (operator footnote)
 
@@ -545,13 +546,13 @@ Dev's i18n keys cover every built screen; the wireframes above use the built `vi
 | Availability by type | – | **new**: Còn trống theo loại | 4.4 |
 | Dashboard | – | **new**: Hôm nay | 4.14 |
 | Company default routing | – | **new**: Khoản chi tính vào đâu (mặc định) (reuse `routing.title`) | 4.12 |
-| Hotel profile / booking rules | – | **new**: Hồ sơ khách sạn / Quy tắc đặt phòng | 4.12 |
+| Booking rules | – | **new**: Quy tắc đặt phòng (hotel profile keys `setup.timeZone` / `setup.rollHour` exist) | 4.12 |
 
 ---
 
 ## 6. Gap list — built (origin/main 2026-09-24) vs. this document
 
-Grouped for dev's 5.6 polish list. **P** = polish (small, no model change), **F** = feature slice (needs a command that exists in §11 but has no UI), **L** = later (parked in product.md §8).
+Grouped for dev's 5.6 polish list. **P** = polish (small, no model change; slice 5.6), **C** = command coverage (the command is in §11, the UI is missing; slice 5.7, after polish, before v1 is declared done), **L** = later (parked in product.md §8).
 
 ### 6.1 Navigation and shell
 | # | gap | kind |
@@ -580,26 +581,26 @@ Grouped for dev's 5.6 polish list. **P** = polish (small, no model change), **F*
 ### 6.4 Bookings and stays
 | # | gap | kind |
 |---|---|---|
-| G13 | Search bookings / stays by name, phone, company (§3 Search); list filters (today, in house) | P |
-| G14 | Booking page: cancel booking with reason (`CancelBooking`), edit notes/party, add / remove stays | F |
-| G15 | Stay page: extend / shorten (`ChangeNights`), per-night price (`SetNightRate`), no-show (`MarkNoShow`) | F |
-| G16 | Folio: move line to another bill (`MoveCharge`, in the receptionist bundle), forfeit deposit | F |
-| G17 | Folio: print | F |
+| G13 | Search bookings / stays by name, phone, company (§3 Search); list filters (today, in house) | P (already planned for 5.6) |
+| G14 | Booking page: cancel booking with reason (`CancelBooking`), edit notes/party, add / remove stays | C |
+| G15 | Stay page: extend / shorten (`ChangeNights`), per-night price (`SetNightRate`), no-show (`MarkNoShow`) | C |
+| G16 | Folio: move line to another bill (`MoveCharge`, in the receptionist bundle), forfeit deposit | C |
+| G17 | Folio: print | 5.5 (planned) |
 | G18 | Folio rows show category id → show name | P |
 | G19 | Master folio: deposit kind on payment form (built always settlement) | P |
-| G20 | Group form: one room type × qty; mixed types per group | F |
+| G20 | Group form: one room type × qty; mixed types per group | C |
 | G21 | Room page: who is in it tonight / next arrival | P |
 
 ### 6.5 People
 | # | gap | kind |
 |---|---|---|
-| G22 | Edit guest / contact details (`UpdateGuest`, `UpdateContact`); contact detail link; guest's stays on their page | F |
+| G22 | Edit guest / contact details (`UpdateGuest`, `UpdateContact`); contact detail link; guest's stays on their page | C |
 
 ### 6.6 Back Office
 | # | gap | kind |
 |---|---|---|
-| G23 | Dashboard (4.14) | F |
-| G24 | Reports: revenue by category / method, occupancy over time | F |
+| G23 | Dashboard (4.14) | in progress (5.3) |
+| G24 | Reports: revenue by category / method, occupancy over time | in progress (5.3, after dashboard) |
 | G25 | Receivables: statement lines link to their stay / booking; settled companies under a toggle | P |
 | G26 | Expenses: default range = current month | P |
 | G27 | Cash handover / day close | L (needs client conversation) |
@@ -607,11 +608,11 @@ Grouped for dev's 5.6 polish list. **P** = polish (small, no model change), **F*
 ### 6.7 Setup
 | # | gap | kind |
 |---|---|---|
-| G28 | Company `defaultRouting` control (dev's own stale comment says "5.1") | F |
-| G29 | HotelProfile (business day start) and BookingRules forms | F |
-| G30 | Floors, charge items catalogue, booking sources — §6 setup items with no UI | F |
+| G28 | Company `defaultRouting` control (dev's own stale comment says "5.1") | C |
+| G29 | BookingRules form (HotelProfile landed in 5.2) | C |
+| G30 | Floors, charge items catalogue, booking sources — §6 setup items with no UI | C |
 
-Proposed 5.6 polish scope = every **P** row (G1–G10, G12, G13, G18, G19, G21, G25, G26). **F** rows become tickets; **L** stays parked.
+5.6 polish = every **P** row (G1–G10, G12, G13, G18, G19, G21, G25, G26). 5.7 command coverage = every **C** row (G14, G15, G16, G20, G22, G28, G29, G30) — v1 scope, not post-v1 tickets. G17 print = 5.5. G23/G24 = 5.3 in progress. **L** stays parked.
 
 ---
 
@@ -619,5 +620,5 @@ Proposed 5.6 polish scope = every **P** row (G1–G10, G12, G13, G18, G19, G21, 
 
 1. Nav grouping and the two label collisions (G1, G2).
 2. Quick panel on the room map vs. always going through the room page: the panel is my recommendation for the desk's "two clicks to money".
-3. Dashboard row split: money rows owner-only, occupancy rows for everyone?
+3. Dashboard: default is owner-only for the whole page (architect ruling, until product §3 says otherwise). Open the occupancy row to the desk?
 4. Wording pass on **new** labels in §5 and on "Hoá đơn / Hoá đơn đoàn".
