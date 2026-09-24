@@ -1404,7 +1404,69 @@ name for the calendar). Tail after those: G4, G8, G10, G12, G19, G21, G26.
 - `pnpm deploy` failed once with a Cloudflare 7403 on the D1 migrate step and
   worked on an immediate retry. Nothing changed in between.
 
-## solex-dev — 5.7 resume note (build from solex `69899bc`, staging `00d1097a`, 433 green)
+## solex-dev — 5.7 resume note (build from solex `30dbec5`, staging `a2476da4`, 437 green)
+
+Kept current at the landing. Both repos pushed, tree clean, `pnpm build`
+clean, biome at the 4-warning baseline. **Migration 0018** (`stay_guests`)
+applied dev + remote; nothing pending.
+
+**Landed since the `69899bc` note:**
+- **G22** (`fc17274`) — three things the people screens were missing.
+  *Edit:* `UpdateGuest`/`UpdateContact` existed on the SDK since slice 1 with
+  nothing calling them, so a wrong phone number could only be fixed by making
+  a second person. Form on the person's page; no form for an erased person
+  (the command refuses either way — this avoids inviting somebody to fill the
+  blanks back in). *Contact detail link:* from the people list and from the
+  booking header, which is the one that matters. *Where they have stayed:* new
+  projection `stay_guests` (0018), **ids only**, from `stay.checked_in` — ids
+  only is what lets the list survive erasure, because the room was occupied on
+  those nights whatever the guest asked for afterwards. A booking nobody
+  turned up for is not on it. One shape question answered on the page (N10):
+  an ID number with no type would go over the wire as an empty enum and come
+  back "input.invalid".
+- **QA N31** (same commit) — the `Ask` dialog answered twice when both clicks
+  landed in one tick, because the dialog closes on the caller's *next* render;
+  the second answer reached a command that had already run, and the desk read
+  "already voided" for pressing a button once, hard. One answer per asking,
+  held in a ref.
+- **QA N32, the client half** (`30dbec5`) — `run()` awaited
+  `router.invalidate()` inside the try, so the button was tied to the refetch
+  rather than to the command: one loader request that never settled left
+  `busy` true forever, every button disabled, form uncleared, for a command
+  that had already written the row. The refresh is now fired and caught, not
+  awaited.
+
+**N32's other half is open and is not mine yet.** QA sees a `getViewer` GET
+never complete on the dev server (status -1), 4–6 of ~60 e2e tests, not on
+`755e585`. That also stalls the root `beforeLoad`, which is why navigations
+never land (S5-35, S5-14) — nothing in `run()` can fix that. Nothing obvious
+in the server path: `getViewer` → Better Auth session → one libsql client,
+and the store uses `db.batch` (atomic, short) with **no long transaction** to
+deadlock on. Next probe for whoever picks it up: does it reproduce against
+the built worker (`wrangler dev`) or only vite dev, and does it survive
+`--workers=1`.
+
+**Next, in architect's order:** **G28 = company `defaultRouting`** → G29
+BookingRules → G32 group routing table → G33 owner home + Needs attention →
+5.8.
+
+**Open:**
+- `pnpm i18n:report` at **24** en-only keys: G16's nine plus G22's
+  `people.details`, `people.detailsHint`, `people.save`, `people.email`,
+  `people.notes`, `people.idDocType`, `people.idDocNumber`,
+  `people.idTypeMissing`, `idDoc.cccd|passport|other|none`, `people.stays`,
+  `people.staysHint`, `people.noStays`.
+- `bookings.sourceId` on rows written before G30 stays null; no backfill.
+- **solex `main` is shared** — QA pushes e2e there; always fetch + rebase.
+- Architect has been unreachable via SendMessage since the G16 landing; the
+  G16 report has not been delivered. Retry at the next landing.
+
+**Verification technique** (no dev server, no staging sign-in): inline
+`src/styles.css` into a static HTML harness in the scratchpad, screenshot with
+Playwright run from `solex/e2e` (a `file://` URL), read the PNG, delete the
+harness. Used on the move dialog and the person page this stretch.
+
+## solex-dev — 5.7 resume note, superseded (build from solex `69899bc`, staging `00d1097a`)
 
 Kept current at every landing, per Alex's process change (no manual
 compaction cycles; auto-compaction happens on its own, and this note is the
