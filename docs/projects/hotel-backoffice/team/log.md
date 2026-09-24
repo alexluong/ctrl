@@ -1,4 +1,5 @@
 # Team log
+- 2026-09-24 — dev: **5.7 G14 landing 1 — group CancelBooking on screen** (solex `417c5cd`, staging `ca754483`, 375 green). Booking page cancels the whole booking with a reason; every still-booked stay goes in the same batch and the nights go back on sale. Guard moved up to the booking: `booking.stayCheckedIn` (not `stay.notCancellable` about one room of twelve), read inside the plan under the stay streams' versions. Master folio stays open through the cancel — a scenario now takes a company deposit, cancels the group and forfeits it, **which is the N28 path**. **Dev at a clean stop for compaction; resume note below.** Next: G14 landing 2 (notes/party edits), then G15.
 - 2026-09-24 — product: **SoLex, ezFolio-shaped mockups, all 5 screens** (c0388bc): shell (desk + owner with Needs attention badge), room map + quick panel, booking editor + settle dialog, status lists + one new-booking form, tape chart + nights without a room; English, SoLex style, our features only, ≤5 callouts, maps-to per control, "not carried over" per page. Architect reviewed all six files; calls accepted (4 tabs Front desk · Housekeeping · Back office · Setup; screen 3 = stay page, group = same page + Rooms tab; rendered as owner). Republished to artifact L2ivkCzKDWwXoCFcmF6bKP for Alex.
 - 2026-09-24 — dev: **5.6 polish complete** (solex bc64f12 + D-29 04822c6, staging 5250b6e6, 371 green): tail G10 (empty cell → prefilled booking), G12 (checked-out-held legend, N9 closed), G19 (master payment form asks kind → company deposits; unblocks N28), G21 (room page: tonight/next), G26 (expenses default month, December-boundary test). D-29 built: `vi` is Partial, missing key renders the English sentence, `pnpm i18n:report` (in `pnpm check`, report only). Every P row in ux.md §6 landed. Accepted → **5.7 command coverage**: G14 → G15 → G20 → G28 → SetRoomType → G16 → G22 → G29 → G30 → G32 → G33.
 - 2026-09-24 — dev: **5.6 complete** — tail G10/G12/G19/G21/G26 (solex `bc64f12`) + **D-29 i18n** (`04822c6`, staging deployed, 371 green). G10 empty tape-chart square → booking prefilled (room + that night, hover/focus affordance); G12 checked-out-night-still-held gets its own colour (was OOO's grey — QA N9 closed); **G19 master payment form takes a deposit kind — unblocks N28** (nothing on a group bill could be forfeited before); G21 room page says who is in it tonight and the next arrival, above housekeeping; G26 spending opens on this month, range returned by the server so the fields match the list (`monthOf` tested on December). D-29: `vi` is `Partial<Messages>`, missing keys render the **English sentence** not a marker, `pnpm i18n:report` (Node type-stripping, no new dep) lists untranslated keys and runs inside `pnpm check` as a report never a failure; existing vi untouched for product's pass. **5.6 polish is done** — every P row in ux.md §6 landed. Next: 5.7 command coverage (G31/G32 done; G14, G15, G20 first, then G16, G22, G28, G29, G30, plus `SetRoomType`).
@@ -1375,3 +1376,59 @@ name for the calendar). Tail after those: G4, G8, G10, G12, G19, G21, G26.
   the map. Moving it to Setup with a room-type select is still open.
 - `pnpm deploy` failed once with a Cloudflare 7403 on the D1 migrate step and
   worked on an immediate retry. Nothing changed in between.
+
+## solex-dev — 5.7 resume note (build from solex `417c5cd`, staging `ca754483`)
+
+375 green, build clean, working tree clean, both repos pushed. Migration 0016
+(rooms.room_type_id) applied to dev and remote in this stretch; nothing pending.
+
+### Landed since the last resume note
+
+- **5.6 complete — every P row in ux.md §6.** G31 settle dialog + money strip
+  (`bdf0fa1`), G13 status lists (`b211550`), G9 tape-chart tallies + type
+  grouping (`9627c78`), G18 + G25 (`d26eefb`), G8 rooms reference a room type
+  (`e362433`, migration 0016), G1 + G2 grouped nav (`84b68d6`), G4 history in
+  words (`7bc8697`), tail G10/G12/G19/G21/G26 (`bc64f12`).
+- **D-29** (`04822c6`): `vi` is `Partial<Messages>`, a missing key renders the
+  **English sentence** (never a marker), `pnpm i18n:report` lists what is
+  waiting and runs inside `pnpm check` as a report, never a failure. Node's own
+  type stripping, so no new dependency. Product sends key → Vietnamese pairs
+  after each accepted slice; dev applies them mechanically, no wording calls.
+- **5.7 G14 landing 1** (`417c5cd`): group CancelBooking on the booking page,
+  `booking.stayCheckedIn` as a booking-level refusal, master folio left open
+  so a cancelled group's deposit can be forfeited (N28's path, now covered by
+  a scenario in `groups.test.ts`).
+
+### Next, in architect's 5.7 order
+
+G14 landing 2 (ChangeBookingParty / Notes / Requests — product §3 names the
+events `booking.party_changed` / `notes_changed` / `requests_changed`; add and
+remove stays is the `requests_changed` half and is the big one) → G15
+(ChangeNights, SetNightRate, on the stay page) → G20 group availability grid →
+G28 BookingSource (product `50a07b7`) → SetRoomType (product `349073e`:
+`room.type_changed`, `setup.roomTypeInvalid`, allowed with a checked-in stay) →
+G16 → G22 → G29 → G30 → G32 routing table on the booking page → G33 owner home
++ NeedsAttention.
+
+### Open, carried forward
+
+- **Two QA rulings from slice 4 were due "latest 5.6" and did not land**: (a)
+  history tables should group events by `correlationId` so one click reads as
+  one entry — G4 rewrote those tables without it; (b) every update command
+  should answer `nothingToChange` and the screen should say so (accounts does;
+  guest/contact/roomType/rate still go silent). Both are small and want doing
+  early in 5.7 — raised with architect.
+- Rooms with a null `room_type_id` are flagged in Setup but cannot be re-typed
+  until SetRoomType lands.
+- `bookings.sourceId` still has no writer (G28).
+- Cloudflare `code: 7403` on the D1 migrate step failed the first `pnpm deploy`
+  twice this session and cleared on an immediate retry both times. Flagged to
+  Alex as infra.
+
+### How UI gets verified here
+
+No dev server and no staging sign-in: inline `src/styles.css` into a static
+HTML harness in the scratchpad, screenshot it with Playwright run from
+`solex/e2e` (`@playwright/test` does not resolve from `/tmp`), delete the
+harness after. It caught real defects in every landing it was used on — the
+tape chart's foot headings, the money strip, the nav groups.
