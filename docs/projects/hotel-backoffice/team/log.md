@@ -1408,7 +1408,7 @@ name for the calendar). Tail after those: G4, G8, G10, G12, G19, G21, G26.
 - `pnpm deploy` failed once with a Cloudflare 7403 on the D1 migrate step and
   worked on an immediate retry. Nothing changed in between.
 
-## solex-dev — 5.7 resume note (build from solex `d2e4199`, staging `5ffb294f`, 453 green)
+## solex-dev — 5.7 resume note (build from solex `ae22949`, staging `1c653f15`, 464 green)
 
 Kept current at the landing. Both repos pushed, tree clean, build clean,
 biome at the 4-warning baseline. **Migration 0019** (`booking_rules`) applied
@@ -1481,7 +1481,19 @@ stands on its own merits.
   exceptions. The column select never shows a state: the column can be three
   things at once.
 
-**Next, in architect's order:** **G33** (owner home + Needs attention; this is where `receivableAgeDays` and
+- **G33** (`ae22949`) — Needs attention on the owner home + a count badge on
+  the Reports nav link. **Derived, never stored, never dismissed**: computed
+  from the projections on every read, so a row leaves because the fact stopped
+  being true. Two readings to know: a company's debt is aged from its oldest
+  unpaid line with payments knocking off the oldest first (dating it from
+  `account.openedAt` would leave a monthly payer permanently overdue), and a
+  room's OOO date comes off its stream rather than a new column. Needed a new
+  query — `staysCheckedIn` — because an overstay is outside `staysOnDate`'s
+  range by definition. `receivableAgeDays` and `oooDays` joined the G29 form
+  in the same commit, which is when something finally read them.
+
+**Next, in architect's order:** **G34** overbooking → **G35** capacity →
+5.8. ~~**G33**~~ (owner home + Needs attention; this is where `receivableAgeDays` and
 `oooDays` join the G29 form) → **G34** overbooking → **G35** capacity → 5.8.
 G34/G35 are spec'd in product.md (ctrl `847ff15`) and accepted by architect:
 override is an `override?: true` flag on the adding command, `OverrideOverbooking`
@@ -1499,6 +1511,12 @@ G35: `adults ≤ RoomType.capacity`, children never counted, refuse
 - `bookings.sourceId` on rows written before G30 stays null; no backfill.
 - **solex `main` is shared** — QA pushes e2e there. Rebased onto `f4308ad`
   this stretch; always fetch + rebase.
+- **Architect and product are both unreachable** as of the G33 landing
+  (`ListAgents` shows neither). Undelivered: the G29/G32 report to architect
+  (including two calls of mine that want a ruling — group-level "As agreed"
+  clearing overrides too, and the routing cells being read-only with the
+  exception made on the room's own page) and the 35-key list to product. QA
+  has the G32/G33 walk and knows.
 
 **Verification technique** (no dev server, no staging sign-in): inline
 `src/styles.css` into a static HTML harness in the scratchpad, screenshot with
@@ -1560,8 +1578,7 @@ BookingRules → G32 group routing table → G33 owner home + Needs attention �
   `people.staysHint`, `people.noStays`.
 - `bookings.sourceId` on rows written before G30 stays null; no backfill.
 - **solex `main` is shared** — QA pushes e2e there; always fetch + rebase.
-- Architect has been unreachable via SendMessage since the G16 landing; the
-  G16 report has not been delivered. Retry at the next landing.
+
 
 **Verification technique** (no dev server, no staging sign-in): inline
 `src/styles.css` into a static HTML harness in the scratchpad, screenshot with
