@@ -609,8 +609,8 @@ Grouped for dev's 5.6 polish list. **P** = polish (small, no model change; slice
 |---|---|---|---|
 | G13 | Search bookings / stays by name, phone, company (§3 Search); list filters (today, in house) | P (already planned for 5.6) | high — the status lists are how the desk finds anything |
 | G14 | Booking page: cancel booking with reason (`CancelBooking`), edit notes/party, add / remove stays | C | high — Hủy đặt phòng is a ribbon entry |
-| G15 | Stay page: extend / shorten (`ChangeNights`), per-night price (`SetNightRate`), no-show (`MarkNoShow`) | C | high — extend / no-show are daily |
-| G16 | Folio: move line to another bill (`MoveCharge`, in the receptionist bundle), forfeit deposit | C | mid — folio split exists in ezFolio |
+| G15 | Stay page: extend / shorten (`ChangeNights`), per-night price (`SetNightRate`); no-show (`MarkNoShow`) moved to 5.4 | C | high — extend / no-show are daily |
+| G16 | Folio: move line to another bill (`MoveCharge`, in the receptionist bundle); forfeit deposit 👑 is 5.4 | C | mid — folio split exists in ezFolio |
 | G17 | Folio: print | 5.5 (planned) | high — Hóa đơn print |
 | G18 | Folio rows show category id → show name | P | high |
 | G19 | Master folio: deposit kind on payment form (built always settlement) | P | mid |

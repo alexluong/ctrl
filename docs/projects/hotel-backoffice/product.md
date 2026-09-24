@@ -27,7 +27,7 @@ Owner: `solex-product`. **v1, 2026-09-23** — walked with Alex section by secti
 type Capability =
   | 'booking.create' | 'booking.edit' | 'booking.cancel'
   | 'stay.assign' | 'stay.check_in' | 'stay.check_out' | 'stay.move' | 'stay.cancel'
-  | 'folio.post_charge' | 'folio.void' | 'folio.move_line' | 'folio.take_payment' | 'folio.refund' | 'folio.transfer_to_receivable'
+  | 'folio.post_charge' | 'folio.void' | 'folio.move_line' | 'folio.take_payment' | 'folio.refund' | 'folio.forfeit' | 'folio.transfer_to_receivable'
   | 'room.set_status' | 'room.set_out_of_order'
   | 'receivable.record_payment' | 'receivable.write_off'
   | 'expense.record' | 'expense.void'
@@ -43,7 +43,7 @@ type User = { id: UserId; hotelId: HotelId; name: string; username: string; emai
 - Every command declares the capability it needs; the handler checks it against the actor. Audit = event `actor` + capability.
 - **v1 ships two fixed bundles** (as built, slice 3):
   - `receptionist`: `booking.create/edit/cancel` · `stay.assign/check_in/check_out/move/cancel` · `room.set_status/set_out_of_order` · `folio.post_charge/move_line/take_payment/transfer_to_receivable` · `receivable.record_payment` · `expense.record` (petty cash: desk buys water, records it — client-flag assumption) · `guests.view`
-  - `owner`: everything above + `folio.void/refund` · `receivable.write_off` · `expense.void` · `reports.view` · `setup.edit` · `users.manage` · `guests.erase` · `approval.decide` (5.8)
+  - `owner`: everything above + `folio.void/refund/forfeit` · `receivable.write_off` · `expense.void` · `reports.view` · `setup.edit` · `users.manage` · `guests.erase` · `approval.decide` (5.8)
   - No `ledger.*` capability: ledger ops are internal, reached only through folio / receivable / expense commands.
 - Custom roles / editing bundles in Setup → later; the model already allows it because a role *is* a capability list.
 - No approval workflows in v1 (discount approval → later ticket). Admin SDK (D-9) sits outside the apps, for seeding/tenant creation.
@@ -327,7 +327,7 @@ type Payment = {
 Folio accounts open **lazily** on the first charge or payment, with derived ids — own `ledger:folio:<stayId>`, master `ledger:folio:master:<bookingId>` — never at CreateBooking (empty = zero to every reader; derived ids make retry safe). As built (slice 3): `room` category posts only via the night roll · refunds capped at payments received on that folio, not at the credit balance · deposit = a payment before any charge, allowed.
 
 Events: `folio.opened` (first line, lazy) · `folio.charge_posted` · `folio.charge_voided(reason)` · `folio.charge_moved(chargeId, toFolioId)` (ezFolio "Chuyển dịch vụ") · `folio.payment_received` · `folio.payment_refunded` · `folio.transferred_to_receivable(companyId, amount)` · `folio.closed`.
-Rules: never edit a charge — void and repost · a night's room charge posts once, at the roll (D-7), or at check-in for the current night · move charges only while both folios open · close only at 0 or after transfer · deposit = payment of kind `deposit` (master folio for groups, stay folio for individuals); forfeit = `folio.deposit_forfeited` posts a compensation charge against it.
+Rules: never edit a charge — void and repost · a night's room charge posts once, at the roll (D-7), or at check-in for the current night · move charges only while both folios open · close only at 0 or after transfer · deposit = payment of kind `deposit` (master folio for groups, stay folio for individuals); forfeit = `folio.deposit_forfeited` posts a charge under the reserved system category `depositForfeit` against it — owner-only (`folio.forfeit`, 5.4): keeping money the guest handed over sits with void / refund.
 
 Simplifications vs ezFolio: dropped `telephone` category (dead) · discount = negative-priced line or void + repost, **no approval workflow in v1** (later ticket) · tax/service % not modelled as lines (VAT / red invoice → later) · FOC = rate 0, not a payment method · `debt` is not a payment method, it is the transfer-to-receivable action.
 
@@ -370,7 +370,7 @@ Reference data, retire-not-delete, seeded by admin SDK (D-9). Each has `<name>.d
 - `HotelProfile` — name, address, **timeZone**, `checkInTime` 14:00, `checkOutTime` 12:00, `businessDayStart` 02:00 (D-7)
 - `Floor`, `RoomType` (name, capacity), `Room` (number, floor, type, bedType)
 - `RateTable` — `{roomTypeId, bedType, dateRange | dayOfWeek, ratePerNight}`; no overlapping ranges
-- `ChargeCategory` — seeded room · roomSurcharge · minibar · laundry · compensation · extraService · restaurant; `room` reserved
+- `ChargeCategory` — seeded room · roomSurcharge · minibar · laundry · compensation · extraService · restaurant; reserved system-only (never pickable by hand): `room` (night roll), `depositForfeit` (ForfeitDeposit), `writeOff` (expense side)
 - `ChargeItem` — category, VN + EN name, unitPrice, active
 - `BookingSource` — **tier b Setup entity, retire not delete** (channels change; the client adds an OTA without a deploy): `{ id: BookingSourceId; hotelId; name: string; kind: 'direct' | 'ota' | 'agent' | 'company'; retired?: true }`; id = slug of the name like RoomType. `kind` is the coarse bucket ezFolio calls Nguồn (WALK-IN · OTA · TA · CORP, counts seen 61 · 21 · 1 · 161) so reports roll up the same way the client is used to; `name` is the channel. **v1 seed** (from the OTAs actually in the client's debtor list, existing-system.md 06): `walk-in` (direct) · `phone` (direct) · `zalo-facebook` (direct) · `agoda` · `booking-com` · `expedia` · `traveloka` · `trip-com` (all `ota`) · `agent` (agent; the travel-agency catch-all) · `company` (company). "Repeat guest" is not a source — it is a guest fact, GuestHistory. Source ≠ payer: an OTA that settles later is *also* a `Company` (that is how ezFolio's receivable list mixes Agoda with corporates); `sourceId` says where the booking came from, `party.companyId` says who is billed. Events: `setup.booking_source.defined / updated / retired`; retire refused while… nothing — old bookings keep the id, the form just stops offering it. Built in 5.7 with G28.
 - `ExpenseCategory` — **v1: fixed in code, not Setup data; Setup screen if the client asks** (D-21). Ids: `groceries`, `incidental`, `hkOvertime`, `advance`, `other`, + system-only `writeOff` (written-off receivables land there; not pickable by hand)
@@ -432,7 +432,7 @@ Later: WaitingList (unassigned stays), Breakfast list, PA18 export, CommissionBy
 |---|---|---|
 | 1 | Hotel day | D-7 + D-25. Business date rolls at `businessDayStart` 02:00. Room charge posts via `PostNightlyRoomCharges` (actor `system:night_roll`), idempotent per `(stayId, businessDate)` (entry id `night:<stayId>:<date>:<attempt>`, so a voided night can be re-posted), fired lazily on the first request after the roll by deriving "in-house nights with no live room charge" (no watermark, self-healing); cron at the roll deferred to pre-go-live, lazy alone loses no revenue; check-in posts tonight through the same command. Changing `businessDayStart` is owner-only and refused while any night of the current business date is unposted. Check-in before `checkInTime` 14:00 → optional early check-in item; checkout after `checkOutTime` 12:00 → optional late checkout item; after next roll → extra night (`stay.nights_changed`). Actual instants decide; typed dates are the plan. |
 | 2 | Overbooking | warn + explicit override (D-15) |
-| 3 | Cancellation / no-show | no automatic charge. Receptionist posts a compensation charge by hand if agreed. Deposit forfeit = explicit `ForfeitDeposit`. Cancel guards: not if checked in; reason required; charges moved off first. |
+| 3 | Cancellation / no-show | no automatic charge. Receptionist posts a compensation charge by hand if agreed. Deposit forfeit = explicit `ForfeitDeposit` [owner, 5.4]. Cancel guards: not if checked in; reason required; charges moved off first. |
 | 4 | Guest ID | optional; PA18 export later |
 | 5 | Children | under `childAgeThreshold` (6) free, not counted against capacity |
 | 6 | Room after checkout | auto `room.marked_dirty {cause: checkout, stayId}` (reaction, in-batch) |
@@ -468,7 +468,7 @@ Command = one intent. `needs` = capability. `checks` = rules beyond "hotel match
 | `CheckIn {stayId, guests[]?}` | `stay.check_in` | booked · tonight's room assigned, not OOO · early arrival: room free `[today, arrive)` (warn) | `stay.nights_changed` if today ∉ nights (versions availability), `stay.checked_in`, `folio.charge_posted` (tonight's room) |
 | `CheckOut {stayId}` | `stay.check_out` | checkedIn · own folio 0 or transferred | `stay.nights_changed {removed}` if leaving early (versions availability), `stay.checked_out`, `folio.closed`, `room.marked_dirty` |
 | `CancelStay {stayId, reason}` | `stay.cancel` | booked · folio has no unmoved charges | `stay.cancelled` |
-| `MarkNoShow {stayId}` | `stay.cancel` | booked · after arrival date | `stay.marked_no_show` |
+| `MarkNoShow {stayId}` (5.4) | `stay.cancel` | booked · after arrival date | `stay.marked_no_show` |
 | `OverrideOverbooking {stayId}` | `stay.assign` (owner by default) | – | `stay.overbooking_overridden` |
 
 ### Rooms — tier **b** (Room row is truth; every write emits `room.*`). `TakeOutOfOrder` / `ReturnToService` and Setup room retire / type change **still version `availability:<hotel>`** in the same batch (D-8): the row is tier b, the supply change is not.
@@ -486,8 +486,8 @@ Command = one intent. `needs` = capability. `checks` = rules beyond "hotel match
 | `RepriceCharge {chargeId, unitPrice, reason}` (5.8; the only "discount": no discount concept in the ledger) | `folio.void` | folio open · unitPrice ≥ 0 · ≠ current | `folio.charge_voided` + `folio.charge_posted {…, repricedFrom: chargeId}` → reversal + entry, one batch |
 | `MoveCharge {chargeId, toFolioId}` | `folio.move_line` | both folios open | `folio.charge_moved` → reversal + new entry |
 | `TakePayment {folioId, method, amount, kind deposit|settlement, ref?}` | `folio.take_payment` | folio open · amount > 0 | `folio.payment_received` → entry |
-| `Refund {folioId, method, amount, reason}` | `folio.refund` | ≤ payments | `folio.payment_refunded` → entry |
-| `ForfeitDeposit {folioId, amount, reason}` | `folio.post_charge` | deposit exists | `folio.deposit_forfeited` (= compensation charge) |
+| `Refund {folioId, method, amount, reason}` | `folio.refund` | ≤ payments | `folio.payment_refunded` → entry; closes the folio in the same batch if it lands on 0 and the stay is terminal |
+| `ForfeitDeposit {folioId, amount, reason}` (5.4) | `folio.forfeit` (owner) | stay cancelled / no-show, or a cancelled group's master · amount ≤ deposits − refunds − forfeits | `folio.deposit_forfeited` (a charge under system category `depositForfeit`) → entry; if a refund or forfeit brings the folio to 0 it closes in the same batch (`folio.closed`, `ledger.account_closed`) |
 | `TransferToReceivable {folioId, companyId, amount?}` | `folio.transfer_to_receivable` | folio open · amount ≤ balance | `folio.transferred_to_receivable` (+ `ledger.account_opened` on first transfer for that company) → entry |
 | `CloseFolio {folioId}` | `folio.take_payment` | balance 0 | `folio.closed`, `ledger.account_closed` |
 | `RecordReceivablePayment {receivableId, method, amount, ref?}` | `receivable.record_payment` | open/partial · ≤ remaining | `receivable.payment_received` (+ `settled`) → entry |
@@ -507,10 +507,10 @@ Command = one intent. `needs` = capability. `checks` = rules beyond "hotel match
 | `AddStaff {userId, role}` / `ChangeStaffRole {userId, role}` / `DeactivateStaff` / `ReactivateStaff` | `users.manage` | `staff.added / role_changed {role, from} / deactivated / reactivated` — refuse `staff.lastOwner`, `staff.alreadyStaff` |
 
 ### Approvals — tier **a**, stream `<hotelId>/approval:<id>` (slice 5.8, after 5.7; v1 unless Alex says later)
-One rule: **an owner-only money act the desk cannot do becomes a request from the same button.** Kinds = exactly the owner-only money commands: `void` (VoidCharge) · `reprice` (RepriceCharge) · `refund` (Refund) · `writeOff` (WriteOffReceivable). No discount kind: PostCharge already refuses `unitPrice < 0` (`folio.priceInvalid`), so there is no free discount path; `reprice` *is* the discount approval.
+One rule: **an owner-only money act the desk cannot do becomes a request from the same button.** Kinds = exactly the owner-only money commands: `void` (VoidCharge) · `reprice` (RepriceCharge) · `refund` (Refund) · `forfeit` (ForfeitDeposit, 5.4) · `writeOff` (WriteOffReceivable). No discount kind: PostCharge already refuses `unitPrice < 0` (`folio.priceInvalid`), so there is no free discount path; `reprice` *is* the discount approval.
 ```ts
-type ApprovalKind = 'void' | 'reprice' | 'refund' | 'writeOff'
-type ApprovalSubject = { chargeId: ChargeId } | { folioId: FolioId } | { receivableId: ReceivableId }   // the subject carries the amount; only refund / writeOff carry one explicitly
+type ApprovalKind = 'void' | 'reprice' | 'refund' | 'forfeit' | 'writeOff'
+type ApprovalSubject = { chargeId: ChargeId } | { folioId: FolioId } | { receivableId: ReceivableId }   // the subject carries the amount; only refund / forfeit / writeOff carry one explicitly
 type Approval = { id: ApprovalId; hotelId; kind; subject; stayId?: StayId; bookingId?: BookingId; amount?: Money; unitPrice?: Money; reason: string;
                   status: 'open' | 'granted' | 'declined' | 'expired'; requestedBy: UserId; decidedBy?: UserId; decidedAt?: Instant }
 ```
