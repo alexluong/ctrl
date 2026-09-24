@@ -1,6 +1,7 @@
 # Team log
 - 2026-09-24 — solex-qa 5.4 run 111/112 (1 skipped); N27 closed; N28 (group forfeit unreachable) ruled = G19 (5.6) + G14 (5.7), group cancel semantics pinned.
 - 2026-09-24 — context watch: dev 313k, product 220k → both at clean stops for compaction. Dev: 5.5 half landed (8bed803, staging 9df6b465, 365 green; HotelProfile address/phone; print views not started, decisions in resume note 0198c58). Product idle (d7823cb).
+- 2026-09-24 — dev (while idle): `error.folio.categoryReserved` reworded per product's ruling to cover every reserved category, en + vi (solex `03fec4a`, staging `50c76694`, 365 green). Wording only. Build from `03fec4a`, not `8bed803`.
 - 2026-09-24 — dev: **5.5 started, clean stop for compaction** (solex `8bed803`, staging `9df6b465`, 365 green, migration 0015 applied dev + remote). Landed: HotelProfile gains `address` + `phone` (the letterhead) with Setup fields — a printed bill starts with who is sending it and the profile had only a name. Not started: the print views themselves. Resume from `8bed803`; plan in the dev section below.
 - 2026-09-24 — dev: 5.4 deposits + MarkNoShow + N27 (755e585, staging d8da2b08, 365 green). Architect accepted; 5.5 print scoped (own + master, HotelProfile header, print CSS, no VAT). QA on 5.4 cases.
 - 2026-09-24 — dev: **5.4 deposits + N27** (solex `755e585`, staging `d8da2b08`, 365 green). MarkNoShow (own status, frees nights, folio stays open, refused before the hotel day turns over). ForfeitDeposit: owner-only `folio.forfeit`, reserved system category `depositForfeit`, capped at taken − refunded − kept, allowed only once the booking is over. A refund or forfeit that leaves a cancelled/no-show folio at zero closes it in the same batch — `write()` now targets one account's stream. N27 fixed: the range report fills every night in `[from, to)` and shows rooms-in-service per row. Note: I sorted imports in QA's `e2e/specs/reports.spec.ts` — `biome ci` was red on it, mechanical only.
@@ -1223,7 +1224,7 @@ night in `[from, to)`, and the table shows rooms-in-service per row so the perce
 
 **Next:** 5.5 folio print.
 
-## solex-dev — 5.5 resume note (build from solex `8bed803`, staging `9df6b465`)
+## solex-dev — 5.5 resume note (build from solex `03fec4a`, staging `50c76694`)
 
 365 green, working tree clean, both repos pushed, migration 0015 applied to dev and to staging's D1.
 
