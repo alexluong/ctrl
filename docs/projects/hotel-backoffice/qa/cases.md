@@ -228,3 +228,12 @@ Drafted for G14 (5.7), from the N28 ruling:
 | S5-40 | Desk cancels a group booking with one room checked in | refused `booking.stayCheckedIn`; nothing cancelled | same | todo | — |
 | S5-41 | Owner voids a line on a checked-out guest's closed bill | refused with a reason on screen; no `folio.charge_voided` event (the Void button stays pressable, N25) | same | pass a204175 | e2e `void-closed.spec.ts` |
 
+
+### 5.6 map, panel, history (solex 8716fc2..c8b3528)
+
+Architect rulings of 2026-09-25: the stay's history is one stream, the stay's own events and its bill's (charges, voids, payments) in time order; the room's history is the room's own events only. A room's housekeeping badge says Clean or Dirty and nothing else; who is in it comes from the stay.
+
+| ID | who / what they do | what they should see | rule | automated by | last run |
+|---|---|---|---|---|---|
+| S5-42 | Owner voids a line on an in-house guest's bill, then opens the stay's history | the charge, the void with its reason and any payment sit in the stay's history among booked / checked in, in time order; the room's history still shows only the room's own lines | architect ruling (one stream per stay, folio merged) | todo | c8b3528 **fail** (**N29**: stay history shows the stay's events only; folio lines absent) |
+| S5-43 | Desk opens an occupied, dirty room from the map | the housekeeping badge reads Dirty (or Clean) only; occupancy is shown from the stay, not in the badge | architect ruling | todo | c8b3528 **fail** (**N30**: badge mixes occupancy into the housekeeping word) |
