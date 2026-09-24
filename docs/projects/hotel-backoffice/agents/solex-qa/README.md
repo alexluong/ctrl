@@ -35,6 +35,8 @@ Availability versioned on every supply/demand command · one batch per money com
 
 - 2026-09-25 — qa: no manual compaction anymore (Alex via architect); the resume note is kept current at every milestone. N29 (stay history lacks folio lines) and N30 (badge mixes occupancy in) filed as S5-42/43 and sent to dev. **Resume:** (1) Full suite on c8b3528 running; fix the specs the new screens broke (strip, settle, G13, map, dialogs). Verify N21/N22 and close them. (2) Suite-wide rrweb behind an env flag, with `test.step` markers; the player lists all (D-30). (3) G14/G15/G20/BookingSource/SetRoomType through the screens; then the S5-4x..7x backlog. (4) One showcase journey per accepted landing. Next free N31.
 
+- 2026-09-25 — qa: suite green apart from findings on 30dbec5 (e2e f4308ad); suite-wide rrweb done (`pnpm test:replay`, `support/test.ts`, player lists journeys + suite, lazy per-recording scripts); N29–N31 closed; N32 half fixed, the rest environmental (load avg ~190); N33–N36 filed with dev. **Resume:** (1) Retest when dev lands N33–N36; rerun S5-45/46a/47 on a quiet machine. (2) G14/G15/G20/BookingSource/SetRoomType through the screens: S5-37/N28, S5-39/40, party/notes/requests, nights/rates, mixed-type group grid; G28 agreement (f82ea14). (3) Print cases S5-4x; the map/panel backlog S5-5x..7x. (4) G34 overbooking / G35 capacity cases once dev lands them after G33 (product ctrl 847ff15, product.md §6). (5) One showcase journey per accepted landing. R2 is not re-filmed since the merged history. Next free N37.
+
 ---
 
 **Session prompt (Alex pastes to start the session, named `solex-qa`):**
