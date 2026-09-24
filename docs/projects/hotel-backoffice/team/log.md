@@ -1408,7 +1408,7 @@ name for the calendar). Tail after those: G4, G8, G10, G12, G19, G21, G26.
 - `pnpm deploy` failed once with a Cloudflare 7403 on the D1 migrate step and
   worked on an immediate retry. Nothing changed in between.
 
-## solex-dev — 5.7 resume note (build from solex `d37bae1`, staging `bca132da`, 475 green)
+## solex-dev — 5.7 resume note (build from solex `e85263b`, staging `ee15dcb2`, 481 green)
 
 Kept current at the landing. Both repos pushed, tree clean, build clean,
 biome at the 4-warning baseline. **Migration 0019** (`booking_rules`) applied
@@ -1517,9 +1517,26 @@ stands on its own merits.
   clears a room's own setting.
 - **QA N39** (same) — departure day is not an overstay.
 
-**Next:** **G35** capacity (`adults ≤ RoomType.capacity`, children never
-counted, refuse `stay.overCapacity` at create / requests / CheckIn, new
-`SetOccupancy {stayId, adults, children}` → `stay.occupancy_set`), then 5.8.
+- **G35** (`e85263b`) — `RoomType.capacity` had been in Setup since slice 2
+  and **nothing read it**: four adults could be booked into a double and
+  checked into it. `adults ≤ capacity` at create, add-rooms, the new
+  `SetOccupancy`, and check-in — check-in against the **room's** type, since
+  that is the moment four people are standing in a double. Children never
+  counted (definition, not a discount). No override, per product. Refusal
+  carries `{roomTypeId, capacity, adults}` using G34's detail payload.
+
+**5.7 is complete.** Every C row in ux.md §6 is built.
+
+**Next: 5.8, the approval flow** (product.md §11 Approvals, ux.md G34-the-5.8-row
+— note ux.md reuses the number "G34" for it, which is *not* the overbooking
+G34 just built). One rule: an owner-only money act the desk cannot do becomes
+a request from the same button. Desk's void / reprice / refund / write-off
+render as **Xin duyệt** with the same reason field → `RequestApproval`; the
+line carries *đang chờ duyệt* / *từ chối: reason*; the owner home's
+`approval.pending` row opens one card → `GrantApproval` (which runs the act
+in the same batch) / `DeclineApproval`. New capability `approval.decide`
+(owner). **Architect has not briefed this slice** — it is the next thing in
+their stated order, but a slice boundary is normally theirs to open.
 ~~**G33**~~ (owner home + Needs attention; this is where `receivableAgeDays` and
 `oooDays` join the G29 form) → **G34** overbooking → **G35** capacity → 5.8.
 G34/G35 are spec'd in product.md (ctrl `847ff15`) and accepted by architect:
