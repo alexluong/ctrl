@@ -1408,7 +1408,7 @@ name for the calendar). Tail after those: G4, G8, G10, G12, G19, G21, G26.
 - `pnpm deploy` failed once with a Cloudflare 7403 on the D1 migrate step and
   worked on an immediate retry. Nothing changed in between.
 
-## solex-dev — 5.7 resume note (build from solex `b4e501e`, staging `0d257c28`, 448 green)
+## solex-dev — 5.7 resume note (build from solex `d2e4199`, staging `5ffb294f`, 453 green)
 
 Kept current at the landing. Both repos pushed, tree clean, build clean,
 biome at the 4-warning baseline. **Migration 0019** (`booking_rules`) applied
@@ -1463,9 +1463,25 @@ replay-lab, /tmp) and I left them alone. Under that load QA's rerun hung 5 of
 it. The client half of the fix (`run` no longer awaits `router.invalidate`)
 stands on its own merits.
 
-**Next, in architect's order:** **G32** (group page routing table — reuse
-`ui/routing.tsx`, per stay, empty option meaning "as the company agreed") →
-**G33** (owner home + Needs attention; this is where `receivableAgeDays` and
+**Landed after that note was written:**
+- **QA N37** (`7279fc1`) — **G29 shipped a switch that bricked check-in.**
+  With "an ID is required" on, the stay page sent `guests: [{ name }]` and had
+  no field for a document anywhere, so every check-in was refused with no way
+  to comply, and setting the ID on the guest's page first does not help
+  (check-in mints new guest rows). Each guest row at check-in now carries a
+  type and a number, optional per person — the rule asks for one between them.
+  Half a document is refused on the page, since check-in has no domain rule of
+  its own to answer with. Tested that the number reaches the guest's row.
+- **G32** (`d2e4199`) — the group's routing table on the booking page. Rows ×
+  categories, each cell the effective target. Header select sets a column via
+  new `bookings.setGroupRouting`, one commit across every stay stream.
+  Product's rule holds: **a room somebody set differently keeps what it was
+  set to**, marked in the cell, changed on its own page. `target: null`
+  clears the column, overrides included — the way out of a column of
+  exceptions. The column select never shows a state: the column can be three
+  things at once.
+
+**Next, in architect's order:** **G33** (owner home + Needs attention; this is where `receivableAgeDays` and
 `oooDays` join the G29 form) → **G34** overbooking → **G35** capacity → 5.8.
 G34/G35 are spec'd in product.md (ctrl `847ff15`) and accepted by architect:
 override is an `override?: true` flag on the adding command, `OverrideOverbooking`
@@ -1476,9 +1492,10 @@ G35: `adults ≤ RoomType.capacity`, children never counted, refuse
 `stay.overCapacity`, new `SetOccupancy {stayId, adults, children}`.
 
 **Open:**
-- `pnpm i18n:report` at **15** en-only keys, all G28/G29. **Product was
-  unreachable when I tried to send them** — the list with its context is in
-  my outbox intent, resend at the next landing.
+- `pnpm i18n:report` at **24** en-only keys: G28's four, G29's ten, G32's
+  eight, plus `people.idNumberMissing` and `error.stay.idRequired`. **Product
+  was unreachable when I tried to send the first batch** — resend all of them
+  at the next landing.
 - `bookings.sourceId` on rows written before G30 stays null; no backfill.
 - **solex `main` is shared** — QA pushes e2e there. Rebased onto `f4308ad`
   this stretch; always fetch + rebase.
