@@ -203,7 +203,20 @@ Owner only. The dashboard is today. Revenue and occupancy take a range [from, to
 | S5-27 | Owner opens revenue over everything the suite has done | per category equals the charges table minus voids for the range; the category and source tables each add up to the revenue total; the method table adds up to its own total; source is one "not recorded" row (until 5.7) | revenue reconciles with the books | e2e reports-range "S5-27" | cecd997 pass |
 | S5-28 | Owner compares the dashboard with revenue for [today, tomorrow) and with no range | same sold and taken figures | dashboard = same helper over today | e2e reports-range "S5-28" | cecd997 pass |
 | S5-29 | Owner asks for from = to, or to before from, by URL or the form | refused with `report.rangeInvalid` on the page, not an error page | half-open range | e2e reports-range "S5-29" | cecd997 pass |
-| S5-30 | Owner books two nights inside a four-night range | those two nights go up by one, not the departure day; every night of the range is a row | occupancy per night | e2e reports-range "S5-30" | cecd997 **fail** (N27: nights with nothing sold are left out, so the average divides by the nights that sold) |
+| S5-30 | Owner books two nights inside a four-night range | those two nights go up by one, not the departure day; every night of the range is a row | occupancy per night | e2e reports-range "S5-30" | 755e585 pass (N27 closed) |
 | S5-31 | A charge on D1 is voided on D3; a payment on D1 is refunded on D3 | revenue for D1 drops, D3 unaffected, cash unchanged; cash D1 keeps the payment, D3 shows the refund | effective date for reversals (architect) | scenario `reports.test` (needs the test clock) | cecd997 pass (code) |
 | S5-32 | A stay due out today, still in | counted as leaving, still in | departures | scenario `reports.test` (check-in rewrites dates; needs the test clock) | cecd997 pass (code) |
+
+### 5.4 no-shows and kept deposits (solex bc38f17)
+
+"Nobody came" is its own status: offered from booking, refused until the hotel's day has turned past the arrival date, frees the nights, leaves the bill open. The owner can keep some or all of a deposit on a cancelled or no-show stay (or a cancelled group's bill), up to what was taken less refunded less already kept. It is revenue on the day it was kept, under its own category that nobody can post by hand. A refund or a keep that brings such a bill to zero closes it.
+
+| ID | who / what they do | what they should see | rule | automated by | last run |
+|---|---|---|---|---|---|
+| S5-33 | Desk presses "Nobody came" on the arrival day | refused `stay.notYetDue`; still booked | the day has to turn first | e2e deposits "S5-33" | 755e585 pass |
+| S5-34 | Desk marks a stay booked for yesterday as nobody came | status no-show, the closed line for it; its nights freed; the deposit still on the bill and the keep form offered | no-show leaves the folio open | e2e deposits "S5-34"; marking twice is silent: scenario | 755e585 pass |
+| S5-35 | Owner on a cancelled stay with a 200 000 deposit keeps nothing typed, 250 000, then 50 000, then 150 001; refunds 150 000 | amount missing; too large; kept (credit 150 000 left); too large; refund brings it to zero and the bill closes with no forms left; revenue for today +50 000 | ceiling = taken − refunded − kept; close at zero | e2e deposits "S5-35" | 755e585 pass |
+| S5-36 | A tampered charge form posts the deposit-kept category | not offered in the list; refused `folio.categoryReserved` | reserved category, like room | e2e deposits "S5-36" | 755e585 pass (wording of the refusal speaks only of room charges: sent to product) |
+| S5-37 | Owner keeps the deposit on a cancelled group's bill | the same form on the group bill; the bill closes at zero | 5.4 | e2e deposits "S5-37" (fixme) | 755e585 **blocked** (N28: no screen cancels a group booking, and the group bill takes settlements only, so there is never a deposit on it to keep) |
+| S5-38 | Revenue report over everything, with a kept deposit in it | the kept deposit appears as its own category line; the category reconciliation (S5-27) still matches the charges table | forfeit is a charge on a reserved category | e2e reports-range "S5-27" (runs after deposits) | 755e585 pass |
 
