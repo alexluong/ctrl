@@ -1,77 +1,49 @@
 <!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>2 · Room map (Sơ đồ) + Detail box</title><link rel="stylesheet" href="ezfolio.css">
+<title>2 · Room map (Sơ đồ)</title><link rel="stylesheet" href="solex.css">
 <div class="wrap">
 <div class="crumb"><a href="index.html">← Index</a></div>
-<h1>2 · Room map (Sơ đồ) + Detail box</h1><p class="sub">The desk's default screen. Rendered as: Linh. Reference: <code>fd-room-map.png</code>, <code>fd-room-detail-panel.png</code>.</p>
+<h1>2 · Room map (Sơ đồ)</h1><p class="sub">The desk's default screen. Rendered as Linh. Shape: <code>fd-room-map.png</code> + <code>fd-room-detail-panel.png</code>.</p>
 
-<div class="ez">
-  <div class="topbar"><span class="hotel">⌂ SOLEX HOTEL</span><a href="shell.html" class="on">Front desk (Lễ tân)</a><a href="room-map.html#housekeeping" class="">Housekeeping (Buồng)</a><a href="index.html#later" class="">Reports (Báo cáo)</a><a href="index.html#later" class="">System (Hệ thống)</a><span class="right"><span>Print</span><span>Linh · desk</span><span>⏻</span></span></div><div class="ribbon"><a class="big" href="room-map.html"><i>▦</i>Room map</a><a class="big" href="index.html#todo"><i>▤</i>Tape chart</a><a class="big" href="index.html#todo"><i>👤</i>Walk-in</a><a class="big" href="index.html#todo"><i>👥</i>Group</a><a class="big" href="index.html#todo"><i>⇲</i>Arriving</a><a class="big" href="index.html#todo"><i>⇱</i>Departing</a><a class="big" href="index.html#todo"><i>⇄</i>Move room</a><a class="big" href="index.html#todo"><i>🔍</i>Search</a><div class="grp"><a href="#" class="">Laundry</a><a href="#" class="">Minibar</a><a href="#" class="x">Restaurant</a><span class="cap">Services</span></div><div class="grp"><a href="index.html#todo" class="">Arrivals today</a><a href="index.html#todo" class="">Departures today</a><a href="#" class="x">Booking summary</a><span class="cap">Today</span></div><div class="grp"><a href="index.html#todo" class="">In house</a><a href="index.html#todo" class="">Cancelled</a><a href="index.html#todo" class="">Unassigned</a><span class="cap">Lists</span></div><div class="grp"><a href="#" class="x">Export PA18</a><a href="#" class="x">Guest registry</a><span class="cap">PA18</span></div></div><div class="logo">ez<b>FOLIO</b></div>
-  <div class="page" id="housekeeping">
-    <div class="stbar" data-n="1"><span class="date">24/09/2026</span><a class="st all" href="#">ALL(40)</a><a class="st ready" href="#">READY(3)</a><a class="st arr" href="#">ARRIVING(3)</a><a class="st in" href="#">IN HOUSE(31)</a><a class="st dep" href="#">DEPARTING(2)</a><a class="st occdirty" href="#">OCCUPIED DIRTY(1)</a><a class="st vacdirty" href="#">VACANT DIRTY(2)</a><a class="st ooo" href="#">OUT OF ORDER(1)</a><span class="tools">FILTER · ▦ · 🖶 <span class="st key1" style="text-decoration:line-through">READ CARD</span><span class="st key2" style="text-decoration:line-through">ERASE CARD</span></span></div>
-    <div data-n="2"><div class="floor">Floor 1</div><div class="tiles"><a class="tile ooo" href="#detail" title="VIP / DBL"><small>VIP / DBL</small><b>101</b></a><a class="tile in" href="#detail" title="SUPT / TWN"><small>SUPT / TWN</small><b>103</b></a><a class="tile in" href="#detail" title="SUPD / DBL"><small>SUPD / DBL</small><b>104</b></a><a class="tile in" href="#detail" title="DLX5 / DBL"><small>DLX5 / DBL</small><b>105</b></a><a class="tile dep" href="#detail" title="DLX6 / DBL"><small>DLX6 / DBL</small><b>106</b></a><a class="tile in" href="#detail" title="DLX5 / DBL"><small>DLX5 / DBL</small><b>107</b></a><a class="tile vacdirty" href="#detail" title="DLX5 / DBL"><small>DLX5 / DBL</small><b>108</b></a><a class="tile in" href="#detail" title="DLX5 / DBL"><small>DLX5 / DBL</small><b>109</b></a><a class="tile in sel" href="#detail" title="DLXT / TWN"><small>DLXT / TWN</small><b>110</b></a></div><div class="floor">Floor 2</div><div class="tiles"><a class="tile in" href="#detail" title="VIP / DBL"><small>VIP / DBL</small><b>201</b></a><a class="tile in" href="#detail" title="SUPT / TWN"><small>SUPT / TWN</small><b>203</b></a><a class="tile occdirty" href="#detail" title="SUPD / DBL"><small>SUPD / DBL</small><b>204</b></a><a class="tile in" href="#detail" title="DLX5 / DBL"><small>DLX5 / DBL</small><b>205</b></a><a class="tile in" href="#detail" title="DLX6 / DBL"><small>DLX6 / DBL</small><b>206</b></a><a class="tile in" href="#detail" title="DLX5 / DBL"><small>DLX5 / DBL</small><b>207</b></a><a class="tile in" href="#detail" title="DLX5 / DBL"><small>DLX5 / DBL</small><b>208</b></a><a class="tile dep" href="#detail" title="DLX5 / DBL"><small>DLX5 / DBL</small><b>209</b></a><a class="tile in" href="#detail" title="DLXT / TWN"><small>DLXT / TWN</small><b>210</b></a></div><div class="floor">Floor 3</div><div class="tiles"><a class="tile in" href="#detail" title="SUPD / DBL"><small>SUPD / DBL</small><b>301</b></a><a class="tile ready" href="#detail" title="STD2 / DBL"><small>STD2 / DBL</small><b>302</b></a><a class="tile in" href="#detail" title="SUPT / TWN"><small>SUPT / TWN</small><b>303</b></a><a class="tile in" href="#detail" title="SUPT / TWN"><small>SUPT / TWN</small><b>304</b></a><a class="tile ready" href="#detail" title="DLX5 / DBL"><small>DLX5 / DBL</small><b>305</b></a><a class="tile in" href="#detail" title="DLX6 / DBL"><small>DLX6 / DBL</small><b>306</b></a><a class="tile ready" href="#detail" title="DLX5 / DBL"><small>DLX5 / DBL</small><b>307</b></a><a class="tile vacdirty" href="#detail" title="DLX5 / DBL"><small>DLX5 / DBL</small><b>308</b></a><a class="tile in" href="#detail" title="DLX5 / DBL"><small>DLX5 / DBL</small><b>309</b></a><a class="tile in" href="#detail" title="DLXT / TWN"><small>DLXT / TWN</small><b>310</b></a></div><div class="floor">Floor 4</div><div class="tiles"><a class="tile in" href="#detail" title="SUPD / DBL"><small>SUPD / DBL</small><b>401</b></a><a class="tile in" href="#detail" title="STD2 / DBL"><small>STD2 / DBL</small><b>402</b></a><a class="tile arr" href="#detail" title="SUPT / TWN"><small>SUPT / TWN</small><b>403</b></a><a class="tile in" href="#detail" title="SUPT / TWN"><small>SUPT / TWN</small><b>404</b></a><a class="tile in" href="#detail" title="DLX5 / DBL"><small>DLX5 / DBL</small><b>405</b></a><a class="tile in" href="#detail" title="DLX6 / DBL"><small>DLX6 / DBL</small><b>406</b></a><a class="tile in" href="#detail" title="DLX5 / DBL"><small>DLX5 / DBL</small><b>407</b></a><a class="tile arr" href="#detail" title="DLX5 / DBL"><small>DLX5 / DBL</small><b>408</b></a><a class="tile in" href="#detail" title="DLX5 / DBL"><small>DLX5 / DBL</small><b>409</b></a><a class="tile in" href="#detail" title="DLXT / TWN"><small>DLXT / TWN</small><b>410</b></a></div><div class="floor">Floor 5</div><div class="tiles"><a class="tile arr" href="#detail" title="SUPD / DBL"><small>SUPD / DBL</small><b>501</b></a><a class="tile in" href="#detail" title="STD2 / DBL"><small>STD2 / DBL</small><b>502</b></a></div></div>
-  </div>
-  <div class="arrowline">▼ click tile <b>110</b> → "Detail" box (opens over the map; drawn apart here for reading)</div>
+<div class="app"><div class="top"><span class="brand">SoLex</span><a href="shell.html" class="on">Front desk</a><a href="room-map.html#hk" class="">Housekeeping</a><a href="index.html#later" class="">Back office</a><a href="index.html#later" class="">Setup</a><span class="right"><span>Linh · desk</span><span>Sign out</span></span></div><div class="ribbon"><a href="room-map.html" class="on">Room map</a><a href="tape-chart.html" class="">Tape chart</a><span class="sep"></span><span class="grp">New booking</span><a href="booking-editor.html#new" class="">Walk-in</a><a href="status-lists.html#new" class="">Group</a><span class="sep"></span><span class="grp">Lists</span><a href="status-lists.html" class="">Due to arrive</a><a href="status-lists.html" class="">In house</a><a href="status-lists.html" class="">Due to leave</a><a href="status-lists.html" class="">All bookings</a><a href="index.html#later" class="">People</a></div>
+  <div class="page" id="hk"><div class="stbar" data-n="1"><a class="st on" href="#"><i class="i-all"></i>All<b>38</b></a><a class="st " href="#"><i class="i-ready"></i>Ready<b>3</b></a><a class="st " href="#"><i class="i-arr"></i>Due to arrive<b>2</b></a><a class="st " href="#"><i class="i-in"></i>In house<b>30</b></a><a class="st " href="#"><i class="i-dep"></i>Due to leave<b>2</b></a><a class="st " href="#"><i class="i-dirty"></i>Occupied, dirty<b>1</b></a><a class="st " href="#"><i class="i-dirty"></i>Vacant, dirty<b>2</b></a><a class="st " href="#"><i class="i-ooo"></i>Out of order<b>1</b></a></div><div data-n="2"><div class="floor">Floor 1</div><div class="tiles"><a class="tile ooo" href="#panel"><small>VIP</small><b>101</b><em></em></a><a class="tile in" href="#panel"><small>SUPT</small><b>103</b><em>Trần</em></a><a class="tile in" href="#panel"><small>SUPD</small><b>104</b><em>Lê</em></a><a class="tile in" href="#panel"><small>DLX5</small><b>105</b><em>Phạm</em></a><a class="tile dep" href="#panel"><small>DLX6</small><b>106</b><em>Hoàng</em></a><a class="tile in" href="#panel"><small>DLX5</small><b>107</b><em>Vũ</em></a><a class="tile dirty" href="#panel"><small>DLX5</small><b>108</b><em></em></a><a class="tile in" href="#panel"><small>DLX5</small><b>109</b><em>Đặng</em></a><a class="tile in sel" href="#panel"><small>DLXT</small><b>110</b><em>Nguyễn</em></a></div><div class="floor">Floor 2</div><div class="tiles"><a class="tile in" href="#panel"><small>VIP</small><b>201</b><em>Bùi</em></a><a class="tile in" href="#panel"><small>SUPT</small><b>203</b><em>Đỗ</em></a><a class="tile in dirty" href="#panel"><small>SUPD</small><b>204</b><em>Hồ</em></a><a class="tile in" href="#panel"><small>DLX5</small><b>205</b><em>Ngô</em></a><a class="tile in" href="#panel"><small>DLX6</small><b>206</b><em>Dương</em></a><a class="tile in" href="#panel"><small>DLX5</small><b>207</b><em>Lý</em></a><a class="tile in" href="#panel"><small>DLX5</small><b>208</b><em>Mai</em></a><a class="tile dep" href="#panel"><small>DLX5</small><b>209</b><em>Trịnh</em></a><a class="tile in" href="#panel"><small>DLXT</small><b>210</b><em>Đinh</em></a></div><div class="floor">Floor 3</div><div class="tiles"><a class="tile in" href="#panel"><small>SUPD</small><b>301</b><em>Lâm</em></a><a class="tile ready" href="#panel"><small>STD2</small><b>302</b><em></em></a><a class="tile in" href="#panel"><small>SUPT</small><b>303</b><em>Phan</em></a><a class="tile in" href="#panel"><small>SUPT</small><b>304</b><em>Võ</em></a><a class="tile ready" href="#panel"><small>DLX5</small><b>305</b><em></em></a><a class="tile in" href="#panel"><small>DLX6</small><b>306</b><em>Tạ</em></a><a class="tile ready" href="#panel"><small>DLX5</small><b>307</b><em></em></a><a class="tile dirty" href="#panel"><small>DLX5</small><b>308</b><em></em></a><a class="tile in" href="#panel"><small>DLX5</small><b>309</b><em>Cao</em></a><a class="tile in" href="#panel"><small>DLXT</small><b>310</b><em>Hà</em></a></div><div class="floor">Floor 4</div><div class="tiles"><a class="tile in" href="#panel"><small>SUPD</small><b>401</b><em>Kim</em></a><a class="tile in" href="#panel"><small>STD2</small><b>402</b><em>Lưu</em></a><a class="tile arr" href="#panel"><small>SUPT</small><b>403</b><em>Chu</em></a><a class="tile in" href="#panel"><small>SUPT</small><b>404</b><em>Tô</em></a><a class="tile in" href="#panel"><small>DLX5</small><b>405</b><em>Quách</em></a><a class="tile in" href="#panel"><small>DLX6</small><b>406</b><em>Thái</em></a><a class="tile in" href="#panel"><small>DLX5</small><b>407</b><em>Ông</em></a><a class="tile arr" href="#panel"><small>DLX5</small><b>408</b><em>Diệp</em></a><a class="tile in" href="#panel"><small>DLX5</small><b>409</b><em>Hứa</em></a><a class="tile in" href="#panel"><small>DLXT</small><b>410</b><em>Từ</em></a></div></div></div>
+  <div class="arrowline">▼ click tile <b>110</b> → quick panel (opens over the map; drawn apart here)</div>
   <div class="fade">
-<div class="modal" id="detail">
-  <div class="mh">Detail (Chi tiết) <span class="act">⎘ BOOK (ĐẶT PHÒNG)</span><span class="x">✕</span></div>
-  <div class="mtabs" data-n="3"><span class="on">CHECKIN ROOM</span><span style="text-decoration:line-through;color:var(--muted)">ADVANCE POST ROOM CHARGE</span></div>
-  <div class="mbody">
-    <div class="card" data-n="4"><a class="lk" href="index.html#todo">🔍 VIEW DETAIL (XEM CHI TIẾT)</a>
-      <div class="kv"><span>Room</span><span>110</span></div>
-      <div class="kv"><span>Rate</span><span>1,100,000</span></div>
-      <div class="kv"><span>Arrival</span><span>18/09/2026 20:11</span></div>
-      <div class="kv"><span>Departure</span><span>28/09/2026 12:00</span></div>
-      <div class="kv"><span>Nights</span><span>10</span></div>
-      <div class="kv"><span>Status</span><span>CHECKIN</span></div>
+<div class="dlg" id="panel">
+  <div class="dh">Room 110 · Deluxe twin <span class="status">Checked in</span><span class="x">✕ Close</span></div>
+  <div class="db">
+    <div class="two">
+      <div class="kv" data-n="3"><span>State</span><span>occupied · clean</span><span>Guest</span><span>Nguyễn Văn A · 0903 xxx xxx</span><span>Company</span><span>—</span>
+        <span>Stay</span><span>24/09 → 26/09 · 2 nights</span><span>Tonight</span><span>800,000</span></div>
+      <div><div class="dim" style="font-size:12px">Note</div><div class="in" style="width:100%;min-height:48px;margin:4px 0">arrives ~20:00</div><span class="btn">Save note</span></div>
     </div>
-    <div class="card">
-      <div class="lab">Guest</div><div class="val">NGUYEN VAN A 0903 xxx xxx</div>
-      <div class="lab">Company</div><div class="val">—</div>
-      <div class="lab">Note <span style="float:right;color:#c00">🖫</span></div>
-      <textarea>20h in</textarea>
-    </div>
+    <div class="row" style="justify-content:flex-end;font-size:16px"><span class="dim">Left to pay</span> <b>350,000</b> <a href="booking-editor.html" class="btn">Open the stay →</a></div>
   </div>
-  <div class="bal">Balance (Còn lại): 350,000 ⎆</div>
-  <div class="mfoot" data-n="5"><span>DIRTY</span><span>MINIBAR</span><span>LAUNDRY</span><span>COMPENSATION</span><span>EXTRA SERVICE</span></div>
+  <div class="df" data-n="4"><span class="dim" style="margin-right:auto">Add to bill:</span><span class="btn">Minibar</span><span class="btn">Laundry</span><span class="btn">Compensation</span><span class="btn">Extra service</span><span class="btn">Restaurant</span></div>
+  <div class="df" data-n="5"><span class="btn">Mark dirty</span><span class="btn">Room history</span><span class="btn pri">Check out</span></div>
 </div>
 </div>
-</div>
-<div class="legend"><span class="n">n</span>note below · struck through = dropped · tile colour = status, ezFolio's palette · sample data, no real guests</div>
+</div><div class="legend"><span class="n">n</span>note below · <span class="btn pri">Primary</span> the one action this state is for · <span class="btn">Button</span> fires a command · <span class="btn own">Owner</span> owner-only; the desk sees "Ask approval" (5.8) · <span class="in sel">select</span> <span class="in">input</span> · <span class="tag same">shape</span> ezFolio shape kept · <span class="tag ours">ours</span> SoLex addition</div>
 
 <div class="notes">
-<div><h3><span class="n">1</span>Status buttons with live counts</h3>
-<p>Same 8 buttons, colours and order (ezFolio: TẤT CẢ · SẴN SÀNG · DỰ KIẾN ĐẾN · ĐANG Ở · DỰ KIẾN ĐI · CÓ KHÁCH BẨN · TRỐNG BẨN · PHÒNG SỬA). Counts and tile colours are <b>derived</b> from the room (clean/dirty, out of order) + the stays' nights — no stored status (product.md §6 Room: "derived, never stored"). Click = filter tiles.</p>
-<table class="map"><tr><th>button</th><th>maps to (read <code>RoomBoard</code>)</th></tr>
-<tr><td>ALL</td><td>every defined room</td></tr>
-<tr><td>READY</td><td>vacant · clean · nobody arriving today</td></tr>
-<tr><td>ARRIVING</td><td>stay <i>booked</i> with tonight in its nights, room assigned</td></tr>
-<tr><td>IN HOUSE</td><td>stay <i>checkedIn</i> tonight (includes departing / occupied dirty, as ezFolio counts)</td></tr>
-<tr><td>DEPARTING</td><td>checkedIn, last night was yesterday</td></tr>
-<tr><td>OCCUPIED DIRTY / VACANT DIRTY</td><td>housekeeping = dirty, with / without a guest</td></tr>
-<tr><td>OUT OF ORDER</td><td><code>room.outOfOrder</code></td></tr>
-<tr><td>Date 24/09</td><td>display only; cannot be changed (see "not replicated")</td></tr>
-</table></div>
-<div><h3><span class="n">2</span>Room tiles</h3>
-<p>Type / bed code on top, room number below, colour = status. Grouped by floor. Click → <b>Detail</b> box. ezFolio's corner triangles (key card / note flags) are not drawn.</p>
-<h3><span class="n">3</span>Detail box header</h3>
-<table class="map"><tr><th>button</th><th>maps to</th><th></th></tr>
-<tr><td>BOOK (ĐẶT PHÒNG)</td><td><code>CreateBooking{kind:'individual', room:110}</code> — booking form with the room prefilled</td><td><span class="tag same">keep</span></td></tr>
-<tr><td>CHECKIN ROOM</td><td><code>CheckIn{stayId}</code> (tonight's room must be in service; early arrival → adds tonight, warns)</td><td><span class="tag same">keep</span></td></tr>
-<tr><td>ADVANCE POST ROOM CHARGE</td><td>none: the room charge is posted by the system at check-in and at the day roll; the <i>room</i> category is locked for everyone</td><td><span class="tag drop">drop</span></td></tr>
-</table>
-<h3><span class="n">4</span>Detail box body</h3>
-<table class="map"><tr><th>field</th><th>maps to</th></tr>
-<tr><td>Room · Rate · Arrival / Departure · Nights · Status · Guest · Company</td><td>read the room's stay tonight (<code>Stay</code> + <code>Booking.party</code>); Rate = tonight's night rate</td></tr>
-<tr><td>Note + 🖫</td><td><code>SetRoomNote</code> (the room's note; the booking note lives on screen 3)</td></tr>
-<tr><td>Balance (Còn lại)</td><td>read folio balance (total − deposit − paid); ⎆ → screen 3 (folio)</td></tr>
-<tr><td>VIEW DETAIL</td><td>→ screen 3 (booking editor / stay)</td></tr>
-</table>
-<h3><span class="n">5</span>Quick buttons</h3>
-<table class="map"><tr><th>button</th><th>maps to</th></tr>
-<tr><td>DIRTY</td><td><code>SetHousekeeping{dirty}</code> (Housekeeping tab: same button plus CLEAN)</td></tr>
-<tr><td>MINIBAR · LAUNDRY · COMPENSATION · EXTRA SERVICE</td><td><code>PostCharge</code> with the category preselected; the button list = the charge categories in Setup (the hotel's own names and prices). Each opens one line: item · qty · unit price → posted to the folio per routing (group: guest folio or master folio)</td></tr>
-</table></div>
+<div><h3><span class="n">1</span>Status buttons with live counts <span class="tag same">shape</span></h3>
+<p>ezFolio's eight buttons (TẤT CẢ · SẴN SÀNG · DỰ KIẾN ĐẾN · ĐANG Ở · DỰ KIẾN ĐI · CÓ KHÁCH BẨN · TRỐNG BẨN · PHÒNG SỬA), same order, click = filter. Counts and colours are <b>derived</b> from the room's housekeeping / out-of-order flags plus the stays' nights; nothing is stored (product.md §6 Room). In house counts every checked-in room, as ezFolio does. Built in 5.6.</p>
+<table class="map"><tr><th>button</th><th>reads (<code>RoomBoard</code>)</th></tr>
+<tr><td>Ready</td><td>vacant · clean · nobody due today</td></tr><tr><td>Due to arrive</td><td>a <i>booked</i> stay holds tonight, room assigned</td></tr>
+<tr><td>In house / Due to leave</td><td>checked in tonight / checked in and last night was yesterday</td></tr>
+<tr><td>Occupied, dirty / Vacant, dirty</td><td>housekeeping = dirty with / without a guest</td></tr><tr><td>Out of order</td><td><code>room.outOfOrder</code></td></tr></table>
+<h3 style="margin-top:12px"><span class="n">2</span>Tiles by floor <span class="tag same">shape</span></h3>
+<p>Type code · number · guest surname (ours: ezFolio shows the type only). Colour = state; a split tile = in house and dirty. No date picker: the map is <i>now</i>; over time is the tape chart.</p></div>
+<div><h3><span class="n">3</span>Quick panel = ezFolio's "Chi tiết" <span class="tag same">shape</span></h3>
+<p>Same facts in the same places: room · rate · dates · nights · status on the left, guest · company · note on the right, <b>Left to pay (Còn lại)</b> prominent, quick-charge buttons in the footer, "Open the stay" = XEM CHI TIẾT. Note → <code>SetRoomNote</code>. Built in 5.6 as a dialog.</p>
+<h3><span class="n">4</span>Add to bill <span class="tag same">shape</span></h3>
+<p>One button per charge category from Setup (the hotel's own names: Minibar · Laundry · Compensation · Extra service · Restaurant). Each opens What · Qty · Unit price → <code>PostCharge</code> with the category preselected; the room category is never offered. Group stay: posts to the guest's or the group's bill per routing.</p>
+<h3><span class="n">5</span>State actions <span class="tag ours">ours</span></h3>
+<table class="map"><tr><th>state</th><th>primary</th><th>maps to</th></tr>
+<tr><td>booked, due today</td><td>Check in</td><td><code>CheckIn</code> (tonight's room must be in service)</td></tr>
+<tr><td>checked in</td><td>Check out</td><td>settle dialog (screen 3) → <code>TakePayment</code> or <code>TransferToReceivable</code>, then <code>CheckOut</code></td></tr>
+<tr><td>vacant</td><td>New booking for this room</td><td><code>CreateBooking</code> with the room prefilled (ezFolio's ĐẶT PHÒNG)</td></tr>
+<tr><td>any</td><td>Mark dirty / clean · Out of order</td><td><code>SetHousekeeping</code> · <code>TakeOutOfOrder</code></td></tr></table></div>
 </div>
-<div class="cant"><b>Not replicated:</b> READ / ERASE CARD (key cards out of scope, permanently) · date picker on the map (the map is now; over time is the tape chart, product.md §4) · ADVANCE POST ROOM CHARGE (room charge is a system category, §6) · Rate not editable in place (a night's price change = <code>SetNightRate</code> with a reason, screen 3).</div>
-<div class="foot"><a href="shell.html">← 1 · Shell</a><a href="index.html#todo">Next: 3 · Booking editor (not drawn yet) →</a></div>
+<div class="cant"><b>Not carried over from ezFolio:</b> key-card buttons; date picker on the map; ADVANCE POST ROOM CHARGE (the room charge is posted by the system at check-in and at the day roll); editing the rate in the panel (a night's price is <code>SetNightRate</code> with a reason, screen 3).</div>
+<div class="foot"><a href="shell.html">← 1 · Shell</a><a href="booking-editor.html">Next: 3 · Booking editor →</a></div>
 </div></html>

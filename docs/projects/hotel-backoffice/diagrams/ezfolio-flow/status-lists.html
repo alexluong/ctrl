@@ -1,0 +1,48 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>4 · Status lists + new booking</title><link rel="stylesheet" href="solex.css">
+<div class="wrap">
+<div class="crumb"><a href="index.html">← Index</a></div>
+<h1>4 · Status lists + new booking</h1><p class="sub">One list for every status: <code>/bookings</code>. Rendered as Linh. Shape: <code>fd-arrivals-today.png</code> + walk-in / group forms.</p>
+
+<div class="app"><div class="top"><span class="brand">SoLex</span><a href="shell.html" class="on">Front desk</a><a href="room-map.html#hk" class="">Housekeeping</a><a href="index.html#later" class="">Back office</a><a href="index.html#later" class="">Setup</a><span class="right"><span>Linh · desk</span><span>Sign out</span></span></div><div class="ribbon"><a href="room-map.html" class="">Room map</a><a href="tape-chart.html" class="">Tape chart</a><span class="sep"></span><span class="grp">New booking</span><a href="booking-editor.html#new" class="">Walk-in</a><a href="status-lists.html#new" class="">Group</a><span class="sep"></span><span class="grp">Lists</span><a href="status-lists.html" class="on">Due to arrive</a><a href="status-lists.html" class="">In house</a><a href="status-lists.html" class="">Due to leave</a><a href="status-lists.html" class="">All bookings</a><a href="index.html#later" class="">People</a></div>
+<div class="page">
+  <div class="head"><h2>Bookings</h2><span class="dim">arriving 24/09/2026</span><span class="back"><span class="btn">Print list</span> <a href="#new" class="btn pri">New booking</a></span></div>
+  <div class="tabs" data-n="1"><span>All<b>40</b></span><span class="on">Due to arrive<b>5</b></span><span>Arriving today<b>3</b></span><span>In house<b>30</b></span><span>Leaving today<b>2</b></span><span>Cancelled<b>4</b></span></div>
+  <div class="row" data-n="2">From <span class="in">24/09/2026</span> to <span class="in">24/09/2026</span> Type <span class="in sel">All</span> Room <span class="in" style="min-width:48px"></span> Company <span class="in sel">All</span> <span class="in" style="min-width:200px">Find: name, phone or booking #</span> <span class="btn">Search</span></div>
+  <div class="box" data-n="3"><div class="b"><table><tr><th>#</th><th>Guest</th><th>Room</th><th>Type</th><th class="num">Rate</th><th class="num">Nights</th><th>Arrive</th><th>Depart</th><th>Source</th><th>Company</th><th>Notes</th><th class="num">Due</th></tr><tr class="grp"><td colspan="12">Individuals · 3</td></tr><tr><td>5533</td><td><a href="booking-editor.html" style="color:var(--accent);text-decoration:none">Nguyễn Văn A</a></td><td>110</td><td>DLXT</td><td class="num">800,000</td><td class="num">2</td><td>24/09 14:00</td><td>26/09</td><td>Walk-in</td><td>—</td><td class="dim">arrives ~20:00</td><td class="num">350,000</td></tr><tr><td>5860</td><td><a href="booking-editor.html" style="color:var(--accent);text-decoration:none">Trần Thị B</a></td><td>106</td><td>DLX6</td><td class="num">950,000</td><td class="num">1</td><td>24/09 14:00</td><td>25/09</td><td>Agoda</td><td>—</td><td class="dim">14h out, luggage</td><td class="num">0</td></tr><tr><td>5950</td><td><a href="booking-editor.html" style="color:var(--accent);text-decoration:none">Lê Văn C</a></td><td>403</td><td>SUPT</td><td class="num">850,000</td><td class="num">3</td><td>24/09 15:00</td><td>27/09</td><td>Phone</td><td>—</td><td class="dim"></td><td class="num">2,550,000</td></tr><tr class="grp"><td colspan="12">Groups · 1 booking · 2 rooms</td></tr><tr><td>5916</td><td><a href="booking-editor.html" style="color:var(--accent);text-decoration:none">Phạm D (Metro Travel)</a></td><td>408</td><td>DLX5</td><td class="num">850,000</td><td class="num">4</td><td>24/09 14:00</td><td>28/09</td><td>Agent</td><td>Metro Travel</td><td class="dim">group's bill</td><td class="num">—</td></tr><tr><td>5916</td><td><a href="booking-editor.html" style="color:var(--accent);text-decoration:none">Phạm D (Metro Travel)</a></td><td><span class="chip">assign</span></td><td>DLX5</td><td class="num">850,000</td><td class="num">4</td><td>24/09 14:00</td><td>28/09</td><td>Agent</td><td>Metro Travel</td><td class="dim">no room yet</td><td class="num">—</td></tr></table></div></div>
+  <div class="row dim" style="font-size:12px">5 stays · 5 rooms · 13 nights</div>
+</div>
+<div class="arrowline" id="new">▼ <b>New booking</b> (ezFolio's Khách lẻ / Khách đoàn on one form)</div>
+<div class="fade"><div class="dlg" data-n="4" style="width:640px">
+  <div class="dh">New booking <span class="x">✕</span></div>
+  <div class="db">
+    <div class="row">Booking for <span class="in sel">One guest</span> <span class="dim">One guest · A group</span> Source <span class="in sel">Walk-in</span></div>
+    <div class="row">Guest <span class="in" style="min-width:160px"></span> Phone <span class="in"></span> Adults <span class="in" style="min-width:36px">2</span> Children <span class="in" style="min-width:36px">0</span></div>
+    <div class="row">Arrive <span class="in">24/09/2026</span> Depart <span class="in">26/09/2026</span> <span class="hint">2 nights · 1,600,000 from the rate table</span></div>
+    <div class="row">Room type <span class="in sel">Deluxe twin</span> Room <span class="in sel">110</span> <span class="dim">or decide later</span> Rate per night <span class="in">800,000</span></div>
+    <div class="row">Billed to <span class="in sel">Nobody — the guests pay</span> Notes <span class="in" style="min-width:200px"></span></div>
+    <div class="hint">A group: company + rooms per type (qty · adults · children · rate), rooms assigned later from the tape chart. Live availability per type shows next to the qty.</div>
+  </div>
+  <div class="df"><span class="btn">Take the booking</span><span class="btn pri">Take and check in now</span></div>
+</div></div>
+</div><div class="legend"><span class="n">n</span>note below · <span class="btn pri">Primary</span> the one action this state is for · <span class="btn">Button</span> fires a command · <span class="btn own">Owner</span> owner-only; the desk sees "Ask approval" (5.8) · <span class="in sel">select</span> <span class="in">input</span> · <span class="tag same">shape</span> ezFolio shape kept · <span class="tag ours">ours</span> SoLex addition</div>
+
+<div class="notes">
+<div><h3><span class="n">1</span>One list, status tabs <span class="tag same">shape</span></h3>
+<p>ezFolio has one list screen switched by <code>status=</code> (WILL_CHECKIN · CHECKIN · INHOUSE · CHECKOUT · CANCEL · NOSHOW). Same here: tabs with counts over one list, built in 5.6. Cancelled includes no-shows.</p>
+<table class="map"><tr><th>tab</th><th>reads (<code>StayList</code>)</th></tr><tr><td>Due to arrive</td><td>booked, arrive in the window</td></tr><tr><td>Arriving today / Leaving today</td><td>arrive = today · depart = today</td></tr><tr><td>In house</td><td>checked in</td></tr><tr><td>Cancelled</td><td>cancelled + no-show</td></tr></table>
+<h3 style="margin-top:12px"><span class="n">2</span>Filters <span class="tag same">shape</span></h3><p>ezFolio's bar: date range · type · room · company · name. Ours adds one Find box (name, phone, booking #). Print list = the printed list with its header (5.5).</p>
+<h3><span class="n">3</span>Rows grouped Individuals / Groups, ezFolio's columns <span class="tag same">shape</span></h3>
+<p># · Guest · Room · Type · Rate · Nights · Arrive · Depart · Source · Company · Notes, then <b>Due</b> (ours). Source is a real field (Walk-in · Phone · Agoda · Agent …), not a tag in the guest's name. A group row without a room shows <b>assign</b> → tape chart. Guest → the editor (screen 3).</p></div>
+<div><h3><span class="n">4</span>New booking = Khách lẻ + Khách đoàn on one form <span class="tag same">shape</span></h3>
+<table class="map"><tr><th>control</th><th>maps to</th></tr>
+<tr><td>Take the booking</td><td><code>CreateBooking {kind, party, sourceId, arrive, depart, requests[]}</code> → individual opens the stay, group opens the booking</td></tr>
+<tr><td>Take and check in now</td><td>ezFolio's walk-in lands in a CHECKIN folio; here it is <code>CreateBooking</code> then <code>CheckIn</code>, two commands, one click (room must be in service)</td></tr>
+<tr><td>Rate per night</td><td>defaults from the rate table (<code>getQuote</code>); override is allowed and recorded</td></tr>
+<tr><td>Availability per type</td><td>read <code>Availability</code> — ezFolio's availability grid inside the group form (G20)</td></tr>
+<tr><td>Billed to</td><td>company → its receivable; deposit is a payment on the bill, not a form field</td></tr></table>
+<p>Dropped columns: nationality code (on the guest), account / saler (who took the booking is in History), display code / colour (later, tape chart label).</p></div>
+</div>
+<div class="cant"><b>Not carried over from ezFolio:</b> Mã QT / Mã hiển thị columns; commission and saler fields; Export to Excel (a report, later); two separate entry points for walk-in and group.</div>
+<div class="foot"><a href="booking-editor.html">← 3 · Booking editor</a><a href="tape-chart.html">Next: 5 · Tape chart →</a></div>
+</div></html>

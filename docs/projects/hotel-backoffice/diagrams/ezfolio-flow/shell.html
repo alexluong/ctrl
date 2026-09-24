@@ -1,41 +1,36 @@
 <!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>1 · Shell — tabs + Front desk ribbon</title><link rel="stylesheet" href="ezfolio.css">
+<title>1 · Shell — tabs and ribbon</title><link rel="stylesheet" href="solex.css">
 <div class="wrap">
 <div class="crumb"><a href="index.html">← Index</a></div>
-<h1>1 · Shell — tabs + Front desk ribbon</h1><p class="sub">Common shell of every screen. Rendered as: Linh (desk). Reference: header of <code>fd-room-map.png</code>.</p>
+<h1>1 · Shell — tabs and ribbon</h1><p class="sub">Common to every screen. Rendered as Linh (desk), then as the owner.</p>
 
-<div class="ez">
-  <div data-n="1"><div class="topbar"><span class="hotel">⌂ SOLEX HOTEL</span><a href="shell.html" class="on">Front desk (Lễ tân)</a><a href="room-map.html#housekeeping" class="">Housekeeping (Buồng)</a><a href="index.html#later" class="">Reports (Báo cáo)</a><a href="index.html#later" class="">System (Hệ thống)</a><span class="right"><span>Print</span><span>Linh · desk</span><span>⏻</span></span></div></div>
-  <div data-n="2"><div class="ribbon"><a class="big" href="room-map.html"><i>▦</i>Room map</a><a class="big" href="index.html#todo"><i>▤</i>Tape chart</a><a class="big" href="index.html#todo"><i>👤</i>Walk-in</a><a class="big" href="index.html#todo"><i>👥</i>Group</a><a class="big" href="index.html#todo"><i>⇲</i>Arriving</a><a class="big" href="index.html#todo"><i>⇱</i>Departing</a><a class="big" href="index.html#todo"><i>⇄</i>Move room</a><a class="big" href="index.html#todo"><i>🔍</i>Search</a><div class="grp"><a href="#" class="">Laundry</a><a href="#" class="">Minibar</a><a href="#" class="x">Restaurant</a><span class="cap">Services</span></div><div class="grp"><a href="index.html#todo" class="">Arrivals today</a><a href="index.html#todo" class="">Departures today</a><a href="#" class="x">Booking summary</a><span class="cap">Today</span></div><div class="grp"><a href="index.html#todo" class="">In house</a><a href="index.html#todo" class="">Cancelled</a><a href="index.html#todo" class="">Unassigned</a><span class="cap">Lists</span></div><div class="grp"><a href="#" class="x">Export PA18</a><a href="#" class="x">Guest registry</a><span class="cap">PA18</span></div></div><div class="logo">ez<b>FOLIO</b></div></div>
-  <div class="page" style="min-height:120px;color:var(--muted);font-size:13px">
-    Screen content (room map, tape chart, lists …) renders here. Tabs and ribbon are the same on every screen.
-  </div>
+<div class="app">
+  <div data-n="1"><div class="top"><span class="brand">SoLex</span><a href="shell.html" class="on">Front desk</a><a href="room-map.html#hk" class="">Housekeeping</a><a href="index.html#later" class="">Back office</a><a href="index.html#later" class="">Setup</a><span class="right"><span>Linh · desk</span><span>Sign out</span></span></div><div class="ribbon"><a href="room-map.html" class="">Room map</a><a href="tape-chart.html" class="">Tape chart</a><span class="sep"></span><span class="grp">New booking</span><a href="booking-editor.html#new" class="">Walk-in</a><a href="status-lists.html#new" class="">Group</a><span class="sep"></span><span class="grp">Lists</span><a href="status-lists.html" class="">Due to arrive</a><a href="status-lists.html" class="">In house</a><a href="status-lists.html" class="">Due to leave</a><a href="status-lists.html" class="">All bookings</a><a href="index.html#later" class="">People</a></div></div>
+  <div class="page" style="min-height:110px;color:var(--muted);font-size:13px">Screen content renders here. Tabs and the ribbon are the same on every screen; the ribbon changes with the tab.</div>
 </div>
-<div class="legend"><span class="n">n</span>note below · <span class="tag same">keep</span> as ezFolio, over a SoLex command/read · <span class="tag later">later</span> exists in SoLex, not in the demo · <span class="tag drop">drop</span> not available (struck through on the ribbon)</div>
+<div class="arrowline">▼ same shell, signed in as the owner</div>
+<div class="app" data-n="2"><div class="top"><span class="brand">SoLex</span><a href="shell.html" class="on">Front desk</a><a href="room-map.html#hk" class="">Housekeeping</a><a href="index.html#later" class="">Back office</a><a href="index.html#later" class="">Setup</a><span class="right"><span>Needs attention <span class="badge">3</span></span><span>Anh Tuấn · owner</span><span>Sign out</span></span></div><div class="ribbon"><a href="room-map.html" class="">Room map</a><a href="tape-chart.html" class="">Tape chart</a><span class="sep"></span><span class="grp">New booking</span><a href="booking-editor.html#new" class="">Walk-in</a><a href="status-lists.html#new" class="">Group</a><span class="sep"></span><span class="grp">Lists</span><a href="status-lists.html" class="">Due to arrive</a><a href="status-lists.html" class="">In house</a><a href="status-lists.html" class="">Due to leave</a><a href="status-lists.html" class="">All bookings</a><a href="index.html#later" class="">People</a></div></div>
+<div class="legend"><span class="n">n</span>note below · <span class="btn pri">Primary</span> the one action this state is for · <span class="btn">Button</span> fires a command · <span class="btn own">Owner</span> owner-only; the desk sees "Ask approval" (5.8) · <span class="in sel">select</span> <span class="in">input</span> · <span class="tag same">shape</span> ezFolio shape kept · <span class="tag ours">ours</span> SoLex addition</div>
 
 <div class="notes">
-<div><h3><span class="n">1</span>Top tabs</h3>
-<p>Keep 4 ezFolio tabs: <b>Front desk · Housekeeping · Reports · System</b>. Drop <b>Sales (Kinh doanh)</b> (only Companies → lives under Front desk › Lists), <b>Restaurant (Nhà hàng)</b> (POS unused; the folio keeps a restaurant line), <b>Audit (Kiểm toán)</b> (no night audit: the hotel day rolls itself at the hour set in Setup).</p>
-<table class="map"><tr><th>tab</th><th>maps to</th><th></th></tr>
-<tr><td>Front desk (Lễ tân)</td><td>ribbon below: room map · tape chart · new booking · lists</td><td><span class="tag same">keep</span></td></tr>
-<tr><td>Housekeeping (Buồng)</td><td>same room map, DIRTY filter preselected; Clean/Dirty → <code>SetHousekeeping</code>; Out of order → <code>TakeOutOfOrder</code>/<code>ReturnToService</code></td><td><span class="tag same">keep</span></td></tr>
-<tr><td>Reports (Báo cáo)</td><td>owner dashboard (revenue, occupancy, receivables) — projections, owner-only</td><td><span class="tag later">later</span></td></tr>
-<tr><td>System (Hệ thống)</td><td>Setup (rooms, room types, charge categories, day-roll hour) + Accounts</td><td><span class="tag later">later</span></td></tr>
+<div><h3><span class="n">1</span>Tabs + ribbon, ezFolio's structure</h3>
+<p>Four tabs like ezFolio (Lễ tân · Buồng · Báo cáo · Hệ thống), a ribbon of entries under the tab in ezFolio's order: map · chart · new booking · lists. Every entry is a SoLex route; nothing on the ribbon is a feature we do not have.</p>
+<table class="map"><tr><th>tab</th><th>ribbon entries → maps to</th><th></th></tr>
+<tr><td>Front desk</td><td>Room map (<code>RoomBoard</code>) · Tape chart (<code>Calendar</code>) · Walk-in / Group (<code>CreateBooking</code>) · Due to arrive · In house · Due to leave · All bookings (one list, <code>StayList</code>, screen 4) · People (guests + companies)</td><td><span class="tag same">shape</span></td></tr>
+<tr><td>Housekeeping</td><td>the same room map with <b>Vacant, dirty</b> + <b>Occupied, dirty</b> preselected; Mark clean / dirty → <code>SetHousekeeping</code>; Out of order → <code>TakeOutOfOrder</code> / <code>ReturnToService</code></td><td><span class="tag same">shape</span></td></tr>
+<tr><td>Back office</td><td>Owed (receivables) · Spending (expenses) · Reports (owner)</td><td><span class="tag ours">ours</span></td></tr>
+<tr><td>Setup</td><td>Setup (hotel, room types, rates, charge categories, companies, rooms, staff) · Accounts · System (operator)</td><td><span class="tag same">shape</span></td></tr>
 </table></div>
-<div><h3><span class="n">2</span>Front desk ribbon</h3>
-<table class="map"><tr><th>button</th><th>maps to</th><th></th></tr>
-<tr><td>Room map (Sơ đồ)</td><td>read <code>RoomBoard</code> → screen 2</td><td><span class="tag same">keep</span></td></tr>
-<tr><td>Tape chart (Tình hình)</td><td>read <code>Calendar</code> → screen 5</td><td><span class="tag same">keep</span></td></tr>
-<tr><td>Walk-in (Khách lẻ)</td><td><code>CreateBooking{kind:'individual'}</code> then <code>CheckIn</code> — ezFolio lands in a folio already CHECKIN; SoLex is two steps on one form (book → check in) because check-in is a ruled event (tonight's room must be in service)</td><td><span class="tag same">keep</span></td></tr>
-<tr><td>Group (Khách đoàn)</td><td><code>CreateBooking{kind:'group', requests[]}</code> — same form: company · source · dates · rooms per type; rooms assigned later</td><td><span class="tag same">keep</span></td></tr>
-<tr><td>Arriving / Departing · Arrivals / Departures today · In house · Cancelled · Unassigned</td><td>one list screen, <code>status=</code> tabs → screen 4 (read <code>StayList</code>)</td><td><span class="tag same">keep</span></td></tr>
-<tr><td>Move room (Đổi phòng)</td><td><code>MoveStay</code> — from the folio / stay (screen 3), no separate screen</td><td><span class="tag same">keep</span></td></tr>
-<tr><td>Search (Tìm kiếm)</td><td>by name · phone · booking code → screen 4</td><td><span class="tag same">keep</span></td></tr>
-<tr><td>Laundry · Minibar (registers)</td><td>read folio lines by category; posting still happens from the room tile (screen 2)</td><td><span class="tag later">later</span></td></tr>
-<tr><td>Booking summary</td><td>Reports (owner)</td><td><span class="tag later">later</span></td></tr>
-<tr><td>Restaurant · PA18 · Guest registry</td><td>out of v1 scope (PA18: product.md §8)</td><td><span class="tag drop">drop</span></td></tr>
+<div><h3><span class="n">2</span>Owner sees one more thing</h3>
+<p><b>Needs attention</b> with a count, top right: aged receivables, long out-of-order rooms, tomorrow's arrivals without a room, overstays with a balance, pending approvals (product.md §3 Home & inbox). The desk never sees it; the map is the desk's to-do list. Reports and Setup entries appear for the owner only.</p>
+<table class="map"><tr><th>ezFolio entry</th><th>where it went</th></tr>
+<tr><td>Sales › Companies (Kinh doanh)</td><td>Front desk › People, and Setup › Companies</td></tr>
+<tr><td>Laundry / Minibar registers (Dịch vụ)</td><td>posting is from the room tile (screen 2); a per-category register is a report, later</td></tr>
+<tr><td>Change room (Đổi phòng)</td><td>an action on the stay (screen 3), not a screen</td></tr>
+<tr><td>Unassigned bookings (Đ.phòng chưa gán)</td><td>"Nights without a room" under the tape chart (screen 5)</td></tr>
+<tr><td>Audit › Night audit (Kiểm toán)</td><td>none: the hotel day rolls itself at the hour set in Setup</td></tr>
 </table></div>
 </div>
-<div class="cant"><b>Not replicated:</b> Sales, Restaurant, Audit tabs and key cards (ĐỌC/XÓA THẺ): out of scope. Tabs and ribbon are a shell; every button inside runs on an existing command or read — the UI holds no rule.</div>
+<div class="cant"><b>Not carried over from ezFolio:</b> Restaurant POS, PA18 export, key cards, print icon in the tab bar (print lives on the bill and the lists, 5.5).</div>
 <div class="foot"><a href="room-map.html">Next: 2 · Room map →</a></div>
 </div></html>

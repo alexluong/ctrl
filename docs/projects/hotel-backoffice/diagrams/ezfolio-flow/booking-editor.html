@@ -1,0 +1,71 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>3 · Booking editor (the stay)</title><link rel="stylesheet" href="solex.css">
+<div class="wrap">
+<div class="crumb"><a href="index.html">← Index</a></div>
+<h1>3 · Booking editor (the stay)</h1><p class="sub">Where the desk works a guest: <code>/stays/:id</code>. Rendered as the owner so the amber buttons show; the desk sees "Ask approval" there. Shape: <code>fd-booking-detail.png</code> + quickout.</p>
+
+<div class="app"><div class="top"><span class="brand">SoLex</span><a href="shell.html" class="on">Front desk</a><a href="room-map.html#hk" class="">Housekeeping</a><a href="index.html#later" class="">Back office</a><a href="index.html#later" class="">Setup</a><span class="right"><span>Linh · desk</span><span>Sign out</span></span></div><div class="ribbon"><a href="room-map.html" class="">Room map</a><a href="tape-chart.html" class="">Tape chart</a><span class="sep"></span><span class="grp">New booking</span><a href="booking-editor.html#new" class="">Walk-in</a><a href="status-lists.html#new" class="">Group</a><span class="sep"></span><span class="grp">Lists</span><a href="status-lists.html" class="">Due to arrive</a><a href="status-lists.html" class="on">In house</a><a href="status-lists.html" class="">Due to leave</a><a href="status-lists.html" class="">All bookings</a><a href="index.html#later" class="">People</a></div>
+<div class="page">
+  <div class="head"><h2>Nguyễn Văn A</h2><span class="status">Checked in</span><span class="dim">booking #5533 · walk-in</span><span class="back">← In house</span></div>
+  <div class="three" data-n="1">
+    <div class="box"><div class="t">Guest</div><div class="b">
+      <div class="kv"><span>Name</span><span>Nguyễn Văn A</span><span>Phone</span><span>0903 xxx xxx</span><span>ID</span><span>0790xxxxxxxx</span><span>Nationality</span><span>VN</span><span>Company</span><span>—</span></div></div></div>
+    <div class="box"><div class="t">Booking</div><div class="b">
+      <div class="kv"><span>Arrive</span><span>24/09/2026</span><span>Depart</span><span>26/09/2026 · 2 nights</span><span>Room</span><span>110 · Deluxe twin</span><span>Adults / children</span><span>2 / 0</span><span>Source</span><span>Walk-in</span><span>Notes</span><span>arrives ~20:00</span></div></div></div>
+    <div class="box"><div class="t">Money</div><div class="money" style="grid-template-columns:1fr 1fr;border:0">
+      <div><small>Total</small><b>830,000</b></div><div><small>Deposit</small><b>480,000</b></div><div><small>Paid</small><b>0</b></div><div><small>Due</small><b>350,000</b></div></div>
+      <div class="hint" style="padding:6px 12px">as of today; tomorrow's night not yet posted</div></div>
+  </div>
+  <div class="box" data-n="2"><div class="t">Actions</div><div class="b"><div class="row">
+    <span class="btn pri">Check out</span><span class="btn">Move room <span class="in sel" style="min-width:48px">110</span></span><span class="btn">Extend / shorten</span><span class="btn">Add a guest</span><span class="btn">Print the bill</span>
+    <span class="hint">when booked: Assign room · Check in · Cancel the stay · Nobody came</span></div></div></div>
+  <div class="tabs" data-n="3"><span>Guests</span><span class="on">Bill</span><span>Nights</span></div>
+  <div class="box"><div class="b">
+    <table><tr><th>Night</th><th>What</th><th class="num">Qty</th><th class="num">Unit price</th><th class="num">Amount</th><th></th></tr>
+      <tr><td>24/09</td><td>Room</td><td class="num">1</td><td class="num">800,000</td><td class="num">800,000</td><td><span class="btn own">Void</span> <span class="btn own">Reprice</span></td></tr>
+      <tr><td>24/09</td><td>Minibar · water <span class="chip">approval pending</span></td><td class="num">2</td><td class="num">15,000</td><td class="num">30,000</td><td></td></tr>
+      <tr><td>24/09</td><td>Deposit · cash</td><td class="num"></td><td class="num"></td><td class="num neg">−480,000</td><td></td></tr></table>
+    <div class="row">Add: <span class="in sel">Kind</span> <span class="in">What</span> Qty <span class="in" style="min-width:32px">1</span> Unit price <span class="in">0</span> <span class="btn">Add to bill</span></div>
+    <div class="row">Payment: <span class="in sel">Payment</span> <span class="in sel">Cash</span> Amount <span class="in">350,000</span> Reference <span class="in"></span> <span class="btn">Record payment</span> <span class="btn own">Refund</span><span class="hint">refund at most 480,000</span></div>
+    <div class="row">Move to the company: <span class="in sel">Company</span> <span class="btn">Move</span><span class="hint">the company owes it instead of the guest</span></div>
+  </div></div>
+  <div class="box" data-n="4"><div class="t">History <span class="r dim">ezFolio's Show log</span></div><div class="b"><table>
+    <tr><th>v</th><th>Event</th><th>Detail</th><th>When</th><th>Who</th></tr>
+    <tr><td>3</td><td>Checked in</td><td>room 110, 2 guests</td><td>24/09 14:02</td><td>Linh</td></tr>
+    <tr><td>4</td><td>Deposit recorded</td><td>cash 480,000</td><td>24/09 14:05</td><td>Linh</td></tr></table></div></div>
+</div>
+<div class="arrowline">▼ <b>Check out</b> → settle dialog (ezFolio's quickout shape)</div>
+<div class="fade"><div class="dlg" data-n="5">
+  <div class="dh">Check out · room 110 <span class="x">✕</span></div>
+  <div class="db">
+    <div class="row" style="font-size:15px"><span class="dim">Owes</span> <b>350,000</b></div>
+    <div class="row">How <span class="in sel">Cash</span> <span class="dim">Cash · Bank transfer · Card · On account — the company pays</span></div>
+    <div class="row">Amount <span class="in">350,000</span> Reference <span class="in"></span></div>
+    <div class="hint">On account: pick the company; the balance moves to its receivable, then the stay checks out. Nights after today go back on sale; the room becomes dirty.</div>
+  </div>
+  <div class="df"><span class="btn">Cancel</span><span class="btn pri">Check out</span></div>
+</div></div>
+</div><div class="legend"><span class="n">n</span>note below · <span class="btn pri">Primary</span> the one action this state is for · <span class="btn">Button</span> fires a command · <span class="btn own">Owner</span> owner-only; the desk sees "Ask approval" (5.8) · <span class="in sel">select</span> <span class="in">input</span> · <span class="tag same">shape</span> ezFolio shape kept · <span class="tag ours">ours</span> SoLex addition</div>
+
+<div class="notes">
+<div><h3><span class="n">1</span>Three panels across the top <span class="tag same">shape</span></h3>
+<p>ezFolio's editor opens with guest · booking · money side by side; we keep that. Money = the four-number strip (Tổng · Đặt cọc · Trả trước · Còn lại → Total · Deposit · Paid · Due), built in 5.6. Guest fields stay minimal (name · phone · ID · nationality); PA18 fields come with PA18.</p>
+<table class="map"><tr><th>field</th><th>maps to</th></tr><tr><td>Guest / party</td><td><code>UpdateParty</code> (5.7)</td></tr><tr><td>Room</td><td><code>AssignRoom</code> / <code>MoveStay</code></td></tr><tr><td>Source</td><td><code>BookingSource</code> from Setup, default walk-in (5.7)</td></tr><tr><td>Notes</td><td>booking notes</td></tr></table>
+<h3 style="margin-top:12px"><span class="n">2</span>Actions row = ezFolio's Thao tác <span class="tag same">shape</span></h3>
+<table class="map"><tr><th>button</th><th>maps to</th></tr>
+<tr><td>Check in</td><td><code>CheckIn</code> — early arrival adds tonight and warns</td></tr><tr><td>Check out</td><td>settle dialog, then <code>CheckOut</code> (refused while the bill owes; the payment stands)</td></tr>
+<tr><td>Move room</td><td><code>MoveStay</code> (unposted nights only)</td></tr><tr><td>Extend / shorten</td><td><code>ChangeNights</code>; a night's price → <code>SetNightRate</code> (5.7)</td></tr>
+<tr><td>Add a guest</td><td><code>AddGuest</code></td></tr><tr><td>Cancel the stay / Nobody came</td><td><code>CancelStay {reason}</code> / <code>MarkNoShow</code>; owner may then <code>ForfeitDeposit</code></td></tr><tr><td>Print the bill</td><td>read (5.5)</td></tr></table></div>
+<div><h3><span class="n">3</span>Tabs = Bản khai báo · Hóa đơn chi tiết · Đặt phòng <span class="tag same">shape</span></h3>
+<p><b>Guests</b>: who checked in with (registration names). <b>Bill</b>: lines, add, pay, move to the company — every money act on one tab. <b>Nights</b>: night · room · rate, read-only. Group booking: a fourth tab <b>Rooms</b> lists the room stays, and the money panel shows the group's bill (master folio) with the routing table (rooms × categories → guest's bill / group's bill, <code>SetRouting</code>).</p>
+<table class="map"><tr><th>control</th><th>maps to</th></tr>
+<tr><td>Add to bill</td><td><code>PostCharge</code> (room category never offered; unit price ≥ 0)</td></tr><tr><td>Record payment (Payment / Deposit)</td><td><code>TakePayment</code></td></tr>
+<tr><td>Refund 👑</td><td><code>Refund</code> ≤ money received</td></tr><tr><td>Void 👑 / Reprice 👑</td><td><code>VoidCharge</code> / <code>RepriceCharge</code> = the only discount; the desk's button says <b>Ask approval</b> → <code>RequestApproval</code>, the line shows the badge until the owner decides (5.8)</td></tr>
+<tr><td>Move to the company</td><td><code>TransferToReceivable</code></td></tr></table>
+<h3 style="margin-top:12px"><span class="n">4</span>History = Show log <span class="tag same">shape</span></h3><p>Same block at the bottom of every entity page: one line per event, who and when.</p>
+<h3><span class="n">5</span>Settle dialog = quickout <span class="tag same">shape</span></h3>
+<p>Balance · How · Amount · Reference, <b>On account — the company pays</b> last (ezFolio's Công nợ). Two commands in order, never one batch: <code>TakePayment</code> or <code>TransferToReceivable</code>, then <code>CheckOut</code>. The dialog never decides whether check-out is allowed. Built in 5.6.</p></div>
+</div>
+<div class="cant"><b>Not carried over from ezFolio:</b> card number / expiry / CVV tab (no card data, ever); FOC, discount %, tax and service-fee fields (discount = owner reprice with a reason); editable per-night price grid; commission, saler, display colour; gender / DOB / address / visa until PA18.</div>
+<div class="foot"><a href="room-map.html">← 2 · Room map</a><a href="status-lists.html">Next: 4 · Status lists →</a></div>
+</div></html>

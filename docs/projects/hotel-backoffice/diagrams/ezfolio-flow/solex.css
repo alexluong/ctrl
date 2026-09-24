@@ -63,7 +63,7 @@ code{font-family:var(--mono);font-size:12px}
 table{border-collapse:collapse;width:100%;font-size:13px;font-variant-numeric:tabular-nums}
 th{text-align:left;font-weight:500;color:var(--muted);font-size:12px;padding:4px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
 td{padding:5px 8px;border-bottom:1px solid var(--line);vertical-align:middle}
-td.n,th.n{text-align:right}
+td.num,th.num{text-align:right}
 tr:last-child td{border:0}
 tr.grp td{background:var(--bg);font-weight:600;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.03em}
 .chip{font-size:11px;padding:1px 6px;border-radius:3px;background:var(--pending-bg);color:var(--accent)}
