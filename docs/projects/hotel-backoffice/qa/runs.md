@@ -2,6 +2,8 @@
 
 Newest first. `date · commit · staging · cases · result · findings · blocking?`
 
+- 2026-09-24 · 624b7dd (e2e e620c3f) · fd74a805 (not walked) · full e2e 96: all pass except S5-12c · S5-15 **pass** (N23 closed); new S5-12a, S5-12b, S5-12d ×2 pass; master closes with the booking (folio.closed + ledger.account_closed, both in events) and a payment on it is refused `ledger.accountClosed` · **N24** after Finish, the group bill on the booking page still shows its payment form (a closed stay folio hides its forms and says `folio.closed`); the form is only refused on submit · N (the ledger refuses; screen only)
+
 - 2026-09-24 · db0c0e0 (e2e 4c39a3c) · — · S5-8/S5-16 · pass · architect ruled N23 (landing 3: individual auto-close, group explicit close, inUse = live stay or master > 0) and master charges keep their stay (S5-16). Flake fixed: after a group submit the URL changes before the booking page renders, so stay links were read off the /bookings list · N
 
 - 2026-09-24 · db0c0e0 (e2e b03e8d4) · 68192888 (not walked) · full e2e 92: all pass except S5-15 · new S5-6..8, S5-10, S5-11, S5-13, S5-14 pass; S5-9 scenario only (no screen for a company agreement) · **N23** a checked-out, paid booking keeps status `booked` (no close command yet, and individual bookings may never get one), so `bookingsOfCompany` says in use forever: any company that was ever booked can never be retired · N (retire is admin, not money; asks architect whether landing 3 closes individual bookings too). Q to architect: master room charges carry the originating stay_id (entries + charges); only payments/transfers are stay-less. The "no stayId" rule was checked on payments
