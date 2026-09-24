@@ -37,6 +37,8 @@ Availability versioned on every supply/demand command · one batch per money com
 
 - 2026-09-25 — qa: suite green apart from findings on 30dbec5 (e2e f4308ad); suite-wide rrweb done (`pnpm test:replay`, `support/test.ts`, player lists journeys + suite, lazy per-recording scripts); N29–N31 closed; N32 half fixed, the rest environmental (load avg ~190); N33–N36 filed with dev. **Resume:** (1) Retest when dev lands N33–N36; rerun S5-45/46a/47 on a quiet machine. (2) G14/G15/G20/BookingSource/SetRoomType through the screens: S5-37/N28, S5-39/40, party/notes/requests, nights/rates, mixed-type group grid; G28 agreement (f82ea14). (3) Print cases S5-4x; the map/panel backlog S5-5x..7x. (4) G34 overbooking / G35 capacity cases once dev lands them after G33 (product ctrl 847ff15, product.md §6). (5) One showcase journey per accepted landing. R2 is not re-filmed since the merged history. Next free N37.
 
+- 2026-09-25 — qa: N33–N36 fixed by dev (b4e501e), retest pending. N37 filed (G29: ID required, but check-in has no ID field). Specs written, **not yet run** (load avg ~260; other sessions' stuck python shims): cancel-booking (S5-37/39/40 pass; S5-48..50 G14 landing 2), nights (S5-51..54, G15), setup-changes (S5-55 SetRoomType, S5-56 G28 agreement), house-rules (S5-57/58, G29), S3-34 (Add-to-bill double-submit). All in a local WIP commit in solex-qa, not pushed. **Resume:** once load < 40 (`sysctl vm.loadavg`): run the full suite, fix the specs, push `test(e2e)`, add case rows (S5-48..58, S3-34), close N33–N36. Then G20 mixed-type grid, print S5-4x, the map/panel backlog, then G34/G35 after G33. Next free N38.
+
 ---
 
 **Session prompt (Alex pastes to start the session, named `solex-qa`):**
