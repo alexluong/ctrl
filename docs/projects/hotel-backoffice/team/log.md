@@ -1531,7 +1531,7 @@ G35: `adults ≤ RoomType.capacity`, children never counted, refuse
 `stay.overCapacity`, new `SetOccupancy {stayId, adults, children}`.
 
 **Open:**
-- `pnpm i18n:report` at **40** en-only keys: G28, G29, G32, G33 and G34.
+- `pnpm i18n:report` at **39** en-only keys: G28, G29, G32, G33 and G34.
   **Product has been unreachable every time I have tried**, so none of these
   have been handed over. Send the whole set when they come back.
 - `bookings.sourceId` on rows written before G30 stays null; no backfill.
