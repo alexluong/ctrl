@@ -313,4 +313,5 @@ The desk asks from the same button; the owner answers from Needs attention. The 
 | S5-82 | Desk presses each of the eight status filters on the room map | the tiles shown equal the count on the button, every time | G5 | e2e room-map "S5-82" | 8130240 pass |
 | S5-83 | A guest arriving today is checked in | "arriving" drops by one and "in house" rises by one; the tile moves between them | G5 | e2e room-map "S5-83" | 8130240 pass |
 | S5-84 | Desk marks a room left dirty by a check-out clean from its panel | the panel reads Clean; the tile is no longer dirty; "vacant dirty" drops by one | G6/G7 | e2e room-map "S5-84" | 8130240 pass |
+| S5-85 | Desk (receptionist) asks for 2 of a 1-room type under "the owner's to allow", then under "anybody's to allow" | refused "1 short" and cannot take it anyway; then takes it anyway, booked, and `stay.overbooking_overridden` on both stays | G34 rules `warn`/`allow` | e2e approval.last "S5-85" | 8130240 pass |
 
