@@ -1408,7 +1408,7 @@ name for the calendar). Tail after those: G4, G8, G10, G12, G19, G21, G26.
 - `pnpm deploy` failed once with a Cloudflare 7403 on the D1 migrate step and
   worked on an immediate retry. Nothing changed in between.
 
-## solex-dev — 5.8 complete (build from solex `e1c113d`, staging `3ccf839b`, 512 green)
+## solex-dev — 5.8 complete (build from solex `1b6850f`, staging `745a54d8`, 512 green)
 
 Kept current at the landing. Both repos pushed, tree clean, build clean,
 biome at the 4-warning baseline. **Migration 0019** (`booking_rules`) applied
@@ -1570,13 +1570,19 @@ rings the owner instead of leaving a record), and the write-off form lost its
 **Every row in product.md §11 is built.** There is no unbuilt command left in
 the catalogue.
 
-**QA N42 is still open and my first diagnosis was wrong.** Ruled out with
-evidence: the event is in the log (QA), the read returns it (probe), and the
-component renders it from those exact inputs — proved by
-`src/ui/history.test.tsx`, **the first rendering test in this suite**
-(`renderToStaticMarkup`, no DOM, so it fits a server-only suite). What is left
-is between the read and the component on the real page; QA is checking whether
-the server-rendered loader payload contains the event.
+**QA N42 is closed.** The rendering fix in `e17d85b` was the whole of it; QA's
+"still nothing" was a spec clicking a stay link on the stale bookings list
+after "Take it anyway" navigates, so they were reading another booking's stay.
+The chase left behind `src/ui/history.test.tsx`, **the first rendering test in
+this suite** (`renderToStaticMarkup`, no DOM, so it fits a server-only suite).
+Worth knowing for e2e: after an override the URL moves to the group page
+before it renders.
+
+**QA N43** (`1b6850f`) — both buttons on a bill line read "Ask the owner" for
+a receptionist, side by side, one opening the reprice dialog and one the void
+dialog. Landing 3's idea is that the control does not move and does not change
+meaning, and I took the meaning out of the label. Now "Ask to reprice" /
+"Ask to take off".
 
 **Next: nothing is queued.** ux.md §6 has no outstanding row and §11 has no
 unbuilt command. The open items are QA's N42 (diagnosis still open, see above)
