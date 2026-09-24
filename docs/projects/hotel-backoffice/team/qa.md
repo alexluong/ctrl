@@ -25,6 +25,7 @@ Architect reviews each slice dev lands. Worktree: `~/git/hub/alexluong/solex-arc
 - [ ] Upcaster: fold path throws on a gap; display paths tolerate and flag.
 - [ ] `pnpm check` green; staging deploy loads; flow walkable in a browser
 - [ ] product.md amended for any gap dev discovered (not just code)
+- [ ] **A printout reconciles with the ledger** for the same folio — nothing on paper that is not in the sum (5.5).
 
 - **Forms never fall back to GET** — `method="post"` on every form (N11; PII in the URL is PII in the access log). Same for GET search: **PII search terms never in the URL** (N12).
 
@@ -42,6 +43,7 @@ Architect reviews each slice dev lands. Worktree: `~/git/hub/alexluong/solex-arc
 - **What-changed is compared against the row, never against what the form sent** — the screen must send everything (N16), so only the rules can say nothing moved; no `*.updated` event for a no-op (N18).
 
 ## Findings
+- 2026-09-24 — **5.5 print accepted** (solex `e7f1dd1`, staging `d96ba0c4`, 365 green). `/print/stay/<id>` + `/print/booking/<id>`, HotelProfile letterhead incl. address/phone, print CSS, no VAT, no event; reads via two narrow adapters (`src/server/api/print.ts`). **Ruling: a voided line stays off the paper** — the sheet shows what the guest owes and reconciles with the ledger (charges − payments + refunds = balance); the screen keeps it struck through as the record. Checklist add: **a printout reconciles with the ledger for the same folio; nothing on paper that is not in the sum.** QA: S5-4x print cases (own vs master, deposit + refund lines, voided line absent, letterhead fields, print media hides chrome) after R1/R2 recordings. Dev → 5.6 polish (G3 first).
 
 - 2026-09-24 — **solex-qa 5.4 run (755e585): 111 pass / 1 skipped; N27 closed.** S5-33..36 green (no-show date guard, nights freed, forfeit ceiling incl. after partial, close at zero, reserved category tamper refused, reconciliation exact). **N28** (ruled, non-blocking tracker): forfeit on a cancelled group's master unreachable — no CancelBooking screen (G14, 5.7) and master payment form takes settlements only (G19, 5.6). Ruled: group CancelBooking cancels every still-booked stay in one batch, refused `booking.stayCheckedIn`, emits booking.cancelled, master stays open then closes at zero; all-stays-cancelled leaving the booking `booked` is correct (explicit act only). S5-37 parked. Next free N29.
 - 2026-09-24 — **Slice 5.4 deposits + N27 (755e585). Staging d8da2b08, 365 green. Accepted.** All six rulings in; MarkNoShow idempotent; `write()` gained `closes` for one account stream (close-at-zero lands on the folio only); live stay at zero stays open (pinned). Known conservative: every refund counts against the deposit ceiling (refunds carry no "what for"); can refuse a forfeit, never allow a wrong one. N27 closed.
