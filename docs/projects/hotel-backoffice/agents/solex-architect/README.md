@@ -37,3 +37,7 @@ Alex: "work with Dev on this and make sure to help with review/QA as we go." Per
 - **Local dev = Node only**: `mise run setup` then `mise run dev` (SQLite `data/solex.db`); Docker stack torn down 2026-09-24 (orphan postgres from the spike removed; compose `up/down/logs` tasks remain unused).
 - Architect worktree `~/git/hub/alexluong/solex-architect` (detached, read-only); QA owns `../solex-qa`.
 
+
+## Resume note — 2026-09-24 (architect at 230k, awaiting compaction)
+
+State: solex main `bc64f12`+`04822c6` (5.6 complete, D-29 built), staging `5250b6e6`, 371 green. Dev in 5.7 (order G14 → G15 → G20 → G28 → SetRoomType → G16/G22/G29/G30 → G32 → G33), at 349k → clean-stop requested. Product (198k) redoing `diagrams/ezfolio-flow/` 1+2 as "SoLex, ezFolio-shaped" (D-27 amendment) then 3–5; I republish per screen to artifact L2ivkCzKDWwXoCFcmF6bKP. QA (108k, **unchanged for hours — check it is receiving messages**) owes R1/R2 flow videos + rrweb replays (`solex/e2e/recordings/`), then 5.5 print, 5.6 cases, S5-37/N28 once G14 lands. Decisions today: D-27 amendment, D-28, D-29 (vi strings: product → dev). Open with Alex: none blocking; flags in progress.md (CF 7403 on D1 migrate, ezFolio 1+2 review superseded by restyle). Cron 5733ce9e = hourly context watch at :41. Stay-template artifact FnYDkwHfpSed7wtQmzgL3L parked.
