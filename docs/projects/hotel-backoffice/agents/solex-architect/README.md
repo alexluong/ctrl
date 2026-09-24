@@ -29,3 +29,11 @@ Alex: "work with Dev on this and make sure to help with review/QA as we go." Per
 
 - 2026-09-23 — rev 2: review/QA role added; `team/qa.md` created; QA worktree set up.
 - 2026-09-19 — session named; roster created.
+
+## Session ops (Alex's standing asks, 2026-09-24)
+
+- **Context cap:** Alex keeps every session under **250k** tokens; he compacts. Architect watches via `get_usage` (session ids: dev `local_94ba0f28-75c1-4021-b985-cff336fc9aeb`, qa `local_0640ecfd-d1c2-4094-9c55-9ba59e066319`, product `local_6a799d7c-a89c-4af6-a987-c0d7579a5b29`) and tells Alex in one line when anyone crosses **200k**. Run as a session-only `CronCreate` hourly (off-minute), paused while the team is idle (each check costs ~3.5k of architect's own context) and re-armed when work resumes. Before a compaction: tell the agent to reach a clean stop, commit/push, write a resume note in its profile log, then confirm idle to Alex; re-brief it in one message after.
+- **Questions go to architect, not Alex** (dev/QA/product); architect escalates only breaking calls. Alex checks in when he can.
+- **Local dev = Node only**: `mise run setup` then `mise run dev` (SQLite `data/solex.db`); Docker stack torn down 2026-09-24 (orphan postgres from the spike removed; compose `up/down/logs` tasks remain unused).
+- Architect worktree `~/git/hub/alexluong/solex-architect` (detached, read-only); QA owns `../solex-qa`.
+
