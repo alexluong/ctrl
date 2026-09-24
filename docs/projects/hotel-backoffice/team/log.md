@@ -1578,10 +1578,13 @@ this suite** (`renderToStaticMarkup`, no DOM, so it fits a server-only suite).
 Worth knowing for e2e: after an override the URL moves to the group page
 before it renders.
 
-**Every event has a name too** (`8130240`). QA's e2e net — which fails a spec
-if any alert shows a bare key — covers a class the codes test does not: keys
-built at render time. The biggest is the history's `eventType.<type>`, and
-eight events had no name. Six were that afternoon's approvals; **`stay.routing_set`
+**Every event has a name too** (`8130240`). QA's e2e net — a spec fails if a
+bare key shows on screen — prompted the question of what the codes test does
+*not* cover: keys built at render time. (Their net watched `role=alert` only
+at that point, so it would not have caught these either; QA corrected the
+record themselves, and it scans every text node from their next run on.) The
+biggest such key is the history's `eventType.<type>`, and eight events had no
+name. Six were that afternoon's approvals; **`stay.routing_set`
 and `routing_cleared` had been printing their own type in a stay's history
 since routing was built**, because nobody had opened a stay's history after
 changing its routing. Guarded the same way, reading the literals at the point
