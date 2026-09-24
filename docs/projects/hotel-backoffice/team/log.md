@@ -1,4 +1,5 @@
 # Team log
+- 2026-09-24 — dev: **5.5 started, clean stop for compaction** (solex `8bed803`, staging `9df6b465`, 365 green, migration 0015 applied dev + remote). Landed: HotelProfile gains `address` + `phone` (the letterhead) with Setup fields — a printed bill starts with who is sending it and the profile had only a name. Not started: the print views themselves. Resume from `8bed803`; plan in the dev section below.
 - 2026-09-24 — dev: 5.4 deposits + MarkNoShow + N27 (755e585, staging d8da2b08, 365 green). Architect accepted; 5.5 print scoped (own + master, HotelProfile header, print CSS, no VAT). QA on 5.4 cases.
 - 2026-09-24 — dev: **5.4 deposits + N27** (solex `755e585`, staging `d8da2b08`, 365 green). MarkNoShow (own status, frees nights, folio stays open, refused before the hotel day turns over). ForfeitDeposit: owner-only `folio.forfeit`, reserved system category `depositForfeit`, capped at taken − refunded − kept, allowed only once the booking is over. A refund or forfeit that leaves a cancelled/no-show folio at zero closes it in the same batch — `write()` now targets one account's stream. N27 fixed: the range report fills every night in `[from, to)` and shows rooms-in-service per row. Note: I sorted imports in QA's `e2e/specs/reports.spec.ts` — `biome ci` was red on it, mechanical only.
 - 2026-09-24 — solex-qa 5.3 run 105/106; N26 closed; N27 occupancy denominator → dev with 5.4.
@@ -1219,3 +1220,49 @@ the range, so a one-room hotel that sold two of four nights read 100%. The domai
 night in `[from, to)`, and the table shows rooms-in-service per row so the percentage is checkable.
 
 **Next:** 5.5 folio print.
+
+## solex-dev — 5.5 resume note (build from solex `8bed803`, staging `9df6b465`)
+
+365 green, working tree clean, both repos pushed, migration 0015 applied to dev and to staging's D1.
+
+### Built
+
+`HotelProfile.address` and `.phone`, optional and defaulting to empty, on the Setup form and in the
+changed-field-names list. No rules on either: a hotel can run for months before anybody prints a
+bill, and blocking Setup on a field only the printout reads is the wrong trade. Architect's 5.5 brief
+said "hotel name/address from HotelProfile" — the address did not exist, so this is it.
+
+### Next: the print views
+
+Architect's scope: own folio and master folio; hotel name/address/phone, guest or company,
+stay/room/dates, lines by night, payments including deposits, refunds, balance; Vietnamese labels;
+browser print CSS, no PDF service; print button on the stay page and the master panel; read-only, no
+event; no VAT / red-invoice fields (later).
+
+Decisions already taken, to save re-deriving them:
+
+- **Routes**: `print.stay.$id.tsx` and `print.booking.$id.tsx` → `/print/stay/<id>`. Not
+  `stays.$id.print.tsx`, which would turn `stays.$id.tsx` into a layout and force renaming the two
+  biggest route files for nothing.
+- **Shape (D-27)**: there is no folio printout in `screens/`, so follow the house style of the report
+  printouts (`rpt-fd-revenue.png`): hotel block top-left, title centred, printed-on / printed-by
+  top-right, the lines table, a totals row, and the three signature blocks
+  (Người lập biểu / Trưởng bộ phận / Giám đốc).
+- **Reads**: `hotel.folios.statement()` already returns folioId, balance, charges, payments and
+  account. The print loader needs that plus `hotel.profile.get()`, the stay (room, dates) or the
+  booking (company), and guest names. Worth one adapter each rather than reusing `getStay`, which
+  drags history, rooms and routing the printout does not want.
+- **Print CSS**: a `@media print` block in `src/styles.css` hiding `.topbar` and anything marked
+  `.no-print`, plus a `.sheet` wrapper. `src/styles.css` has no print rules today.
+
+### Known conservative rule, logged at architect's request
+
+The forfeit ceiling counts **every** refund against the deposit, because a refund does not record
+what it is refunding. It can refuse a forfeit that might have been allowed; it can never allow one
+that keeps money the hotel no longer holds. Accepted as the cautious reading; revisit only if a
+refund ever carries its target. Progress flag for Alex is architect's.
+
+### Open, not mine to decide
+
+- `bookings.sourceId` has no writer (by-source report is one "not recorded" row) — 5.7 with G28.
+- `Company.defaultRouting` has no Setup control — G28, 5.7.
