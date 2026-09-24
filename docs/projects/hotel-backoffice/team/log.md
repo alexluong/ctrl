@@ -1,4 +1,5 @@
 # Team log
+- 2026-09-24 — dev: **5.7 G15 landing 1 — ChangeNights + SetNightRate rules** (solex `a48c254`, staging `589cca66`, 398 green). Commands and scenarios only; the stay-page screens are landing 2. ChangeNights refuses a charged night (`stay.nightPosted`), a gap (`stay.nightsNotContiguous` — the fold reads nights as an interval), and emptying the stay (`stay.nightsRequired`); added nights go through the availability guard and are priced at what the stay already pays, not the rate table. SetNightRate is per night, refused once the night is posted, so calendar and folio cannot disagree. **Dev at a clean stop for compaction; resume note below.**
 - 2026-09-24 — G14 landing 2 landed (d5686fd, staging d4c4c896, 390 green): party/notes/requests, 3 events per §3; requests add = unassigned stay (room via AssignRoom, availability rule stays in one place — dev's narrower call accepted), remove refused by stayCheckedIn, reason on remove only, group-only forms. Quiet nothingToChange notice on all six forms (077ab9d). i18n report 23 keys → product's first vi pass, via dev. Dev → G15.
 - 2026-09-24 — dev: **5.7 G14 landing 2 — correcting a booking after it is taken** (solex `d5686fd`, staging `d4c4c896`, 390 green; quiet-notice ruling in `077ab9d`). Three commands, three events per §3: `booking.party_changed` (ids only, `companyId: null` said out loud when cleared, erased-contact check as in CreateBooking), `booking.notes_changed`, `booking.requests_changed` (add + remove in one batch — `stay.created` per room added, `stay.cancelled` per room taken off, availability touched only when the rooms given back had numbers; each stay appended under its folded version; removal refused by `booking.stayCheckedIn`). **Narrower than the ruling on purpose:** an added room holds no room number, so the CreateBooking availability predicate has nothing to bite on and was not duplicated — `AssignRoom` already decides freeness under the guard. Add/remove forms are group-only; remove requires a reason, add does not. `pnpm i18n:report` at 23 en-only keys for product. Next: G15 (ChangeNights, SetNightRate).
 - 2026-09-24 — Dev re-briefed after compaction. Slice-4 debts landed (a920697, staging 23c4346e, 375 green): N21 history grouped by correlationId; N22 nothingToChange refused on guest/contact/roomType/rate + company/hotel profile (stretch accepted). Ruling: UI renders nothingToChange as a quiet neutral notice on all six, no disabled-button logic. i18n report now 7 en-only keys for product. Dev on G14 landing 2 with the ruled requests_changed guard (reuse CreateBooking availability predicate; remove refused only by stayCheckedIn).
@@ -1383,7 +1384,28 @@ name for the calendar). Tail after those: G4, G8, G10, G12, G19, G21, G26.
 - `pnpm deploy` failed once with a Cloudflare 7403 on the D1 migrate step and
   worked on an immediate retry. Nothing changed in between.
 
-## solex-dev — 5.7 resume note (build from solex `417c5cd`, staging `ca754483`)
+## solex-dev — 5.7 resume note (build from solex `a48c254`, staging `589cca66`, 398 green)
+
+Written 2026-09-24 at architect's clean-stop for compaction. Everything below landed and is pushed on both repos.
+
+**Landed this session (after the previous note at `417c5cd`):**
+- **Slice-4 debts** (`a920697`) — N21: history tables group events by `correlationId`, one action one row (headline = first event, the rest quieter under it in `.also`, version column shows a range like `2–4`; grouped by id not adjacency so merged streams still fold). N22: `nothingToChange` refused rather than swallowed on guest, contact, room type, rate, **and** company + hotel profile (stretch, accepted). Five tests rewritten to assert the refusal *and* that nothing was written.
+- **Quiet notice** (`077ab9d`) — architect's ruling: `CommandError` renders any `*.nothingToChange` code muted with `role="status"` instead of red; no disabled-button logic (N25). Covers all six forms at once.
+- **G14 landing 2** (`d5686fd`) — `booking.party_changed` / `notes_changed` / `requests_changed`. Party carries ids only and says `companyId: null` out loud when cleared; erased-contact check as in CreateBooking. Requests is add + remove in one batch (`stay.created` per room added, `stay.cancelled` per room off, availability touched only when the freed rooms had numbers, each stay under its folded version); removal refused by `booking.stayCheckedIn`. **Added rooms hold no room number** — AssignRoom already decides freeness under the guard, so the predicate is not duplicated (architect accepted this as narrower than his ruling, on purpose). Add/remove forms are group-only; remove needs a reason, add does not.
+- **G15 landing 1** (`a48c254`) — the rules above.
+
+**Next:** G15 landing 2 — the stay page's screens for ChangeNights and SetNightRate (`/stays/$id` already lists the nights; the forms go beside that table). Then G20 → G28 → SetRoomType (product `349073e`) → G16 → G22 → G29 → G30 → G32 → G33.
+
+**Open:**
+- `pnpm i18n:report` is at **33 en-only keys**; architect is sending the batch to product, who messages key → Vietnamese pairs back for dev to apply mechanically (D-29).
+- Rooms with a null `room_type_id` still cannot be re-typed until SetRoomType lands.
+- `bookings.sourceId` still has no writer (G28).
+- Cloudflare `code: 7403` on the D1 migrate step keeps failing the first `pnpm deploy` attempt and clearing on retry. Flagged to Alex via architect; not ours.
+- QA has not walked G14 landing 1 or 2 through the screens yet (S5-37 and the party/notes/requests paths).
+
+**Verification technique** (no dev server, no staging sign-in): inline `src/styles.css` into a static HTML harness in the scratchpad, screenshot it with Playwright run from `solex/e2e`, delete the harness. Caught the nav-group and tape-chart defects earlier; used again this session on the grouped history table and the booking-correction cards.
+
+## solex-dev — 5.7 resume note, superseded (build from solex `417c5cd`, staging `ca754483`)
 
 375 green, build clean, working tree clean, both repos pushed. Migration 0016
 (rooms.room_type_id) applied to dev and remote in this stretch; nothing pending.
