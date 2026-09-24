@@ -1404,7 +1404,74 @@ name for the calendar). Tail after those: G4, G8, G10, G12, G19, G21, G26.
 - `pnpm deploy` failed once with a Cloudflare 7403 on the D1 migrate step and
   worked on an immediate retry. Nothing changed in between.
 
-## solex-dev — 5.7 resume note (build from solex `c8b3528`, staging `e8ec202d`, 419 green)
+## solex-dev — 5.7 resume note (build from solex `69899bc`, staging `00d1097a`, 433 green)
+
+Kept current at every landing, per Alex's process change (no manual
+compaction cycles; auto-compaction happens on its own, and this note is the
+safety net). Both repos pushed, tree clean, `pnpm build` clean, biome at the
+4-warning baseline, **no migration pending** — 0017 (`booking_sources`) was
+the last one and it is applied dev + remote.
+
+**Landed since the `c8b3528` note:**
+- **vi pass 1** (`18da91f`) — product's 65 key→vi pairs applied verbatim, plus
+  QA's fix: `folio.void` was "Huỷ", the same word as `ask.cancel` on the
+  dialog it opens, now "Huỷ khoản". I diffed their key list against
+  `i18n:report` before inserting (exact match) and checked placeholder parity
+  across the whole dictionary. Report said complete at that commit.
+- **G16 / MoveCharge** (`d4fe94f`) — a line moves to another bill. Product's
+  shape (§11): both bills open, `folio.charge_moved`, reversal + new entry.
+  It is a *move*: the line keeps its id, description, qty and posting date,
+  because a void-and-repost would show a struck-through line on one bill and
+  a fresh one on the other. The new entry is the original's lines with the
+  source folio swapped for the target, so revenue comes off in the reversal
+  and goes back in the repost and the day's takings do not move. **A room
+  charge stays with the guest who slept the night** — moving one between a
+  stay's own folio and its group's master is allowed (that is the routing
+  case, revisited), onto another guest's bill is refused by name. Target
+  picker = in-house tonight + this booking's master; the desk's own permission
+  (`folio.move_line` was already in the receptionist bundle) because nothing
+  leaves the hotel's books. Two incidental changes in the same commit: the
+  folio adapter's `write()` takes a **list** of entries now (RepriceCharge in
+  5.8 wants the same), and `Ask` gained a **list-of-answers** variant, since
+  "which bill" is a pick and the dialog could only ask for typed text.
+- **Architect's code ruling, folded in** (same commit) — `room.typeUnknown` is
+  gone; `setup.roomTypeInvalid` covers both defining a room under a type
+  nobody defined and re-typing one into it. One fact, one sentence.
+- **QA N29 + N30** (`69899bc`) — N29: a stay's history merges its own stream
+  with its bill's, `folio.*` only (each of those is written beside a `ledger.*`
+  entry, and showing both prints every line twice). The merge is on the SDK as
+  `events.ofStayAndBill` so it is tested without a browser. N30: the
+  housekeeping badge reads **Clean**, not "Vacant clean" — which also fixed
+  the button beside it reading "Mark vacant clean". I trimmed the Vietnamese
+  to match ("Trống sạch" → "Sạch") and told product; that is a word removed
+  from their own string, not new copy.
+
+**Next, in architect's order:** **G22** (edit guest/contact details,
+`UpdateGuest`/`UpdateContact`, contact detail link, guest's stays on their
+page) → **G28 = company `defaultRouting`** → G29 BookingRules → G32 group
+routing table → G33 owner home + Needs attention → 5.8.
+
+**Open:**
+- `pnpm i18n:report` at **9** en-only keys, all from G16: `folio.move`,
+  `folio.moveTitle`, `folio.moveHint`, `folio.moveTo`, `folio.moveToRoom`,
+  `folio.moveToMaster`, `eventType.folio.charge_moved`,
+  `error.folio.billClosed`, `error.folio.roomChargeStays`. Product is running
+  again and knows.
+- `bookings.sourceId` on rows written before G30 stays null; no backfill. The
+  revenue report's null bucket exists for exactly those.
+- QA has not walked G14 landing 1/2, G15, G20, G30, G16 or the N29/N30 fixes
+  through the screens. Point them at `69899bc` / staging `00d1097a`.
+- **solex `main` is shared** — QA pushes e2e there; always `git fetch` +
+  rebase before pushing.
+
+**Verification technique** (no dev server, no staging sign-in): inline
+`src/styles.css` into a static HTML harness in the scratchpad, screenshot with
+Playwright run from `solex/e2e` (a `file://` URL — the scratchpad http server
+is gone), read the PNG, delete the harness. Used on the move dialog this
+stretch; it caught that `dialog.ask` styled `input` but not `select`, so the
+picker was half-width.
+
+## solex-dev — 5.7 resume note, superseded (build from solex `c8b3528`, staging `e8ec202d`)
 
 Written at architect's clean-stop for compaction. Both repos pushed, working
 tree clean, `pnpm build` clean, biome at the 4-warning baseline. **Migration
