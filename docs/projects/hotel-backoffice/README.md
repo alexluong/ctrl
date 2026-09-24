@@ -12,6 +12,7 @@ Naming: product/hotel name is **SoLex** (keep that casing in prose/UI). Folders,
 | `stack.md` | WS1: repo + Go-on-Cloudflare spike, stack decision, deploy shape | WS1 |
 | `existing-system.md` | WS2: what the current `:99` system is, feature inventory, entities, what staff use | WS2 |
 | `product.md` | WS3: domain discovery — bounded contexts, aggregates, events, user roles, scope | WS3 |
+| `ux.md` + `diagrams/solex-ux.excalidraw` | WS3: UX by persona — journeys, IA, per-screen wireframes, gap list vs built app (G1–G30 → 5.6 polish / 5.7 command coverage) | WS3 |
 | `discovery.md` | Alex's brain-dump answers to open questions (input to WS2/WS3) | Alex→Claude |
 | `agents/<name>/` | per-agent: `README.md` profile (role, owned files, current objective, log) + `notes/YYYY-MM-DD-HHMM-<slug>.md` personal journal, one file per entry — **read yours at session start** | that agent (profile objective: architect) |
 | `team/` | shared: `decisions.md`, `questions.md`, `log.md`, `progress.md` (narrative history) — any agent appends, dated + signed | all |
