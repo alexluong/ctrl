@@ -991,3 +991,53 @@ vocabulary.
 **N16 reading on the button**: the page does not offer it while either condition fails, and says
 which one is in the way using the refusal's own string. The codes still exist for the race — a
 routed charge can land between the page loading and the click.
+
+## 5.2 — half built, clean stop for compaction
+
+Build from **solex `b531242`**, staging `7cfb5ced`. 335 scenarios green, build clean, both repos
+pushed. Two commits:
+
+**`54a13b6` — the cron half of D-25. Done.** A server entry of our own
+(`src/server-entry.ts`), because TanStack Start's default one exports `fetch` and nothing else, so
+`scheduled` had nowhere to live. `tanstackStart({ server: { entry } })` points the build at it and
+wrangler's `main` follows. Cron is **hourly**, not once at the cutover: the roll hour is per-hotel
+config and a cron expression is not, so the handler asks the same idempotent question every hour and
+usually finds nothing. The lazy first-request roll stays. Live on staging — `schedule: 0 * * * *`.
+
+**`b531242` — HotelProfile, backend only.** `hotel_profile` (migration 0014), a singleton tier (b)
+row: name, timeZone, rollHour. `hotelProfileRules` validate the zone against what `Intl` can actually
+format, the hour against being an hour, and report which fields moved (N18/N20). `businessDateFor`
+now takes a `HotelDay`; an instant before the roll hour belongs to the day before, stepped on the
+calendar not on a millisecond count. `HotelDeps.day` is required, read from the profile by the
+composition root with `DEFAULT_HOTEL_DAY` as a visible fallback. `systemHotel()` is now async.
+
+Threading it cost **one field on `CommandContext`** (`businessDate?`). The log layer has no hotel to
+ask, so the domain says which day the command falls in, once, where every command already passes.
+Absent = the old default, which is what every event written before today carries.
+
+### What is left of 5.2
+
+1. **The Setup screen section** for the profile — form, i18n keys (en + vi), `saveProfile` is already
+   wired in `src/server/api/setup.ts` and `getSetup` already returns `profile` + `defaultDay`.
+2. A timezone picker. I dropped a `knownTimeZones()` helper from `getSetup` rather than invent one at
+   the stop; `Intl.supportedValuesOf("timeZone")` is the obvious source.
+3. Nothing reads the profile for **rendering** yet — `formatTimestamp` still uses the browser's zone.
+   Architect's brief said "tz for rendering", so that is a real remaining item.
+
+### Do these first, before the screen
+
+Both are architect rulings on landing 3, arrived after it shipped. Neither is done.
+
+- **N24**: a closed master folio still shows its pay/transfer forms; `src/ui/master-folio.tsx` should
+  hide them and show `folio.closed`, the way `src/ui/folio.tsx` already does off
+  `folio.account?.status === "closed"`. `getMasterFolio` already returns `account`.
+- **N25**: `CloseBooking` in `src/routes/bookings.$id.tsx` must **always render the Finish button**
+  while the booking is open, and let `booking.staysOpen` / `booking.masterNotSettled` come back
+  through `CommandError`. **This reverses what I built and I was wrong**: I read N16 as "do not offer
+  a choice the rules will refuse" and copied the open-stay filter and the balance check into the
+  screen. Architect: N16 is about the screen *answering* a rule for the user, not about hiding a
+  refused action, and a client-side copy of a rule is drift. A server-side "ready to close" *display*
+  is still fine; the button must not depend on it. QA's S5-12a/b press Finish and expect the two
+  refusals — red until this is fixed.
+
+QA's landing 3 run: 95/96 on `624b7dd`, **N23 closed**.
