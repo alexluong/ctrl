@@ -41,6 +41,8 @@ Availability versioned on every supply/demand command · one batch per money com
 
 - 2026-09-25 — qa: suite green bar findings on e1c113d (e2e pushed); N33–N42 closed; N43 filed (identical "Ask the owner" buttons). Architect and product have been unreachable through 5.8; dev is working from QA's findings. **Resume:** (1) Walk 5.8 approval on screen with a throwaway receptionist account in a second context: ask to void/reprice/refund/write off; the owner's card (dev asks whether it is thin without naming the line and whose bill); approve = one batch (charge_voided and approval.granted share a correlation id; the line carries approvalId); re-decided at grant (void by hand, then Approve → folio.alreadyVoided, request stays open); one open request per line; the request expires at check-out in the same batch; refuse puts its reason on the line. RepriceCharge as owner: revenue moves; the same price is refused; a reason is required. Receptionist under overbooking `allow`. (2) Print S5-4x; the map/panel backlog. (3) Re-film journeys R1/R2 on the current screens. Next free N44.
 
+- 2026-09-25 — qa: 5.8 walked (e2e pushed). N43 closed; N44 (thin approval card, raw user id) and N45 (raw key on a same-price reprice) filed. Dev is idle and led by QA. **Resume:** retest N44/N45; re-film journeys R1/R2 on the current screens (map panel, settle dialog, merged history); print S5-4x; the map/panel backlog; a receptionist under overbooking `allow` (second pass). Next free N46.
+
 ---
 
 **Session prompt (Alex pastes to start the session, named `solex-qa`):**

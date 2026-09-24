@@ -290,3 +290,17 @@ Architect rulings of 2026-09-25: the stay's history is one stream, the stay's ow
 | S5-72 | Overbooking set to "refused, by everybody"; the owner asks for 2 of a 1-room type | refused "1 short"; taking it anyway is refused too; nothing booked | G34 rule `refuse` | e2e availability "S5-72" | e17d85b pass |
 | S5-73 | Overbooking set to "anybody's to allow"; the owner takes 2 of a 1-room type anyway | booked; `stay.overbooking_overridden` on both stays (the flag is still required) | G34 rule `allow` | e2e availability "S5-73" | e17d85b pass (receptionist under `allow` not yet automated) |
 
+### 5.8 approvals and reprice (solex a0beb3c..1b6850f)
+
+The desk asks from the same button; the owner answers from Needs attention. The first pass has no receptionist, so these run in the second pass (`approval.last.spec.ts`) with a throwaway desk account signed in beside the owner.
+
+| ID | who / what they do | what they should see | rule | automated by | last run |
+|---|---|---|---|---|---|
+| S5-74 | Desk asks to take a minibar line off; owner approves from the card | the line reads "waiting for the owner" and its asks are gone; after Approve the card leaves and the line is voided; `folio.charge_voided` and `approval.granted` share a correlation id; the void carries `approvalId` | one batch; one open request per line | e2e approval.last "S5-74" | 1b6850f pass (N43 fixed: "Ask to reprice" / "Ask to take off") |
+| S5-75 | Desk asks to reprice; owner refuses with a reason | the line reads "the owner said no — <reason>"; not voided; the desk may ask again | 5.8 | e2e approval.last "S5-75" | 1b6850f pass |
+| S5-76 | Owner opens the stay while a request waits | the line shows "waiting for the owner" and no Void of the owner's own | 5.8 (re-decision at grant is not reachable from the screens; domain test) | e2e approval.last "S5-76" | 1b6850f pass |
+| S5-77 | Guest checks out while a request is open | the card leaves; `approval.expired` shares the check-out's correlation id | 5.8 | e2e approval.last "S5-77" | 1b6850f pass |
+| S5-78 | Owner reprices a minibar line to the same price, then with no reason, then 80 000 → 50 000 with a reason | the same price is refused quietly; no reason refused; void and repost on the bill; revenue for the day −30 000 | RepriceCharge | e2e reprice "S5-78" | 1b6850f **fail** (**N45**: the refusal shows the raw key "error.folio.nothingToChange") |
+| S5-79 | Owner reads a void request on the card | who asks by name; the room, the line and its amount; the reason | 5.8 | e2e approval.last "S5-79" | 1b6850f **fail** (**N44**: "user:01M3… is asking to take a line off a bill — <reason>": raw user id, no room, line or amount) |
+| S3-22 | Desk opens a company's statement | "Ask the owner to write it off"; no owners-only note | 5.8 | e2e receptionist.last | 1b6850f pass |
+
