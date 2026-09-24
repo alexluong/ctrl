@@ -1,4 +1,5 @@
 # Team log
+- 2026-09-24 — Alex: staff not tech-savvy, keep the UX similar-ish to ezFolio; Vietnamese wording iterates with the client, not a gate → **D-27**. Product to re-check ux.md against ezFolio screens; 5.6 ordered by familiarity; VN wording flag closed.
 - 2026-09-24 — product: ux.md review fixes applied (e2ff980): G29 = BookingRules only, G23/24 wip, C = 5.7 command coverage (G14/15/16/20/22/28/29/30), board self-check (467 elements, zero overlaps). Final; with Alex.
 - 2026-09-24 — product: ux.md + solex-ux board first complete draft (9c132b6). Architect review: G29 stale (HotelProfile built), G23/24 in progress, §11-command F rows are v1 scope → new 5.7 command-coverage pass after 5.6; board needs a bounds check. README pointer + Alex flag added.
 - 2026-09-24 — dev: 5.2 complete (5485e9e, staging 42ef30f3, 335 green): Setup profile section, tz picker, timestamps in hotel zone. Architect accepted; 5.3 reports scoped (dashboard today → revenue by category/source/method, occupancy over time; owner-only; projections + ledger only; totals reconcile with ledger). QA: 5.2 cases.
