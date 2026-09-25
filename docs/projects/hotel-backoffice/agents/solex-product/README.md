@@ -47,3 +47,4 @@ Message architect with proposed aggregate list early (before polishing) so dev's
 - 2026-09-25: G34 overbooking + G35 capacity specced in product.md (override flag, stay.overbook cap, SetOccupancy, OverrideOverbooking retired); vi pass 2 (24 keys @30dbec5) sent to dev. Pass 1 landed solex 18da91f. Compaction suspended — keep this line current.
 - 2026-09-25: vi pass 3 (92 keys @8130240) sent to dev; mvp.md check sent to architect (ChargeItem unbuilt vs 'all §11 built', rule-1 cron text stale, People/erase missing from §1, deferred items missing from §4). v1 complete; phase = demo prep. Pending: Stay-template screens if Alex approves.
 - 2026-09-25: §10 rule 1 cron wording fixed (cron live + lazy). Architect applied mvp.md list (8d5d63e). Idle.
+- 2026-09-25: vi pass 3 landed solex 2f61ef9 (staging eef708e5); i18n:report complete. Vietnamese demo gated only on client wording pass (mvp.md §5). Idle.
