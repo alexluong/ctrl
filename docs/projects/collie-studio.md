@@ -12,7 +12,7 @@ A personal, local-first workspace for working with agents: **a board where colum
 |---|---|---|
 | **Obsidian** | data | local-first, your files, works offline with zero setup; team features added on top |
 | **Odoo** | apps | install apps and configure them; apps share one data model, so a ticket links its doc, PR, demo, and agent runs without glue |
-| **k8s for agents** | runtime | declarative desired state ("keep 2 devs on the Ready column"), reconcile (restart a dead/idle/compacted agent from its resume state), scheduling across machines (MBP / Mac Mini / cloud), resource limits (token budgets), health probes ("no progress for hours"). Borrow the ideas, not the YAML |
+| **k8s for agents** | runtime + dev env (§ Runtime) | resource classes per persona, env per project; declarative desired state ("keep 2 devs on the Ready column"), reconcile (restart a dead/idle/compacted agent from its resume state), scheduling across machines (MBP / Mac Mini / cloud), resource limits (token budgets), health probes ("no progress for hours"). Borrow the ideas, not the YAML |
 | **Gru / minions** | UX, feel | you direct; many small eager, slightly chaotic workers; the inbox is the lab they report back to. The chaos is why review + evidence exist |
 | **ClickUp alternative** | horizon | a team runs entirely on Studio's built-ins. A far vision, not a direction |
 
@@ -69,6 +69,24 @@ Two audiences: humans browse and search; agents fetch as context (playbooks = sk
 - Runtime swappable: Claude Agent SDK / headless `claude -p` / ACP to run other agent CLIs; a worktree per card.
 - Roles that worked in SoLex: builder, an independent reviewer with fresh context (is the code right), QA (does it behave to the acceptance criteria), architect only for design-changing work, product/explore on demand.
 - Phases: figuring out *what to build* = conversational (one lead, or a few independent threads, with parallel research/spikes underneath); *building* = parallel once there's a cutline, a contract, and acceptance criteria. Cycles back and forth; it's not a waterfall. "Work that needs you = few threads; work that doesn't = parallel." Independent threads that do need you (product vs stack) are fine as long as decisions merge in one place.
+
+## Runtime and environments (the k8s layer)
+
+The k8s simile is about **managing agents as workloads**: where they run, with what resources, in which dev environment. A full runtime + dev env layer, not just orchestration.
+
+- **Resource classes per persona**, like pod requests/limits:
+  - product / explore: light — reads docs, talks, no build; cheaper model or effort OK
+  - QA: medium — needs a browser + a running app, not a compiler
+  - dev: heavy — build, tests, DB, dev server; strongest model, most CPU and tokens
+  - "resources" = model tier + effort, token budget, CPU/mem, and capabilities (browser, DB, network, secrets)
+- **Environment spec per project**, since projects differ:
+  - simple: each agent gets its own env (worktree + own port + own SQLite), fully parallel
+  - heavy: can't be replicated per agent (big stack, external deps, can't deploy) → a shared env with **leases/locks**, or agents queue for it
+  - QA's target varies: a local env, a per-branch preview, or a shared staging/deployed env
+- **Env lifecycle**: provision → seed → run → teardown; health checks; nothing left behind (SoLex: stale dev servers holding ports, stuck shims pushing load avg to 260).
+- **Placement**: schedule workloads onto machines (MBP, Mac Mini, cloud VM/sandbox) by resource class and env needs; heavy dev work off the laptop.
+- **Declarative**: a project declares its env ("app + SQLite, seed script, ports from a range, preview deploy optional"); personas declare their class; the runtime reconciles (restart the dead, reap the idle, respect budgets).
+- Existing pieces to study: devcontainers, Nix/devbox, mise (already used), Coder / Gitpod / Daytona (remote dev envs), e2b / Modal sandboxes, Cloudflare/Vercel preview deploys, herdr (agent sessions across machines).
 
 ## Teaching agents
 
