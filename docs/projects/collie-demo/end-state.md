@@ -40,7 +40,7 @@ export default demo("Move a guest mid-stay", async (r) => {
 ```
 $ demo run .demo/room-move.demo.ts --logs
 browser  system Chrome 131 (headless)
-app      http://localhost:5173 (already running)
+app      started via demo.config `start: pnpm dev` → http://localhost:5173
 steps    6 · 1 slide · 1 diff · 1 expect ✓
 wrote    out/room-move.demo  (11 KB, 24 s)
 ```
@@ -72,6 +72,8 @@ It authenticates through `DEMO_TOKEN`, a workspace token that can only publish, 
 1. Guest in 204 wants a quieter room · 2. Charges split at the move date · 3. Folio shows both rooms ✓
 ```
 GitHub won't embed the player, so the link comes with a small GIF/poster preview and the step list as text.
+
+> **Lab caveat (collie-lab, 2026-09-25):** GitHub fetches images anonymously (through its camo proxy), so for a team-only demo the GIF must be **publicly** reachable, which leaks a frame. Options: text-only by default; an opt-in unguessable public preview URL; or uploading the GIF to GitHub itself (no clean API). The GIF is rendered on the CLI side at publish, so the server doesn't need a browser.
 
 ### 7. Alex reviews it
 He opens the link and sees the **dev view**:
@@ -109,6 +111,9 @@ The same link with `?view=reviewer`: big captions, it pauses at each step with a
 6. Self-hosting is one binary (or one container) plus SQLite.
 
 ## Open, for review
+
+- **`--logs` needs the runner to own the app process.** We can't capture the stdout of an app that's already running. So either a `demo.config` start command (like Playwright's `webServer`; assumed above), or logs from a file or `docker logs`. (collie-lab)
+- Lab feasibility of the rest: nothing is impossible. Slides as player-side events, not DOM injected into the app; `frame` and mp4/GIF need a headless browser (mp4 also needs system ffmpeg). Full rundown: [engineering.md](engineering.md).
 
 - Is the journey in TS/Playwright the right authoring surface for agents, or should it be a smaller DSL/YAML?
 - Is `r.slide.diff` in scope, or does the PR diff speak for itself?
