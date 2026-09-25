@@ -25,3 +25,20 @@
 | 16 | 1:36 | Mai: Owed → Blue Sea's statement | The group's total is on the company's account, ready to invoice. |
 
 Open on screen: N51 (room lines read "Tiền phòng <ISO date>"), N52 (the statement's line shows the company's id), N53 (the category under each bill line is in Vietnamese), N54.
+
+## In ezFolio today
+
+The corporate group is ezFolio's main business and its most involved path (`existing-system.md` § group booking flow, § group folio routing, § master folio, § group lifecycle).
+
+1. The company: **Kinh doanh › Công ty** (`screens/sales-companies.png`) — Agent/Company rows with a Nguồn of OTA / TA / CORP. No standing "who pays for what" lives here; routing is set per booking.
+2. **Lễ tân › Khách đoàn** (`fd-group-availability.png`, `cmd=check_availability`): the room-type × night matrix with free rooms per night and per-night used / free / %; the left half is the entry — per type a row of adults · children · price · qty. Header: company lookup, contact, deposit, display code + colour, Nguồn. **Kiểm tra phòng trống** recomputes, **Đặt phòng** creates N room-stays with no room numbers.
+3. Routing: open one of the group's rooms in the editor (`fd-booking-detail.png`) → the nine-checkbox matrix (HĐ phòng · nhà hàng · DV mở rộng · … · Tiền đặt cọc · Các khoản khác) decides which buckets settle on the group's master bill — set per room-stay, all nine on for a "one bill" group.
+4. Assign: **Danh sách đặt phòng chưa gán** (`fd-waiting-list.png`) is the queue by room type; in practice it is empty — rooms are assigned at booking or on the tape chart (`fd-room-situation.png`); `lay_phong_can_ngay` auto-assigns the soonest-needed room.
+5. Check-in, charges, check-out are per room-stay in the editor, exactly as in R1; dinner posted from the tile's EXTRA SERVICE button routes to the master by the matrix.
+6. The master bill: a folio assembled by **Chuyển dịch vụ** (move lines between rooms) or by the matrix at posting time; listed on the editor's **FO** tab; settled in quickout with method **Công nợ**, which is what creates the receivable row against the company (`rpt-debit-update.png`).
+7. Invoice: **Báo cáo › Công nợ chi tiết** (`rpt-debit-detail.png`), one row per booking with rooms · nights · Tổng, Excel export.
+
+**What SoLex keeps / changes** (ux.md §4.5, §4.6, §4.10):
+- Keeps: group = types × qty with live free-per-type (G20), "Booking for" a group with a room count, the routing idea per charge category, Công nợ → company as the last settle option, statement rows that read as bookings.
+- Changes: the company's agreement is stored once in Setup as the default routing (§10 rule 8) and applied to every group stay; the booking page shows the whole table (rooms × categories) and one select changes the group (G32) — ezFolio sets nine checkboxes per room.
+- Changes: "Move to the company" is an explicit transfer on the group's bill, not a payment method that doubles as "open a receivable"; the master is closed at 0 by `CloseBooking`, and there is no Đóng day-close (parked, G27).

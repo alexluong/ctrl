@@ -19,3 +19,18 @@
 | 10 | 1:08 | Linh: 103's bill | "The owner said no — <reason>" on the line; the beers stay on the bill, and she may ask again. |
 
 Open on screen: N47 (the reprice card shows the line's current amount, not the price asked), N57 (the ask and the answer are not in the stay's history, a product question).
+
+## In ezFolio today
+
+There is no ask-and-approve round trip in ezFolio; the money change is done by whoever holds the permission (`existing-system.md` § mid-stay changes, § visual pass facts).
+
+1. The receptionist opens the room from the map → XEM CHI TIẾT → editor (`screens/fd-booking-detail.png`) → **Hóa đơn chi tiết**.
+2. A cheaper price: the *Money* panel's discount (% or VND) + a **reason** field, or `update_reduce_amount` — a post-hoc discount on the room-stay behind an explicit edit toggle, gated by `allowchangeprice`. A service line's price is edited in place.
+3. Taking a line off: the service line is deleted from the register (`fd-minibar-invoice.png`, `fd-extra-service.png`); no reason, no trace on the bill.
+4. Control after the fact only: **Báo cáo › Giảm giá phòng** (`rpt-room-discount.png`) lists discounts with a requested / edited / approved trail and the users — a report the owner reads later, not a gate the desk hits.
+5. Who may: the same reception login does it, unless the admin has turned the flag off for that account; then the receptionist asks the owner in person or on Zalo and the owner edits it.
+
+**What SoLex keeps / changes** (product.md §11 Approvals, D-28; ux.md §4.14):
+- Keeps: a discount is a price change on the line with a reason, and the trail of who asked / who approved that ezFolio's discount report already shows.
+- Changes: the receptionist's button on the same line reads "Ask to reprice" / "Ask to take off"; the line waits, marked, and cannot be asked twice; the owner answers from a Needs attention card and the act runs in the same batch as the grant (§11). Refusal carries a reason the desk reads on the line.
+- Changes: void and reprice are owner capabilities (§10 rule 10); a reprice is void + re-post, both visible, so the month-end sees every discount — there is no discount field or percentage box.
