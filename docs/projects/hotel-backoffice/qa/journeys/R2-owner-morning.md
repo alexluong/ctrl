@@ -33,7 +33,3 @@ The owner's morning is spread over reports and the desk's editor (`existing-syst
 - Keeps the dashboard's top row in the map's vocabulary (Đang ở · Dự kiến đến · Dự kiến đi · Trống bẩn · Phòng sửa), receivables as company list → statement with rows that read as bookings, payment recorded from the statement with amount prefilled.
 - Changes: a void is an event with a required reason; the line stays struck through and leaves the total, never deleted (§10 rule 10, owner only). Revenue "today" is posted charges, and the report says so.
 - Changes: Needs attention is new (ezFolio has no inbox); every page ends in its own history, not one log per booking.
-
-## In ezFolio today
-
-_(product to fill in)_

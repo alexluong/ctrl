@@ -18,4 +18,16 @@
 
 ## In ezFolio today
 
-_(product to fill in)_
+Every change here is done inside the booking editor or on the tape chart, and none of it leaves a trace beyond the current value (`existing-system.md` § mid-stay changes, § group booking flow, § room status).
+
+1. "Any twins free next weekend?": **Lễ tân › Tình hình** (`screens/fd-room-situation.png`) — rooms grouped by type over 7/15/30 days, bottom rows used / free / %; or the availability matrix on **Khách đoàn** (`fd-group-availability.png`), which counts free rooms per type per night including bookings without a room.
+2. Extend / shorten: open the stay in the editor (`fd-booking-detail.png`) and change the **departure date**; the per-night charge rows are regenerated for the new span, posted nights come back disabled (`is_post = 1`).
+3. One night's rate: the **Lược đồ giá** (price chart) tab, one editable row per night, gated by `allowchangeprice`. It is an edit, not an event — the old value is gone.
+4. Move room: **Lễ tân › Đổi phòng** (`fd-change-room.png`, `?page=change_room`): from room (occupied) → to room (vacant only), nothing else asked; already-posted nights stay on the folio; the move shows up in **Báo cáo › Đổi phòng** (`rpt-room-transfer.png`).
+5. Out of order: **Buồng › Sơ đồ buồng / trạng thái phòng** (`hk-room-status.png`, `hk-room-map.png`) — status PHÒNG SỬA (`OOO`) set by hand; whether a reason is demanded was not observable. The room map's PHÒNG SỬA count drops it from supply.
+6. Dirty / clean: **DIRTY** is a button on the room tile's modal (`fd-room-detail-panel.png`); the vocabulary is INSPECTED · CLEAN · DIRTY · OOO, transitions are manual on housekeeping's word.
+
+**What SoLex keeps / changes** (ux.md §4.4, §4.7, §4.3):
+- Keeps: the tape chart grouped by type with the free-per-type row and the used / free / % rows; move room = pick a free room from tonight; dirty and clean from the map panel.
+- Changes: a night's price is an event (`SetNightRate`) and add / give back a night are explicit, so "why is this bill lighter than the rate card" is answerable (§6 Stay); posted nights stay immutable, which is ezFolio's one good instinct kept.
+- Changes: out of order carries a reason and the room has its own page with a history (ezFolio has no room page); a move keeps the slept nights in the old room and marks it dirty.

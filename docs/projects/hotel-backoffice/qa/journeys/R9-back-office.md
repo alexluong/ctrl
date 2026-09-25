@@ -22,4 +22,16 @@ Gaps on screen:
 
 ## In ezFolio today
 
-_(product to fill in)_
+Half of this journey has no ezFolio counterpart; the other half is spread over Reports and Hệ thống (`existing-system.md` § 06–08, § visual pass facts, § screen index).
+
+1. Expenses: **none.** ezFolio has no money-out module; the client asked for one. Petty cash lives in a notebook.
+2. Revenue: **Báo cáo › Doanh thu lễ tân** (`screens/rpt-fd-revenue.png`) — fixed column per charge bucket, one date; **Doanh thu theo hoá đơn** (`rpt-revenue-by-invoice.png`) per folio; nothing by booking source or by payment method.
+3. Occupancy: **Công suất theo thời gian** (`fd-occupancy-over-time.png`) and **Dự báo phòng trống theo loại** (`fd-forecast-by-type.png`) — the forecast is the same engine as the group matrix.
+4. Print: quickout's Post opens the invoice window (`show_invoice_new&folio_id=`); templates live on the **Biểu mẫu** settings tab (admin-only). Reports print via the browser and export to Excel.
+5. People: **Quản lý khách ở** (`fd-traveller-list.png`, `traveller`) — one profile per person with gender, DOB, ID, nationality; **Lịch sử khách** (`fd-guest-history.png`); **Merge Profile** under Reports; **PA18** export (`fd-pa18-export.png`) for the police declaration. Editing is in place; **there is no erase**, and a profile's ID number lives in the row for ever.
+6. Staff: `?page=employee` under Hệ thống (not walked); housekeeping rosters on `hk-employee-schedule.png`. Leaving = the admin disables or deletes the login; history is whatever the booking logs say.
+
+**What SoLex keeps / changes** (ux.md §4.11, §4.8, §4.13, §4.14):
+- Keeps: revenue by the same buckets the client reads today, a printed bill with the hotel's letterhead, one profile per person with ID and nationality.
+- Changes: expenses are new (by category and method, voidable with a reason, in the same ledger as revenue); revenue also by source and by payment method, occupancy by type per night (§7 projections).
+- Changes: erase is ours (D-20: the row is overwritten, the log keeps a tombstone, the stay and bill remain); a former staff member keeps their history and can be brought back (§2), instead of a deleted login.

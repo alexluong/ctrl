@@ -34,7 +34,3 @@ There is no ask-and-approve round trip in ezFolio; the money change is done by w
 - Keeps: a discount is a price change on the line with a reason, and the trail of who asked / who approved that ezFolio's discount report already shows.
 - Changes: the receptionist's button on the same line reads "Ask to reprice" / "Ask to take off"; the line waits, marked, and cannot be asked twice; the owner answers from a Needs attention card and the act runs in the same batch as the grant (§11). Refusal carries a reason the desk reads on the line.
 - Changes: void and reprice are owner capabilities (§10 rule 10); a reprice is void + re-post, both visible, so the month-end sees every discount — there is no discount field or percentage box.
-
-## In ezFolio today
-
-_(product to fill in)_

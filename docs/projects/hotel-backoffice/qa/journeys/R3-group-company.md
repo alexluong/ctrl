@@ -43,7 +43,3 @@ The corporate group is ezFolio's main business and its most involved path (`exis
 - Keeps: group = types × qty with live free-per-type (G20), "Booking for" a group with a room count, the routing idea per charge category, Công nợ → company as the last settle option, statement rows that read as bookings.
 - Changes: the company's agreement is stored once in Setup as the default routing (§10 rule 8) and applied to every group stay; the booking page shows the whole table (rooms × categories) and one select changes the group (G32) — ezFolio sets nine checkboxes per room.
 - Changes: "Move to the company" is an explicit transfer on the group's bill, not a payment method that doubles as "open a receivable"; the master is closed at 0 by `CloseBooking`, and there is no Đóng day-close (parked, G27).
-
-## In ezFolio today
-
-_(product to fill in)_

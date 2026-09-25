@@ -20,4 +20,16 @@ N63 is fixed: a closed bill now says why it closed (cancelled, or nobody came).
 
 ## In ezFolio today
 
-_(product to fill in)_
+The deposit is a number on the booking and the money side of a cancellation is handled by hand (`existing-system.md` § deposits, § cancellation and no-show).
+
+1. Deposit: **Đặt cọc** on the booking form (`screens/fd-walkin-form.png`, `fd-group-availability.png` header); it shows in the editor's money panel (Tổng / Đặt cọc / Trả trước / Còn lại) and on **Báo cáo › Đặt cọc** (`rpt-deposit.png`) with a method (cash / bank).
+2. Cancel: editor › Thao tác › **Hủy đặt phòng**. Guards: a checked-in room cannot be cancelled; if charges were posted they must be moved to another room first; then a **mandatory reason** → status CANCEL (`fd-cancellations.png` is the list).
+3. With a deposit, cancel forks: downgrade to BOOKED with a pre-check-in reason, or open `extra_service_invoice … add_prepayment=1&service_id=38` — i.e. **post the deposit as an extra-service line** so it becomes revenue. No forfeit cap, no reason on the line.
+4. Refund: **no refund path in the UI**; money back is handled outside the system (cash drawer, bank), and the bill does not show it.
+5. No-show: **Không đến** — a flag on the room-stay (`fd-noshow.png` list): no charge, no reason, allowed at any time; the deposit is kept or returned by hand as in 3–4.
+6. Revenue: the kept deposit lands in the extra-service bucket of `rpt-fd-revenue.png` under whatever item 38 is called.
+
+**What SoLex keeps / changes** (product.md §10 rule 3; ux.md §4.7, §4.10):
+- Keeps: a deposit taken before arrival with its method; cancel with a mandatory reason and only for a stay nobody has checked into; a kept deposit is a revenue line, not a status.
+- Changes: keeping the deposit is an explicit owner act (`ForfeitDeposit`) capped at what was actually taken, and the refund is a recorded line with a reason — both visible on the bill, both under "Deposit kept" / refunds in the reports; no more posting it as "service 38".
+- Changes: no-show only after the arrival date has passed, and a closed bill says why it closed (N63); nothing is charged automatically for either.
