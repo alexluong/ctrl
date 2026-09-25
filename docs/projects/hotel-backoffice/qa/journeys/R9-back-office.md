@@ -3,7 +3,7 @@
 **Purpose:** show the owner's side of the office: money going out, the reports, printing, people's data (including erasure), and staff leaving.
 **Persona:** Oanh, the owner.
 **Seed used:** set up off camera: Vu Quang Minh, who stayed in 303 and has checked out, and a seasonal receptionist account ("Tuan (seasonal)"). Tran Van Nam in 101 comes from the main seed.
-**Length:** 1:24. File `R9-back-office.webm`.
+**Length:** 1:26. File `R9-back-office.webm`.
 
 | # | Step (caption) | Notice |
 |---|---|---|
@@ -14,7 +14,7 @@
 | 5 | Room 101's printed bill | The hotel's letterhead; voided lines left off; totals, paid, and balance due. |
 | 6 | People → Tran Van Nam → phone and nationality → Save | A "Guest updated" row appears in the person's history. |
 | 7 | People → Vu Quang Minh → Erase data | SoLex says a contact with the same details (the booking's) is still there, and offers its own Erase. |
-| 7b | Erase the contact too, from that notice | The owner decides; nothing is erased on a name match automatically. The page reads "Erased"; the stay and the bill remain, and the history keeps its events but not the name. |
+| 7b | Erase the contact too, from that notice | The owner decides; nothing is erased on a name match automatically. The search is run again with the same term: both lists read "Nobody found." (N65 fixed). The person's page reads "Erased"; the stay and the bill remain, and the history keeps its events but not the name. |
 | 8 | Accounts → Tuan (seasonal) → Mark as former staff | Signed out and unable to sign in; "Bring back" is offered. |
 
 Gaps on screen:

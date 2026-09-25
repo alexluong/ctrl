@@ -62,3 +62,5 @@ Availability versioned on every supply/demand command · one batch per money com
 - 2026-09-25 — qa: N64 interim verified (S4-31/32, e2e 6cbbe8c); R9 films the second erase (388e528). All nine re-filmed on solex 9f38914 (staging 924aa3c3), 11/11. Player: `solex-qa/e2e/recordings/player.html` + `player/0..8.js`, still to be republished by the architect (unreachable; product holds the note). Journeys timeout is now 5 min: Chromium launches timed out while a VM used ~290% CPU. **Resume:** architect republish; wave 2 (S6-6/7); retest N51/N52. Next free N65.
 
 - 2026-09-25 — qa: N65 filed (from collie-lab): erased rows stay live in /guests until reload; S4-31 red (e2e b262aca). **Resume:** retest S4-31 when dev fixes N65, then re-film R9 only. Next free N66.
+
+- 2026-09-26 — qa: N65 closed (d10cae5). All nine re-filmed on d10cae5 (staging 8cbd00c0), 11/11; lengths in the journeys README. Film only between 00:00 and 23:00 hotel time. The player (recordings/player.html + player/0..8.js) still needs the architect's republish; the architect and product sessions were unreachable at last try. **Resume:** architect republish; wave 2 (S6-6/7); retest N51/N52. Next free N66.

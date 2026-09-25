@@ -3,7 +3,7 @@
 **Purpose:** show what happens to the money when a guest doesn't come: a cancellation and a no-show, each deposit accounted for with a reason.
 **Persona:** Oanh, the owner.
 **Seed used:** Le Van Hung, set up off camera: due yesterday, paid a 500,000 cash deposit, never arrived.
-**Length:** 1:04. File `R8-cancellation.webm`.
+**Length:** 1:06. File `R8-cancellation.webm`.
 
 | # | Step (caption) | Notice |
 |---|---|---|

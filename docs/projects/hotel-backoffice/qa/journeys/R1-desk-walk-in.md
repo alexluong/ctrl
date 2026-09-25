@@ -3,7 +3,7 @@
 **Purpose:** the front desk's most common job, from an empty room to a closed bill: room map → book two nights → check in → minibar → leave a day early, pay → the room is dirty.
 **Persona:** Dao, front desk.
 **Seed used:** room 302 (free); the Minibar category. The walk-in guest is typed on camera.
-**Length:** 0:54. File `R1-desk-walk-in.webm`.
+**Length:** 0:53. File `R1-desk-walk-in.webm`.
 
 | # | Step (caption) | Notice |
 |---|---|---|

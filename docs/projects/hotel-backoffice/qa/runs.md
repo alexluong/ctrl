@@ -2,6 +2,8 @@
 
 Newest first. `date · commit · staging · cases · result · findings · blocking?`
 
+- 2026-09-26 · d10cae5 (e2e aa60bb4) · 8cbd00c0 (not walked) · people 12/12 (N65 closed: the search is run again, and both lists agree an erased person is gone); journeys R1–R9 + sweep 11/11, filmed after midnight hotel time · A run at 23:41 cascaded: the 23:00 day start cannot move the day after 23:00 (whole hours; structural, per dev). `dayStartsAt` now refuses loudly · N
+
 - 2026-09-25 · 9f38914 (e2e b262aca) · 924aa3c3 (not walked) · S4-31 extended · **fail** · **N65** (found by collie-lab's demo of N64, confirmed): after erasing the guest and then the same-name contact, both /guests result tables keep the erased name with a live Erase button until reload (2 live, expected 0). On a fresh load the lists disagree (guest gone vs contact "(erased)"). R9 missed it because it navigates away · N (demo-visible)
 
 - 2026-09-25 · c4b0350 (e2e 7dc318f) · 4289576d (not walked) · journeys: seed + R1–R9 + English sweep, 11/11 pass (the review package) · Running them as a set exposed ordering traps, fixed in e2e: R5 left ID required on; a failed step left the day start at 23:00; R5's twin oversell blocked R7's extension, so R7 moved to doubles. The sweep is clean apart from N51 · N
