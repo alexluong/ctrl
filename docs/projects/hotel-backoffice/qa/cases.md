@@ -316,7 +316,7 @@ The desk asks from the same button; the owner answers from Needs attention. The 
 | S5-85 | Desk (receptionist) asks for 2 of a 1-room type under "the owner's to allow", then under "anybody's to allow" | refused "1 short" and cannot take it anyway; then takes it anyway, booked, and `stay.overbooking_overridden` on both stays | G34 rules `warn`/`allow` | e2e approval.last "S5-85" | 8130240 pass |
 
 
-| S4-31 | Owner erases a guest whose booking's contact has the same name, then erases the contact from the notice | the notice names the contact and offers its own erase; after the second erase no notice points back at the erased guest; both are tombstoned | N64 interim (product 1b4c8af) | e2e people "S4-31" | 9f38914 pass |
+| S4-31 | Owner erases a guest whose booking's contact has the same name, then erases the contact from the notice | the notice names the contact and offers its own erase; after the second erase no notice points back at the erased guest; both are tombstoned; no erased row keeps a live Erase button, and after a reload no row carries the name | N64 interim (product 1b4c8af) | e2e people "S4-31" | 9f38914 **fail** N65 |
 | S4-32 | Owner erases a guest with no counterpart | no notice | N64 interim | e2e people "S4-32" | 9f38914 pass |
 
 ### Code review 2026-09-25, wave 1 and wave 2 (review/2026-09-25-correctness.md §4, the screen-visible gaps)

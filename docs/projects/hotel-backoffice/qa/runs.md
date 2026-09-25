@@ -2,6 +2,8 @@
 
 Newest first. `date · commit · staging · cases · result · findings · blocking?`
 
+- 2026-09-25 · 9f38914 (e2e b262aca) · 924aa3c3 (not walked) · S4-31 extended · **fail** · **N65** (found by collie-lab's demo of N64, confirmed): after erasing the guest and then the same-name contact, both /guests result tables keep the erased name with a live Erase button until reload (2 live, expected 0). On a fresh load the lists disagree (guest gone vs contact "(erased)"). R9 missed it because it navigates away · N (demo-visible)
+
 - 2026-09-25 · c4b0350 (e2e 7dc318f) · 4289576d (not walked) · journeys: seed + R1–R9 + English sweep, 11/11 pass (the review package) · Running them as a set exposed ordering traps, fixed in e2e: R5 left ID required on; a failed step left the day start at 23:00; R5's twin oversell blocked R7's extension, so R7 moved to doubles. The sweep is clean apart from N51 · N
 
 - 2026-09-25 · ceece38 (e2e 17b938d → ba40c10) · e47f2ef2 (not walked) · full e2e: desk 155/159, receptionist 13/14; all 5 reds were specs (the shortfall wording now starts "Thiếu N phòng"; S6-1 expected a reversal where tonight was only freed), fixed and green on rerun. N46–N62 closed per dev (ceece38; N61 re-proved by S6-1). New S6-8 (early leave on account: company sent one night) passes. Journeys R6–R9 scripted; each passes alone · **N63** a cancelled or no-show bill said "checked out" (fixed c4b0350) · **N64** erasing a guest leaves the same person's contact record (name) — product question; dev offers an interim notice with a link · no receipt print exists (gap, to architect) · N
