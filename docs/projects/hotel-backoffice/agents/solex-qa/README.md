@@ -64,3 +64,5 @@ Availability versioned on every supply/demand command · one batch per money com
 - 2026-09-25 — qa: N65 filed (from collie-lab): erased rows stay live in /guests until reload; S4-31 red (e2e b262aca). **Resume:** retest S4-31 when dev fixes N65, then re-film R9 only. Next free N66.
 
 - 2026-09-26 — qa: N65 closed (d10cae5). All nine re-filmed on d10cae5 (staging 8cbd00c0), 11/11; lengths in the journeys README. Film only between 00:00 and 23:00 hotel time. The player (recordings/player.html + player/0..8.js) still needs the architect's republish; the architect and product sessions were unreachable at last try. **Resume:** architect republish; wave 2 (S6-6/7); retest N51/N52. Next free N66.
+
+- 2026-09-26 — qa: architect republished the player as v3 on d10cae5 (https://claude.ai/artifact/RrF94hDrGJ8QWPaecge4xN). N52 (company name at render) ships with wave 2; N51's {key, params} memo schema is post-demo (mvp.md §4). **Resume:** when wave 2 lands: pull, full `pnpm test`, S6-6/7 (B12, B14), retest N52, re-film only the affected journeys (R3 statement line), before 23:00 hotel time. Next free N66.
