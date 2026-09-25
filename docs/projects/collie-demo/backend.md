@@ -166,3 +166,13 @@ Success = the reviewer answers the PR's questions from the table alone and opens
 - Probe sampling: case edges + `until` only, or continuous (like `dbWatch`)? Continuous gives sparklines but is noisier.
 - `variants` in the journey vs the config vs CLI `--variant k=v`? Journey keeps it next to the cases.
 - Should `demo report --md` exist without a `.demo` (pure text mode, no player) for teams that won't use the player at all?
+
+## Reality check: hookdeck/outpost PRs (2026-09-25)
+
+Alex asked whether we're overfitting to outpost#1093. Read the ~15 non-bot merged PRs in hookdeck/outpost (#1042–#1087; e.g. #1087 RabbitMQ resubscribe, #1086 publish proxy, #1079 latency metrics, #1069 compat signature, #1063 suppression race, #1050 topic filter before suppression).
+- **The descriptions are already strong:** behaviour, scope, config examples, the tests that prove it, benchmark tables. The evidence is **integration/e2e tests**, described in prose.
+- **A time-based demo would add little to most of them.** Reconnect and proxy are proven by tests; metrics by benchmark tables; a race (#1063) can't be reproduced on demand anyway.
+- **Where there's a real gap:**
+  1. **Flow explanations are written as prose or ASCII** (#1063's numbered 5-step race across replicas + Redis; #1050's `suppression → emitter → topic filter`). A generated **sequence diagram** (static, from spans or hand-written Mermaid) would read faster. It's an explanation, not a recording.
+  2. **"Show the real output"**: e.g. #1069 could attach the actual delivered request with both signature headers, captured by the catcher. A small evidence snippet, not a replay.
+- **Takeaway:** backend PRs don't need the same level of demo. At most: diagrams + captured real requests/logs as evidence snippets. Opt-in; not the core of the tool. Pending Alex.
