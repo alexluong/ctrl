@@ -20,6 +20,8 @@ State: **every v1 function in `product.md` §11 is built** (one exception: `Char
 
 ## 2. Demo script (proposed; QA films each as a showcase journey, D-30)
 
+Personas (Alex 2026-09-25): **Oanh** = owner, **Dao** = receptionist, in every journey and doc.
+
 1. **R1 Desk walk-in** (exists, re-filmed on current screens): map → book → check-in → minibar → check-out refused with balance → cash → closed bill → print.
 2. **R2 Owner morning** (exists): dashboard → revenue → owed → company statement → bank-transfer payment → tile → void a line.
 3. **R3 Group + company** (new): company with default routing → group booking 3 doubles + 1 twin, assign later → tape chart free row → assign → routing table (dinner to company, minibar to guest) → check-out to company → receivables.
