@@ -3,7 +3,7 @@
 **Purpose:** a company's tour group from agreement to invoice: who pays for what, set once and applied per room.
 **Personas:** Oanh, owner (the agreement, and receivables at the end); Dao, front desk (everything else).
 **Seed used:** Blue Sea Travel Co.; Double rooms 203, 301, 303 and Twin 401, all free tonight. R2 has already settled room 201's company debt, so the final total is the group alone.
-**Length:** 1:53. File `R3-group-company.webm`.
+**Length:** 1:54. File `R3-group-company.webm`.
 
 | # | Step (caption) | Notice |
 |---|---|---|

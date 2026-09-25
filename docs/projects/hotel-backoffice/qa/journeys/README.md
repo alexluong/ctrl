@@ -1,18 +1,18 @@
 # Showcase journeys
 
-Nine short screen recordings, one user-visible flow each (mvp.md §2, D-30). Filmed in English on solex c4b0350 (staging 4289576d) from `solex/e2e/journeys/*.journey.ts` with `pnpm journeys`. Each one ships as a `.webm` and an rrweb replay; the player lists them all. Read these pages beside the player.
+Nine short screen recordings, one user-visible flow each (mvp.md §2, D-30). Filmed in English on solex 9f38914 (staging 924aa3c3) from `solex/e2e/journeys/*.journey.ts` with `pnpm journeys`. Each one ships as a `.webm` and an rrweb replay; the player lists them all. Read these pages beside the player.
 
 | # | Journey | Persona | Length |
 |---|---|---|---|
 | R1 | [Desk walk-in](R1-desk-walk-in.md) | Dao, front desk | 0:54 |
 | R2 | [Owner morning](R2-owner-morning.md) | Oanh, owner | 0:54 |
-| R3 | [Group + company](R3-group-company.md) | Oanh, then Dao | 1:53 |
+| R3 | [Group + company](R3-group-company.md) | Oanh, then Dao | 1:54 |
 | R4 | [Ask the owner](R4-ask-the-owner.md) | Dao (receptionist account), Oanh | 1:21 |
 | R5 | [House rules](R5-house-rules.md) | Oanh | 1:06 |
 | R6 | [Setup from empty](R6-setup-from-empty.md) | Oanh | 1:31 |
 | R7 | [Stay changes and rooms](R7-stay-changes.md) | Dao | 1:06 |
 | R8 | [Cancellation path](R8-cancellation.md) | Oanh | 1:04 |
-| R9 | [Back office](R9-back-office.md) | Oanh | 1:17 |
+| R9 | [Back office](R9-back-office.md) | Oanh | 1:24 |
 
 ## How they are made
 
