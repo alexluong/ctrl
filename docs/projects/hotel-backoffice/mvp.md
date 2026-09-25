@@ -26,7 +26,7 @@ State: **every v1 function in `product.md` §11 is built** (one exception: `Char
 4. **R4 Ask the owner** (new): receptionist reprices a line → "Ask the owner" → owner's Needs attention card → approve → bill shows the reprice; then a refuse with reason.
 5. **R5 House rules** (new, short): overbooking warn → override recorded; ID required refuses a check-in; capacity refuses 4 adults in a double.
 
-Player: https://claude.ai/artifact/PnZfbQDz5dZdxxef5U8JFr (R1+R2 today; republish when R3–R5 land).
+Player: https://claude.ai/artifact/RrF94hDrGJ8QWPaecge4xN (R1–R5 draft, filmed before wave 1; final re-film after wave 1 lands). Do not demo: voiding a room line of an in-house guest.
 
 ## 3. Known edge cases (decided under D-21; say if wrong, otherwise they stand)
 
