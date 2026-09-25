@@ -52,3 +52,4 @@ Message architect with proposed aggregate list early (before polishing) so dev's
 - 2026-09-25: B1 amended — minimum one night; same-day in/out pays one night. Idle.
 - 2026-09-25: 'In ezFolio today' sections added to qa/journeys R1–R5 (Alex's ask via architect); R6–R9 when QA's docs appear.
 - 2026-09-25: 6a wording fixed to dev's reading (arrival night kept, all later nights freed). Ruled stored memo language (N51/N52): system-written lines = {key, params} rendered in reader's language, print in HotelProfile.locale (vi); typed text as typed.
+- 2026-09-25: architect unreachable when 661d15c rulings sent (dev + qa notified). For architect on return: 6a reworded to dev's build; memo-language ruling (Charge.text, Ledger memo note, HotelProfile.locale) — wave call yours; not a demo blocker.
