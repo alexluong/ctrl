@@ -86,25 +86,15 @@ To add: `format` versioning rules, `view` (default player view), `redactions` ap
 
 ## Field report: a real work demo (2026-09-25)
 
-Another Claude session recorded an 83 s dashboard walkthrough of a real permissions change in Alex's work app, using plain Playwright video (no rrweb). What it had to hand-roll maps directly to features Demo should provide:
+Another Claude session recorded an 83 s walkthrough of a real permissions change in Alex's work app with plain Playwright video. Presentation ideas worth borrowing:
 
-| They hand-rolled | Demo feature |
-|---|---|
-| **Auth without typing a password:** cloned an existing dev session row in the local DB and signed a session cookie; the cookie domain needed a leading dot to reach subdomains | **Auth bootstrap:** reuse a signed-in browser's state (Playwright `storageState`, or `--cdp` into the dev's own browser), or a project hook `auth: async (ctx) => …`. Document the subdomain cookie-domain trap. |
-| Picked the team by pre-setting a localStorage key in an init script | **Setup hooks** before recording (localStorage/cookies/seed), off camera |
-| Changed the user's role mid-video with `docker exec … psql update …` (and restored it in a catch) | **State-change steps:** `r.exec()`/`r.sql()` as recorded steps with automatic restore; they show up as cards on the timeline |
-| Stubbed a health endpoint with `context.route` (a local provider is unreachable, so it always returned 503 and hid UI); CORS headers needed | **Network stubs** as a first-class, *visible* part of the demo (labelled "stubbed" in the Network panel so viewers aren't misled) |
-| Caption bar: an injected fixed div | ✓ `say()` (ours) |
-| Highlights: `boundingBox()` + an orange overlay div, `.catch(() => null)` so a missing element doesn't kill the run | **Showcase highlights** that never fail the run |
-| **Full-screen slides** via `page.setContent()`: title card, a **code diff** (+/− colored), transition cards | **Slides/cards between steps**: title, code-diff card (from git), before/after cards. Strong fit for PR demos: "here's the change, here's the effect". |
-| `page.screenshot` at key steps to check frames before sharing (one caught a loading spinner) | `frame --step N` / `summarize` self-check; optionally "wait for network idle / no spinner" before a step's frame |
-| Installed `@playwright/test` wanted a browser build not in the cache → pass `executablePath` by hand | Confirms the **browser resolution** design (use what's cached or system Chrome, don't demand an exact build) |
-| mp4 via ffmpeg (`libx264`, `yuv420p`, `+faststart`) for sharing | Optional **video export** of a demo (storyboard/export view) for places that want a plain video |
-| macOS `screencapture` blocked in the sandbox | Browser-internal recording (rrweb or Playwright video) is the viable path for agents |
+- **Slides between steps:** full-screen cards via `page.setContent()`: a title card, a **code-diff card** (+/− lines in green/red), transition cards. A natural shape for PR demos: "here's the change → here's the effect". Demo: slide/card steps (title, diff from git, before/after) on the timeline.
+- **Highlights:** `boundingBox()` + an orange overlay a few px outside the element, removed afterwards, with `.catch(() => null)` so a missing element never kills the run. Demo: showcase highlights that can't fail the run.
+- **Captions:** a fixed caption bar updated per step (= our `say()`).
+- **Frame checks before sharing:** screenshots at key steps caught a loading spinner. Demo: `frame --step N` / `summarize` self-check.
+- **mp4 export** (ffmpeg `libx264`, `yuv420p`, `+faststart`) for places that want a plain video. Demo: optional video export.
 
-Takeaways:
-- Real demos need **setup, auth, state changes, stubs and slides** as much as recording.
-- Code-diff slides + before/after are the natural shape for a PR demo.
+Out of scope for Demo: signing in, seeding, state changes and network stubs. The journey/app handles those (plain Playwright/scripts); Demo just records whatever the journey does.
 
 ## Design points decided or leaning (this session)
 
