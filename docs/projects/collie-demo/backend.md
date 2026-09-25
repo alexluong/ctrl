@@ -176,3 +176,15 @@ Alex asked whether we're overfitting to outpost#1093. Read the ~15 non-bot merge
   1. **Flow explanations are written as prose or ASCII** (#1063's numbered 5-step race across replicas + Redis; #1050's `suppression → emitter → topic filter`). A generated **sequence diagram** (static, from spans or hand-written Mermaid) would read faster. It's an explanation, not a recording.
   2. **"Show the real output"**: e.g. #1069 could attach the actual delivered request with both signature headers, captured by the catcher. A small evidence snippet, not a replay.
 - **Takeaway:** backend PRs don't need the same level of demo. At most: diagrams + captured real requests/logs as evidence snippets. Opt-in; not the core of the tool. Pending Alex.
+
+## Prototype: graph-stage demo of outpost#1087 (2026-09-25)
+
+Artifact (private): https://claude.ai/artifact/6NEDyB41hMeFEQhR1GwZv5. It's a real recording, not a mock-up.
+- **Setup:** Outpost built from source at edd46a32 (before) and 68d6214f (#1087), with throwaway RabbitMQ/Redis/Postgres containers (compose project `collie-od`, torn down afterwards). The runner owns the Outpost process and adds a local webhook receiver, a RabbitMQ management-API probe (200 ms), Outpost's JSON logs, and the fault `rabbitmqctl close_all_connections`. Scratch code (not kept in a repo): `runner.mjs` + `build.mjs` + `template.html`.
+- **Result:** before, the delivery consumer goes to 0, there are 16× "channel/connection is not open", and orders #2/#3 sit in the queue and are never delivered (✗✗). After: 2 warnings, then resubscribed, and all 3 orders delivered within 5 s (✓✓✓).
+- **Player:** nodes (app → Outpost API → RabbitMQ → delivery worker → webhook) with live state, stepped ◀ ▶ through actions (no autoplay), a detail panel per action (request/response, headers, log repeats, probe before→after), a before/after toggle, and a generated text tree for the PR.
+- **Learned:**
+  - RabbitMQ management stats lag a few seconds, so probe-derived state can trail reality. Don't color on it alone.
+  - Collapsing repeated warnings into one event (×N) is essential.
+  - Outpost's API port is `API_PORT`.
+  - The runner must always kill its child process, or orphans hold ports.
