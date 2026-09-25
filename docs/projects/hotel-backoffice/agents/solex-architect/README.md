@@ -38,6 +38,17 @@ Alex: "work with Dev on this and make sure to help with review/QA as we go." Per
 - Architect worktree `~/git/hub/alexluong/solex-architect` (detached, read-only); QA owns `../solex-qa`.
 
 
+## Resume note — 2026-09-25 late (architect, before compaction)
+
+**Phase: demo-able MVP (Alex 2026-09-25), review package delivered, awaiting Alex's full-system review.** Entry point `mvp.md` (core, demo script R1–R9, edge cases incl. rulings, follow-ups, open questions). v1 functionality complete; nothing new gets built without Alex.
+
+- **Review package**: player https://claude.ai/artifact/RrF94hDrGJ8QWPaecge4xN (nine journeys, Oanh owner / Dao receptionist, filmed on solex c4b0350; republish = `player.html` page + `player/0..8.js` as `files` from `solex-qa/e2e/recordings/`; scratchpad path `solex-journeys.html`). Docs `qa/journeys/` (README + R1–R9 with product's "In ezFolio today"). Old artifact PnZfbQDz5dZdxxef5U8JFr retired (can't republish: self-contained, 528KB read).
+- **Code review 2026-09-25**: `review/2026-09-25-{quality,correctness,analysis}.md`, artifact https://claude.ai/artifact/EeDpiBCWeMbaFuE92jNrtF. Wave 1 (B1–B4, B8) landed. **Wave 2 with dev** (B5 read-side role gate, B6 operator guard, B7 version availability on group create/add, B9 transfer cap, B10 approval method, B12 cancel group w/ terminal stays, B13 first staff = owner, B14 refund cap incl. forfeits, B15 default roll 02:00 + openAccount no-op, A3 grant inside plan) — accept per landing, log, no restructuring. Rest in mvp.md §4.
+- **Rulings today**: minimum one night on early check-out (same-day in/out pays one night); reprice keeps original businessDate; check-out in credit refused; move from today; void in-house room line refused → reprice; overbooking override on new-booking form only; "As agreed" doesn't clear room overrides; N57 approval ask/answer in stay history; per-language Setup display names = follow-up (Alex deferred to me).
+- **Open with peers**: dev's N51 (stored memo language) / N52 (company slug) questions never reached me — ask again. Product idle (vi complete; §10 amended). QA idle after package; N-numbers next free ~N65.
+- **Alex**: reviewing the nine journeys; feedback → findings for dev/product via me. Deferred the code-review handling to me.
+- Peer ids: dev local_94ba0f28-75c1-4021-b985-cff336fc9aeb, product local_6a799d7c-a89c-4af6-a987-c0d7579a5b29, qa local_0640ecfd-d1c2-4094-9c55-9ba59e066319 (names often unreachable; ids work).
+
 ## Resume note — 2026-09-25 (architect, before compaction)
 
 **State:** slice 5.7 command coverage nearly done. Landed and accepted today: slice-4 debts N21/N22 + quiet nothingToChange notice; G14 (cancel, party/notes/requests), G15 (nights, per-night rate), G20 (mixed-type groups + freeByType grid), BookingSource (= G30 + §3, not G28), SetRoomType (G8 debt closed, one-code ruling `setup.roomTypeInvalid`), G16 MoveCharge (room charge stays with the guest who slept the night), G22 guest/contact edit + stay_guests, G28 company defaultRouting. Latest: solex f82ea14, 439 green.
