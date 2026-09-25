@@ -12,7 +12,7 @@ Alex via architect: the goal is a **demo-able MVP, not production**. Entry point
 
 **From here: no new features.** Only (a) fixes QA files while filming showcase journeys R3–R5, (b) anything demo-blocking, (c) vi pass 3 (the 92 keys) if product sends it — apply + commit.
 
-**Resume state:** solex `9f38914`, staging `924aa3c3`, 540 unit tests, green, `pnpm build` clean, biome at the 4-warning + 1-info baseline, both repos clean and pushed, migrations 0018–0020 applied dev + remote. QA suite 154/154 desk + 13/13 receptionist, no open finding.
+**Resume state:** solex `d10cae5`, staging `8cbd00c0`, 542 unit tests, green, `pnpm build` clean, biome at the 4-warning + 1-info baseline, both repos clean and pushed, migrations 0018–0020 applied dev + remote. QA suite 154/154 desk + 13/13 receptionist, no open finding.
 
 **Known half-done** (architect 2026-09-25: both are §4 follow-ups, no work now):
 - "Take it anyway" (overbooking override) is offered on the **new-booking form only**. `checkIn`, `changeNights` and `changeBookingRequests` all accept `override` but no screen sends it, so those paths refuse even under `warn`. Ruled: stays this way for the MVP.
@@ -79,6 +79,7 @@ Do **not** yet: domain code, ES infra, Hookdeck. Those wait on product + archite
 - Frontend: TS → React likely; coordinate w/ `collie-ui` (see README cross-ref).
 
 ## Log
+- 2026-09-25 — N65 (from collie-lab's demo of N64, reproduced by QA): erased rows outlived the erase because a search's results are component state and `router.invalidate()` does not touch them — the erase re-asks the box's question now. And the two lists disagreed: `listContacts` never had the erased filter `listGuests` has, so a guest vanished while the same person's contact stayed as a blank "(erased)" row. Contacts now match, with the same `includeErased` audit path. Second erase on a tombstone is a no-op, now tested.
 - 2026-09-25 — N64 interim built (product ruled it the v1 answer, ctrl 1b4c8af): after an erase the People page names the same person in the other list and offers that second erase. Phone first, exact name only when there is no phone, never automatic. Receipt print stays out — in scope, after the demo, architect schedules.
 - 2026-09-25 — QA N63 fixed (a closed bill says why it closed). N64 (erasing a guest leaves the same person's contact) left with product: `contacts.erase` already exists and the contacts list already offers it, so it is not a missing capability — the two records are linked only by a typed name, which is why "one button erases the person" is an identity decision and not a loop. Cheap interim offered, not built: after erasing a guest, say a contact of the same name still exists and link to it.
 - 2026-09-25 — product ruled both open questions (ctrl 661d15c): §10 6a reading stands, no code change; stored memos become `{key, params}` rendered at read time, with `HotelProfile.locale` for the printed bill. **Not started — architect picks the wave.** Mechanism already exists (the early-check-out reversal uses it); the print path is the hard half, and the company-name-at-render fix for N52's slug is independent and tiny.
