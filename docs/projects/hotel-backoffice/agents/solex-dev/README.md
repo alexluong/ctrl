@@ -6,7 +6,20 @@
 
 **Constraints (from Alex):** TypeScript on plain Cloudflare Workers (D-3, 2026-09-19 — Go dropped). No VM. Free tier where possible; ask before paid. Ship > purity.
 
-## Current objective (2026-09-23, rev 6 — build the rough end-to-end, slice by slice)
+## Current objective (2026-09-25, rev 7 — demo-able MVP; feature freeze)
+
+Alex via architect: the goal is a **demo-able MVP, not production**. Entry point is `../../mvp.md`. Every v1 function in `product.md` §11 is built and QA-green.
+
+**From here: no new features.** Only (a) fixes QA files while filming showcase journeys R3–R5, (b) anything demo-blocking, (c) vi pass 3 (the 92 keys) if product sends it — apply + commit.
+
+**Resume state:** solex `8130240`, staging `e00bc289`, 517 unit tests green, `pnpm build` clean, biome at the 4-warning + 1-info baseline, both repos clean and pushed, migrations 0018–0020 applied dev + remote. QA suite 154/154 desk + 13/13 receptionist, no open finding.
+
+**Known half-done, reported to architect for mvp.md §3/§4:**
+- "Take it anyway" (overbooking override) is offered on the **new-booking form only**. `checkIn`, `changeNights` and `changeBookingRequests` all accept `override` but no screen sends it, so those paths refuse even under `warn`. One of two open rulings.
+- G32 routing-table cells are read-only; a room's own exception is set on the room's page. Second open ruling: group-level "As agreed" clears the column but not a room's own setting.
+- 92 vi keys outstanding (`notes/2026-09-25-vi-pass-3-handover.md`); the `approvalKind.*` ones are sentence fragments and need a wording decision, not just translation.
+
+<details><summary>rev 6 (build the rough end-to-end, slice by slice — discharged 2026-09-25)</summary>
 
 Alex: "green light, let's implement a rough version of the overall design." Auth already live. Each slice = commands + projections + one screen + unit tests on `decide` + deployed to staging + projections rebuildable via `/system`. Rough = one receptionist can do the flow in a browser; no polish/i18n/mobile.
 
@@ -20,6 +33,8 @@ Alex: "green light, let's implement a rough version of the overall design." Auth
 | 5 | Long tail | **order (architect 2026-09-24):** 5.1a Company (Setup, tier b: name, defaultRouting; receivable transfer picks from list) → 5.1 group booking + master folio routing (§10/§11; Bucket = ChargeCategoryId; master guarded at booking.close) → 5.2 Cloudflare cron entry for the night roll (D-25) + HotelProfile (D-7 zone, roll hour) → 5.3 dashboard + revenue/occupancy/receivables reports (owner, `reports.view`) → 5.4 deposits + MarkNoShow → 5.5 folio print → 5.6 polish (ux.md §6 P rows, familiarity order, D-27) → 5.7 command coverage (ux.md C rows: G14/15/16/20/22/28/29/30/31/32/33 incl. BookingSource, Needs-attention inbox) → 5.8 approvals (product.md §11 Approvals, 3 landings; D-28) | as needed |
 
 Alex reviews staging after slice 1 and slice 3. Product owns the spec: a gap goes into `product.md` first, then code. Ask architect only for breaking calls; ping architect with a one-liner per slice landed.
+
+</details>
 
 <details><summary>rev 5 (build Booking/Stay, superseded same day)</summary>
 
@@ -65,6 +80,7 @@ Do **not** yet: domain code, ES infra, Hookdeck. Those wait on product + archite
 - Frontend: TS → React likely; coordinate w/ `collie-ui` (see README cross-ref).
 
 ## Log
+- 2026-09-25 — architect: everything landed unrouted accepted as-is (ctrl 5fbd9e7). Alex's new direction: demo-able MVP, feature freeze; `mvp.md` is the entry point. Reported the three half-done items above for §3/§4.
 - 2026-09-23 — architect: slice 3 order after landing 4: money screens (folio tab, post charge, take payment, check-out with balance) → Alex staging pass → receivable side (record payment, write off) + expenses → cron entry before go-live.
 - 2026-09-23 — architect: slices 1–2 accepted (173 tests). Slice 3 go: Ledger (D-17) + folio projection + post_charge/payment + night posting per D-25 + checkout balance guard + transfer to receivable. Hotel methods + scenarios first; money commands idempotent by commandId; owner-only guards via ctx.must. CreateUser/UpdateUser/DisableUser → slice 4.
 - 2026-09-23 — architect: rev 6, slice plan 0–5; Alex green light for rough end-to-end.
