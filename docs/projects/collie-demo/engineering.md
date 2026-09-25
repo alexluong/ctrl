@@ -84,6 +84,52 @@ To add: `format` versioning rules, `view` (default player view), `redactions` ap
 11. The in-page navigation entry is back-dated → streams must be sorted when saving.
 12. Generated player HTML is built from a JS template string: escaping bugs are easy (`\"`, `\n`) → `node --check` on the extracted script caught both.
 
+## First real demo: SoLex N64 (lab cbc4d4d, 2026-09-25)
+
+Target: SoLex @ 9f38914 in its own worktree `../solex-lab` (detached; `main` is checked out by solex-dev), own DB `data/lab.db`, dev-bypass user, port 7122 (`targets/solex/start.sh`, recipe from solex-architect). Journey: `targets/solex/n64-erase.demo.ts` in the dx.md shape (`demo()` + say/go/type/click/expect + `r.offstage` for the seed). Output: `out/n64-erase/` (player `index.html`, `sheet.png`).
+
+**Built for it:**
+- `bin/demo.js`:
+  - `run <journey>` loads `demo.config.js` from the journey's folder; attaches if the app is up, else starts `config.start` (runner-owned) and kills it after
+  - `sheet <out/name>`
+- `package.json` is named `@collie/demo` with `exports`, so `import { demo } from "@collie/demo"` self-resolves.
+- **Journeys are real `.ts`:** Node 22.22 strips types natively; no build step.
+- **Recorder:**
+  - visible-text targets (button → link → tab → menuitem by exact name; CSS if it starts like a selector)
+  - `type` = select-all + key by key
+  - `pick`
+  - `r.expect(locator).<matcher>()` wraps @playwright/test `expect` (works outside the test runner) and records `{t, step, matcher, pass, message, box}`; `{soft:true}` records ✗ and continues
+  - `r.offstage(fn, label)`: a separate page in the same context (shares cookies), **not filmed** (the binding ignores non-main pages; console attached to the main page only)
+  - an `actions` stream `{t, kind, target, box}`
+- **Sheet:**
+  - frames every 3 s + 0.9 s after each step, 2 columns
+  - caption + ✓/✗ per tile
+  - a **1:1 zoom on what the step touched** (click/type target, or the element an expect checked), rendered from the replay *at the action's moment*
+  - Pixel-diff crops failed: a modal dims the whole page; an inserted notice shifts everything below.
+
+**Numbers:**
+- Runs: app start 4.5 s (runner-owned); record 20.7 s (13 s filmed + offstage seed); sheet ~10 s.
+- The journey worked on the **first run**.
+- Size: zip 82 KB without trace, but `network.json` alone is 1.1 MB raw. The Vite dev server = hundreds of module requests with headers → filter static assets / drop their headers by default.
+
+**What the sheet caught (all invisible to summarize/expects; both expects passed):**
+1. **A real app finding:** after Erase, the search results still show the erased name with a live "Erase data" button in both tables until reload (the DB confirms both erased). On a fresh load the erased guest is gone ("Nobody found.") but the erased contact shows "(erased)", which is inconsistent. Not scripted around; reported.
+2. **The final caption over-claims** ("both halves erased") while the screen shows both names. `toHaveCount(0)` on "a notice isn't there" is weak evidence.
+3. **Nothing on screen confirms the second erase**, so the last step has no visual payoff.
+4. Every frame shows "dev sign-in — SOLEX_DEV_USER · Signed in as QA": dev noise; no persona.
+5. The notice appears at the top, far from the clicked row; easy to miss in the player (the sheet zoom finds it; a viewer won't) → wants `r.highlight(notice)`.
+
+**dx.md vs reality:**
+- `r.type("Name or phone", …)`: label lookup fell back to the placeholder (there's no `<label>`). Fine.
+- `r.click("Search")` by text: fine.
+- **The two same-name rows needed a raw locator** (`row.filter(has link).getByRole(button).first()`), and the confirm dialog needed `dialog.ask button.primary`. Real UIs need locators; text-only verbs cover ~60%.
+- `r.offstage` was essential and ~40 lines here (a minimal hotel + booking + check-in/out). **Seeding dwarfs the demo** (the demo proper is 15 lines).
+- `r.expect(...)` needs `await`, and the "negative" expect (`toHaveCount(0)`) passed while the screen still showed stale data: expects check what you ask, not what a viewer sees.
+- Reruns need a fresh DB: `config.start` = `start.sh` resets it; "attach" mode reuses the dirty DB (the offstage seed fails on a rerun: the room type exists). dx.md's `reset`/`seed` config keys are needed.
+- `.demo.ts` + `@collie/demo` + `demo run` worked as written.
+
+**Bugs found in the tooling:** the CSS-vs-text heuristic (`#login button` read as text); console listener double attach (again, gotcha 3); a duplicated "off camera" label.
+
 ## Lab rough edges and half-done work (as of lab 8b254df)
 
 - **No redaction at all:** bodies, headers, cookies and the webhook `secret` are recorded verbatim.
