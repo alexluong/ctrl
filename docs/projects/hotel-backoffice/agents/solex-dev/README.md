@@ -12,7 +12,7 @@ Alex via architect: the goal is a **demo-able MVP, not production**. Entry point
 
 **From here: no new features.** Only (a) fixes QA files while filming showcase journeys R3–R5, (b) anything demo-blocking, (c) vi pass 3 (the 92 keys) if product sends it — apply + commit.
 
-**Resume state:** solex `9b30ff9`, staging `eef708e5`, 517 unit tests green, `pnpm build` clean, biome at the 4-warning + 1-info baseline, both repos clean and pushed, migrations 0018–0020 applied dev + remote. QA suite 154/154 desk + 13/13 receptionist, no open finding.
+**Resume state:** solex `285648d`, staging `b55618c4`, 519 unit tests, green, `pnpm build` clean, biome at the 4-warning + 1-info baseline, both repos clean and pushed, migrations 0018–0020 applied dev + remote. QA suite 154/154 desk + 13/13 receptionist, no open finding.
 
 **Known half-done** (architect 2026-09-25: both are §4 follow-ups, no work now):
 - "Take it anyway" (overbooking override) is offered on the **new-booking form only**. `checkIn`, `changeNights` and `changeBookingRequests` all accept `override` but no screen sends it, so those paths refuse even under `warn`. Ruled: stays this way for the MVP.
@@ -79,6 +79,7 @@ Do **not** yet: domain code, ES infra, Hookdeck. Those wait on product + archite
 - Frontend: TS → React likely; coordinate w/ `collie-ui` (see README cross-ref).
 
 ## Log
+- 2026-09-25 — Alex saw Vietnamese labels in English forms (recordings). Cause: seeded charge categories carry `name` + `nameEn`; eight screens render them and only the expenses page picked by locale. Fixed with one `localName()` rule + `names.test.ts` guard (solex `285648d`). Hotel-typed names (room types, sources, companies) correctly stay as typed.
 - 2026-09-25 — vi pass 3 from product applied (solex `2f61ef9`); Tiếng Việt is complete. What remains is a native-speaker wording pass with the client, not translation.
 - 2026-09-25 — architect: everything landed unrouted accepted as-is (ctrl 5fbd9e7). Alex's new direction: demo-able MVP, feature freeze; `mvp.md` is the entry point. Reported the three half-done items above for §3/§4.
 - 2026-09-23 — architect: slice 3 order after landing 4: money screens (folio tab, post charge, take payment, check-out with balance) → Alex staging pass → receivable side (record payment, write off) + expenses → cron entry before go-live.
