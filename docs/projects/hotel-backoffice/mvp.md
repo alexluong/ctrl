@@ -31,7 +31,7 @@ Player: https://claude.ai/artifact/PnZfbQDz5dZdxxef5U8JFr (R1+R2 today; republis
 ## 3. Known edge cases (decided under D-21; say if wrong, otherwise they stand)
 
 - **Deposit forfeit is cautious**: every refund on a bill counts against how much deposit can be kept. Can refuse a forfeit the hotel was entitled to; never keeps money it no longer holds.
-- **Refunds capped at payments actually received** on that folio, not at the credit balance.
+- **Refunds capped at payments actually received** on that folio minus refunds and forfeits, not at the credit balance (forfeit term added 2026-09-25, review B14).
 - **Reports date rule**: a voided charge leaves the revenue of the day it was earned; a refund shows in cash on the day refunded; the ledger records the day a thing happened.
 - **Discount = reprice**: no discount field; a lower price is void + re-post in one batch, both visible, `repricedFrom` links them.
 - **Approval re-decided at grant**: if the act refuses at grant time (bill closed meanwhile), nothing is written, request stays open to decline.
@@ -66,6 +66,18 @@ Player: https://claude.ai/artifact/PnZfbQDz5dZdxxef5U8JFr (R1+R2 today; republis
 - [ ] Native-speaker Vietnamese wording pass with the client (D-27/D-29); translation itself is complete. The `approvalKind.*` fragments composed at render are the first thing to check with them.
 - [ ] Overbooking override on the other paths (check-in early nights, extend, add rooms to a group) — commands accept `override`, only the new-booking form sends it.
 - [ ] Remaining §10 dials with no UI yet? — none known; confirm in UX review.
+
+**From the 2026-09-25 code review** (`review/2026-09-25-analysis.md` has the routing; waves 1–2 are being fixed now, the rest are these)
+- [ ] commandId scoping: ULID-only client ids, reserved `night:` prefix, lookup by hotel (B11).
+- [ ] Projection rebuild atomic (shadow tables or write lock); OOO rooms' assigned demand counted in overbooking; booking span bound; last-owner race; move/reprice revenue dates; expense backdating; free-text notes as PII in the log; same-id double submit answering a refusal (B15).
+- [ ] One ledger write helper; accounts opened in the same batch as the command (A1, A2 — M).
+- [ ] Read models (room map, booking view, history) on `Hotel` with scenario tests (A4 — M).
+- [ ] UI permissions by capability (`useCan`), not role name — prerequisite for custom roles (A5 — S).
+- [ ] Split `setup.tsx` / `stays.$id.tsx` / `bookings.index.tsx`; `useFormCommand` helper (A6 — M).
+- [ ] Typed event unions per context (A7 — L).
+- [ ] Rename login "accounts" → users; schema files by context (A8 — S).
+- [ ] Comment sweep: 7 orphaned JSDoc blocks, 4 stale facts, changelog narration (A9 — S).
+- [ ] Drop `roomType` legacy shims before production (A10 — S); shared `CommandResult`, wire schemas home, hotel-scoped store, `Hotel` surface cleanup, split i18n en/vi, `FolioRef` union on the wire (A11–A15).
 
 **Production hardening (not MVP)**
 - [ ] Staging auth before real data; production environment (D-26 says staging is throwaway, no third env yet).
