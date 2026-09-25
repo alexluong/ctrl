@@ -275,6 +275,7 @@ type Entry = {
   memo?: string
 }
 // balance(account) = Σ its lines, never folded/stored · entries immutable; undo = reversal entry · account closes only at 0
+// memo: what a person typed, as typed. A memo the *system* writes is never a sentence in one language: it is `{key, params}` with ids (`companyId`, `stayId`, dates) and is rendered when read — on screen in the reader's language, on a printed bill in the hotel's (`HotelProfile.locale`, default `vi`). The log holds facts; sentences are a projection (same principle as D-20 field names). Never store a slug or an id where a name is meant to appear — look the name up at render, so a renamed company prints right.
 // streams are per account: <hotelId>/ledger:<kind>:<id> (ledger:folio:<stayId>, ledger:receivable:<companyId>, ledger:cash…). An entry touching N accounts is appended to all N streams
 // (same entryId + correlationId, full entry in each payload); projections dedupe by entryId.
 ```
@@ -312,7 +313,8 @@ type Charge = {
   businessDate: LocalDate      // which hotel day it counts for (D-7); occurredAt comes from the event
   categoryId: ChargeCategoryId
   itemId?: ChargeItemId        // Setup catalogue item; free text if absent
-  description: string
+  description: string          // what the desk typed, stored as typed (free text or the catalogue item's name at post time)
+  text?: { key: string; params: Record<string, string | number> }   // system-written lines only (night roll, early-check-out reversal, forfeit, transfer memo): a message key + facts, rendered in the reader's language; `description` is then empty. Ruled 2026-09-25 (QA N51/N52)
   qty: number; unitPrice: Money
   voided?: { reason: string; at: Instant }
 }
@@ -369,7 +371,7 @@ Events mirror Guest: `contact.created` · `contact.updated` (field names only) �
 ### Setup context (D-6) — what the hotel is made of
 
 Reference data, retire-not-delete, seeded by admin SDK (D-9). Each has `<name>.defined / updated / retired` events for audit.
-- `HotelProfile` — name, address, **timeZone**, `checkInTime` 14:00, `checkOutTime` 12:00, `businessDayStart` 02:00 (D-7)
+- `HotelProfile` — name, address, **timeZone**, `locale` `vi` (the language of anything the hotel hands a guest: printed bill, receipt; screens follow the reader), `checkInTime` 14:00, `checkOutTime` 12:00, `businessDayStart` 02:00 (D-7)
 - `Floor`, `RoomType` (name, capacity), `Room` (number, floor, type, bedType)
 - `RateTable` — `{roomTypeId, bedType, dateRange | dayOfWeek, ratePerNight}`; no overlapping ranges
 - `ChargeCategory` — seeded room · roomSurcharge · minibar · laundry · compensation · extraService · restaurant; reserved system-only (never pickable by hand): `room` (night roll), `depositForfeit` (ForfeitDeposit), `writeOff` (expense side)
@@ -438,8 +440,8 @@ Later: WaitingList (unassigned stays), Breakfast list, PA18 export, CommissionBy
 | 4 | Guest ID | optional; PA18 export later |
 | 5 | Children | under `childAgeThreshold` (6) free, not counted against capacity. G35 §6 Availability: `adults ≤ RoomType.capacity`, refuse `stay.overCapacity` at create / requests / `SetOccupancy` / check-in. |
 | 6 | Room after checkout | auto `room.marked_dirty {cause: checkout, stayId}` (reaction, in-batch) |
-| 6a | Early check-out | nights are `[arrive, depart)` (D-7): the departure date is not a night. **Minimum one night**: a checked-in stay always keeps its first (arrival) night. Checking out on business date D before the planned `depart` removes every night `≥ D` **only where D > the first night** — the current night included — in the same batch: `stay.nights_changed {removed}` frees them for sale and the current night's posted room charge is **reversed** (`folio.charge_voided {cause: earlyCheckOut}`) so the guest pays only the nights slept. Same-day in/out (D = first night) removes nothing and pays that one night: the room was used; day-use pricing is out of scope. Explicit events, never implied by `checked_out`. Leaving after `checkOutTime` on the last day is a **late check-out fee = catalogue item**, never an extra night (rule 1); staying past the next roll is the extra night. (Review B1, 2026-09-25.) |
-| 6c | Early / late check-in | Check-in makes today the first unposted night: early arrival adds nights `[today, arrive)` (warn + allow, room must be free), late arrival drops unposted nights before today. A checked-in stay never has zero nights: tonight is held and posted at check-in and is the one night 6a never removes. Same-day in/out pays that night (room used); day-use pricing is out of scope. |
+| 6a | Early check-out | nights are `[arrive, depart)` (D-7): the departure date is not a night. **Minimum one night**: a checked-in stay always keeps its first (arrival) night. Checking out on business date D before the planned `depart` removes every night `≥ D` **except the arrival night**, in the same batch: `stay.nights_changed {removed}` frees them for sale and, where the current night is among them (D > arrival), its posted room charge is **reversed** (`folio.charge_voided {cause: earlyCheckOut}`) so the guest pays only the nights slept. Same-day in/out (D = arrival night) keeps and pays that one night and frees every later night: a three-night booking leaving on day one holds night one, gives back two and three. The room was used; day-use pricing is out of scope. Explicit events, never implied by `checked_out`. Leaving after `checkOutTime` on the last day is a **late check-out fee = catalogue item**, never an extra night (rule 1); staying past the next roll is the extra night. (Review B1, 2026-09-25.) |
+| 6c | Early / late check-in | Check-in makes today the first unposted night: early arrival adds nights `[today, arrive)` (warn + allow, room must be free), late arrival drops unposted nights before today. A checked-in stay never has zero nights: the arrival night is posted at check-in and is the one night 6a never removes; every later night is given back on early check-out. Same-day in/out pays that night (room used); day-use pricing is out of scope. |
 | 6b | Out-of-order room | assign to future nights: warn + allow. Check-in: refuse. Taking a room OOO under assigned nights: warn + allow. |
 | 7 | Check-out with balance | stay's own folio: blocked unless 0 or remainder transferred to a company receivable. Master folio not checked here. |
 | 7a | Close booking | **Individual**: closes automatically in the same batch when its last stay checks out or is cancelled (no master, own folio already settled). **Group**: only by explicit `CloseBooking`, refused while any stay is open or the master folio balance > 0 (settle or transfer on the booking page). |

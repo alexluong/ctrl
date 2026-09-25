@@ -51,3 +51,4 @@ Message architect with proposed aggregate list early (before polishing) so dev's
 - 2026-09-25: review B1 (early check-out frees + reverses today's night; [arrive, depart)) and B14 (refund cap) folded into §6 Stay, §10 6a/6c/10, §11 CheckOut/Refund. Idle.
 - 2026-09-25: B1 amended — minimum one night; same-day in/out pays one night. Idle.
 - 2026-09-25: 'In ezFolio today' sections added to qa/journeys R1–R5 (Alex's ask via architect); R6–R9 when QA's docs appear.
+- 2026-09-25: 6a wording fixed to dev's reading (arrival night kept, all later nights freed). Ruled stored memo language (N51/N52): system-written lines = {key, params} rendered in reader's language, print in HotelProfile.locale (vi); typed text as typed.
