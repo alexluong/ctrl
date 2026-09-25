@@ -4,7 +4,7 @@ Narrative record of what the team (and Alex) has done, by day. `log.md` is the t
 
 ## Where we are (2026-09-25)
 
-**Phase: v1 functionality complete → demo-able MVP.** Every command in `product.md` §11 has a screen (5.7 command coverage + 5.8 approvals landed 2026-09-25: G29 house rules, G32 group routing table, G33 Needs attention, G34 overbooking, G35 capacity, reprice, approvals in three landings). QA suite fully green on `8130240` (desk 154 + receptionist 12), N33–N45 closed, staging `e00bc289`. Alex 2026-09-25: goal is a demo-able MVP, not production; prune docs, track follow-ups → `mvp.md` is the entry point. Code review 2026-09-25 (two reviewers) → wave 1 fixed; nine showcase journeys R1–R9 filmed with ezFolio comparison docs → **Alex's full-system review** next; wave 2 correctness fixes in parallel.
+**Phase: v1 functionality complete → demo-able MVP.** Every command in `product.md` §11 has a screen (5.7 command coverage + 5.8 approvals landed 2026-09-25: G29 house rules, G32 group routing table, G33 Needs attention, G34 overbooking, G35 capacity, reprice, approvals in three landings). QA suite fully green on `8130240` (desk 154 + receptionist 12), N33–N45 closed, staging `e00bc289`. Alex 2026-09-25: goal is a demo-able MVP, not production; prune docs, track follow-ups → `mvp.md` is the entry point. Code review 2026-09-25 (two reviewers) → wave 1 fixed; nine showcase journeys R1–R9 filmed on `d10cae5` with ezFolio comparison docs (player v3) → **Alex's full-system review** next; wave 2 correctness fixes + N52 slug fix in parallel; N51/N52 memo schema is a follow-up.
 
 | WS | agent | state |
 |---|---|---|

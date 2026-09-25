@@ -35,7 +35,7 @@ Personas (Alex 2026-09-25): **Oanh** = owner, **Dao** = receptionist, in every j
 
 Alex 2026-09-25: the review package is **all nine**, filmed on the wave-1 base and published together; R1–R5 double as the client demo. Each journey doc gets an "In ezFolio today" section (product) with the same task in ezFolio, screenshots from `screens/`, and what SoLex keeps/changes. The suite-wide rrweb capture (every e2e test) is the unnarrated reference.
 
-Player: https://claude.ai/artifact/RrF94hDrGJ8QWPaecge4xN (all nine, filmed on c4b0350 after code-review wave 1; docs in `qa/journeys/`). Do not demo: voiding a room line of an in-house guest.
+Player: https://claude.ai/artifact/RrF94hDrGJ8QWPaecge4xN (all nine, filmed on d10cae5 / staging 8cbd00c0 after code-review wave 1 + N61–N65; docs in `qa/journeys/`). Do not demo: voiding a room line of an in-house guest.
 
 ## 3. Known edge cases (decided under D-21; say if wrong, otherwise they stand)
 
@@ -58,6 +58,7 @@ Player: https://claude.ai/artifact/RrF94hDrGJ8QWPaecge4xN (all nine, filmed on c
 ## 4. Follow-ups (tracked, not built now)
 
 **Product / features**
+- [ ] Stored memo language (N51/N52, product ruling 661d15c): system-written folio/history lines stored as `{key, params}` and rendered at read time; printed bill uses a new `HotelProfile.locale`. Schema change → after the demo. The company-slug-on-the-bill half (N52) ships with wave 2.
 - [ ] Cash handover / day close (G27) — needs the client conversation; candidate `CloseShift {cashCounted}`.
 - [ ] Tape chart drag to move / extend (G11).
 - [ ] Notifications leaving the app (Zalo/Telegram/email) — async cursor consumer over the log; badge is the only notification today.
