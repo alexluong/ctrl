@@ -1,13 +1,13 @@
 # Collie Demo: sample end state
 
-**DRAFT, pending Alex's review (2026-09-25).** This is a strawman of "done": one concrete scenario to test with agents that have real finished PRs (the walkthroughs). Everything here is hypothetical. Names are placeholders: the `demo` CLI, the `.demo` file and `demo.example.dev` (see README § Naming).
+**DRAFT, pending Alex's review (2026-09-25).** This is a strawman of "done": one concrete scenario to test with agents that have real finished PRs (the walkthroughs). Everything here is hypothetical. Names are placeholders: the `demo` CLI, the `.demo` file and `demo.collie.studio` (Alex's domain idea; see README § Naming).
 
 ## Cast
 
 - **Author:** a coding agent that just finished a PR (e.g. `solex-dev`, feature "move a guest to another room mid-stay").
 - **Reviewer:** Alex, on GitHub or on his phone.
 - **Second viewer:** a non-technical teammate (e.g. the hotel owner) who wants to see what changed, not how.
-- **Server:** Alex's self-hosted instance, `demo.example.dev`, team workspace `solex`.
+- **Server:** Alex's instance at `demo.collie.studio`, team workspace `solex`.
 
 ## The flow
 
@@ -60,20 +60,23 @@ If something looks off (a spinner, a 500, a console error), it runs `demo frame 
 ### 5. It publishes
 ```
 $ demo publish out/room-move.demo
-https://demo.example.dev/solex/d/7fq2k   (team-only)
+https://demo.collie.studio/d/7fq2k   (team-only)
+teaser   out/room-move.gif   (local; drag into the PR)
 ```
 It authenticates through `DEMO_TOKEN`, a workspace token that can only publish, so this works in cloud/CI too. Redaction runs before upload (auth headers, cookies, secrets, password fields).
 
 ### 6. It links the demo in the PR
 ```md
 ## Demo
-[▶ Move a guest mid-stay (24 s)](https://demo.example.dev/solex/d/7fq2k)
-![preview](https://demo.example.dev/solex/d/7fq2k/preview.gif)
+[▶ Move a guest mid-stay (24 s)](https://demo.collie.studio/d/7fq2k)
+<GIF teaser attached from out/room-move.gif>
 1. Guest in 204 wants a quieter room · 2. Charges split at the move date · 3. Folio shows both rooms ✓
 ```
-GitHub won't embed the player, so the link comes with a small GIF/poster preview and the step list as text.
+GitHub won't embed the player. The **full demo is team-only** on the server; the GIF is only a **local teaser file** that the CLI generates, never served publicly by us (Alex, 2026-09-25).
 
-> **Lab caveat (collie-lab, 2026-09-25):** GitHub fetches images anonymously (through its camo proxy), so for a team-only demo the GIF must be **publicly** reachable, which leaks a frame. Options: text-only by default; an opt-in unguessable public preview URL; or uploading the GIF to GitHub itself (no clean API). The GIF is rendered on the CLI side at publish, so the server doesn't need a browser.
+- GitHub has no official API for uploading images into PR bodies (`gh` can't), so by default a human drags the GIF in (the CLI prints its path). On a private repo the attachment is visible only to repo members, which matches the team model.
+- Alternatives: commit the GIF to a demo branch/assets path, or an opt-in per-workspace public preview URL (off by default).
+- Without the GIF, the PR still gets the link + the step list. **Walkthrough question:** is that enough for agents working alone?
 
 ### 7. Alex reviews it
 He opens the link and sees the **dev view**:
