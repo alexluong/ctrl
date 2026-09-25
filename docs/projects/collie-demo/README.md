@@ -2,7 +2,28 @@
 
 Formerly the working name **replay** (renamed 2026-09-25). Older sections below still say "replay", `.replay`, `@replay/*`: read those as working names.
 
-Status: **going ahead as a personal tool** (2026-09-25). Lab prototype at `~/code/replay-lab`; no public repo yet. Market scan: [market.md](market.md). Build side (lab map, format v0, capture internals, gotchas, language/browser/sharing decisions): [engineering.md](engineering.md).
+## Summary (2026-09-25): start here
+
+**What:** turns a finished feature into a narrated, seekable demo. An agent (or a human) writes a short journey; Collie Demo runs it and records one small file: DOM replay + captions + synced console / network / storage panels, and optionally backend logs / spans / DB changes. Open it locally, or publish it to a server and share a link.
+
+**Why:** video is big and can't be inspected; Playwright's trace is a debugger. Collie Demo gives one synced view in ~10 KB, and agents can read it too (self-check before sharing).
+
+**For:** Alex and his team, dogfooded on his own agent work. Not a money idea; paid hosting would only cover costs.
+
+**Scope:**
+- **Local tool:** recorder + format + player + CLI (`run`, `open`, `summarize`, `frame`).
+- **Server:** the same codebase, self-hostable; upload → link; accounts/teams. Details to be elaborated.
+- **Out:** the suite (tickets, test cases, orchestration; parked); signing in/seeding the app under demo (the journey's job).
+
+**Status:** exploring. The lab prototype (`~/code/replay-lab`) proves capture (UI, in-page, backend logs/OTel/webhooks/DB) and the player. No real repo yet.
+
+**How we proceed:**
+1. **End-state sample:** write one concrete target scenario: an agent finishes a PR → records a demo → shares a link → a reviewer watches it. Mock the artifacts (the player screens, CLI calls, agent skill). → `end-state.md`
+2. **Agent walkthroughs:** give the sample to agents that have real finished PRs (SoLex, work). Each tries to plan a demo of its PR with the hypothetical tool; we log what fits, what's missing and what they'd want. → `walkthroughs/`
+3. **Decide v1** from 1 + 2: feature cut, language, server MVP ([§ Open questions](#open-questions)).
+4. **Build.**
+
+Detail: market scan in [market.md](market.md); build side (lab map, format v0, capture, gotchas) in [engineering.md](engineering.md). **Everything below is the exploration log**, roughly chronological; the Summary wins where they disagree.
 
 ## Positioning (Alex, 2026-09-25): decided
 
