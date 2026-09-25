@@ -143,3 +143,7 @@ Rule: **Demo owns recording, understanding and sharing demos; the suite owns *wh
 3. Server with private workspaces + `login`/`publish` + recorder redaction.
 4. `summarize` / `frame` + an agent skill.
 5. Player views (reviewer, storyboard), before/after compare, collections + auto diagrams.
+6. Presentation features (from the field report), mostly part of showcase mode:
+   - **Slides/cards** as timeline steps: `r.slide.title(text)`, `r.slide.diff({ base: "main", paths })` (renders the git diff), `r.slide.compare(before, after)`, custom HTML. In the ui stage, a full-screen overlay recorded by rrweb; in the http stage, a card. Listed in the step list, so a viewer can jump to "the change".
+   - **Highlights:** `r.highlight(selector, { label })` draws an overlay around the element (and an optional callout), captured by rrweb; automatic before each `click`/`type` in showcase mode. Never fails the run if the element is missing.
+   - **Video export:** `demo export x.replay --mp4` renders the replay (with captions/slides) to mp4 for places that want plain video.
