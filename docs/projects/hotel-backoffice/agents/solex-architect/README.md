@@ -38,6 +38,15 @@ Alex: "work with Dev on this and make sure to help with review/QA as we go." Per
 - Architect worktree `~/git/hub/alexluong/solex-architect` (detached, read-only); QA owns `../solex-qa`.
 
 
+## Resume note — 2026-09-25 (architect, before compaction)
+
+**State:** slice 5.7 command coverage nearly done. Landed and accepted today: slice-4 debts N21/N22 + quiet nothingToChange notice; G14 (cancel, party/notes/requests), G15 (nights, per-night rate), G20 (mixed-type groups + freeByType grid), BookingSource (= G30 + §3, not G28), SetRoomType (G8 debt closed, one-code ruling `setup.roomTypeInvalid`), G16 MoveCharge (room charge stays with the guest who slept the night), G22 guest/contact edit + stay_guests, G28 company defaultRouting. Latest: solex f82ea14, 439 green.
+**Dev now:** G29 BookingRules, ruled (b): row carries all five §11 fields, form shows only what is read. Then G32 routing table → G33 owner home + NeedsAttention → G34 overbooking → G35 capacity (both spec'd by product, ctrl 847ff15, accepted) → 5.8 approvals (D-28). Alex's priority: all v1 functionality before his big UX review; estimate ~3 dev cycles.
+**QA:** suite on new screens 110/118 (e2e f4308ad); N29–N31 closed; N33 (double-submit safety lost since 8716fc2), N34, N35, N36 with dev; N32 hangs = machine load. D-30 suite-wide rrweb live (`JOURNEY_RRWEB=1 pnpm test:replay`). Next: screen pass G14/G15/G20/BookingSource/SetRoomType, then S5-4x..7x. R1/R2 replays published: https://claude.ai/artifact/PnZfbQDz5dZdxxef5U8JFr.
+**Product:** vi pass 1 committed (18da91f), pass 2 (24 keys) sent to dev; reach product via `SendMessage` to its session id when the name is unreachable (idle process). Mockups artifact L2ivkCzKDWwXoCFcmF6bKP unreviewed by Alex.
+**Process:** manual compaction suspended for now (temporary); context-watch cron retired; every agent keeps its resume note current per landing. replay-demo session was handed the rrweb setup for product/OSS evaluation (docs/projects/replay.md, not SoLex's).
+**Open for Alex:** machine load ~180 from stuck `pyenv exec python3` shims across sessions (`pkill -f "pyenv exec python3"`); CF 7403 migrate flake; no staging smoke pass since 5.6.
+
 ## Resume note — 2026-09-24 (architect at 230k, awaiting compaction)
 
 State: solex main `bc64f12`+`04822c6` (5.6 complete, D-29 built), staging `5250b6e6`, 371 green. Dev in 5.7 (order G14 → G15 → G20 → G28 → SetRoomType → G16/G22/G29/G30 → G32 → G33), at 349k → clean-stop requested. Product (198k) redoing `diagrams/ezfolio-flow/` 1+2 as "SoLex, ezFolio-shaped" (D-27 amendment) then 3–5; I republish per screen to artifact L2ivkCzKDWwXoCFcmF6bKP. QA (108k, **unchanged for hours — check it is receiving messages**) owes R1/R2 flow videos + rrweb replays (`solex/e2e/recordings/`), then 5.5 print, 5.6 cases, S5-37/N28 once G14 lands. Decisions today: D-27 amendment, D-28, D-29 (vi strings: product → dev). Open with Alex: none blocking; flags in progress.md (CF 7403 on D1 migrate, ezFolio 1+2 review superseded by restyle). Cron 5733ce9e = hourly context watch at :41. Stay-template artifact FnYDkwHfpSed7wtQmzgL3L parked.
