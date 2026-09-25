@@ -141,6 +141,10 @@ The in-page recorder, API-only demos, viewing, publishing and the server need no
 - **Redaction on by default at record time, before upload:** `authorization`, `cookie`, `set-cookie`, `*token*`, `*secret*` headers/fields, password inputs, plus configurable rules. (The lab's webhook `secret` would leak today.)
 - The player loads data through the authenticated API (short-lived signed URLs), never from a public bucket. Encryption at rest, a view access log, retention per workspace.
 - Self-host gets all of it; paid = hosting (seats, retention, storage), per market.md.
+- **Previews (Alex, 2026-09-25):** the GIF is a teaser generated locally by the CLI (`preview.gif`, one frame per step + caption) and posted wherever the PR/chat lives; the value is the full demo, which stays team-only at `demo.collie.studio/d/:id`. The server never has to serve a private demo's frames publicly (GitHub fetches images anonymously through its camo proxy).
+  - A GIF attached to a private-repo PR is only visible to repo members, which matches the team model.
+  - Catch: GitHub has no official API to upload images into PR bodies/comments (`gh` can't), so agents can't fully automate it. Options: human drag-and-drop of the local file (default); commit to a demo branch/assets path; or an opt-in, per-workspace unguessable public preview URL for the GIF only (off by default).
+  - Slack/Discord: upload the file through their APIs + the team link.
 - Server MVP order: auth (OAuth + magic link) + workspaces + invites → upload + team-only demo page → list/search → link sharing with expiry → recorder redaction.
 - Open: sign-in methods (GitHub only first, or GitHub + Google + email); Go vs TS.
 
