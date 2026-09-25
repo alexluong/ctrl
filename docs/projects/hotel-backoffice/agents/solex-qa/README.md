@@ -66,3 +66,5 @@ Availability versioned on every supply/demand command · one batch per money com
 - 2026-09-26 — qa: N65 closed (d10cae5). All nine re-filmed on d10cae5 (staging 8cbd00c0), 11/11; lengths in the journeys README. Film only between 00:00 and 23:00 hotel time. The player (recordings/player.html + player/0..8.js) still needs the architect's republish; the architect and product sessions were unreachable at last try. **Resume:** architect republish; wave 2 (S6-6/7); retest N51/N52. Next free N66.
 
 - 2026-09-26 — qa: architect republished the player as v3 on d10cae5 (https://claude.ai/artifact/RrF94hDrGJ8QWPaecge4xN). N52 (company name at render) ships with wave 2; N51's {key, params} memo schema is post-demo (mvp.md §4). **Resume:** when wave 2 lands: pull, full `pnpm test`, S6-6/7 (B12, B14), retest N52, re-film only the affected journeys (R3 statement line), before 23:00 hotel time. Next free N66.
+
+- 2026-09-26 — qa: wave 2 part 1 (aa0934c): S6-6/7 pass; N66 (refund wording after a forfeit) filed. **Resume:** the rest of wave 2 as dev pings; retest N52; re-film R3 if its statement line changes (before 23:00 hotel time). Next free N67.

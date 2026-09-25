@@ -2,6 +2,8 @@
 
 Newest first. `date · commit · staging · cases · result · findings · blocking?`
 
+- 2026-09-26 · aa0934c (e2e review-wave2) · b40f4b22 (not walked) · S6-6 (B12: cancel a group with a no-show and a checked-out room) pass; S6-7 (B14: the refund ceiling drops by what was kept, and 1,000,000 is refused) pass · **N66** (wording): after a forfeit, `folio.refundable` says "that is what has been taken in" and `error.folio.refundTooLarge` "more than was taken"; both are wrong once part was kept · N
+
 - 2026-09-26 · d10cae5 (e2e aa60bb4) · 8cbd00c0 (not walked) · people 12/12 (N65 closed: the search is run again, and both lists agree an erased person is gone); journeys R1–R9 + sweep 11/11, filmed after midnight hotel time · A run at 23:41 cascaded: the 23:00 day start cannot move the day after 23:00 (whole hours; structural, per dev). `dayStartsAt` now refuses loudly · N
 
 - 2026-09-25 · 9f38914 (e2e b262aca) · 924aa3c3 (not walked) · S4-31 extended · **fail** · **N65** (found by collie-lab's demo of N64, confirmed): after erasing the guest and then the same-name contact, both /guests result tables keep the erased name with a live Erase button until reload (2 live, expected 0). On a fresh load the lists disagree (guest gone vs contact "(erased)"). R9 missed it because it navigates away · N (demo-visible)

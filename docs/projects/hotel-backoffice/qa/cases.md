@@ -331,6 +331,6 @@ The other §4 gaps (read-side role gate, operator reset, concurrent group create
 | S6-3b | Receptionist: the same, in credit | the dialog's primary button is Ask the owner; the request is on Needs attention; the guest stays in until the owner answers | B3 + 5.8 | e2e approval.last "S6-3b" | ceece38 pass |
 | S6-4 | Move a checked-in guest mid-stay; then try a move into an out-of-order room | nights already posted keep their room; the move applies from today; out of order refused by name; the old room is dirty | B4 | e2e review-wave1 "S6-4" | ceece38 pass |
 | S6-5 | Owner voids an in-house guest's room line | refused, and the refusal points to Reprice; the line is unchanged | B8 | e2e review-wave1 "S6-5" | ceece38 pass |
-| S6-6 | Cancel a group where one room is a no-show and one checked out | the booking cancels; the remaining booked stays go with it | B12 (wave 2) | e2e review-wave2 "S6-6" | — |
+| S6-6 | Cancel a group where one room is a no-show and one checked out | the booking cancels; the remaining booked stays go with it | B12 (wave 2) | e2e review-wave2 "S6-6" | aa0934c pass |
 | S6-8 | Guest in since yesterday, leaves a day early, settles "on account" to a company | the dialog asks for one night; the company is sent one night; the guest's bill is 0 | B1 + ceece38 (transfer uses what is owed to leave today) | e2e review-wave1 "S6-8" | ceece38 pass |
-| S6-7 | No-show with a deposit: keep the deposit, then try to refund it | refund refused (cap: deposits − refunds − forfeits) | B14 (wave 2) | e2e review-wave2 "S6-7" | — |
+| S6-7 | No-show with a deposit: keep the deposit, then try to refund it | refund refused (cap: deposits − refunds − forfeits) | B14 (wave 2) | e2e review-wave2 "S6-7" | aa0934c pass |
