@@ -84,6 +84,25 @@ To add: `format` versioning rules, `view` (default player view), `redactions` ap
 11. The in-page navigation entry is back-dated → streams must be sorted when saving.
 12. Generated player HTML is built from a JS template string: escaping bugs are easy (`\"`, `\n`) → `node --check` on the extracted script caught both.
 
+## Lab rough edges and half-done work (as of lab 8b254df)
+
+- **No redaction at all:** bodies, headers, cookies and the webhook `secret` are recorded verbatim.
+- **The in-page recorder has no `traceparent` patch** (only the Playwright init script does), so in-page recordings can't correlate with backend spans.
+- **Custom capture instead of rrweb's official network/console plugins** (not adopted yet).
+- **Player:**
+  - always shows the "deep debug: trace.zip" hint, even without a trace
+  - fixed 16:10 box, so tall in-page recordings letterbox
+  - the waterfall has no collapse/zoom (fine for ~15 spans)
+  - the http-stage cards repeat payloads (only retries are trimmed)
+- **Runner:**
+  - always *starts* the app (no "attach to an already running app" mode)
+  - `--logs` only works when it owns the process
+  - hacky `--journey` argument parsing
+  - `node:sqlite` prints an ExperimentalWarning (silenced for the child via `NODE_NO_WARNINGS`)
+- **One unexplained flake:** the first `--journey webhooks` run died with an `AggregateError` on the first `context.request.post` (connection refused?); the re-run passed. Possibly the app not fully ready although `GET /` answered.
+- **Background processes during the lab session** (not needed to resume): `serve.js` :7101, the record-mode app :7103 (started before the webhook/SQLite change, so it runs old code), `show-trace` :7102.
+- **Demo names are fixed per journey/mode** (`todo-otel`, …), so re-runs overwrite; there are no ids yet.
+
 ## Field report: a real work demo (2026-09-25)
 
 Another Claude session recorded an 83 s walkthrough of a real permissions change in Alex's work app with plain Playwright video. Presentation ideas worth borrowing:
