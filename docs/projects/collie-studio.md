@@ -134,6 +134,39 @@ The manual version's pain = candidate requirements. Setup: 5 long-lived persona 
 
 Kandev (kanban + worktree per task + approval gates + agent CLIs via ACP; no proof/tests), herdr (the runtime/multiplexer layer), Vibe Kanban, Claude Squad, Crystal/Nimbalyst, Sculptor, Conductor, Copilot agent, Devin. Crowded: orchestration and boards. Less crowded: **evidence** (demos, before/after, QA tied to acceptance criteria) and the **attention inbox**.
 
+## Studio as a distro (packaging of tools)
+
+Alex (2026-09-25): Studio is a **packaging** of multiple tools, not one app. Closer to a Linux distro than to a product: pick good existing pieces, configure them to work together, add glue where nothing exists.
+
+| need | candidate piece |
+|---|---|
+| review, local → hosted | a review tool + Gitea/Forgejo (or GitHub) |
+| tickets | a self-hosted tracker (or Linear/GitHub for teams) |
+| wiki / notes | an Obsidian vault (plain markdown, local-first, synced) |
+| agent sessions | herdr-like runtime over Claude Code / Codex |
+| skills, personas, hooks | harness plugins (see below) |
+| evidence | Collie Demo |
+
+Glue Studio would own: the card ↔ session ↔ evidence links, the inbox, persona/env/host config, install + wiring.
+
+## The workspace-repo problem
+
+Today ctrl mixes three things: **notes** (project docs, ideas), **skills/conventions** (`.claude/skills`, `CLAUDE.md`, `workflow.md`), and **domain data** (bookkeeping, RE). To use Claude consistently Alex needs this workspace repo, and every project gets a pointer `CLAUDE.md` back into it. Alex doesn't want a workspace repo as the precondition.
+
+Work case (Hookdeck): many repos (core, terraform, outpost, cli, …), each with its own skills, plus generic skills for analysis that belong to no repo. Wanted: start Claude in any repo and get the same personal setup, the repo's own skills, and access to notes, with no workspace repo.
+
+Split by what each thing is:
+
+| thing | lives in | reaches every session via |
+|---|---|---|
+| personal skills / agents / hooks | a personal **plugin** (a git repo as a marketplace), or `~/.claude` managed by dotfiles | installed once per machine; user-level, so present in every repo |
+| team skills | each repo's `.claude/` (checked in) + a team plugin marketplace for cross-repo ones | the repo itself / team install |
+| notes, wiki, project docs | an **Obsidian vault** (markdown), synced (iCloud / Obsidian Sync / git) | added as a directory the session can read/write (additional directory, or an MCP over the vault) |
+| work / tickets | tracker | MCP |
+| domain data (bookkeeping, RE) | its own repo; it's a domain, not a workspace | normal repo |
+
+Result: no pointer files, no workspace repo; the vault replaces ctrl's notes role, plugins replace its skills role. Open: how a session knows *which* vault notes belong to the repo it's in (a convention like `vault/projects/<repo>/`, or a frontmatter tag the plugin resolves).
+
 ## Value check: Studio vs plain Claude Code (2026-09-25)
 
 Question (Alex): with all this, is a tool warranted, or is Claude Code + skills enough?
