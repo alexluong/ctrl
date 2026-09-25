@@ -43,6 +43,7 @@ Player: https://claude.ai/artifact/PnZfbQDz5dZdxxef5U8JFr (R1+R2 today; republis
 - **Needs attention is derived, never stored**: rows leave when the fact stops being true; nothing to dismiss. Debt aged from the oldest unpaid line.
 - **First-owner bootstrap**: empty hotel lets a system operator act as owner until the first staff row exists.
 - **Money role split**: receptionist posts/pays/transfers/moves lines/petty cash; owner alone voids, refunds, forfeits, writes off, voids expenses (desk asks via 5.8).
+- **Early check-out** (review B1, 2026-09-25): nights are [arrival, departure) on business dates; check-out on day D drops every night ≥ D including the current one and reverses today's posted room line in the same batch. Consequence: a same-day in/out pays no room night (day-use is out of scope; the desk posts a catalogue item). Late check-out fee = catalogue item; past the next roll = an extra night.
 - **Business date**: configurable roll (default 02:00); late arrivals count as the prior night.
 
 ## 4. Follow-ups (tracked, not built now)
