@@ -28,3 +28,5 @@ scenario "cap=3, queue has DLX" env {PUBLISH_MAX_REDELIVERIES: 3}
 - Two different products hide in one: **UI demo** (replay-first) vs **backend evidence** (scenario matrix + probes + text report, replay optional). The lab's `http` stage, `catcher` and `dbWatch` are the start of the second; the framing "stage = pluggable" holds, but the backend output wants a **table/report view**, not a card timeline.
 - The environment side (services, setup, env matrix, restarts, teardown) is much bigger than "`start` command". It's close to what test harnesses already do, so reuse (compose/testcontainers) rather than reinvent. It stretches the "setup is out of scope" line in engineering.md.
 - The skill needs a better trigger rule than "user-visible".
+
+**Alex (2026-09-25):** fine. The tool isn't meant for every task; a backend-only PR like this one may simply not need a demo. The takeaways stay here as ideas, not requirements.
