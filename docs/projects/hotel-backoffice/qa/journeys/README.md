@@ -23,13 +23,13 @@ Nine short screen recordings, one user-visible flow each (mvp.md §2, D-30). Fil
   - 202 Nguyen Minh Anh, arriving in two days.
 - **Language.** All hotel data is typed in English, and people's names are written without diacritics. On the English screens, any Vietnamese left is the app's own. `sweep.journey.ts` checks for it and writes `recordings/english-sweep.json`.
 - **Nobody signs in on camera.** Personas are the dev user renamed. R4's receptionist is a real account signed in off camera, and its session is handed to the filmed browser.
-- **"Next morning".** A step off camera moves the hotel's day start (Setup → "The day starts at": 23:00, then back to 00:00). This lets a guest check in "last night" and check out on their departure day without waiting a day. It matters because, since B1, a check-out on the day of arrival gives the night back.
+- **"Next morning".** A step off camera moves the hotel's day start (Setup → "The day starts at": 23:00, then back to 00:00). This lets a guest check in "last night" and check out on their departure day without waiting a day. It matters because a real check-out falls on a later business day than the check-in. Under B1 (ctrl 79631fd) the arrival night is always charged, and every night from the check-out day onward is given back. A day-2 check-out therefore shows the early departure honestly (R1).
 - **Order.** R1–R5 and R7–R9 run in that order on one database, each starting where the one before left off. R6 runs on its own empty database and server.
 - **Personas.** Oanh is the owner and Dao the front desk: the dev user renamed, except in R4, where Dao is a real receptionist account.
 
 ## Do not demo
 
 - **Never void a room line of an in-house guest.** Since wave 1 it is refused; a change goes through Reprice. Void a room line only after check-out, or void a non-room line.
-- **Don't check a guest out on the day they arrived** unless the point is an early departure. The night comes off the bill (B1), and a bill that was paid in advance is then in credit: check-out is refused and the settle dialog offers a refund (B3).
+- **A guest who leaves early is charged the arrival night only** (B1); the nights after it come off the bill. If the bill was paid in advance it is now in credit: the owner is offered a refund in the check-out dialog, and a receptionist has to ask the owner (B3).
 - **"Take it anyway" is only on the new-booking form.** Extending a stay, checking in and adding rooms to a group all refuse an oversell under the owner's-to-allow rule.
 - **Group routing table cells are read-only.** Change a whole category from the header select. A single room's exception is set on that stay's page, and the table then shows it marked. "As agreed" does not clear a room's own setting.
