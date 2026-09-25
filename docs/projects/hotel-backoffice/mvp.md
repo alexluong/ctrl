@@ -34,11 +34,11 @@ Player: https://claude.ai/artifact/PnZfbQDz5dZdxxef5U8JFr (R1+R2 today; republis
 - **Reports date rule**: a voided charge leaves the revenue of the day it was earned; a refund shows in cash on the day refunded; the ledger records the day a thing happened.
 - **Discount = reprice**: no discount field; a lower price is void + re-post in one batch, both visible, `repricedFrom` links them.
 - **Approval re-decided at grant**: if the act refuses at grant time (bill closed meanwhile), nothing is written, request stays open to decline.
-- **Overbooking**: only the nights a command *adds* are checked; supply-side commands (OOO, retire, re-type) never refuse; `warn` mode default, override recorded on the command.
+- **Overbooking**: only the nights a command *adds* are checked; supply-side commands (OOO, retire, re-type) never refuse; `warn` mode default, override recorded on the command. **Override ("Take it anyway") is offered on the new-booking form only**; check-in early nights, extend, and adding rooms to a group refuse under `warn` too (ruled 2026-09-25: stays so for the MVP, follow-up §4). Demo the warn/override on a new booking.
 - **Capacity**: adults ≤ type capacity, children (under threshold) never counted, no override (extra bed = charge item + bigger capacity). Check-in checks the *room's* type.
 - **ID at check-in (required mode)**: one document per party is enough.
 - **Room charge stays with the guest who slept the night** when a stay changes room/guest mid-way.
-- **Group routing**: column select changes rooms still on the default; rooms set individually keep their override; "As agreed" clears the column.
+- **Group routing**: the table is read-only per cell; a column select changes rooms still on the default; a room's own exception is set on the stay's page, not in the table, and keeps its value; "As agreed" resets the column's default rows and does **not** clear a room's own setting (ruled 2026-09-25: keep as built, a room-level choice is never undone by a group-level tidy-up).
 - **Needs attention is derived, never stored**: rows leave when the fact stops being true; nothing to dismiss. Debt aged from the oldest unpaid line.
 - **First-owner bootstrap**: empty hotel lets a system operator act as owner until the first staff row exists.
 - **Money role split**: receptionist posts/pays/transfers/moves lines/petty cash; owner alone voids, refunds, forfeits, writes off, voids expenses (desk asks via 5.8).
@@ -56,7 +56,8 @@ Player: https://claude.ai/artifact/PnZfbQDz5dZdxxef5U8JFr (R1+R2 today; republis
 - [ ] PA18 guest declaration export (legal? ask client).
 - [ ] Seasonal rates / rate plans beyond date-range rates.
 - [ ] Migration from ezFolio (D-5 fresh start; DB export from ezCloud only if migration comes up).
-- [ ] Vietnamese pass 3 (92 keys) + a native-speaker wording pass with the client (D-27/D-29).
+- [ ] Vietnamese pass 3 (92 keys; `approvalKind.*` are sentence fragments composed at render and need a vi wording decision first, not just translation) + a native-speaker wording pass with the client (D-27/D-29).
+- [ ] Overbooking override on the other paths (check-in early nights, extend, add rooms to a group) — commands accept `override`, only the new-booking form sends it.
 - [ ] Remaining §10 dials with no UI yet? — none known; confirm in UX review.
 
 **Production hardening (not MVP)**
