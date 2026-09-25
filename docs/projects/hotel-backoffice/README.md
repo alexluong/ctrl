@@ -8,7 +8,8 @@ Naming: product/hotel name is **SoLex** (keep that casing in prose/UI). Folders,
 
 | file | holds | owner |
 |---|---|---|
-| `README.md` | what/why, direction, decisions, open questions, status, session prompts | cockpit session |
+| `mvp.md` | **entry point from 2026-09-25**: MVP cut, demo script, known edge cases, follow-ups, open questions | cockpit session |
+| `README.md` | what/why, direction, decisions, status, session prompts | cockpit session |
 | `stack.md` | WS1: repo + Go-on-Cloudflare spike, stack decision, deploy shape | WS1 |
 | `existing-system.md` | WS2: what the current `:99` system is, feature inventory, entities, what staff use | WS2 |
 | `product.md` | WS3: domain discovery — bounded contexts, aggregates, events, user roles, scope | WS3 |
@@ -37,7 +38,7 @@ Secrets (existing-system URL/login): `ctrl/secrets/hotel-backoffice.md` (gitigno
 **Decided (D-22, Alex 2026-09-23):** two tiers — Booking/Stay/Ledger are event-sourced (log = truth); Room, rates, charge categories, companies, guests, users, profile are CRUD tables that still emit events to the same log (history, projections), no fold. Don't ES everything. **D-23:** generic surfaces (console, exports) redact by column-name denylist. **D-24 (Alex):** one `Hotel` SDK object is the application layer; server fns are adapters; main test suite = scenarios against it with an in-memory store. **D-27 familiar-over-novel UX (ezFolio-shaped) · D-29 English is the working language, Vietnamese = product's translation pass; D-30 rrweb journeys are the review format · D-26 (2026-09-24): staging is throwaway until production exists; architect may call wipe/reseed, dev acts; no separate dev env. Production, secrets, config stay Alex's.
 - D-25:** nightly room-charge posting fires from cron and lazily, idempotent per (stay, night).
 
-**Build status 2026-09-23:** slices 0–2 done (foundation, occupancy loop, Setup minimum; 173 tests, staging deployed). Slice 3 (money: Ledger, folio, payments, night posting) next.
+**Build status 2026-09-25:** every v1 function in `product.md` §11 built (slices 0–5.8; solex `8130240`, staging `e00bc289`; e2e desk 154 + receptionist 12 green, no open QA finding). **Phase: demo-able MVP, not production** — see `mvp.md` for the cut, demo script and follow-ups.
 **Decided (D-4):** client already has a PMS (**ezFolio** by ezCloud, the `:99` system). SoLex = rebuild driven by **data ownership**; core subset + enhancements, not feature parity. WS2 maps the PMS first via slow walkthrough w/ Alex.
 **Decided (D-5):** fresh start, migration deferred — ezFolio has no working export. Schema for the domain, not for an import.
 See `team/decisions.md`. Older Go notes below kept for context.

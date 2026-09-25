@@ -2,9 +2,9 @@
 
 Narrative record of what the team (and Alex) has done, by day. `log.md` is the terse feed; this is the readable version. Architect maintains; append per milestone.
 
-## Where we are (2026-09-23)
+## Where we are (2026-09-25)
 
-**Phase: discovery complete → product modeling.** Existing system fully mapped; client requirements translated; 7 decisions recorded; product v0.1 drafted and waiting for Alex's session on schema / roles / actions / rules / events. Dev spike blocked only on `wrangler login`.
+**Phase: v1 functionality complete → demo-able MVP.** Every command in `product.md` §11 has a screen (5.7 command coverage + 5.8 approvals landed 2026-09-25: G29 house rules, G32 group routing table, G33 Needs attention, G34 overbooking, G35 capacity, reprice, approvals in three landings). QA suite fully green on `8130240` (desk 154 + receptionist 12), N33–N45 closed, staging `e00bc289`. Alex 2026-09-25: goal is a demo-able MVP, not production; prune docs, track follow-ups → `mvp.md` is the entry point. Next: showcase journeys R3–R5 (D-30), vi pass 3 if the demo is in Vietnamese, then Alex's big UX review.
 
 | WS | agent | state |
 |---|---|---|
@@ -46,25 +46,8 @@ Narrative record of what the team (and Alex) has done, by day. `log.md` is the t
 ## Decisions so far
 D-1 Go/no-VM/CF (superseded) · D-2 one owner per file · D-3 TS on plain Workers · D-4 rebuild for data ownership, core subset · D-5 fresh start, no migration · D-6 Setup scope + setup/admin persona · D-7 business date w/ configurable roll · D-8 D1 log + projections, no DO, Hookdeck deferred (built) · D-9 multi-tenant by design, one tenant · D-10 folded into D-12 · D-11 (proposed) auth · D-12 event naming + envelope (f: commandId replay in `commit`) · D-13 Booking v1 scope · D-14 Booking/Stay naming · D-15 night is the unit · D-16 money v1 · D-17 Ledger context · D-18 users/roles/apps · D-19 v1 screens · D-20 PII outside log · D-21 architect decides, Alex reviews · D-22 ES core (Booking/Stay/Ledger), event-notified CRUD for the rest · D-23 redact by column name · D-24 domain SDK `Hotel`, screens = tests · D-25 night posting = cron + lazy, idempotent · D-26 staging throwaway until production; architect may wipe, no third env · D-27 familiar over novel (ezFolio-shaped UX); VN wording iterates with client · D-28 approvals = request from the same button, owner grants in Needs attention (slice 5.8) · D-29 English is the working language; Vietnamese = product's translation pass. Full text: `decisions.md`.
 
-## Flag for Alex (decided under D-21, glance when convenient)
-- **Deposit forfeit is cautious**: every refund on a bill counts against how much deposit can be kept, because a refund does not say what it refunds. Can refuse a forfeit the hotel was entitled to; never keeps money it no longer holds. Say if the client hits it.
-- **Home pages / inbox / approvals** (your question 2026-09-24): spec'd in product.md §3 + §8. Desk home = room map + today strip; owner home = dashboard + "Needs attention" list (aged receivables, long OOO, unassigned arrivals, overstays with balance) — **in v1** (5.7). Approval flow (discount/void/refund/write-off request → owner grants → command runs) is designed on the log but **parked**; push notifications deferred. **Update:** hashed out with product per your ask → D-28, slice 5.8 after 5.7, in v1 unless you pull it.
-- **Reports date rule** (money semantics, reversible): a voided charge disappears from the revenue of the day it was earned; a refund shows in cash on the day it was refunded. The ledger itself always records the day a thing happened. Say if your accountant reads it differently.
-- **Infra (yours)**: staging deploy hit Cloudflare 7403 on the D1 migrate step twice today (retry passes unchanged) — flaky auth on the deploy token/step, worth a look.
-- **Flow recordings (your 2026-09-24 call)**: R1 + R2 delivered as webm + seekable rrweb replay https://claude.ai/artifact/PnZfbQDz5dZdxxef5U8JFr (your call on format going forward). Screen drawings paused (HTML template at artifact FnYDkwHfpSed7wtQmzgL3L if we return to it); **ezFolio-shaped mockups, all 5 screens ready for you** (shapes/nav/vibe, SoLex style, our features): https://claude.ai/artifact/L2ivkCzKDWwXoCFcmF6bKP (source `diagrams/ezfolio-flow/`, gen.py). Feedback → product via me.
-- **UX wireframe by persona ready for you**: `ux.md` (personas → journeys → nav → one wireframe per screen → gap list) + `diagrams/solex-ux.excalidraw`. Alex 2026-09-24: keep it ezFolio-shaped (D-27), wording not a gate. Open: nav grouping (architect: yes), quick panel (yes), dashboard desk rows (owner-only). Gap list drives 5.6 polish and a 5.7 command-coverage pass before v1.
-- **Open a `solex-qa` session** — profile + start prompt in `agents/solex-qa/README.md`; plan seeded in `qa/cases.md` (49 cases, slices 0–3).
-- **Slice 3 money ready for your staging pass** (the checkpoint I said mattered most): Thiết lập → "Thêm danh sách chuẩn" for charge categories (once), a room type + rate → Đặt phòng (price prefills) → Nhận phòng (tonight's room charge appears on the bill by itself) → add a minibar line → Trả phòng (should refuse with the balance) → Ghi nhận thanh toán tiền mặt → Trả phòng closes the bill. Then look at the bill and tell me what a Vietnamese receptionist would find odd.
-- **Slice 2 also ready for your staging pass**: Thiết lập → add a room type ("Phòng đôi"), a rate for a date range, then Đặt phòng and watch the price prefill; try a date outside the range (should refuse: "Chưa có giá cho một số đêm"); Khách & liên hệ → erase a guest, then check its history in Hệ thống shows `{}` payloads. Vietnamese copy is dev's.
-- **Slice 1 ready for your staging pass** (see `qa.md` 2026-09-23 walkthrough for the exact clicks): sign in → Phòng (a room in service) → Đặt phòng with a room → Nhận phòng with a guest name → try a second booking on the same room/night (should refuse) → Trả phòng early → Lịch phòng + board. Vietnamese copy is dev's, skim it.
-- D-11 auth: app-owned username/password v1, OIDC later; staging login before real data.
-- D-20 PII outside the event log (id refs, tombstone erasure).
-- D-11 built: Better Auth; `/system` gated by `system_operator` flag, separate from hotel `owner` role.
-- Staging event log wipe at the Room flip: **Alex 2026-09-23 (architect session): "i'll defer to you; staging is indeed throwaway data, at least at the moment"** → wipe approved, Room flip greenlit. Relayed to dev. **Confirmed by Alex directly in dev's session 2026-09-24 — closed.**
-- Refunds are capped at payments actually received on that folio, not at the credit balance (landing 2). Conservative; say if the client refunds credit notes differently.
-- Money role split is now concrete (D-17 built note): receptionist posts charges, takes payments, transfers to receivable; owner alone voids, refunds, writes off, voids expenses. Product added move-line-between-folios and record-petty-cash-expense to receptionist. Say if you want the line elsewhere.
-- First-owner bootstrap (landing C): an empty hotel lets a system operator act as owner until the first staff member is added, then never again. Narrow by design; re-read if it ever feels wrong.
-- D-23: console/exports redact by column-name denylist after dev caught live session tokens rendering in `/system`.
+## Flag for Alex
+Moved to `mvp.md` §3 (known edge cases) and §4 (follow-ups) on 2026-09-25. Review artifacts: journeys player https://claude.ai/artifact/PnZfbQDz5dZdxxef5U8JFr · ezFolio-shaped mockups https://claude.ai/artifact/L2ivkCzKDWwXoCFcmF6bKP.
 
 ## What Alex still owns
 - Hotel-local time zone (rendering); staging auth before real data (`questions.md`)
