@@ -86,6 +86,7 @@ The k8s simile is about **managing agents as workloads**: where they run, with w
 - **Env lifecycle**: provision → seed → run → teardown; health checks; nothing left behind (SoLex: stale dev servers holding ports, stuck shims pushing load avg to 260).
 - **Registered hosts** (Alex's idea): register machines agents can run on — MBP, Mac Mini, collielab VM, a cloud box, a teammate's machine — each advertising what it offers (CPU/mem, OS, browser, Docker, GPU, network reach, which repos/secrets it may hold). Like k8s nodes or CI self-hosted runners. Work is scheduled onto a host that matches the persona's class + the project's env.
 - **Agents instead of CI** (Alex's idea): with registered hosts, CI-shaped work (build, test, e2e, deploy checks) can be done by agents that also *act* on results — rerun a flake, bisect, draft the fix, attach a demo. Needs guaranteed resources and deterministic parts (the test run itself stays a script; the agent wraps it).
+- **Process / system visibility** (Alex's idea): track what agents are *running* — dev servers, Docker containers/compose stacks, DBs, tunnels, background jobs — as first-class objects: owner (which agent / card / worktree), host, ports, logs, CPU/mem, started-at, health. A "`ps` for agents" in the UI, plus an API/MCP so an agent checks before starting ("a dev server for this worktree is already up on :7531") and can read another's logs. Lifecycle tied to the card: done/abandoned card → its processes reaped. Directly targets SoLex's stale dev servers holding ports, orphan postgres container, stuck shims at load avg 260. Pieces to study: Docker labels, process-compose / overmind, mise tasks, Tilt, Portainer.
 - **Placement**: schedule workloads onto machines (MBP, Mac Mini, cloud VM/sandbox) by resource class and env needs; heavy dev work off the laptop.
 - **Declarative**: a project declares its env ("app + SQLite, seed script, ports from a range, preview deploy optional"); personas declare their class; the runtime reconciles (restart the dead, reap the idle, respect budgets).
 - Existing pieces to study: devcontainers, Nix/devbox, mise (already used), Coder / Gitpod / Daytona (remote dev envs), e2b / Modal sandboxes, Cloudflare/Vercel preview deploys, herdr (agent sessions across machines).
@@ -136,7 +137,7 @@ The manual version's pain = candidate requirements. Setup: 5 long-lived persona 
 
 ## Studio as a distro (packaging of tools)
 
-Alex (2026-09-25): Studio is a **packaging** of multiple tools, not one app. Closer to a Linux distro than to a product: pick good existing pieces, configure them to work together, add glue where nothing exists.
+Alex (2026-09-25): Studio is a **packaging** of multiple tools, not one app — fine with it being an **opinionated distro / workspace with git management tooling built in** (worktrees, branches, review, local → Forgejo/Gitea/GitHub). Closer to a Linux distro than to a product: pick good existing pieces, configure them to work together, add glue where nothing exists.
 
 | need | candidate piece |
 |---|---|
