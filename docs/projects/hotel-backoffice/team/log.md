@@ -1,4 +1,5 @@
 # Team log
+- 2026-09-25 — Alex: wants the full system for review, not the demo path; and the ezFolio path beside it. Review package = R1–R9 on the wave-1 base; product adds "In ezFolio today" to each journey doc (steps, screenshots, keeps/changes). QA scripts R6–R9 now, re-films all nine on dev's sha.
 - 2026-09-25 — Alex: journey personas are Oanh (owner) and Dao (receptionist). QA applies at the re-film.
 - 2026-09-25 — Alex: do five journeys demonstrate the full system? No (Setup, stay changes, cancellation path, back office uncovered). Queued R6–R9 with QA after the wave-1 re-film; mvp.md §2 lists nine.
 - 2026-09-25 — Ruling (B1 detail, dev vs product): **minimum one night** — a checked-in stay keeps its arrival night; same-day in/out pays one night; early check-out drops only nights after arrival. Dev's implementation stands; product to amend §10 6a. QA journey docs live in qa/journeys/ (README + R1–R5, do-not-demo list) since 9f90b40; R3 re-film includes a room-level routing exception (301 laundry → group).

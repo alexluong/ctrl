@@ -33,7 +33,7 @@ Personas (Alex 2026-09-25): **Oanh** = owner, **Dao** = receptionist, in every j
 8. **R8 Cancellation path** (queued): deposit, cancel with reason, no-show, partial forfeit, refund the rest by the method paid.
 9. **R9 Back office** (queued): expense record + void, reports, print bill + receipt, edit and erase a guest (tombstoned history), deactivate staff.
 
-R1–R5 are the demo; R6–R9 complete the system. The suite-wide rrweb capture (every e2e test) is the unnarrated reference.
+Alex 2026-09-25: the review package is **all nine**, filmed on the wave-1 base and published together; R1–R5 double as the client demo. Each journey doc gets an "In ezFolio today" section (product) with the same task in ezFolio, screenshots from `screens/`, and what SoLex keeps/changes. The suite-wide rrweb capture (every e2e test) is the unnarrated reference.
 
 Player: https://claude.ai/artifact/RrF94hDrGJ8QWPaecge4xN (R1–R5 draft, filmed before wave 1; final re-film after wave 1 lands). Do not demo: voiding a room line of an in-house guest.
 
