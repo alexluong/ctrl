@@ -1,7 +1,7 @@
 # R3 — Group + company
 
 **Purpose:** a company's tour group from agreement to invoice: who pays for what, set once and applied per room.
-**Personas:** Mai, owner (the agreement, and receivables at the end); Linh, front desk (everything else).
+**Personas:** Oanh, owner (the agreement, and receivables at the end); Dao, front desk (everything else).
 **Seed used:** Blue Sea Travel Co.; Double rooms 203, 301, 303 and Twin 401, all free tonight. Room 201's company debt is already on the account (it shows in the final total).
 **Length:** 1:47. File `R3-group-company.webm`.
 
@@ -22,7 +22,7 @@
 | 13 | 1:23 | (the other three check out, off camera) | Nothing is left on their own bills. |
 | 14 | 1:24 | The group's bill | Four room nights and the dinner: 2,410,000. |
 | 15 | 1:29 | Move to the company → Finish | The company is already picked from the booking; the bill closes at 0. |
-| 16 | 1:36 | Mai: Owed → Blue Sea's statement | The group's total is on the company's account, ready to invoice. |
+| 16 | 1:36 | Oanh: Owed → Blue Sea's statement | The group's total is on the company's account, ready to invoice. |
 
 Open on screen: N51 (room lines read "Tiền phòng <ISO date>"), N52 (the statement's line shows the company's id), N53 (the category under each bill line is in Vietnamese), N54.
 
@@ -42,3 +42,7 @@ The corporate group is ezFolio's main business and its most involved path (`exis
 - Keeps: group = types × qty with live free-per-type (G20), "Booking for" a group with a room count, the routing idea per charge category, Công nợ → company as the last settle option, statement rows that read as bookings.
 - Changes: the company's agreement is stored once in Setup as the default routing (§10 rule 8) and applied to every group stay; the booking page shows the whole table (rooms × categories) and one select changes the group (G32) — ezFolio sets nine checkboxes per room.
 - Changes: "Move to the company" is an explicit transfer on the group's bill, not a payment method that doubles as "open a receivable"; the master is closed at 0 by `CloseBooking`, and there is no Đóng day-close (parked, G27).
+
+## In ezFolio today
+
+_(product to fill in)_

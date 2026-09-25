@@ -1,7 +1,7 @@
 # R5 — House rules
 
 **Purpose:** what the hotel refuses, and who may override it: overbooking (the owner may, and it is recorded), ID at check-in, and room capacity.
-**Persona:** Mai, owner.
+**Persona:** Oanh, owner.
 **Seed used:** the Twin type with 2 rooms (401–402); Double room 102, free tonight; Doubles sleep 2.
 **Length:** 1:08. File `R5-house-rules.webm`.
 
@@ -30,3 +30,7 @@ The rules exist as flags on one settings tab, and most of them do not refuse any
 - Keeps: one House rules page under Setup with the same dials (child age, day boundary, overbooking), and "2 free, 3 asked" shown on the group form like the matrix's tightest night.
 - Changes: overbooking is a refusal with the night and the shortfall named; "Take it anyway" is the owner's by default (`stay.overbook`) and the booking's history records it — ezFolio's flag is all-or-nothing and silent.
 - Changes: ID at check-in and room capacity are rules the hotel can switch on (ID) or that always hold (capacity: adults ≤ type capacity, children never counted); ezFolio only stores the fields.
+
+## In ezFolio today
+
+_(product to fill in)_

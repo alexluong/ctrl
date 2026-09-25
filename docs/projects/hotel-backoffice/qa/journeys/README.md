@@ -1,14 +1,18 @@
 # Showcase journeys
 
-Five short screen recordings, one user-visible flow each (mvp.md §2, D-30). Filmed in English from `solex/e2e/journeys/*.journey.ts` with `pnpm journeys`. Each one ships as a `.webm` and an rrweb replay; the player lists them all. Read these pages beside the player.
+Nine short screen recordings, one user-visible flow each (mvp.md §2, D-30). Filmed in English from `solex/e2e/journeys/*.journey.ts` with `pnpm journeys`. Each one ships as a `.webm` and an rrweb replay; the player lists them all. Read these pages beside the player.
 
 | # | Journey | Persona | Length |
 |---|---|---|---|
-| R1 | [Desk walk-in](R1-desk-walk-in.md) | Linh, front desk | 0:53 |
-| R2 | [Owner morning](R2-owner-morning.md) | Mai, owner | 0:54 |
-| R3 | [Group + company](R3-group-company.md) | Mai, then Linh | 1:47 |
-| R4 | [Ask the owner](R4-ask-the-owner.md) | Linh (receptionist account), Mai | 1:21 |
-| R5 | [House rules](R5-house-rules.md) | Mai | 1:08 |
+| R1 | [Desk walk-in](R1-desk-walk-in.md) | Dao, front desk | 0:53 |
+| R2 | [Owner morning](R2-owner-morning.md) | Oanh, owner | 0:54 |
+| R3 | [Group + company](R3-group-company.md) | Oanh, then Dao | 1:47 |
+| R4 | [Ask the owner](R4-ask-the-owner.md) | Dao (receptionist account), Oanh | 1:21 |
+| R5 | [House rules](R5-house-rules.md) | Oanh | 1:08 |
+| R6 | [Setup from empty](R6-setup-from-empty.md) | Oanh | ~1:30 |
+| R7 | [Stay changes and rooms](R7-stay-changes.md) | Dao | ~1:06 |
+| R8 | [Cancellation path](R8-cancellation.md) | Oanh | ~1:04 |
+| R9 | [Back office](R9-back-office.md) | Oanh | ~1:15 |
 
 ## How they are made
 
@@ -20,7 +24,8 @@ Five short screen recordings, one user-visible flow each (mvp.md §2, D-30). Fil
 - **Language.** All hotel data is typed in English, and people's names are written without diacritics. On the English screens, any Vietnamese left is the app's own. `sweep.journey.ts` checks for it and writes `recordings/english-sweep.json`.
 - **Nobody signs in on camera.** Personas are the dev user renamed. R4's receptionist is a real account signed in off camera, and its session is handed to the filmed browser.
 - **"Next morning".** A step off camera moves the hotel's day start (Setup → "The day starts at": 23:00, then back to 00:00). This lets a guest check in "last night" and check out on their departure day without waiting a day. It matters because, since B1, a check-out on the day of arrival gives the night back.
-- **Order.** The journeys run R1 → R5 on one database; each starts where the one before left off.
+- **Order.** R1–R5 and R7–R9 run in that order on one database, each starting where the one before left off. R6 runs on its own empty database and server.
+- **Personas.** Oanh is the owner and Dao the front desk: the dev user renamed, except in R4, where Dao is a real receptionist account.
 
 ## Do not demo
 

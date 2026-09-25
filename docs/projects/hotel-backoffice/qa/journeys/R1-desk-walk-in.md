@@ -1,7 +1,7 @@
 # R1 — Desk walk-in
 
 **Purpose:** the front desk's most common job, from an empty room to a closed bill: room map → book → check in → minibar → check out and pay → the room is dirty.
-**Persona:** Linh, front desk.
+**Persona:** Dao, front desk.
 **Seed used:** room 302 (free); the Minibar category. The walk-in guest is typed on camera.
 **Length:** 0:53. File `R1-desk-walk-in.webm`.
 
@@ -33,3 +33,7 @@ Same job, the desk's path in ezFolio (`existing-system.md` § individual booking
 - Keeps the map as home, the status buttons with counts, the tile → quick panel with Còn lại and one quick-charge button per category, and the quickout-shaped settle dialog.
 - Changes: one booking form with "Take the booking" / "Take and check in now" instead of a 95-field editor; tonight's room charge posts at check-in; check-out is refused while the bill owes, so the bill stays on the page rather than behind the Hóa đơn tab.
 - Changes: the room goes dirty automatically at check-out (§10 rule 6, house rule); no card tab, ever.
+
+## In ezFolio today
+
+_(product to fill in)_
