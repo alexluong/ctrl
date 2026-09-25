@@ -132,7 +132,7 @@ The manual version's pain = candidate requirements. Setup: 5 long-lived persona 
 
 ## Landscape (see collie-demo § workspace vision for detail)
 
-Kandev (kanban + worktree per task + approval gates + agent CLIs via ACP; no proof/tests), herdr (the runtime/multiplexer layer), Vibe Kanban, Claude Squad, Crystal/Nimbalyst, Sculptor, Conductor, Copilot agent, Devin. Crowded: orchestration and boards. Less crowded: **evidence** (demos, before/after, QA tied to acceptance criteria) and the **attention inbox**.
+**T3 Code** (t3.codes, pingdotgg/t3code; checked 2026-09-25: MIT, ~22k★, free, BYO subscription): one GUI over many harnesses (Claude Code, Codex, Cursor, OpenCode, Antigravity, Grok), switch harness/model mid-thread, a git worktree per thread, diff review, one-click PR, custom actions; desktop + web + iOS/Android remote control of agents on your machine. Sits at the harness-front/runtime layer, not board/personas/env/evidence. Kandev (kanban + worktree per task + approval gates + agent CLIs via ACP; no proof/tests), herdr (the runtime/multiplexer layer), Vibe Kanban, Claude Squad, Crystal/Nimbalyst, Sculptor, Conductor, Copilot agent, Devin. Crowded: orchestration and boards. Less crowded: **evidence** (demos, before/after, QA tied to acceptance criteria) and the **attention inbox**.
 
 ## Studio as a distro (packaging of tools)
 
