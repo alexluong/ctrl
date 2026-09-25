@@ -1,4 +1,6 @@
-# replay (candidate) — Playwright journeys → seekable HTML replay
+# Collie Demo (`collie-demo`): narrated, seekable demos of features, recorded by agents
+
+Formerly the working name **replay** (renamed 2026-09-25). Older sections below still say "replay", `.replay`, `@replay/*`: read those as working names.
 
 Status: **going ahead as a personal tool** (2026-09-25). Lab prototype at `~/code/replay-lab`; no public repo yet. Market scan: [market.md](market.md).
 
@@ -318,7 +320,11 @@ Alex: "what about backend features, not UI?"
 
 **Lab next** (Alex to pick): the before/after compare spike, or the auto sequence diagram from spans.
 
-## Naming (open, 2026-09-25)
+## Naming
+
+**Decided (Alex, 2026-09-25): project = Collie Demo / `collie-demo`.** Still open: the CLI command (`demo` vs `collie demo`), npm scope (`@collie/*` vs a standalone scoped package first), file extension (`.demo`? `.take`?), and whether "journey" is the script term. The history below explains how we got here.
+
+### History (2026-09-25)
 
 "Replay" is a working name only: Alex says it doesn't fit, and it collides with Replay.io.
 
@@ -376,7 +382,7 @@ Alex: "what about backend features, not UI?"
 
 ## Open questions
 
-- Name / repo: see § Naming.
+- Name: **Collie Demo** (decided). Open: repo location, CLI command, file extension, npm scope. See § Naming.
 - License split: MIT for core/adapters/player/CLI; server MIT vs AGPL. Lean: MIT everywhere, AGPL server as fallback; skip FSL/BSL ([market.md](market.md#open-core-models)).
 - Go (single binary: server + CLI + embedded player) vs TS monorepo. The recorder/player stay JS either way.
 - ~~Does an "agent demo recorder" MCP already exist?~~ Answered in [market.md](market.md): several are video-only; none are DOM replays.

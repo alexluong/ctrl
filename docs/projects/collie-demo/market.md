@@ -1,4 +1,6 @@
-# replay — market / prior-art scan
+# Collie Demo — market / prior-art scan
+
+(Written under the working name "replay"; "replay" below = Collie Demo.)
 
 Checked 2026-09-25 by web and GitHub research across 5 parallel tracks. Sources are inline. Items marked **(unverified)** come from third parties, from memory, or from a model-summarized fetch; check them before relying on them.
 Context: [README.md](README.md) (idea, lab state, SDK).
