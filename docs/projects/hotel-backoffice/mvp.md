@@ -28,14 +28,14 @@ Personas (Alex 2026-09-25): **Oanh** = owner, **Dao** = receptionist, in every j
 4. **R4 Ask the owner** (new): receptionist reprices a line → "Ask the owner" → owner's Needs attention card → approve → bill shows the reprice; then a refuse with reason.
 5. **R5 House rules** (new, short): overbooking warn → override recorded; ID required refuses a check-in; capacity refuses 4 adults in a double.
 
-6. **R6 Owner sets up the hotel from empty** (queued): profile + business date, room types with capacity, rooms, rates, standard categories, a source, a company, a staff account.
-7. **R7 Stay changes and rooms** (queued): extend, shorten, per-night rate, move room from today, out of order and back, housekeeping, tape chart quote.
-8. **R8 Cancellation path** (queued): deposit, cancel with reason, no-show, partial forfeit, refund the rest by the method paid.
-9. **R9 Back office** (queued): expense record + void, reports, print bill + receipt, edit and erase a guest (tombstoned history), deactivate staff.
+6. **R6 Owner sets up the hotel from empty** : profile + business date, room types with capacity, rooms, rates, standard categories, a source, a company, a staff account.
+7. **R7 Stay changes and rooms** : extend, shorten, per-night rate, move room from today, out of order and back, housekeeping, tape chart quote.
+8. **R8 Cancellation path** : deposit, cancel with reason, no-show, partial forfeit, refund the rest by the method paid.
+9. **R9 Back office** : expense record + void, reports, print bill + receipt, edit and erase a guest (tombstoned history), deactivate staff.
 
 Alex 2026-09-25: the review package is **all nine**, filmed on the wave-1 base and published together; R1–R5 double as the client demo. Each journey doc gets an "In ezFolio today" section (product) with the same task in ezFolio, screenshots from `screens/`, and what SoLex keeps/changes. The suite-wide rrweb capture (every e2e test) is the unnarrated reference.
 
-Player: https://claude.ai/artifact/RrF94hDrGJ8QWPaecge4xN (R1–R5 draft, filmed before wave 1; final re-film after wave 1 lands). Do not demo: voiding a room line of an in-house guest.
+Player: https://claude.ai/artifact/RrF94hDrGJ8QWPaecge4xN (all nine, filmed on c4b0350 after code-review wave 1; docs in `qa/journeys/`). Do not demo: voiding a room line of an in-house guest.
 
 ## 3. Known edge cases (decided under D-21; say if wrong, otherwise they stand)
 
