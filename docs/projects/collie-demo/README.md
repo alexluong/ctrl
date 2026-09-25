@@ -2,7 +2,7 @@
 
 Formerly the working name **replay** (renamed 2026-09-25). Older sections below still say "replay", `.replay`, `@replay/*`: read those as working names.
 
-Status: **going ahead as a personal tool** (2026-09-25). Lab prototype at `~/code/replay-lab`; no public repo yet. Market scan: [market.md](market.md).
+Status: **going ahead as a personal tool** (2026-09-25). Lab prototype at `~/code/replay-lab`; no public repo yet. Market scan: [market.md](market.md). Build side (lab map, format v0, capture internals, gotchas, language/browser/sharing decisions): [engineering.md](engineering.md).
 
 ## Positioning (Alex, 2026-09-25): decided
 
@@ -382,7 +382,17 @@ Alex: "what about backend features, not UI?"
 
 ## Open questions
 
-- Name: **Collie Demo** (decided). Open: repo location, CLI command, file extension, npm scope. See § Naming.
-- License split: MIT for core/adapters/player/CLI; server MIT vs AGPL. Lean: MIT everywhere, AGPL server as fallback; skip FSL/BSL ([market.md](market.md#open-core-models)).
-- Go (single binary: server + CLI + embedded player) vs TS monorepo. The recorder/player stay JS either way.
+Alex's decisions pending:
+- **Naming leftovers:** CLI command (`demo` vs `collie demo`), file extension (`.demo`? `.take`?), npm scope (`@collie/*` now vs standalone first), repo location. See § Naming.
+- **Language:** Go (one binary: CLI + runner + server + backend capture, web bundle embedded) vs all-TS (simpler npm shipping, shared types). The recorder/player are JS and the Playwright adapter is TS either way. Lean: Go. Details: [engineering.md § language split](engineering.md#where-each-piece-runs-language-split-leaning).
+- **Sign-in methods** for the sharing server: GitHub only first, or GitHub + Google + email magic link.
+- **License:** MIT for core/adapters/player/CLI; server MIT vs AGPL. Lean: MIT everywhere, AGPL server as fallback; skip FSL/BSL ([market.md](market.md#open-core-models)).
+- **What to build next:**
+  - Lab spike: before/after compare, or the auto sequence diagram from spans.
+  - Build order: [engineering.md § Next build steps](engineering.md#next-build-steps-proposed-alex-to-pick).
+
+Known issue: redaction isn't implemented yet. The lab's webhook `secret` would leak in a published demo. Redaction is planned on by default at record time ([engineering.md](engineering.md#private-team-sharing-the-paid-add-on-but-private-first-by-design)).
+
+Answered:
+- ~~Name~~: **Collie Demo** (2026-09-25).
 - ~~Does an "agent demo recorder" MCP already exist?~~ Answered in [market.md](market.md): several are video-only; none are DOM replays.
