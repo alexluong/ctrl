@@ -2,7 +2,7 @@
 
 **Goal (Alex 2026-09-25): a demo-able MVP, not a production-ready app.** This file is the entry point from here on: what the MVP is, what to demo, the edge cases we knowingly decided, and the follow-ups we are *not* building now. `product.md` / `ux.md` stay as the full spec; `team/progress.md` is history. Architect maintains; Alex prunes via architect.
 
-State: **every v1 function in `product.md` §11 is built** (one exception: `ChargeItem` catalogue, §4) (dev, 2026-09-25, solex `8130240`, staging `e00bc289`); QA suite fully green (desk 154 + receptionist 12 e2e); no open QA finding. Phase now = **demo prep + UX review**, not features.
+State: **every v1 function in `product.md` §11 is built** (one exception: `ChargeItem` catalogue, §4) (dev, 2026-09-25, solex `2f61ef9`, staging `eef708e5`); QA suite fully green (desk 154 + receptionist 12 e2e); no open QA finding. Phase now = **demo prep + UX review**, not features.
 
 ## 1. Core (what the MVP is)
 
@@ -16,7 +16,7 @@ State: **every v1 function in `product.md` §11 is built** (one exception: `Char
 | Owner | dashboard, revenue / occupancy reports, Needs attention (aged debt, long OOO, unassigned arrivals, overstays, waiting approvals) + badge | yes — the "owner morning" |
 | Histories | guest / booking / stay+folio (merged) / room, one sentence per event | short |
 | System | `/system` console (events, replay, tables), redaction by column name | no (unless the audience is technical) |
-| i18n | EN working language; vi translated through pass 2; **92 keys still English** (dev handover `agents/solex-dev/notes/2026-09-25-vi-pass-3-handover.md`) | needed if the demo is in Vietnamese |
+| i18n | EN working language; **vi complete** (pass 3 landed solex `2f61ef9`, staging `eef708e5`, `i18n:report` clean) | demo can run in vi or en |
 
 ## 2. Demo script (proposed; QA films each as a showcase journey, D-30)
 
@@ -63,7 +63,7 @@ Player: https://claude.ai/artifact/PnZfbQDz5dZdxxef5U8JFr (R1+R2 today; republis
 - [ ] Receivable due dates (today aged by days only, §10 deferred).
 - [ ] `ExpenseCategory` as Setup data (fixed in code; screen if the client asks).
 - [ ] Migration from ezFolio (D-5 fresh start; DB export from ezCloud only if migration comes up).
-- [ ] Vietnamese pass 3 (92 keys; `approvalKind.*` are sentence fragments composed at render and need a vi wording decision first, not just translation) + a native-speaker wording pass with the client (D-27/D-29).
+- [ ] Native-speaker Vietnamese wording pass with the client (D-27/D-29); translation itself is complete. The `approvalKind.*` fragments composed at render are the first thing to check with them.
 - [ ] Overbooking override on the other paths (check-in early nights, extend, add rooms to a group) — commands accept `override`, only the new-booking form sends it.
 - [ ] Remaining §10 dials with no UI yet? — none known; confirm in UX review.
 
@@ -82,7 +82,7 @@ Player: https://claude.ai/artifact/PnZfbQDz5dZdxxef5U8JFr (R1+R2 today; republis
 
 ## 5. Open questions (for the demo / the client)
 
-- Who is the demo audience and language — the client (vi) or Alex alone (en)? Decides whether vi pass 3 is a gate.
+- Who is the demo audience — the client or Alex alone? (Language is no longer a gate; vi is complete.)
 - Demo on staging with seeded data, or the journeys player only? (Staging seeding = throwaway, architect may wipe.)
 - Cash handover: how does the desk hand cash to the owner today, and does the app need to record it (G27)?
 - Do they keep the PA18 export today, and is it required?
