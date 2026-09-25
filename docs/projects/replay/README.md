@@ -263,6 +263,61 @@ Alex: "what about backend features, not UI?"
 - **Tracetest**: trace-based assertions
 - Keploy: API capture/replay
 
+## Scope: tool now, suite parked (Alex, 2026-09-25)
+
+**We build only the tool (capture + sharing).** The suite is an idea: not finalized, not being built.
+
+**Boundary:** the tool is about **recordings**; the suite is about **work**. Test: does the feature make sense without any project/task/team context? Yes → tool. No → suite.
+- **Tool:**
+  - recording
+  - player views
+  - before/after compare
+  - publish/share
+  - collections (several replays + text + diagrams on one page)
+  - Mermaid diagram blocks + an **auto sequence diagram generated from trace spans**
+- **Suite (parked):**
+  - releases (version / changelog / "demos in this release", rendered as a collection)
+  - test cases (requirement → journeys → pass/fail history)
+  - agent orchestration (bug → repro → fix → compare → attach to PR)
+- **Seams to keep clean** so a suite can sit on top later:
+  1. the `.replay` format + collection/compare manifests
+  2. the player as an embeddable component with a plugin API (stages/panels/views)
+  3. the CLI with `--json` output
+
+### Usage levels
+- **Throwaway** (default for agents): the script lives in a gitignored `.replay/`; the replay itself is the artifact.
+- **Showcase:** kept `demos/*.demo.ts`, re-run to regenerate.
+- **Suite:** a Playwright fixture, `use: { replay: 'off'|'on'|'retain-on-failure'|'showcase' }`.
+  - `off` = no-op (`test.step` works as normal)
+  - `on` = a replay per test
+  - `showcase` = demo pacing
+- Users don't set up Playwright themselves; the tool ships it.
+- Our verbs: `go/click/type/say/http/until`, plus raw `r.page`.
+- **Not a test framework:** a reporter layer, like the trace viewer / HTML report.
+
+### Player views (same file, different views)
+- The views:
+  - **dev** (today)
+  - **backend** (`http` stage)
+  - **reviewer / non-technical:** big captions, pause at each step + Next, outcome summary, no dev panels
+  - **storyboard:** a frame per step → PDF/GIF/MP4
+  - **test report:** ✓/✗ per step
+  - **compare**
+  - **embed**
+- Picked via `?view=` or `manifest.view`.
+- Custom panels via a plugin API (e.g. a SoLex domain panel).
+- Pricing caution (see [market.md § Open-core models](market.md#open-core-models)): keep views and the plugin API free everywhere. Charge only for hosted conveniences: branded share pages / custom domain, private viewer links, viewer analytics, retention.
+
+### Before/after compare + bug demos
+- `replay run x.demo.ts --compare main`: creates a git worktree at the base and at HEAD, runs the same journey on each (fresh DB each time), and writes `compare.json`.
+- Steps are aligned by caption.
+- A soft `r.expect` records ✗ instead of throwing, so the "before" run completes.
+- The compare view shows a per-step diff summary (status / console / DB / trace shape / visual) plus the two runs side by side.
+- **Bug workflow:** reproduce first (before, ✗) → fix → after (✓). The journey then becomes a regression test.
+- For features, "before" is optional.
+
+**Lab next** (Alex to pick): the before/after compare spike, or the auto sequence diagram from spans.
+
 ## Naming (open, 2026-09-25)
 
 "Replay" is a working name only: Alex says it doesn't fit, and it collides with Replay.io.
@@ -291,6 +346,20 @@ Alex: "what about backend features, not UI?"
   - **outtake**
   - **exhibit** (needs an npm scope)
 - **Suite names (film theme), if ever:** Editbay, Cutroom, Picturelock (all free on npm); Backlot is risky (brekkylab/backlot = local SaaS emulator for agents).
+
+**Later discussion (same day):**
+- **"Proof"**: liked the angle, but too strong. Alex: in a PR "I want to share a demo", not proof.
+- **Shared noun = "demo".** The dev/backend panels are extras inside a demo.
+- CLI candidates:
+  - **`demo`** (plain, later "Collie Demo"; bare npm taken by a dead package → scoped package with a `demo` bin; no local command clash)
+  - **runthru** (npm free)
+  - `qed` (clever; npm dead)
+- **"Journey"**:
+  - Already SoLex's term (`e2e/journeys`).
+  - Fits the *script* (a path of steps; also a request's journey through the backend).
+  - As a product name it has marketing/analytics baggage (Journey Builder, journey analytics). Bare `journey` npm is dead; `journeys` npm is dead (2022, "test user journeys through a REST API").
+  - Lean: journey = the script term, demo = the output/noun.
+- **Standalone first:** ship a standalone CLI; formalize under Collie later (scope `@collie/*`; the command and file extension don't mention Collie, so nothing needs renaming).
 
 **File format:** a plain zip (magic `PK`) with `manifest.json` (format name + version) and NDJSON streams; a custom extension for "open with"; a `--zip` export. Extension candidates: `.take`, `.rush`, `.reel` (none has a fileinfo entry).
 
