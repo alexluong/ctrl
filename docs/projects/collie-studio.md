@@ -13,6 +13,7 @@ A personal, local-first workspace for working with agents: **a board where colum
 | **Obsidian** | data | local-first, your files, works offline with zero setup; team features added on top |
 | **Odoo** | apps | install apps and configure them; apps share one data model, so a ticket links its doc, PR, demo, and agent runs without glue |
 | **k8s for agents** | runtime + dev env (§ Runtime) | resource classes per persona, env per project; declarative desired state ("keep 2 devs on the Ready column"), reconcile (restart a dead/idle/compacted agent from its resume state), scheduling across machines (MBP / Mac Mini / cloud), resource limits (token budgets), health probes ("no progress for hours"). Borrow the ideas, not the YAML |
+| **game IDE** (Unity/Godot editor) | workspace surface | one place to run, inspect, test, deploy, demo; per-project actions become buttons for you and verbs for agents (§ Workspace actions) |
 | **Gru / minions** | UX, feel | you direct; many small eager, slightly chaotic workers; the inbox is the lab they report back to. The chaos is why review + evidence exist |
 | **ClickUp alternative** | horizon | a team runs entirely on Studio's built-ins. A far vision, not a direction |
 
@@ -90,6 +91,18 @@ The k8s simile is about **managing agents as workloads**: where they run, with w
 - **Placement**: schedule workloads onto machines (MBP, Mac Mini, cloud VM/sandbox) by resource class and env needs; heavy dev work off the laptop.
 - **Declarative**: a project declares its env ("app + SQLite, seed script, ports from a range, preview deploy optional"); personas declare their class; the runtime reconciles (restart the dead, reap the idle, respect budgets).
 - Existing pieces to study: devcontainers, Nix/devbox, mise (already used), Coder / Gitpod / Daytona (remote dev envs), e2b / Modal sandboxes, Cloudflare/Vercel preview deploys, herdr (agent sessions across machines).
+
+## Workspace actions ("game IDE")
+
+Alex (2026-09-25): a workspace where you can *do* a lot, like a game engine editor (Unity/Godot: play button, inspectors, consoles, everything in one surface), configured per project the Odoo way.
+
+- **Actions, declared per project:** "how to run tests", "how to seed", "how to deploy", "how to start a demo env", "how to tail prod logs". Each is config (command + target host/env + inputs + what it produces), like mise tasks / VS Code tasks / `launch.json`, but surfaced three ways at once:
+  - a **button/panel** for the human (test runner with results, deploy with status)
+  - a **verb/tool** for agents (same definition, so what you teach the workspace, agents can use)
+  - a **tracked run** (process registry: owner, logs, result, evidence), attachable to a card
+- **Targets beyond local:** an agent can drive a **remote env** — a preview deploy, a demo environment, staging — not just a dev server. Provision → seed → run the demo → record it (Collie Demo) → tear down.
+- **Panels are apps (Odoo):** a test-runner panel, a deploy panel, a DB inspector, a log viewer, a demo player. Install the ones a project needs; a project that never deploys never sees a deploy panel. Teach it to deploy → you get a deploy interface.
+- Ties to § Teaching agents: actions are the concrete form of "agents learn verbs, teams write mappings".
 
 ## Teaching agents
 
