@@ -84,6 +84,8 @@ The k8s simile is about **managing agents as workloads**: where they run, with w
   - heavy: can't be replicated per agent (big stack, external deps, can't deploy) → a shared env with **leases/locks**, or agents queue for it
   - QA's target varies: a local env, a per-branch preview, or a shared staging/deployed env
 - **Env lifecycle**: provision → seed → run → teardown; health checks; nothing left behind (SoLex: stale dev servers holding ports, stuck shims pushing load avg to 260).
+- **Registered hosts** (Alex's idea): register machines agents can run on — MBP, Mac Mini, collielab VM, a cloud box, a teammate's machine — each advertising what it offers (CPU/mem, OS, browser, Docker, GPU, network reach, which repos/secrets it may hold). Like k8s nodes or CI self-hosted runners. Work is scheduled onto a host that matches the persona's class + the project's env.
+- **Agents instead of CI** (Alex's idea): with registered hosts, CI-shaped work (build, test, e2e, deploy checks) can be done by agents that also *act* on results — rerun a flake, bisect, draft the fix, attach a demo. Needs guaranteed resources and deterministic parts (the test run itself stays a script; the agent wraps it).
 - **Placement**: schedule workloads onto machines (MBP, Mac Mini, cloud VM/sandbox) by resource class and env needs; heavy dev work off the laptop.
 - **Declarative**: a project declares its env ("app + SQLite, seed script, ports from a range, preview deploy optional"); personas declare their class; the runtime reconciles (restart the dead, reap the idle, respect budgets).
 - Existing pieces to study: devcontainers, Nix/devbox, mise (already used), Coder / Gitpod / Daytona (remote dev envs), e2b / Modal sandboxes, Cloudflare/Vercel preview deploys, herdr (agent sessions across machines).
@@ -131,6 +133,27 @@ The manual version's pain = candidate requirements. Setup: 5 long-lived persona 
 ## Landscape (see collie-demo § workspace vision for detail)
 
 Kandev (kanban + worktree per task + approval gates + agent CLIs via ACP; no proof/tests), herdr (the runtime/multiplexer layer), Vibe Kanban, Claude Squad, Crystal/Nimbalyst, Sculptor, Conductor, Copilot agent, Devin. Crowded: orchestration and boards. Less crowded: **evidence** (demos, before/after, QA tied to acceptance criteria) and the **attention inbox**.
+
+## Value check: Studio vs plain Claude Code (2026-09-25)
+
+Question (Alex): with all this, is a tool warranted, or is Claude Code + skills enough?
+
+**Claude Code already covers a lot, natively or with light config:** subagents with worktree isolation, workflows (scripted multi-agent), skills, hooks, scheduled/cloud routines, desktop sessions + messaging between them, remote control, the GitHub action (bug/PR triggers), MCP connectors (Linear, Notion, ClickUp, GitHub), artifacts/docs with comments routed back to Claude. And it improves fast; the vendor is building toward this space (as are GitHub, Cursor, Devin).
+
+**What it doesn't do today** (the candidate Studio-only list):
+- a durable **board as the orchestration substrate** (cards drive personas; state outside any session)
+- a cross-project **attention inbox / digest**
+- **evidence in review** (demos, before/after, QA tied to acceptance criteria) → Collie Demo
+- **hosts + environments**: registered machines, resource classes, env specs, leases, cleanup
+- **declarative personas** with budgets and health/reconcile
+- **vendor neutrality**: mixing agent CLIs (only matters for teams, not Alex)
+
+**Honest read:**
+- For Alex personally, most of the value is reachable with Claude Code + skills + GitHub Projects + Collie Demo + a few scripts. The tool would be a thin layer, not a platform.
+- As a product for others, the orchestration/board part has little moat (crowded, platform-adjacent). The differentiated parts are evidence, the inbox, and possibly env/hosts.
+- As a learning/fun project (a stated goal; also a "bigger Go project" candidate), it's valid regardless of market.
+
+**How to tell:** run the manual protocol on plain Claude Code for a while and sort each friction into *can't / can with config / can with a skill*. Only the "can't" pile is Studio. Collie Demo is already in that pile.
 
 ## Stance
 
