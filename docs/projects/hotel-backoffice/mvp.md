@@ -2,7 +2,7 @@
 
 **Goal (Alex 2026-09-25): a demo-able MVP, not a production-ready app.** This file is the entry point from here on: what the MVP is, what to demo, the edge cases we knowingly decided, and the follow-ups we are *not* building now. `product.md` / `ux.md` stay as the full spec; `team/progress.md` is history. Architect maintains; Alex prunes via architect.
 
-State: **every v1 function in `product.md` §11 is built** (dev, 2026-09-25, solex `8130240`, staging `e00bc289`); QA suite fully green (desk 154 + receptionist 12 e2e); no open QA finding. Phase now = **demo prep + UX review**, not features.
+State: **every v1 function in `product.md` §11 is built** (one exception: `ChargeItem` catalogue, §4) (dev, 2026-09-25, solex `8130240`, staging `e00bc289`); QA suite fully green (desk 154 + receptionist 12 e2e); no open QA finding. Phase now = **demo prep + UX review**, not features.
 
 ## 1. Core (what the MVP is)
 
@@ -12,6 +12,7 @@ State: **every v1 function in `product.md` §11 is built** (dev, 2026-09-25, sol
 | Front desk | room map (tiles, filters, quick panel), tape chart (free by type row), individual + group booking (mixed types × qty, assign later), check-in (guests, IDs, occupancy), check-out with settle dialog (pay / to company), extend/shorten nights, per-night rate, move stay, cancel, no-show, deposits | **yes — the walk-in and the group are the demo** |
 | Money | ledger-backed folio, nightly room charge (cron + lazy), post charge, take payment, move line between bills, group routing table (who pays for what), void / reprice / refund / forfeit / write-off, receivables (company statement, payment, write-off), expenses, print (bill, receipt) | yes — bill + company debt |
 | Approvals (5.8) | desk asks from the same button; owner approves from Needs attention; grant + act in one batch | yes — one round trip |
+| People | guests + contacts (booker ≠ sleeper), edit details, guest's stays, erase with tombstone (D-20, PII outside the log) | short, if the audience cares about PII |
 | Owner | dashboard, revenue / occupancy reports, Needs attention (aged debt, long OOO, unassigned arrivals, overstays, waiting approvals) + badge | yes — the "owner morning" |
 | Histories | guest / booking / stay+folio (merged) / room, one sentence per event | short |
 | System | `/system` console (events, replay, tables), redaction by column name | no (unless the audience is technical) |
@@ -54,7 +55,13 @@ Player: https://claude.ai/artifact/PnZfbQDz5dZdxxef5U8JFr (R1+R2 today; republis
 - [ ] OTA channels / commission logic (D-13 deferred); channel manager.
 - [ ] VAT / red invoice (D-16 deferred).
 - [ ] PA18 guest declaration export (legal? ask client).
-- [ ] Seasonal rates / rate plans beyond date-range rates.
+- [ ] `ChargeItem` catalogue (Setup item with category + unit price; §11 Define/Update/Retire; folio line `itemId`) — spec'd v1, never built; free-text posting covers the demo.
+- [ ] Seasonal / day-of-week rates, rate plans beyond date-range rates (§10 rule 9).
+- [ ] Custom roles / editable capability bundles in Setup (§2 later).
+- [ ] Guest merge duplicates + VIP class (§6 Guest later).
+- [ ] Ghép đoàn / merge a stay into a group (`booking.stay_merged_in` reserved, §6).
+- [ ] Receivable due dates (today aged by days only, §10 deferred).
+- [ ] `ExpenseCategory` as Setup data (fixed in code; screen if the client asks).
 - [ ] Migration from ezFolio (D-5 fresh start; DB export from ezCloud only if migration comes up).
 - [ ] Vietnamese pass 3 (92 keys; `approvalKind.*` are sentence fragments composed at render and need a vi wording decision first, not just translation) + a native-speaker wording pass with the client (D-27/D-29).
 - [ ] Overbooking override on the other paths (check-in early nights, extend, add rooms to a group) — commands accept `override`, only the new-booking form sends it.
@@ -71,7 +78,7 @@ Player: https://claude.ai/artifact/PnZfbQDz5dZdxxef5U8JFr (R1+R2 today; republis
 
 **Process / docs**
 - [ ] Prune: fold `progress.md` "Flag for Alex" into §3 here (done 2026-09-25); retire `team/questions.md` items that are follow-ups (moved to §5); `ux.md` §6 gap list is closed except G11/G27.
-- [ ] Big UX review after Alex's staging pass (his call on format: staging click-through vs rrweb journeys).
+- [ ] Big UX review after Alex's staging pass (his call on format: staging click-through vs rrweb journeys). Product's parked ux.md §4 screen redraws in the Stay-template format: dropped in favour of rrweb journeys (D-30) unless the review asks for drawings.
 
 ## 5. Open questions (for the demo / the client)
 
