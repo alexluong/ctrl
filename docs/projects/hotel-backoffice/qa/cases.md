@@ -322,11 +322,11 @@ The other §4 gaps (read-side role gate, operator reset, concurrent group create
 
 | ID | Scenario | Expected | Rule | Test | Last run |
 |---|---|---|---|---|---|
-| S6-1 | Guest booked 2 nights checks in, has a minibar line, and checks out today (early) | today's room line reversed (struck through) in the same batch; settle asks only for the minibar; a walk-in in that room tonight is accepted | B1, D-7 `[arrive, depart)` | e2e review-wave1 "S6-1" | — |
-| S6-2 | Guest checked in yesterday (day-start shift); owner reprices yesterday's room line today | the reposted line keeps yesterday's night date; the reversal is dated today; balance is the new price | B2 | e2e review-wave1 "S6-2" | — |
-| S6-3a | Owner: a deposit larger than the bill, then check out | check-out alone refused `stay.folioInCredit`; the settle dialog refunds and checks out in one press; the bill closes at 0 | B3 | e2e review-wave1 "S6-3a" | — |
+| S6-1 | Guest in since yesterday, booked until tomorrow, has a minibar line, checks out today (early) | today's night comes off in the same batch; settle asks for yesterday's night + minibar (and the amount field says so); the arrival night is never reversed (product 79631fd); a walk-in in that room tonight is accepted | B1, D-7 `[arrive, depart)` | e2e review-wave1 "S6-1" | a9baa51 **fail** N61 |
+| S6-2 | Guest checked in yesterday (day-start shift); owner reprices yesterday's room line today | the reposted line keeps yesterday's night date; the reversal is dated today; balance is the new price | B2 | e2e review-wave1 "S6-2" | a9baa51 pass |
+| S6-3a | Owner: a deposit larger than the bill, then check out | check-out alone refused `stay.folioInCredit`; the settle dialog refunds and checks out in one press; the bill closes at 0 | B3 | e2e review-wave1 "S6-3a" | a9baa51 pass |
 | S6-3b | Receptionist: the same, in credit | the dialog's primary button is Ask the owner; the request is on Needs attention; the guest stays in until the owner answers | B3 + 5.8 | e2e approval.last "S6-3b" | — |
-| S6-4 | Move a checked-in guest mid-stay; then try a move into an out-of-order room | nights already posted keep their room; the move applies from today; out of order refused by name; the old room is dirty | B4 | e2e review-wave1 "S6-4" | — |
-| S6-5 | Owner voids an in-house guest's room line | refused, and the refusal points to Reprice; the line is unchanged | B8 | e2e review-wave1 "S6-5" | — |
+| S6-4 | Move a checked-in guest mid-stay; then try a move into an out-of-order room | nights already posted keep their room; the move applies from today; out of order refused by name; the old room is dirty | B4 | e2e review-wave1 "S6-4" | a9baa51 pass |
+| S6-5 | Owner voids an in-house guest's room line | refused, and the refusal points to Reprice; the line is unchanged | B8 | e2e review-wave1 "S6-5" | a9baa51 pass |
 | S6-6 | Cancel a group where one room is a no-show and one checked out | the booking cancels; the remaining booked stays go with it | B12 (wave 2) | e2e review-wave2 "S6-6" | — |
 | S6-7 | No-show with a deposit: keep the deposit, then try to refund it | refund refused (cap: deposits − refunds − forfeits) | B14 (wave 2) | e2e review-wave2 "S6-7" | — |
