@@ -12,7 +12,7 @@
 ## The flow
 
 ### 1. The author decides to demo
-The agent's skill says: after a user-visible change, record a demo before opening or updating the PR. The agent already has a dev server running with seeded data (seeding and sign-in are the journey's or the app's job, not ours).
+The agent's skill says: after a user-visible change, record a demo before opening or updating the PR. The repo has a `demo.config` with the app's start command and seed state (seeding and sign-in are the journey's or the app's job, not ours).
 
 ### 2. It writes a throwaway journey
 It creates `.demo/room-move.demo.ts` (gitignored), ~20 lines of plain Playwright plus our few verbs:
