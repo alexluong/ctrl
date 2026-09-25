@@ -3,7 +3,7 @@
 **Purpose:** show what happens to the money when a guest doesn't come: a cancellation and a no-show, each deposit accounted for with a reason.
 **Persona:** Oanh, the owner.
 **Seed used:** Le Van Hung, set up off camera: due yesterday, paid a 500,000 cash deposit, never arrived.
-**Length:** about 1:04. File `R8-cancellation.webm`.
+**Length:** 1:04. File `R8-cancellation.webm`.
 
 | # | Step (caption) | Notice |
 |---|---|---|
@@ -16,7 +16,7 @@
 | 7 | Keep the whole 500,000 | The no-show's bill closes. |
 | 8 | Revenue report | "Deposit kept" appears as its own category, on the day the money was kept. |
 
-Open on screen: N63 (a cancelled or no-show bill says "The guest has checked out").
+N63 is fixed: a closed bill now says why it closed (cancelled, or nobody came).
 
 ## In ezFolio today
 

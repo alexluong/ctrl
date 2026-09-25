@@ -3,7 +3,7 @@
 **Purpose:** show the owner's side of the office: money going out, the reports, printing, people's data (including erasure), and staff leaving.
 **Persona:** Oanh, the owner.
 **Seed used:** set up off camera: Vu Quang Minh, who stayed in 303 and has checked out, and a seasonal receptionist account ("Tuan (seasonal)"). Tran Van Nam in 101 comes from the main seed.
-**Length:** about 1:15. File `R9-back-office.webm`.
+**Length:** 1:17. File `R9-back-office.webm`.
 
 | # | Step (caption) | Notice |
 |---|---|---|

@@ -3,7 +3,7 @@
 **Purpose:** show that one owner can take an empty SoLex to "ready to sell" in a single sitting.
 **Persona:** Oanh, the owner.
 **Seed used:** none. R6 runs on its own empty database and server (the `empty` project in `journeys.config.ts`).
-**Length:** about 1:30. File `R6-setup-from-empty.webm`.
+**Length:** 1:31. File `R6-setup-from-empty.webm`.
 
 | # | Step (caption) | Notice |
 |---|---|---|

@@ -1,18 +1,18 @@
 # Showcase journeys
 
-Nine short screen recordings, one user-visible flow each (mvp.md §2, D-30). Filmed in English from `solex/e2e/journeys/*.journey.ts` with `pnpm journeys`. Each one ships as a `.webm` and an rrweb replay; the player lists them all. Read these pages beside the player.
+Nine short screen recordings, one user-visible flow each (mvp.md §2, D-30). Filmed in English on solex c4b0350 (staging 4289576d) from `solex/e2e/journeys/*.journey.ts` with `pnpm journeys`. Each one ships as a `.webm` and an rrweb replay; the player lists them all. Read these pages beside the player.
 
 | # | Journey | Persona | Length |
 |---|---|---|---|
-| R1 | [Desk walk-in](R1-desk-walk-in.md) | Dao, front desk | 0:53 |
+| R1 | [Desk walk-in](R1-desk-walk-in.md) | Dao, front desk | 0:54 |
 | R2 | [Owner morning](R2-owner-morning.md) | Oanh, owner | 0:54 |
-| R3 | [Group + company](R3-group-company.md) | Oanh, then Dao | 1:47 |
+| R3 | [Group + company](R3-group-company.md) | Oanh, then Dao | 1:53 |
 | R4 | [Ask the owner](R4-ask-the-owner.md) | Dao (receptionist account), Oanh | 1:21 |
-| R5 | [House rules](R5-house-rules.md) | Oanh | 1:08 |
-| R6 | [Setup from empty](R6-setup-from-empty.md) | Oanh | ~1:30 |
-| R7 | [Stay changes and rooms](R7-stay-changes.md) | Dao | ~1:06 |
-| R8 | [Cancellation path](R8-cancellation.md) | Oanh | ~1:04 |
-| R9 | [Back office](R9-back-office.md) | Oanh | ~1:15 |
+| R5 | [House rules](R5-house-rules.md) | Oanh | 1:06 |
+| R6 | [Setup from empty](R6-setup-from-empty.md) | Oanh | 1:31 |
+| R7 | [Stay changes and rooms](R7-stay-changes.md) | Dao | 1:06 |
+| R8 | [Cancellation path](R8-cancellation.md) | Oanh | 1:04 |
+| R9 | [Back office](R9-back-office.md) | Oanh | 1:17 |
 
 ## How they are made
 
@@ -33,4 +33,3 @@ Nine short screen recordings, one user-visible flow each (mvp.md §2, D-30). Fil
 - **Don't check a guest out on the day they arrived** unless the point is an early departure. The night comes off the bill (B1), and a bill that was paid in advance is then in credit: check-out is refused and the settle dialog offers a refund (B3).
 - **"Take it anyway" is only on the new-booking form.** Extending a stay, checking in and adding rooms to a group all refuse an oversell under the owner's-to-allow rule.
 - **Group routing table cells are read-only.** Change a whole category from the header select. A single room's exception is set on that stay's page, and the table then shows it marked. "As agreed" does not clear a room's own setting.
-- **At check-in with an ID required, type the guest's name as well as the ID.** The name shown in grey is a placeholder, and an ID beside it is dropped (N46, open).

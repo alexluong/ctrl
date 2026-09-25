@@ -3,7 +3,7 @@
 **Purpose:** show that a booked stay can be changed night by night, and that each room has its own state: in use, out of order, dirty or clean.
 **Persona:** Dao, front desk.
 **Seed used:** Do Minh Khoa, set up off camera: checked into Twin 402 "last night" (using the day-start shift described in the README), booked for two nights.
-**Length:** about 1:06. File `R7-stay-changes.webm`.
+**Length:** 1:06. File `R7-stay-changes.webm`.
 
 | # | Step (caption) | Notice |
 |---|---|---|

@@ -5,20 +5,20 @@
 **Seed used:** 101 Tran Van Nam with 2 × Mineral water at 15,000; 103 Le Thi Hanh with 2 × Saigon beer. Dao's account is created and signed in off camera.
 **Length:** 1:21. File `R4-ask-the-owner.webm`.
 
-| # | At | Step (caption) | Notice |
-|---|---|---|---|
-| 1 | 0:02 | Dao (receptionist): 101 is a regular; Oanh agreed 10,000 a bottle | The receptionist's nav has no Setup, Reports or Accounts. |
-| 2 | 0:10 | Ask to reprice → 10,000, with a reason | The receptionist's buttons read "Ask to reprice" and "Ask to take off", not Reprice and Void. |
-| 3 | 0:19 | The line waits for the owner | Marked "waiting for the owner"; nothing has changed on the bill; no second ask is possible. |
-| 4 | 0:22 | 103: Ask to take off the beers, with a reason | The same flow for a void. |
-| 5 | 0:38 | Oanh: the Reports link has a badge | The count of requests is the notification; nothing leaves the app. |
-| 6 | 0:41 | Needs attention cards | Who asks, what for, which line, amount, room (links to the stay), guest, and the reason (see N47). |
-| 7 | 0:44 | Approve the reprice | The card leaves. |
-| 8 | 0:47 | Refuse the beers, with a reason | A reason is required; the desk will read it. |
-| 9 | 0:59 | Dao: 101's bill | The old line is struck through with the reason; a new line is at 2 × 10,000. |
-| 10 | 1:08 | Dao: 103's bill | "The owner said no — <reason>" on the line; the beers stay on the bill, and the desk may ask again. |
+| # | Step (caption) | Notice |
+|---|---|---|
+| 1 | Dao (receptionist): 101 is a regular; Oanh agreed 10,000 a bottle | The receptionist's nav has no Setup, Reports or Accounts. |
+| 2 | Ask to reprice → 10,000, with a reason | The receptionist's buttons read "Ask to reprice" and "Ask to take off", not Reprice and Void. |
+| 3 | The line waits for the owner | Marked "waiting for the owner"; nothing has changed on the bill; no second ask is possible. |
+| 4 | 103: Ask to take off the beers, with a reason | The same flow for a void. |
+| 5 | Oanh: the Reports link has a badge | The count of requests is the notification; nothing leaves the app. |
+| 6 | Needs attention cards | Who asks, what for, which line, amount, room (links to the stay), guest, and the reason (see N47). |
+| 7 | Approve the reprice | The card leaves. |
+| 8 | Refuse the beers, with a reason | A reason is required; the desk will read it. |
+| 9 | Dao: 101's bill | The old line is struck through with the reason; a new line is at 2 × 10,000. |
+| 10 | Dao: 103's bill | "The owner said no — <reason>" on the line; the beers stay on the bill, and the desk may ask again. |
 
-Open on screen: N47 (the reprice card shows the line's current amount, not the price asked), N57 (the ask and the answer are not in the stay's history, a product question).
+N47 and N57 are fixed: the card shows 30,000 → 10,000, and the ask and the owner's answer are in the stay's history.
 
 ## In ezFolio today
 
