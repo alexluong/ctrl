@@ -151,9 +151,11 @@ Glue Studio would own: the card ↔ session ↔ evidence links, the inbox, perso
 
 ## The workspace-repo problem
 
-Today ctrl mixes three things: **notes** (project docs, ideas), **skills/conventions** (`.claude/skills`, `CLAUDE.md`, `workflow.md`), and **domain data** (bookkeeping, RE). To use Claude consistently Alex needs this workspace repo, and every project gets a pointer `CLAUDE.md` back into it. Alex doesn't want a workspace repo as the precondition.
+The workspace in question is **`hub/alexluong/hookdeck`** (remote `hookdeck-workspace`): a personal repo wrapping the company repos as submodules (core, outpost, hookdeck-cli, terraform-provider-hookdeck, http-ingestion, website, fde/amp-labs/*). It holds what the team never sees: `notes/` (~76 investigations, specs, RFC drafts), `qa/` suites, `.bruno/`, `mise.toml` + env, `.mcp.json`, ~30 skills in `.claude/skills` (worktree, notes, qa, investigate, orchestrate, outpost-*, notion-publish-spec, …), plus `AGENTS_core.md` / `AGENTS_outpost.md` and submodule worktrees as flat siblings (`core-wt-*`, `outpost-wt-*`). Rule: never surface the workspace in team output. Some submodules also carry their own `.claude/` / `CLAUDE.md` / `AGENTS.md` (team-shared).
 
-Work case (Hookdeck): many repos (core, terraform, outpost, cli, …), each with its own skills, plus generic skills for analysis that belong to no repo. Wanted: start Claude in any repo and get the same personal setup, the repo's own skills, and access to notes, with no workspace repo.
+ctrl plays the same role for personal projects. Both work, but using Claude consistently requires wrapping your repos in a personal super-repo. Alex doesn't want that as the precondition.
+
+Wanted: start Claude in any repo and get the same personal setup, the repo's own (team) skills, generic skills (analysis), and access to notes, with no wrapper repo.
 
 Split by what each thing is:
 
@@ -165,7 +167,17 @@ Split by what each thing is:
 | work / tickets | tracker | MCP |
 | domain data (bookkeeping, RE) | its own repo; it's a domain, not a workspace | normal repo |
 
-Result: no pointer files, no workspace repo; the vault replaces ctrl's notes role, plugins replace its skills role. Open: how a session knows *which* vault notes belong to the repo it's in (a convention like `vault/projects/<repo>/`, or a frontmatter tag the plugin resolves).
+Result: no wrapper repo; the vault takes the `notes/` role, a personal plugin takes the `.claude/skills` role, env/QA tooling stays per project. Worktrees then live wherever the runtime puts them, not as siblings inside a wrapper. Open: how a session knows *which* vault notes belong to the repo it's in (a convention like `vault/projects/<repo>/`, or a frontmatter tag the plugin resolves).
+
+## Retrieval / RAG for personas (idea, later)
+
+Alex: would a RAG system for personas make sense later?
+
+- **Now: no.** Agentic search (grep + read) over structured markdown works at hundreds of files, and exact ids (N29, D-21, function names, ticket numbers) are better found by grep than embeddings.
+- **When it would:** the corpus outgrows grep: years of notes across projects, tickets, PR reviews, Notion, Slack; or fuzzy recall ("seen this bug before?", "what did we decide about retries?") where the words aren't known.
+- **Per persona = a retrieval policy, not a separate store:** one index, scoped per persona. QA: cases + past findings. Dev: decisions + conventions + similar past PRs. Reviewer: checklist + past review findings. Product: specs + client inputs.
+- **Main risk is staleness:** retrieving a superseded decision as truth (SoLex's README kept stale Go/Hookdeck sections). Needs metadata: type, status (accepted/superseded), project, date, supersedes, plus citations back to the source.
+- **Order:** structure first (frontmatter + a decision registry), then hybrid search (keyword + embeddings) exposed via MCP over the vault, then per-persona scopes. A Studio capability ("retrieve") with swappable providers.
 
 ## Value check: Studio vs plain Claude Code (2026-09-25)
 
