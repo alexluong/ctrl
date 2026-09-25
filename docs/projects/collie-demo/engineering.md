@@ -160,6 +160,25 @@ Rule: **Demo owns recording, understanding and sharing demos; the suite owns *wh
 | Before/after | ✓ | linking to the bug ticket |
 | Agent workflow | CLI commands + a skill | orchestration across tasks/agents |
 
+### Config file (Alex, 2026-09-25: preferences like the preview strategy belong in config)
+Layers, later ones win:
+1. **User/host** `~/.config/collie/demo.toml`: server, workspace, token, browser, personal preview preference.
+2. **Project** `collie-demo.config.ts|json` (shared by the team): app, capture, redaction, share settings.
+3. **CLI flags** for one-offs.
+
+```ts
+export default {
+  app: { url: "http://localhost:5173", start: "pnpm dev" },   // start → the runner owns the process (logs work); url only → attach mode, no logs
+  browser: "auto",                                            // auto | chrome | cdp:<url> | playwright
+  capture: { backend: "logs", db: "sqlite:data/dev.db" },
+  redact: { headers: ["x-api-key"], fields: ["password", "*secret*"] },
+  share: { server: "https://demo.collie.studio", workspace: "solex", visibility: "team",
+           preview: "manual", previewCommitPath: ".github/demos/" },  // preview: manual | commit | public-url | none
+  view: "dev",
+}
+```
+It resolves the `--logs` vs "already running" conflict (`app.start` = the runner owns the process, like Playwright's `webServer`), keeps redaction rules with the project, keeps tokens out of the repo, and keeps journeys short.
+
 ## Next build steps (proposed; Alex to pick)
 1. Package shape: spec/ + web/ (recorder + player) + adapters/playwright-node + CLI; rrweb's official network plugin.
 2. Playwright fixture `off|on|retain-on-failure|showcase` + `run` for throwaway journeys + browser resolution (system Chrome, `--cdp`).
