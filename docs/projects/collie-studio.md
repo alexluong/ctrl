@@ -149,13 +149,30 @@ Question (Alex): with all this, is a tool warranted, or is Claude Code + skills 
 - **vendor neutrality**: mixing agent CLIs (only matters for teams, not Alex)
 
 **Honest read:**
-- For Alex personally, most of the value is reachable with Claude Code + skills + GitHub Projects + Collie Demo + a few scripts. The tool would be a thin layer, not a platform.
+- For Alex personally, a lot is reachable with Claude Code + skills + GitHub Projects + Collie Demo + a few scripts. Studio earns its place as the **organizing layer** (below), not by replacing the harness.
 - As a product for others, the orchestration/board part has little moat (crowded, platform-adjacent). The differentiated parts are evidence, the inbox, and possibly env/hosts.
-- As a learning/fun project (a stated goal; also a "bigger Go project" candidate), it's valid regardless of market.
 
 **How to tell:** run the manual protocol on plain Claude Code for a while and sort each friction into *can't / can with config / can with a skill*. Only the "can't" pile is Studio. Collie Demo is already in that pile.
 
+## Shape: an organizing layer over existing harnesses
+
+Studio does **not** run the agent loop. Harnesses (Claude Code, Codex, …) do: tools, context, skills, MCP, models. A multiplexer/runtime (herdr or similar) keeps sessions alive on hosts and attachable. Studio organizes them.
+
+```
+Studio      — organize: board/cards, personas, inbox, evidence, env specs, host registry
+  ↓ launches / attaches / reads back
+runtime     — herdr-like: sessions on hosts, alive, attachable, across machines
+  ↓ runs
+harness     — Claude Code, Codex, …: the agent loop, tools, skills, hooks, MCP
+  ↓ on
+hosts       — MBP, Mac Mini, collielab, cloud
+```
+
+"Thin" means: little code of its own; it pushes config *into* the harness instead of inventing parallel systems — a persona compiles to a harness session prompt + skills + permissions + model/effort; a playbook compiles to skills/`CLAUDE.md`; a card's context is what the session boots with; the harness's hooks report back to the card. The harness gets better for free; Studio stays about **how work is organized** (Alex, 2026-09-25: "mostly around how to organize them").
+
 ## Stance
+
+- **A personal tool that could become a product**; product is not important. Not a learning project.
 
 - Collie Demo stays the first real piece. A core, if ever, emerges once 2–3 apps need the same objects.
 - Parking lot for thoughts, not a roadmap.
