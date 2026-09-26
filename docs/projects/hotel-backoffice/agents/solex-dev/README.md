@@ -12,7 +12,32 @@ Alex via architect: the goal is a **demo-able MVP, not production**. Entry point
 
 **From here: no new features.** Only (a) fixes QA files while filming showcase journeys R3–R5, (b) anything demo-blocking, (c) vi pass 3 (the 92 keys) if product sends it — apply + commit.
 
-**Resume state:** solex `f77cad4`, staging `70dd7c8c`, 560 unit tests, green, `pnpm build` clean, biome at the 4-warning + 1-info baseline, both repos clean and pushed, migrations 0018–0020 applied dev + remote. QA suite 154/154 desk + 13/13 receptionist, no open finding.
+**Resume state (clean stop, 2026-09-27):** solex **`f77cad4`**, staging **`70dd7c8c`**, **560 unit tests**, green, `pnpm build` clean, biome at the 4-warning + 1-info baseline, both repos clean and pushed, migrations 0018–0020 applied dev + remote. QA suite 154/154 desk + 13/13 receptionist, no open finding.
+
+**Code review wave 2 — all landed, nothing pending, nothing half-applied.**
+
+| item | state | sha |
+|---|---|---|
+| B5 read-side role gate | landed | `8de0f3f` |
+| B6 operator / other-hotel account guard | landed | `8de0f3f` |
+| B7 group demand versions availability | landed | `9de8f1b` |
+| B9 transfer cap + company check | landed | `8dfd98e` |
+| B10 approval carries method + rules at request | landed | `f77cad4` |
+| B12 cancel a group with a terminal stay | landed | `aa0934c` |
+| B13 first staff must be an owner | landed | `8dfd98e` |
+| B14 refund cap less forfeits | landed | `aa0934c` |
+| B15 (partial) 02:00 default roll + openAccount no-op | landed | `98c9de0` |
+| A3 grant decides inside the plan | landed | `f77cad4` |
+| N52 company name not slug on the bill | landed | `f77cad4` |
+| QA N66 refund wording | landed | `8de0f3f` |
+
+Migration **0021** (`approvals.method`) applied dev **and** remote. Schema is fully applied — there is no half-landed migration to unwind.
+
+**Pending, not started, by instruction:** the `{key, params}` stored-memo schema + `HotelProfile.locale` (product `661d15c`, architect defers past the demo — mvp.md §4).
+
+**Left running (none started by this session; standing rule is not to kill another session's dev server):** two solex `vite dev` processes — pid 27065 on **port 7540**, pid 80723 on **port 7536**. Also an unrelated `python3 -m http.server` (pid 12028) and a `playwright show-trace` from replay-lab (pid 79982).
+
+**One thing for QA when work resumes:** B14 forced an on-screen wording change (`folio.refundable`, `error.folio.refundTooLarge` — both now say "less anything kept"). Architect's wave-2 rule was to avoid wording changes; this one described a number the code no longer computes. If a filmed journey shows the refund line it needs a re-film.
 
 **Known half-done** (architect 2026-09-25: both are §4 follow-ups, no work now):
 - "Take it anyway" (overbooking override) is offered on the **new-booking form only**. `checkIn`, `changeNights` and `changeBookingRequests` all accept `override` but no screen sends it, so those paths refuse even under `warn`. Ruled: stays this way for the MVP.
