@@ -175,6 +175,52 @@ Reading the numbers:
   store still considers those packages referenced. `du -c` across two sibling
   worktrees tells you which case you're in, in about a minute.
 
+## Deep clean — the floor
+
+The *routine* prune (safe tier, above) keeps named volumes, the Go module cache,
+and recently pulled images. A **deep clean** drops all of that too. It's what
+got the disk to its lowest measured state, on 2026-09-26/27. Use it when the
+routine prune isn't enough, or to reset. It costs one slow rebuild of each dev
+stack, and **every dev DB starts empty**.
+
+**Floor (2026-09-27, after emptying Trash):** 280.4G used / 155.5G free.
+System Settings shows this as ~332 GB of 494 GB used. That's decimal GB plus the
+APFS reserve, so it's the same state as `df`, not a different number.
+
+| Bucket | Floor | What's left and why |
+|---|---|---|
+| `docker` | 3.2G | Empty engine: the VM's base. `Docker.raw` TRIMs straight back after a wipe. |
+| `repos` | 61.2G | Live worktrees + their `node_modules`. Only shrinks by deleting worktrees (see big-five). |
+| `system` | 34.1G | pnpm store ~13G, Claude `vm_bundles` 13G, runtimes (mise/bun/asdf/pyenv) ~8G. None of it is cache worth clearing. |
+| `apps` | 72.5G | League of Legends 37G is half of it. |
+| `personal` | 10.9G* | *Undercounted: the audit session couldn't read Messages/Pictures (TCC). About 19G is really here. |
+| `other` | 98.5G* | *Includes that ~19G. The rest is App Support, OS, `/private/var`. ~20G of growth since 09-22 is untraced. |
+
+**Playbook**, in order (no containers running; check `docker ps -a` first):
+
+```sh
+# docker: everything, including named volumes (dev DBs)
+docker image prune -af && docker volume prune -af && docker builder prune -af
+# go
+go clean -cache && go clean -modcache
+# repos: stale node_modules, then the store
+find ~/git ~/code -type d -name node_modules -prune -mtime +90 -exec rm -rf {} +
+pnpm store prune
+# caches
+npm cache clean --force
+brew cleanup --prune=all
+rm -rf ~/Library/Caches/{Google,pnpm,ms-playwright,golangci-lint,goimports,gopls,node-gyp,pip,com.anthropic.claudefordesktop.ShipIt} ~/.cache/puppeteer
+# then: empty Trash (Alex; Claude doesn't hard-delete)
+```
+
+Yield on 2026-09-26, 421 → 280G: Docker ~95G (images 60G, volumes 39G), Go
+caches ~30G, everything else ~15G.
+
+**Regrowth to expect.** Docker put back 40–50G within two weeks every time
+it's been measured. go-build hit 15G in four days of hookdeck worktree builds.
+Landing around 330–350G used during active dev is normal; the 50G free floor
+is still the act-now line.
+
 ## Optimization backlog
 
 Neither of these is a cleanup — they're structural changes that would lower the
@@ -213,6 +259,7 @@ All values in GiB (see units note above).
 | 2026-09-26 | 421.1 | 14.7 | 97.8 | 66.0 | 79.7 | 72.5 | 10.9 | 94.2 |
 | 2026-09-26 | 381.3 | 54.5 | 87.4 | 61.2 | 52.2 | 72.6 | 10.9 | 97.1 |
 | 2026-09-26 | 281.8 | 154.0 | 3.2 | 61.2 | 34.5 | 72.5 | 10.9 | 99.5 |
+| 2026-09-27 | 280.4 | 155.5 | 3.2 | 61.2 | 34.1 | 72.5 | 10.9 | 98.5 |
 
 The brief `caches`/`system` split on 2026-08-03 was folded back before any
 snapshot depended on it, so every row above is directly comparable.
