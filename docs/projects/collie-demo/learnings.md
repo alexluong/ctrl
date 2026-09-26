@@ -67,4 +67,4 @@ Decide v1: the scope cut (UI demos + self-check + publish), Go vs TS, the server
 
 - Docs: end-state.md, dx.md, backend.md, walkthroughs/outpost-1093.md, walkthroughs/solex-qa.md, engineering.md § "First real demo: SoLex N64".
 - N64 demo: `~/code/replay-lab/out/n64-erase/` (player + sheet.png); journey `~/code/replay-lab/targets/solex/n64-erase.demo.ts`.
-- #1087 prototype: artifact above; code (runner.mjs, build.mjs, template.html) handed to collie-lab to keep under `~/code/replay-lab/targets/outpost-1087/`.
+- #1087 prototype: artifact above; code + recordings saved in the lab at `~/code/replay-lab/targets/outpost-1087/` (lab 174bedd; README marks it parked).
