@@ -58,7 +58,7 @@ Player: https://claude.ai/artifact/RrF94hDrGJ8QWPaecge4xN (all nine, filmed on d
 ## 4. Follow-ups (tracked, not built now)
 
 **Product / features**
-- [ ] Stored memo language (N51/N52, product ruling 661d15c): system-written folio/history lines stored as `{key, params}` and rendered at read time; printed bill uses a new `HotelProfile.locale`. Schema change → after the demo. The company-slug-on-the-bill half (N52) ships with wave 2.
+- [ ] Stored memo language (N51/N52, product ruling 661d15c): system-written folio/history lines stored as `{key, params}` and rendered at read time; printed bill uses a new `HotelProfile.locale`. Schema change → after the demo. The company-slug-on-the-bill half (N52) landed with wave 2 (f77cad4).
 - [ ] Cash handover / day close (G27) — needs the client conversation; candidate `CloseShift {cashCounted}`.
 - [ ] Tape chart drag to move / extend (G11).
 - [ ] Notifications leaving the app (Zalo/Telegram/email) — async cursor consumer over the log; badge is the only notification today.
