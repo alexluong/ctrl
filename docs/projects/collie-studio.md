@@ -297,6 +297,20 @@ A T3 project = one directory; a worktree is per repo. Options for a context fold
 ### Patterns worth borrowing
 Capability negotiation via an environment descriptor (clients/servers upgrade independently) · per-thread MCP credentials with capability gating · tools that return "how to drive me" instructions on open instead of an always-loaded prompt · recording tool returns an evidence path the agent cites · one agent model normalized across harnesses · settings layering with visible provenance · hidden-ref checkpoints for per-turn diff/revert · auto-settle driven by PR state · native helpers as supervised children.
 
+## Studio as a framework (2026-09-27)
+
+Alex: Studio could also be a **framework** — actions and patterns for how to do things. Like Rails (convention over configuration), Shape Up, or the 12-factor app: a way of working, packaged so it runs.
+
+Three layers, each useful without the next:
+1. **Framework** — conventions + patterns, portable across harnesses via the open standards (Agent Skills, AGENTS.md, MCP):
+   - schemas: `workspace.yaml` (repos, actions, docs/tracker providers), cutline, card/issue template, PR template, decision record
+   - patterns: lead / worker / reviewer / QA; cutline as scope brake; explore conversationally, build in parallel; context folder; worktree set per card; evidence per PR; escalation rules; corrections → rules; doc lifecycle (draft → review → accepted → living)
+   - delivered as a plugin (skills + templates) + docs
+2. **Tools** — Collie Demo, the config-driven workspace MCP, bootstrap/worktree-set scripts.
+3. **App** — optional: T3 (or any harness UI) may be enough as the surface; build Studio's own UI only for what's left (board, inbox).
+
+Framework-first is cheap, starts now, and is what `docs/workflow.md` + the SoLex protocol already are, in prose. Codifying it = turning that prose into skills, schemas and actions.
+
 ## Value check: Studio vs plain Claude Code (2026-09-25)
 
 Question (Alex): with all this, is a tool warranted, or is Claude Code + skills enough?
