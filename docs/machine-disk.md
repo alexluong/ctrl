@@ -63,7 +63,7 @@ had to justify deleting things that would immediately come back.
 | `apps` | 71.3G | **80G** | Moves only when something is installed. |
 | `personal` | 30.6G | **40G** | Moves only by decision. |
 | `other` | 58.2G | **70G** | Unclassified remainder; drifts with OS churn. |
-| **sum** | 345.5G | **460G** | Equals the whole disk — see below. |
+| **sum** | 345.5G | **480G** | Was 460 (= whole disk) until `system` went 50 → 70; now slightly over. See below. |
 
 Also `FREE_FLOOR=50` — **free space below 50G is the real act-now signal**,
 independent of buckets.
@@ -210,6 +210,8 @@ All values in GiB (see units note above).
 | 2026-09-16 | 425.4 | 8.4 | 116.3 | 104.0 | 66.2 | 72.8 | 29.5 | 36.6 |
 | 2026-09-16 | 364.3 | 69.6 | 61.2 | 88.1 | 58.7 | 70.7 | 29.5 | 56.1 |
 | 2026-09-22 | 419.6 | 13.3 | 116.7 | 75.2 | 70.9 | 71.0 | 29.7 | 56.0 |
+| 2026-09-26 | 421.1 | 14.7 | 97.8 | 66.0 | 79.7 | 72.5 | 10.9 | 94.2 |
+| 2026-09-26 | 381.3 | 54.5 | 87.4 | 61.2 | 52.2 | 72.6 | 10.9 | 97.1 |
 
 The brief `caches`/`system` split on 2026-08-03 was folded back before any
 snapshot depended on it, so every row above is directly comparable.
@@ -266,6 +268,29 @@ Moving files into iCloud Drive frees nothing on its own (same volume) — space
 only returns once iCloud uploads and macOS evicts the local copies.
 
 ## History
+
+- **2026-09-26** — Free space **14.7G** four days after the last clean. Docker
+  had stopped (daemon down, `Docker.raw` 97.8G). Movers: `system` +8.8 to 79.7
+  (over): go-build back to **15G** four days after `go clean -cache` took it
+  from 11G. The hookdeck `core-wt-*` / `server-wt-*` Go builds refill it
+  quickly, so it's the first thing to clear every time. `other` +38.3 is mostly
+  **not real**: this session's sandbox couldn't read `~/Library/Messages` or
+  `~/Pictures` (TCC), so ~19G of `personal` fell into `other` (personal read
+  10.9 instead of ~29.7). The remaining ~+20G in `other` wasn't traced: no local
+  snapshots, `~/Library` holds nothing new and large, `/private/var/folders`
+  is 7.8G. Worth a look if it persists **with** Full Disk Access. Alex's goal:
+  get used under 400G. Cleanup: `go clean -cache` + Chrome cache 4.4G + ShipIt
+  0.9G + `npm cache clean` 3.4G (**18 → 35G free**), 12 `node_modules`
+  untouched 90+ days, all under `hookdeck-workspace` / `hookdeck` (~4.8G), plus
+  `pnpm store prune` (**41G**), then Docker: build cache 1.8G + images >30d
+  9.8G (**54.5G**). The 27G anonymous PG17 volume from 09-22 is gone (volumes
+  63.2 → 38.7G), so it was removed elsewhere. Remaining anonymous volumes are
+  ~190MB in total, left alone. Not touched: named volumes (38.7G, ~17G of it
+  `server*`/`outpost_go_*` Go caches, which would be the next ask) and
+  images whose `CreatedSince` is months old but which were pulled recently, so
+  `until=720h` skips them (flutter 6G). **421.1 → 381.3G used, 14.7 → 54.5G
+  free.** Budget sum corrected to 480 (it went stale with the 09-16 `system`
+  raise).
 
 - **2026-09-22** — Free space hit **12.3G** six days after the last clean, then
   **167M** mid-audit when Docker Desktop crashed during another session's build
