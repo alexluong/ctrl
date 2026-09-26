@@ -212,6 +212,7 @@ All values in GiB (see units note above).
 | 2026-09-22 | 419.6 | 13.3 | 116.7 | 75.2 | 70.9 | 71.0 | 29.7 | 56.0 |
 | 2026-09-26 | 421.1 | 14.7 | 97.8 | 66.0 | 79.7 | 72.5 | 10.9 | 94.2 |
 | 2026-09-26 | 381.3 | 54.5 | 87.4 | 61.2 | 52.2 | 72.6 | 10.9 | 97.1 |
+| 2026-09-26 | 281.8 | 154.0 | 3.2 | 61.2 | 34.5 | 72.5 | 10.9 | 99.5 |
 
 The brief `caches`/`system` split on 2026-08-03 was folded back before any
 snapshot depended on it, so every row above is directly comparable.
@@ -291,6 +292,16 @@ only returns once iCloud uploads and macOS evicts the local copies.
   `until=720h` skips them (flutter 6G). **421.1 → 381.3G used, 14.7 → 54.5G
   free.** Budget sum corrected to 480 (it went stale with the 09-16 `system`
   raise).
+
+  Second pass, same day, at Alex's direction ("clear all the docker stuff"):
+  **full Docker wipe**. That was all 63 images (50.6G) and all 194 volumes (38.7G),
+  **including named dev DBs** (`hookdeck_*`, `enable-*_mongo_data`,
+  `outpost_*`, `server*` Go caches). Dev stacks will re-seed from scratch. Plus
+  `go clean -modcache` (15G), leftover tool caches (~2.5G: pnpm, playwright,
+  puppeteer, golangci-lint, gopls, pip, node-gyp), and `brew cleanup`. Docker.raw
+  TRIMmed immediately (87.4 → 3.2G), so the 09-22 worry about the raw file
+  holding garbage is resolved. **381.3 → 281.8G used, 154G free.** Every
+  bucket except `other` is now far under budget, so this is a new clean floor.
 
 - **2026-09-22** — Free space hit **12.3G** six days after the last clean, then
   **167M** mid-audit when Docker Desktop crashed during another session's build
