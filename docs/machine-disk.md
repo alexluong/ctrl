@@ -74,7 +74,7 @@ reports. The disk shows as 460 GiB in `df` and 494 GB in `diskutil` (physical
 Also `used + free` (345.6 + 89.3 = 434.9) doesn't reach 460: APFS reserves ~25 GiB
 for metadata, so allocatable is ~435 GiB.
 
-**Budgets are independent tripwires, not a partition.** They sum to 460G — the
+**Budgets are independent tripwires, not a partition.** They sum to 480G — more than the
 entire disk — so they cannot all sit at ceiling at once, and `docker` + `repos`
 alone (220G) grant more growth than the disk can actually give while keeping 50G
 free. That's fine and intended: each budget answers "has *this* grown past its
