@@ -1,6 +1,8 @@
 # Collie Demo: backend demos (evidence runs)
 
-**DRAFT, pending Alex's review (date 2026-09-25).** Paper research + a design proposal. Inputs: [walkthroughs/outpost-1093.md](walkthroughs/outpost-1093.md) (the backend "I'd skip it"), [walkthroughs/solex-qa.md](walkthroughs/solex-qa.md), [dx.md](dx.md), [engineering.md](engineering.md), lab `~/code/replay-lab` (`src/backend.js`, `run.js`, `journeys/webhooks.js`). Names (`demo`, `@collie/demo`, `.demo`) are placeholders.
+**Status (Alex, 2026-09-27): parked.** Backend demos aren’t needed for most PRs; the #1087 graph prototype worked but was hard to follow. Summary and reasoning: [learnings.md](learnings.md). The original draft follows.
+
+**DRAFT (2026-09-25).** Paper research + a design proposal. Inputs: [walkthroughs/outpost-1093.md](walkthroughs/outpost-1093.md) (the backend "I'd skip it"), [walkthroughs/solex-qa.md](walkthroughs/solex-qa.md), [dx.md](dx.md), [engineering.md](engineering.md), lab `~/code/replay-lab` (`src/backend.js`, `run.js`, `journeys/webhooks.js`). Names (`demo`, `@collie/demo`, `.demo`) are placeholders.
 
 ## TL;DR
 
