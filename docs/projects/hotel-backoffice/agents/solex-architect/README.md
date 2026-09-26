@@ -38,6 +38,18 @@ Alex: "work with Dev on this and make sure to help with review/QA as we go." Per
 - Architect worktree `~/git/hub/alexluong/solex-architect` (detached, read-only); QA owns `../solex-qa`.
 
 
+## Resume note — 2026-09-27 (pause: Alex closing all agents, pick-up soon)
+
+**Phase: demo-able MVP; review package delivered (player v3 on solex d10cae5 / staging 8cbd00c0); waiting on Alex's full-system review of the nine journeys.** Entry point `mvp.md`. Nothing new gets built without Alex.
+
+- **On resume, first**: (1) read this + the 09-25 late note below; (2) `git log` solex/solex-qa/ctrl since d10cae5 / 388e528 / this note; (3) check peers' clean-stop lines in `team/log.md` (dev/QA/product were asked to commit, push, update their resume notes under `agents/`); (4) if Alex has journey feedback, turn it into N-numbered findings (QA) / rulings (product) / fixes (dev) via me.
+- **Dev**: wave 2 sent 2026-09-26 (B5, B6, B7, B9, B10, B12, B13, B14, B15 default roll + openAccount no-op, A3; B12/B14 first for QA's S6-6/7) + N52 company-name-at-render on the bill. Status at pause: see dev's resume note (`agents/solex-dev`). Accept per landing, log, no restructuring.
+- **QA**: nine journeys filmed d10cae5, 11/11; suite green on ceece38 + S6 cases; S6-6/7 wait on B12/B14. Film only 00:00–23:00 hotel time. Republish = `solex-qa/e2e/recordings/player.html` as page + `player/0..8.js` via `files` to https://claude.ai/artifact/RrF94hDrGJ8QWPaecge4xN (scratchpad `solex-journeys.html`, `root` = scratchpad).
+- **Product**: idle; N51/N52 ruled (661d15c) — I scheduled: N52 slug half with wave 2, `{key, params}` memo schema + HotelProfile.locale = post-demo follow-up (mvp.md §4). Receipt print, per-language Setup names = follow-ups.
+- **Side project**: collie-demo/collie-lab (Alex's replay tool, grew out of D-30) got a read-only local recipe (own worktree `solex-lab`, `e2e/scripts/fresh-db.sh` pattern w/ SOLEX_DEV_USER, N64 state per R9). collie-lab found N65 off that run. Not a SoLex deliverable.
+- **Alex-owned**: journey review; staging smoke pass; CF 7403; mvp.md §5 demo audience/format questions.
+- Peer ids: dev local_94ba0f28-75c1-4021-b985-cff336fc9aeb, product local_6a799d7c-a89c-4af6-a987-c0d7579a5b29, qa local_0640ecfd-d1c2-4094-9c55-9ba59e066319 (names often unreachable; ids work).
+
 ## Resume note — 2026-09-25 late (architect, before compaction)
 
 **Phase: demo-able MVP (Alex 2026-09-25), review package delivered, awaiting Alex's full-system review.** Entry point `mvp.md` (core, demo script R1–R9, edge cases incl. rulings, follow-ups, open questions). v1 functionality complete; nothing new gets built without Alex.
