@@ -132,6 +132,21 @@ MCP servers can already be scoped: `.mcp.json` in a project (shared), per-projec
 
 Idea: **one workspace MCP** exposing the context to any agent in any harness: its repos, notes/vault search, the context's tracker and docs (ClickUp for enable, Notion for hookdeck), actions (test, seed, deploy, demo), the process registry, hosts, cards. Run as the daemon's HTTP endpoint, registered once at user level; it resolves the workspace from the session's cwd / MCP roots. This is probably **Studio's agent-facing API**: the UI is for the human, the workspace MCP is for agents, same daemon behind both.
 
+**Transports (2026-09-27):** same capabilities either way (tools, resources, prompts, notifications). stdio = spawned per session in the session's cwd/env, no auth, state dies with the session (observed: 5 `railway mcp` processes for 5 open sessions; subagents reuse the parent's). HTTP = one long-running server, shared state, needs to be told the workspace (MCP roots / header), auth if not localhost, can live on another host. Best of both: a tiny **stdio shim per session** (knows cwd for free) forwarding to the **shared daemon** (holds registry, cards, locks).
+
+**Config, not code:** one generic workspace MCP reads a per-workspace file; each action becomes a tool; `confirm: true` = the agent must ask first. New workspace = new config, not a new server.
+
+```yaml
+# workspace.yaml (context folder)
+actions:
+  test:   { run: "pnpm test", cwd: "be" }
+  seed:   { run: "pnpm db:seed", cwd: "be" }
+  deploy: { run: "gh workflow run deploy.yml", confirm: true }
+docs: clickup
+```
+
+Building one is small: official SDKs (TS / Python / Go); a stdio server with a couple of tools is ~30 lines; register with `claude mcp add <name> --scope project -- <cmd>` or `claude mcp add --transport http <name> <url>`. Natural first target: SoLex (mise tasks, dev server, seed already exist).
+
 ## Teaching agents
 
 Every user has to teach agents how to work locally and with their team. Keep it small, and make it config rather than prose:
