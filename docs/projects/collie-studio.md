@@ -214,6 +214,23 @@ ctrl plays the same role for personal projects. Both work, but using Claude cons
 
 Wanted: start Claude in any repo and get the same personal setup, the repo's own (team) skills, generic skills (analysis), and access to notes, with no wrapper repo.
 
+### Context folder layout (2026-09-27)
+
+```
+~/workspaces/hookdeck/          ← small git repo: tracks only its own files
+  .gitignore                    ← ignore every repo + worktree dir
+  workspace.yaml                ← repos (name, url, base branch), actions, docs provider
+  CLAUDE.md / AGENTS.md         ← context rules (loaded from parent by any repo below)
+  .claude/skills/               ← context skills (same)
+  notes/                        ← personal notes (or an Obsidian vault)
+  core/ outpost/ cli/ …         ← independent clones, gitignored (not submodules)
+  core-wt-<slug>/ …             ← worktrees, gitignored
+```
+- `workspace.yaml` replaces `.gitmodules` as the manifest; a bootstrap script (or a workspace action) clones whatever's missing on a new machine. No pins: each repo follows its own branch.
+- Start in a repo for single-repo work; start at the root for cross-repo work.
+- Migrating hookdeck: `git submodule deinit` + remove from the index, keep the dirs as ignored clones, write the manifest.
+- Open: `~/workspaces/<context>/` vs keeping them under `~/git/…`.
+
 Split by what each thing is:
 
 | thing | lives in | reaches every session via |
@@ -266,6 +283,16 @@ Alex is trying T3 Code (desktop 0.0.42) as the daily driver to see how far it go
 - **Partial:** hosts (load balancing, no capability advertising / resource classes / leases); actions (human-only buttons, no tracked runs); process registry (telemetry + port discovery, no ownership / agent API); evidence (webm, not tied to acceptance criteria; not a seekable DOM replay with synced panels → Collie Demo still distinct); inbox (per-thread, no cross-project digest).
 - **Missing:** board / tickets, personas + triggers + budgets, config-driven workspace MCP, env specs / seeding / leases, multi-repo workspaces (a project is one dir), docs/decisions lifecycle, team routing.
 - **Plug-in points:** outside T3 — a Studio daemon's workspace MCP registered at user level reaches every T3 session; Studio can write `t3.json` scripts. In a fork (MIT) — scripts as agent tools, new MCP toolkits beside `apps/server/src/mcp/toolkits/*`, a board panel, cards in the event log. T3's RPC is versioned but internal.
+
+### T3 evidence, in detail
+- Agent calls `preview_recording_start` on the shared browser tab, acts, then `preview_recording_stop` → a compressed **webm** (≤50 MiB) is written as an **evidence file** in the agent's environment and its path returned. The compositor draws **click rings and key-press labels** on the video (`apps/web/src/browser/recordingCompositor.ts`).
+- The runtime note tells every agent it can **embed images and videos in its reply** via Markdown with absolute paths → evidence lives in the thread.
+- Screenshots / page state come from `preview_snapshot` / `preview_evaluate`. **SnapShots** is the other direction: the human captures any window (with its accessibility data) as *input* to the agent.
+- Not there: steps/captions, console/network/server timeline, a small shareable file, rerun as a script, linking to a PR or acceptance criteria.
+- **Integration path without a fork:** the Collie Demo in-page recorder (lab `src/inpage.js`) is a plain script → an agent can inject it with `preview_evaluate`, drive the tab, then collect the `.replay` — Collie Demo evidence inside T3's browser.
+
+### Multi-repo in T3
+A T3 project = one directory; a worktree is per repo. Options for a context folder: add each repo as its own T3 project (worktree per thread works), and add the context root as a project in `local` mode for cross-repo threads. Gap: a change spanning FE + BE wants a **worktree set** (matching branches in both repos, created and cleaned together) — T3 doesn't have it; a Studio idea (the card owns a worktree set). `t3.json` has a `worktreeSubmodules` flag, so T3 has some submodule awareness.
 
 ### Patterns worth borrowing
 Capability negotiation via an environment descriptor (clients/servers upgrade independently) · per-thread MCP credentials with capability gating · tools that return "how to drive me" instructions on open instead of an always-loaded prompt · recording tool returns an evidence path the agent cites · one agent model normalized across harnesses · settings layering with visible provenance · hidden-ref checkpoints for per-turn diff/revert · auto-settle driven by PR state · native helpers as supervised children.
