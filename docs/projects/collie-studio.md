@@ -236,6 +236,40 @@ Alex: would a RAG system for personas make sense later?
 - **Main risk is staleness:** retrieving a superseded decision as truth (SoLex's README kept stale Go/Hookdeck sections). Needs metadata: type, status (accepted/superseded), project, date, supersedes, plus citations back to the source.
 - **Order:** structure first (frontmatter + a decision registry), then hybrid search (keyword + embeddings) exposed via MCP over the vault, then per-persona scopes. A Studio capability ("retrieve") with swappable providers.
 
+## T3 Code, closer look (2026-09-27)
+
+Alex is trying T3 Code (desktop 0.0.42) as the daily driver to see how far it goes. Read from source (pingdotgg/t3code @ main, 2026-09-27). It already covers much of Studio's runtime + "game IDE" layer.
+
+**Architecture:** the same shape we landed on. A local **server owns everything** (provider processes, PTYs, git, files); web / desktop / mobile are thin clients over authenticated RPC. State = an event log (commands → decider → events + projections; checkpoints as hidden git refs). **Multiple environments**: one client connects to many servers (SSH-installed onto a remote host, Tailscale, LAN pairing, T3 Connect relay for mobile/push); new threads can be **load-balanced across machines by CPU/mem** (Prefer / Less often / Manual only per machine). Devcontainers only for developing T3 itself.
+
+**Objects:** environment · project (one directory) · worktree · thread (durable conversation, outlives processes) · turn / activity · provider instance (one account/config) · device (simulator/emulator).
+
+**Agent visualization:** an **Agents** panel = fleet view (fixed-height rows: status, current activity, model/effort, tokens, elapsed, tool uses); in chat, one expandable row per spawn batch. T3 doesn't orchestrate; it **parses each harness's native events** (Claude Agent SDK `task_started/progress/notification` + `parent_tool_use_id`; Codex `collabAgent/*`; others) into one normalized `task.* / tool.*` model, folded client-side into agents (subagent / batch / workflow / workflow agent, with phases and parent). Patterns: all in-flight states read "Working", only settled states differ; "Idle · resumable" is distinct; Claude Code workflows render as phased groups.
+
+**Panels:** diff, files, **browser preview**, device (iOS sim / Android emu), terminal, PRs, agents.
+- **Agent-driven shared browser**: Electron webview over CDP + Playwright's injected runtime; agent tools `preview_open/navigate/snapshot/click/type/evaluate/wait_for/resize` and **`preview_recording_start/stop` → a webm "evidence file"** the agent can cite. Human can pick/annotate elements into the composer; cookie import into a browser profile. Only while a desktop client is connected (no headless browser on a bare server). Per-project toggle.
+- **Port discovery**: `lsof` listening ports, HTTP-probed, tied to each thread's terminal PIDs.
+- Terminals are server-owned, shareable, reattachable, but not an agent tool (agents use their harness's shell).
+
+**Project config (`t3.json`):** `scripts[]` (name, command, icon, `runOnWorktreeCreate`, `async` = hold the agent until setup finishes, `previewUrl` + `autoOpenPreview`), `defaultThreadEnvMode` (worktree/local), `worktreeSubmodules`. Settings layer project override → environment → t3.json → built-in, with the UI showing the source. Scripts are **human buttons, not agent tools**. No plugin system.
+
+**Git:** worktree per thread (or local); fan one prompt out to several models = several threads/worktrees; commit/push/PR with generated text following AGENTS.md/CLAUDE.md conventions; GitHub, GitLab, **Forgejo/Gitea**, Bitbucket, Azure DevOps; multiple PRs per thread, stack merge/rebase; threads **auto-settle on merge or after 3 days idle**; worktree auto-cleanup.
+
+**Skills / MCP:** pass-through (native CLAUDE.md, `.claude/skills`, MCP config apply). T3 adds a short runtime note and **its own HTTP MCP with a per-thread credential and capability gating** (preview, device, pull requests) — a thread-scoped cousin of the workspace-MCP idea.
+
+**Attention:** desktop notifications; mobile push + iOS Live Activities (done / failed / needs approval / question) via T3 Connect; threads pinned / snoozed / settled; permission modes Supervised → Full access; multiple accounts per provider.
+
+**Resources:** Rust sidecar samples CPU/mem/IO per process (only while watched), diagnostics UI with signal/kill. Not a registry: no owner/card, no agent API.
+
+### Against Studio
+- **Covered:** harness front-end, worktree per thread + setup scripts, shared agent browser + recording, device viewport, review/PR incl. Forgejo, remote hosts + mobile, subagent visibility, cleanup, much of the attention loop.
+- **Partial:** hosts (load balancing, no capability advertising / resource classes / leases); actions (human-only buttons, no tracked runs); process registry (telemetry + port discovery, no ownership / agent API); evidence (webm, not tied to acceptance criteria; not a seekable DOM replay with synced panels → Collie Demo still distinct); inbox (per-thread, no cross-project digest).
+- **Missing:** board / tickets, personas + triggers + budgets, config-driven workspace MCP, env specs / seeding / leases, multi-repo workspaces (a project is one dir), docs/decisions lifecycle, team routing.
+- **Plug-in points:** outside T3 — a Studio daemon's workspace MCP registered at user level reaches every T3 session; Studio can write `t3.json` scripts. In a fork (MIT) — scripts as agent tools, new MCP toolkits beside `apps/server/src/mcp/toolkits/*`, a board panel, cards in the event log. T3's RPC is versioned but internal.
+
+### Patterns worth borrowing
+Capability negotiation via an environment descriptor (clients/servers upgrade independently) · per-thread MCP credentials with capability gating · tools that return "how to drive me" instructions on open instead of an always-loaded prompt · recording tool returns an evidence path the agent cites · one agent model normalized across harnesses · settings layering with visible provenance · hidden-ref checkpoints for per-turn diff/revert · auto-settle driven by PR state · native helpers as supervised children.
+
 ## Value check: Studio vs plain Claude Code (2026-09-25)
 
 Question (Alex): with all this, is a tool warranted, or is Claude Code + skills enough?
