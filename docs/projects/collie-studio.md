@@ -110,6 +110,28 @@ Alex (2026-09-25): a workspace where you can *do* a lot, like a game engine edit
 - **Panels are apps (Odoo):** a test-runner panel, a deploy panel, a DB inspector, a log viewer, a demo player. Install the ones a project needs; a project that never deploys never sees a deploy panel. Teach it to deploy → you get a deploy interface.
 - Ties to § Teaching agents: actions are the concrete form of "agents learn verbs, teams write mappings".
 
+## App delivery (open)
+
+Web-hosted is out (Studio manages local dirs, processes, git). But "web UI" ≠ cloud:
+- **Local daemon + web UI** (Jupyter / Kandev / Vibe Kanban shape): a daemon owns dirs, git, processes, envs; the UI is served on localhost, reachable from a phone through a tunnel. Registered hosts imply a daemon per host anyway (a k8s node agent), so the architecture is client/server by nature. Daemon = a fit for Go.
+- **Electron shell** (Claude desktop, T3, VS Code, Cursor): cross-platform, embeds Chromium → the built-in agent browser can be driven over CDP and recorded. Heavy.
+- **Tauri**: light, but uses the system webview (WebKit on macOS) → no CDP for the agent browser; would need a separate Chromium.
+- **Native macOS (Swift)**: best feel, Mac-only, slowest for panel-heavy UI; WKWebView browser, same CDP problem.
+- Lean: daemon + web UI as the core; an Electron shell when the browser pane needs it.
+
+## Cross-agent portability
+
+- **Skills:** Agent Skills (`SKILL.md` folders, spec at agentskills.io) started at Anthropic and is now an open standard read by Claude Code, Codex, Copilot, Cursor, Gemini CLI, OpenCode, Antigravity, Kiro. Discovery paths differ per tool (`.claude/skills`, `.cursor/skills`, …) → Studio would install one copy and link it where each harness looks.
+- **Instructions:** `AGENTS.md` is the cross-tool file; Claude Code reads `CLAUDE.md` (which can import `AGENTS.md`).
+- **Tools:** MCP is cross-agent.
+- **Harness-specific** (Studio would compile to each): subagent definitions, hooks, slash commands, permissions/settings, plugin packaging. **ACP** covers the client ↔ agent link (a UI driving different agent CLIs).
+
+## Workspace MCP (idea)
+
+MCP servers can already be scoped: `.mcp.json` in a project (shared), per-project local scope, or user-wide. **stdio** servers are processes the harness spawns per session and kills with it; **HTTP** servers are long-running (local or remote) and shared across sessions. `.mcp.json` does not load from parent dirs, so a context folder can't rely on it for repos below it.
+
+Idea: **one workspace MCP** exposing the context to any agent in any harness: its repos, notes/vault search, the context's tracker and docs (ClickUp for enable, Notion for hookdeck), actions (test, seed, deploy, demo), the process registry, hosts, cards. Run as the daemon's HTTP endpoint, registered once at user level; it resolves the workspace from the session's cwd / MCP roots. This is probably **Studio's agent-facing API**: the UI is for the human, the workspace MCP is for agents, same daemon behind both.
+
 ## Teaching agents
 
 Every user has to teach agents how to work locally and with their team. Keep it small, and make it config rather than prose:
