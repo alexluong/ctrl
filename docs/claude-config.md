@@ -157,3 +157,4 @@ Backups: `~/.claude.json.bak-2026-09-27`, `~/.claude/settings.json.bak-2026-09-2
   - `disableBundledSkills: true`
   - `disableClaudeAiConnectors: true` (CLI only)
 - **visualize** renders only in hosts with an HTML widget renderer (Claude desktop/web/mobile). T3 Code and the terminal CLI can't render it (T3 source: no MCP UI rendering), so it's noise there.
+- Global `~/.claude/CLAUDE.md` = the concision line + the communication style guide moved from hookdeck's `CLAUDE.md` (Alex's general preference for all agents). hookdeck's `CLAUDE.md` deleted; `AGENTS.md` now loads natively there. The "sacrifice grammar" line and "plain language" pull different ways; revisit if replies get too clipped.
