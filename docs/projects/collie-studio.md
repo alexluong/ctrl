@@ -134,6 +134,37 @@ Web-hosted is out (Studio manages local dirs, processes, git). But "web UI" ≠ 
 - **Caveat for context folders:** discovery stops at the repo root, so a context folder's `.agents/skills` above a nested repo (`~/workspaces/hookdeck/outpost`) is invisible to Codex, and possibly to Claude too (its docs also say "up to the repo root") — untested. Fallbacks: context skills at user level namespaced (`hookdeck-*`); symlink them into each repo's gitignored `.agents/skills`; serve them from the workspace MCP (Skills extension).
 - Hooks vs tools vs skills: hook = the harness runs it, can't be skipped (guarantees); MCP tool / script = same steps every time once called (deterministic actions, shared state); skill = judgment. SoLex's 25-item prose checklist was mostly hooks and tools waiting to be written.
 
+## Workflows (idea, to discuss, 2026-09-27)
+
+Recurring actions/flows packaged as a named, rerunnable **workflow**. A concept for Studio and for workspace tooling.
+
+- **Ladder:**
+  - action = one command, deterministic (`workspace.yaml`)
+  - skill = judgment for one step
+  - workflow = several steps, possibly several agents, with state, resumable, with a trigger
+- **Triggers:**
+  - manual (`/run triage`)
+  - cron (morning digest, disk audit, weekly bookkeeping import)
+  - events (new ClickUp ticket or bug report, PR opened, CI failed, deploy done)
+- **Candidates already seen:**
+  - ticket → investigate → spec → task
+  - the team-mode loop (dev → review → QA → digest)
+  - release notes
+  - bookkeeping import → report
+  - disk audit
+  - notes commit cron
+  - morning brief
+- **What exists today:**
+  - Claude Code Workflow tool: scripted multi-agent runs with phases and resume, `.claude/workflows/`
+  - `/loop`, scheduled tasks / cloud routines (cron)
+  - hooks (events inside a session)
+  - GitHub Actions (repo events)
+- **Missing piece:** one place that shows which workflows a workspace has, which run when, and their past runs and outputs. That's the "agents-as-CI" and process-visibility ideas again.
+- **Open:**
+  - workflow = script or declarative (yaml steps: action / skill / agent)?
+  - where do run logs live (vault)?
+  - how are they shared with the team (plugin)?
+
 ## Workspace MCP (idea)
 
 MCP servers can already be scoped: `.mcp.json` in a project (shared), per-project local scope, or user-wide. **stdio** servers are processes the harness spawns per session and kills with it; **HTTP** servers are long-running (local or remote) and shared across sessions. `.mcp.json` does not load from parent dirs, so a context folder can't rely on it for repos below it.
