@@ -95,6 +95,24 @@ Alex's personal agent workspace for Enable (EButler-QA) work. The first concrete
   - long notes go in `work/task-12/*.md`
   - the git log of this repo is the timeline, with a commit per state change
 
+## ClickUp access (plan)
+
+- **Primary: a CLI**, [clickup-cli](https://clickup-cli.com/) (`nicholasbester/clickup-cli`; community project by D3 Vitamin, Rust, Apache-2.0, ~50★, started 2026-03).
+  - Token-based (`pk_…`).
+  - Flattens ClickUp's verbose JSON (claims ~150 tokens vs ~12k per task query).
+  - Covers ~130 endpoints.
+  - Costs no context until called.
+- **Use its CLI mode only.** Skip its MCP mode (143 tools) and `agent-config`, which writes into CLAUDE.md; we write the instructions.
+- **How agents know the commands:**
+  - a small `clickup` skill whose description is always visible and whose body is a cheat sheet of the ~10 commands we use (get task, comments, post comment, set status, search), loaded on demand
+  - `clickup-cli <group> --help` for anything else
+  - the same pattern as `gh`
+- **Token** in the workspace's gitignored `.env`, not global config (check that the CLI supports this). Pin a version and skim the source, since it holds a full-account token.
+- **Alternative:** `triptechtravel/clickup-cli` (Go, MIT, ~39★). It takes the task ID from the branch name and links GitHub, which fits branch-per-task.
+- **Fallback:** the official remote MCP in the workspace `.mcp.json` (`https://mcp.clickup.com/mcp`, OAuth, 61 tools).
+- **Evaluate** on a real ticket: tokens used, reliability, CLI vs MCP.
+- The claude.ai ClickUp connector is disconnected (2026-09-27), so ClickUp is no longer global.
+
 ## Protocol (team-mode)
 
 - **Lead:** the `/lead` skill, in a session started at `~/workspaces/enable/`.
