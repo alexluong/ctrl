@@ -142,9 +142,10 @@ Backups: `~/.claude.json.bak-2026-09-27`, `~/.claude/settings.json.bak-2026-09-2
 - `claude mcp remove clickup -s local` in `ebutler-qa/enable-backend` (the stale entry).
 - claude.ai ClickUp connector: disconnected by Alex on claude.ai.
 - Plugins: all disabled at user scope (`gopls-lsp`, `coderabbit`, `frontend-design`, `discord`); `figma` disabled in ctrl local. Enabled per project (local scope): hookdeck → gopls-lsp; `ebutler-qa/workspace/main` → gopls-lsp, frontend-design. Still installed (cache); re-enable with `claude plugin enable X --scope project|local`.
+- `use-railway` skill removed from `~/.claude/skills` (moved to `~/.claude/backups/2026-09-27/`).
+- Per-project setup: to be discussed when the new workspaces are set up.
 - Desktop app and T3 Code both read user + project + local settings (T3: Agent SDK `settingSources: [user, project, local]`), so per-project enables work in both.
 - Still global:
-  - skill `~/.claude/skills/use-railway`
   - connectors Claude Docs + visualize (account-level; disconnect on claude.ai)
   - the synced claude.ai skills
   - desktop-app built-ins
