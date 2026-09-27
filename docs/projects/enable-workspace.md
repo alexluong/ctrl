@@ -54,7 +54,7 @@ Alex's personal agent workspace for Enable (EButler-QA) work. The first concrete
     digest.md                        ← lead's digest / needs-alex queue
 
   mise.toml                          ← tools + CLOUDSDK_CONFIG; default env = no prod access
-  ops/stg/, ops/prd/                 ← env dirs: mise.toml + gitignored .env (see ../infra-access.md)
+  ops/stg/, ops/prd/, ops/prd-rw/    ← env dirs (prd = read-only): mise.toml + gitignored .env (see ../infra-access.md)
 
   repos/                             ← gitignored
     workspace.git                    ← fresh bare clone of EButler-QA/workspace
@@ -174,7 +174,7 @@ Zero global tools; the workspace declares everything (see `../claude-config.md`)
    - copy skills + hook from workspace-claude
    - migrate memory
    - apply the user-level settings in dotfiles
-   - infra access per `../infra-access.md`: root `mise.toml`, `ops/stg` + `ops/prd`, workspace `CLOUDSDK_CONFIG` + logins, `prd`/`stg` wrappers, prod guard hook, SessionStart mise-env hook
+   - infra access per `../infra-access.md`: root `mise.toml`, `ops/stg` + `ops/prd` (read-only) + `ops/prd-rw`, workspace `CLOUDSDK_CONFIG` + logins, `stg`/`prd`/`prd-rw` wrappers, prod guard hook, SessionStart mise-env hook
    - install clickup-cli; token into `.env`
    - verify with the T3 audit prompt at the root and in `wt/main`: AGENTS.md loaded, skills present, memory dir = vault, no stray MCP
 2. Dev worker, then reviewer, on one real task, driven by hand (no lead). Check worker and review quality.

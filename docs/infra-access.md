@@ -4,7 +4,29 @@ How workspaces reach cloud accounts, databases and clusters, and the target patt
 
 ## Principle: no access by default
 
-Environment names: **`stg`** and **`prd`** (not staging/prod), in folder names, wrappers, `DEPLOY_ENV` values and gcloud config names.
+Environment names: **`stg`**, **`prd`**, **`prd-rw`** (not staging/prod), used in folder names, wrappers, `DEPLOY_ENV` values and gcloud config names.
+
+**Read vs write:**
+
+```
+ops/stg/      ← stg, read + write (low stakes)
+ops/prd/      ← prd, READ-ONLY credentials only
+ops/prd-rw/   ← prd write credentials; the hook always asks, in every permission mode
+```
+
+- `prd <cmd>` can only read; a write needs `prd-rw <cmd>` (explicit, in the approval prompt, always confirmed).
+- No prefix → no prod access. `prd` → read only. Every mistake fails safe.
+- A system without a read-only credential gets **nothing** in `prd`: reachable only via `prd-rw` until a read-only user exists. That makes the missing read-only users visible.
+
+| system | `prd` (read-only) | `prd-rw` | status |
+|---|---|---|---|
+| Enable Mongo | `ENABLE_MONGO_READ_URL` | `ENABLE_MONGO_WRITE_URL` | split exists; verify the READ user has read roles only |
+| hookdeck prod ClickHouse | `alexluong_readonly` (enforced) | none (not needed) | ✓ |
+| hookdeck core PG | none | current user | request/create a read-only role |
+| hookdeck stg ClickHouse | the Railway creds (can write) | same | fine for stg; optional read-only user |
+| GCP | gcloud config `prd` impersonating a **viewer service account** (`auth/impersonate_service_account`) | config `prd-rw` = user account | needs a viewer SA per project (IAM) |
+| Terraform | `plan` from `prd` (viewer SA) | `apply` only from `prd-rw` | follows GCP |
+| kube | read-only RBAC context if available | current contexts | later |
 
 - **The default environment of a workspace has no prod credentials.** A command that forgets to name its environment fails ("no access"). It never lands on prod by accident.
 - **An environment is a directory**, not a shell variable: `ops/stg/`, `ops/prd/`, each a `mise.toml` (+ gitignored `.env`) that inherits the workspace root's `mise.toml` and overrides only what differs.
@@ -66,9 +88,9 @@ Environment names: **`stg`** and **`prd`** (not staging/prod), in folder names, 
 ## Migration (per workspace, at setup)
 
 - root `.env` → only non-prod/dev values
-- prod values → `ops/prd/.env`; staging → `ops/stg/.env`
+- prod read-only values → `ops/prd/.env`; prod write values → `ops/prd-rw/.env`; staging → `ops/stg/.env`
 - per-workspace `CLOUDSDK_CONFIG` + `gcloud auth login` + `gcloud auth application-default login`
-- `prd`/`stg` wrapper tasks
-- hook: ask on `ops/prd` + writes, reject prod identifiers without `ops/prd`
+- `stg` / `prd` / `prd-rw` wrapper tasks
+- hook: always ask on `ops/prd-rw`; reject prod identifiers without `ops/prd` or `ops/prd-rw`
 - `AGENTS.md` rules (prod read-only via `prd …`, cite env in findings)
 - Enable first; hookdeck later (also flip the Outpost target default off prod).
