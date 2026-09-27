@@ -5247,9 +5247,9 @@
       "library": "blue4/movies/Shazam (2019)"
     },
     {
-      "download": "blue4/WALL·E.2008.1080p.BluRay.Opus.5.1.AV1-KIMJI",
+      "download": "blue4/WALL\u00b7E.2008.1080p.BluRay.Opus.5.1.AV1-KIMJI",
       "type": "movie",
-      "title": "WALL·E",
+      "title": "WALL\u00b7E",
       "year": 2008,
       "resolution": "1080p",
       "source": "BluRay",
@@ -5258,7 +5258,7 @@
       "audio": "Opus",
       "hdr": "",
       "status": "linked",
-      "library": "blue4/movies/WALL·E (2008)"
+      "library": "blue4/movies/WALL\u00b7E (2008)"
     },
     {
       "download": "blue4/Spider-Man.Into.the.Spider-Verse.2018.2160p.UHD.BluRay.x265-TERMiNAL",
@@ -9848,7 +9848,355 @@
       "hdr": "",
       "status": "linked",
       "library": "red4/tv/11.22.63"
+    },
+    {
+      "download": "red4/The.Nice.Guys.2016.1080p.BluRay.x265-LAMA",
+      "type": "movie",
+      "title": "The Nice Guys",
+      "year": 2016,
+      "resolution": "1080p",
+      "source": "BluRay",
+      "group": "LAMA",
+      "video": "x265",
+      "audio": "",
+      "hdr": "",
+      "status": "linked",
+      "library": "red4/movies/The Nice Guys (2016)"
+    },
+    {
+      "download": "red4/The.Accountant.2016.1080p.BluRay.x265",
+      "type": "movie",
+      "title": "The Accountant",
+      "year": 2016,
+      "resolution": "1080p",
+      "source": "BluRay",
+      "group": "unknown",
+      "video": "x265",
+      "audio": "",
+      "hdr": "",
+      "status": "linked",
+      "library": "red4/movies/The Accountant (2016)"
+    },
+    {
+      "download": "blue4/Neagley.S01.1080p.x265-AMBER",
+      "type": "tv",
+      "title": "Neagley",
+      "seasons": [
+        1
+      ],
+      "resolution": "1080p",
+      "source": "unknown",
+      "group": "AMBER",
+      "video": "x265",
+      "audio": "",
+      "hdr": "",
+      "status": "linked",
+      "library": "blue4/tv/Neagley"
+    },
+    {
+      "download": "red4/The.Great.S02.1080p.HULU.WEB-DL.DDP5.1.H.264-NOSiViD",
+      "type": "tv",
+      "title": "The Great",
+      "seasons": [
+        2
+      ],
+      "resolution": "1080p",
+      "source": "WEB-DL",
+      "group": "NOSiViD",
+      "video": "x264",
+      "audio": "DD+",
+      "hdr": "",
+      "status": "linked",
+      "library": "red4/tv/The Great"
+    },
+    {
+      "download": "red4/Its.Kind.Of.A.Funny.Story.2010.1080p.BluRay.x265",
+      "type": "movie",
+      "title": "Its Kind Of A Funny Story",
+      "year": 2010,
+      "resolution": "1080p",
+      "source": "BluRay",
+      "group": "unknown",
+      "video": "x265",
+      "audio": "",
+      "hdr": "",
+      "status": "linked",
+      "library": "red4/movies/Its Kind Of A Funny Story (2010)"
+    },
+    {
+      "download": "red4/Girl.Interrupted.1999.1080p.BluRay.x265",
+      "type": "movie",
+      "title": "Girl Interrupted",
+      "year": 1999,
+      "resolution": "1080p",
+      "source": "BluRay",
+      "group": "unknown",
+      "video": "x265",
+      "audio": "",
+      "hdr": "",
+      "status": "linked",
+      "library": "red4/movies/Girl Interrupted (1999)"
+    },
+    {
+      "download": "red4/Slow.Horses.2022.S01.1080p.WebRip.x265.10Bit.AC3.5.1-JATT",
+      "type": "tv",
+      "title": "Slow Horses",
+      "seasons": [
+        1
+      ],
+      "resolution": "1080p",
+      "source": "WEBRip",
+      "group": "JATT",
+      "video": "x265",
+      "audio": "DD",
+      "hdr": "",
+      "status": "linked",
+      "library": "red4/tv/Slow Horses"
+    },
+    {
+      "download": "red4/Slow.Horses.S05.1080p.x265-ELiTE",
+      "type": "tv",
+      "title": "Slow Horses",
+      "seasons": [
+        5
+      ],
+      "resolution": "1080p",
+      "source": "unknown",
+      "group": "ELiTE",
+      "video": "x265",
+      "audio": "",
+      "hdr": "",
+      "status": "linked",
+      "library": "red4/tv/Slow Horses"
+    },
+    {
+      "download": "red4/Reacher.S04.1080p.x265-ELiTE",
+      "type": "tv",
+      "title": "Reacher",
+      "seasons": [
+        4
+      ],
+      "resolution": "1080p",
+      "source": "unknown",
+      "group": "ELiTE",
+      "video": "x265",
+      "audio": "",
+      "hdr": "",
+      "status": "linked",
+      "library": "red4/tv/Reacher"
+    },
+    {
+      "download": "red4/Slow.Horses.S02.1080p.ATVP.WEB-DL.DDP5.1.H.264-NTb",
+      "type": "tv",
+      "title": "Slow Horses",
+      "seasons": [
+        2
+      ],
+      "resolution": "1080p",
+      "source": "WEB-DL",
+      "group": "NTb",
+      "video": "x264",
+      "audio": "DD+",
+      "hdr": "",
+      "status": "linked",
+      "library": "red4/tv/Slow Horses"
+    },
+    {
+      "download": "red4/One.Flew.Over.The.Cuckoos.Nest.1975.1080p.BluRay.x265-LAMA",
+      "type": "movie",
+      "title": "One Flew Over The Cuckoos Nest",
+      "year": 1975,
+      "resolution": "1080p",
+      "source": "BluRay",
+      "group": "LAMA",
+      "video": "x265",
+      "audio": "",
+      "hdr": "",
+      "status": "linked",
+      "library": "red4/movies/One Flew Over The Cuckoos Nest (1975)"
+    },
+    {
+      "download": "red4/Severance.S02.1080p.x265-ELiTE",
+      "type": "tv",
+      "title": "Severance",
+      "seasons": [
+        2
+      ],
+      "resolution": "1080p",
+      "source": "unknown",
+      "group": "ELiTE",
+      "video": "x265",
+      "audio": "",
+      "hdr": "",
+      "status": "linked",
+      "library": "red4/tv/Severance"
+    },
+    {
+      "download": "blue4/Spartacus.House.of.Ashur.S01.1080p.x265-ELiTE",
+      "type": "tv",
+      "title": "Spartacus House of Ashur",
+      "seasons": [
+        1
+      ],
+      "resolution": "1080p",
+      "source": "unknown",
+      "group": "ELiTE",
+      "video": "x265",
+      "audio": "",
+      "hdr": "",
+      "status": "linked",
+      "library": "blue4/tv/Spartacus House of Ashur"
+    },
+    {
+      "download": "red4/The.Fisher.King.1991.1080p.BluRay.x265",
+      "type": "movie",
+      "title": "The Fisher King",
+      "year": 1991,
+      "resolution": "1080p",
+      "source": "BluRay",
+      "group": "unknown",
+      "video": "x265",
+      "audio": "",
+      "hdr": "",
+      "status": "linked",
+      "library": "red4/movies/The Fisher King (1991)"
+    },
+    {
+      "download": "red4/House.of.the.Dragon.S01.1080p.x265-ZMNT",
+      "type": "tv",
+      "title": "House of the Dragon",
+      "seasons": [
+        1
+      ],
+      "resolution": "1080p",
+      "source": "unknown",
+      "group": "ZMNT",
+      "video": "x265",
+      "audio": "",
+      "hdr": "",
+      "status": "linked",
+      "library": "red4/tv/House of the Dragon"
+    },
+    {
+      "download": "red4/The.Great.S03.1080p.HULU.WEB-DL.DDP5.1.H.264-NTb",
+      "type": "tv",
+      "title": "The Great",
+      "seasons": [
+        3
+      ],
+      "resolution": "1080p",
+      "source": "WEB-DL",
+      "group": "NTb",
+      "video": "x264",
+      "audio": "DD+",
+      "hdr": "",
+      "status": "linked",
+      "library": "red4/tv/The Great"
+    },
+    {
+      "download": "red4/A.Beautiful.Mind.2001.1080p.BluRay.x265",
+      "type": "movie",
+      "title": "A Beautiful Mind",
+      "year": 2001,
+      "resolution": "1080p",
+      "source": "BluRay",
+      "group": "unknown",
+      "video": "x265",
+      "audio": "",
+      "hdr": "",
+      "status": "linked",
+      "library": "red4/movies/A Beautiful Mind (2001)"
+    },
+    {
+      "download": "red4/Hellboy.2004.DC.REMASTERED.PROPER.1080p.BluRay.x265-LAMA",
+      "type": "movie",
+      "title": "Hellboy",
+      "year": 2004,
+      "resolution": "1080p",
+      "source": "BluRay",
+      "group": "LAMA",
+      "video": "x265",
+      "audio": "",
+      "hdr": "",
+      "status": "linked",
+      "library": "red4/movies/Hellboy (2004)"
+    },
+    {
+      "download": "red4/Awakenings.1990.BluRay.1080p.2Audio.DTS-HD.MA5.1.x265.10bit-BeiTai",
+      "type": "movie",
+      "title": "Awakenings",
+      "year": 1990,
+      "resolution": "1080p",
+      "source": "BluRay",
+      "group": "BeiTai",
+      "video": "x265",
+      "audio": "DTS-HD",
+      "hdr": "",
+      "status": "linked",
+      "library": "red4/movies/Awakenings (1990)"
+    },
+    {
+      "download": "red4/Mr.Church.2016.1080p.BluRay.DTS-HD.MA5.1.x264-iFT",
+      "type": "movie",
+      "title": "Mr Church",
+      "year": 2016,
+      "resolution": "1080p",
+      "source": "BluRay",
+      "group": "iFT",
+      "video": "x264",
+      "audio": "DTS-HD",
+      "hdr": "",
+      "status": "linked",
+      "library": "red4/movies/Mr Church (2016)"
+    },
+    {
+      "download": "red4/Catch-22 (2019) S01 1080p HULU WEB-DL x265 HEVC 10bit EAC3 5.1 Ghost",
+      "type": "tv",
+      "title": "Catch-22",
+      "seasons": [
+        1
+      ],
+      "resolution": "1080p",
+      "source": "WEB-DL",
+      "group": "Ghost",
+      "video": "x265",
+      "audio": "EAC3",
+      "hdr": "",
+      "status": "linked",
+      "library": "red4/tv/Catch-22"
+    },
+    {
+      "download": "red4/Severance (2022) S01 (1080p BluRay x265 SDR DDP 5.1 English - DarQ HONE)",
+      "type": "tv",
+      "title": "Severance",
+      "seasons": [
+        1
+      ],
+      "resolution": "1080p",
+      "source": "BluRay",
+      "group": "HONE",
+      "video": "x265",
+      "audio": "DDP",
+      "hdr": "",
+      "status": "linked",
+      "library": "red4/tv/Severance"
+    },
+    {
+      "download": "red4/The.Great.S01.REPACK.1080p.HULU.WEB-DL.DDP5.1.H.264-NTb",
+      "type": "tv",
+      "title": "The Great",
+      "seasons": [
+        1
+      ],
+      "resolution": "1080p",
+      "source": "WEB-DL",
+      "group": "NTb",
+      "video": "x264",
+      "audio": "DDP",
+      "hdr": "",
+      "status": "linked",
+      "library": "red4/tv/The Great"
     }
   ],
-  "updated_at": "2026-09-14 08:13:16"
+  "updated_at": "2026-09-27 17:25:19"
 }
