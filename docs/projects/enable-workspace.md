@@ -169,6 +169,8 @@ Zero global tools; the workspace declares everything (see `../claude-config.md`)
 
 ### Setup decisions (2026-09-27)
 
+- Backlog.md: `backlog.config.yml` at the workspace root (a custom backlog dir requires root config), tasks in `vault/backlog/`. CLI works from anywhere in the workspace. Statuses: To Do, In Progress, Review, QA, Needs Alex, Done.
+- Obsidian names a vault after its folder (no separate display name; opening through a symlink still records the real path), so the vault shows as "vault". Renaming it in the app renames the folder.
 - GCP read in `prd`: option (c), Alex's own account as a stopgap until a viewer service account exists (known gap).
 - Enable Mongo READ URL: Alex confirms the user is read-only; no check needed.
 
