@@ -2061,20 +2061,6 @@
       "library": "blue4/movies/Iron Man (2008)"
     },
     {
-      "download": "blue4/Harry.Potter.and.the.Prisoner.of.Azkaban.2004.Theatrical.1080p.DS4K.MA.WEBRip.Opus.7.1.AV1-KIMJI.mkv",
-      "type": "movie",
-      "title": "Harry Potter and the Prisoner of Azkaban",
-      "year": 2004,
-      "resolution": "1080p",
-      "source": "WEBRip",
-      "group": "KIMJI",
-      "video": "AV1",
-      "audio": "Opus",
-      "hdr": "",
-      "status": "linked",
-      "library": "blue4/movies/Harry Potter and the Prisoner of Azkaban (2004)"
-    },
-    {
       "download": "blue4/Happy.Gilmore.1996.1080p.BluRay.OPUS.5.1.AV1-KIMJI",
       "type": "movie",
       "title": "Happy Gilmore",
@@ -2669,20 +2655,6 @@
       "library": "blue4/movies/Star Wars Episode I The Phantom Menace (1999)"
     },
     {
-      "download": "blue4/Harry.Potter.and.the.Philosophers.Stone.2001.Theatrical.1080p.DS4K.MA.WEBRip.Opus.7.1.AV1-KIMJI.mkv",
-      "type": "movie",
-      "title": "Harry Potter and the Philosophers Stone",
-      "year": 2001,
-      "resolution": "1080p",
-      "source": "WEBRip",
-      "group": "KIMJI",
-      "video": "AV1",
-      "audio": "Opus",
-      "hdr": "",
-      "status": "linked",
-      "library": "blue4/movies/Harry Potter and the Philosophers Stone (2001)"
-    },
-    {
       "download": "blue4/Bob's.Burgers.S07.1080p.AMZN.WEBRip.OPUS.5.1.AV1-KIMJI",
       "type": "tv",
       "title": "Bob's Burgers",
@@ -3068,22 +3040,6 @@
       "hdr": "",
       "status": "linked",
       "library": "blue4/tv/Silicon Valley"
-    },
-    {
-      "download": "blue4/Suits (2011) Season 1-9 S01-S09 (1080p BluRay x265 HEVC 10bit AAC 5.1 ImE)",
-      "type": "tv",
-      "title": "Suits (2011)",
-      "seasons": [
-        1
-      ],
-      "resolution": "1080p",
-      "source": "BluRay",
-      "group": "unknown",
-      "video": "x265",
-      "audio": "AAC",
-      "hdr": "",
-      "status": "linked",
-      "library": "blue4/tv/Suits (2011)"
     },
     {
       "download": "blue4/Witness.1985.1080p.Arrow.BluRay.Opus.5.1.AV1-KIMJI.mkv",
@@ -5247,9 +5203,9 @@
       "library": "blue4/movies/Shazam (2019)"
     },
     {
-      "download": "blue4/WALL\u00b7E.2008.1080p.BluRay.Opus.5.1.AV1-KIMJI",
+      "download": "blue4/WALL·E.2008.1080p.BluRay.Opus.5.1.AV1-KIMJI",
       "type": "movie",
-      "title": "WALL\u00b7E",
+      "title": "WALL·E",
       "year": 2008,
       "resolution": "1080p",
       "source": "BluRay",
@@ -5258,7 +5214,7 @@
       "audio": "Opus",
       "hdr": "",
       "status": "linked",
-      "library": "blue4/movies/WALL\u00b7E (2008)"
+      "library": "blue4/movies/WALL·E (2008)"
     },
     {
       "download": "blue4/Spider-Man.Into.the.Spider-Verse.2018.2160p.UHD.BluRay.x265-TERMiNAL",
@@ -6143,20 +6099,6 @@
       "hdr": "",
       "status": "linked",
       "library": "blue4/movies/Sen Kiminle Dans Ediyorsun (2017)"
-    },
-    {
-      "download": "blue4/Harry.Potter.and.the.Chamber.of.Secrets.2002.Theatrical.1080p.DS4K.MA.WEBRip.Opus.7.1.AV1-KIMJI.mkv",
-      "type": "movie",
-      "title": "Harry Potter and the Chamber of Secrets",
-      "year": 2002,
-      "resolution": "1080p",
-      "source": "WEBRip",
-      "group": "KIMJI",
-      "video": "AV1",
-      "audio": "Opus",
-      "hdr": "",
-      "status": "linked",
-      "library": "blue4/movies/Harry Potter and the Chamber of Secrets (2002)"
     },
     {
       "download": "blue4/The.Mitchells.vs.the.Machines.2021.1080p.BluRay.OPUS.5.1.AV1-KIMJI",
@@ -7278,110 +7220,6 @@
     },
     {
       "type": "movie",
-      "title": "Harry Potter and the Philosopher's Stone",
-      "year": 2001,
-      "resolution": "2160p",
-      "source": "BluRay",
-      "video": "x265",
-      "audio": "",
-      "hdr": "HDR10",
-      "download": "blue4/Harry Potter 4K HDR10 Pack hevc-d3g/Harry Potter and the Philosopher's Stone 2001 UHD BluRay HDR10 hevc-d3g",
-      "status": "linked",
-      "library": "blue4/movies4k/Harry Potter and the Philosopher's Stone (2001)"
-    },
-    {
-      "type": "movie",
-      "title": "Harry Potter and the Chamber of Secrets",
-      "year": 2002,
-      "resolution": "2160p",
-      "source": "BluRay",
-      "video": "x265",
-      "audio": "",
-      "hdr": "HDR10",
-      "download": "blue4/Harry Potter 4K HDR10 Pack hevc-d3g/Harry Potter and the Chamber of Secrets 2002 UHD BluRay HDR10 hevc-d3g",
-      "status": "linked",
-      "library": "blue4/movies4k/Harry Potter and the Chamber of Secrets (2002)"
-    },
-    {
-      "type": "movie",
-      "title": "Harry Potter and the Prisoner of Azkaban",
-      "year": 2004,
-      "resolution": "2160p",
-      "source": "BluRay",
-      "video": "x265",
-      "audio": "",
-      "hdr": "HDR10",
-      "download": "blue4/Harry Potter 4K HDR10 Pack hevc-d3g/Harry Potter and the Prisoner of Azkaban 2004 UHD BluRay HDR10 hevc-d3g",
-      "status": "linked",
-      "library": "blue4/movies4k/Harry Potter and the Prisoner of Azkaban (2004)"
-    },
-    {
-      "type": "movie",
-      "title": "Harry Potter and the Goblet of Fire",
-      "year": 2005,
-      "resolution": "2160p",
-      "source": "BluRay",
-      "video": "x265",
-      "audio": "",
-      "hdr": "HDR10",
-      "download": "blue4/Harry Potter 4K HDR10 Pack hevc-d3g/Harry Potter and the Goblet of Fire 2005 UHD BluRay HDR10 hevc-d3g",
-      "status": "linked",
-      "library": "blue4/movies4k/Harry Potter and the Goblet of Fire (2005)"
-    },
-    {
-      "type": "movie",
-      "title": "Harry Potter and the Order of the Phoenix",
-      "year": 2007,
-      "resolution": "2160p",
-      "source": "BluRay",
-      "video": "x265",
-      "audio": "",
-      "hdr": "HDR10",
-      "download": "blue4/Harry Potter 4K HDR10 Pack hevc-d3g/Harry Potter and the Order of the Phoenix 2007 UHD BluRay HDR10 hevc-d3g",
-      "status": "linked",
-      "library": "blue4/movies4k/Harry Potter and the Order of the Phoenix (2007)"
-    },
-    {
-      "type": "movie",
-      "title": "Harry Potter and the Half-Blood Prince",
-      "year": 2009,
-      "resolution": "2160p",
-      "source": "BluRay",
-      "video": "x265",
-      "audio": "",
-      "hdr": "HDR10",
-      "download": "blue4/Harry Potter 4K HDR10 Pack hevc-d3g/Harry Potter and the Half Blood Prince 2009 UHD BluRay HDR10 hevc-d3g",
-      "status": "linked",
-      "library": "blue4/movies4k/Harry Potter and the Half-Blood Prince (2009)"
-    },
-    {
-      "type": "movie",
-      "title": "Harry Potter and the Deathly Hallows: Part 1",
-      "year": 2010,
-      "resolution": "2160p",
-      "source": "BluRay",
-      "video": "x265",
-      "audio": "",
-      "hdr": "HDR10",
-      "download": "blue4/Harry Potter 4K HDR10 Pack hevc-d3g/Haarry Potter and the Deathly Hallows Part 1 2010 UHD BluRay HDR10 hevc-d3g",
-      "status": "linked",
-      "library": "blue4/movies4k/Harry Potter and the Deathly Hallows: Part 1 (2010)"
-    },
-    {
-      "type": "movie",
-      "title": "Harry Potter and the Deathly Hallows: Part 2",
-      "year": 2011,
-      "resolution": "2160p",
-      "source": "BluRay",
-      "video": "x265",
-      "audio": "",
-      "hdr": "HDR10",
-      "download": "blue4/Harry Potter 4K HDR10 Pack hevc-d3g/Harry Potter and the Deathly Hallows Part 2 2011 UHD BluRay HDR10 hevc-d3g",
-      "status": "linked",
-      "library": "blue4/movies4k/Harry Potter and the Deathly Hallows: Part 2 (2011)"
-    },
-    {
-      "type": "movie",
       "title": "Black Panther",
       "year": 2018,
       "resolution": "1080p",
@@ -8178,22 +8016,6 @@
       "library": "red4/tv/The Orville"
     },
     {
-      "download": "red4/Star.Trek.The.Next.Generation.S02.1080p.BluRay.Opus.7.1.AV1-KIMJI",
-      "type": "tv",
-      "title": "Star Trek The Next Generation",
-      "seasons": [
-        2
-      ],
-      "resolution": "1080p",
-      "source": "BluRay",
-      "group": "KIMJI",
-      "video": "AV1",
-      "audio": "Opus",
-      "hdr": "",
-      "status": "linked",
-      "library": "red4/tv/Star Trek The Next Generation"
-    },
-    {
       "download": "red4/The.Sopranos.S06.1080p.BluRay.Opus.5.1.AV1-KIMJI",
       "type": "tv",
       "title": "The Sopranos",
@@ -8245,22 +8067,6 @@
       "library": "red4/tv/The Mandalorian"
     },
     {
-      "download": "red4/Star.Trek.The.Next.Generation.S03.1080p.BluRay.Opus.7.1.AV1-KIMJI",
-      "type": "tv",
-      "title": "Star Trek The Next Generation",
-      "seasons": [
-        3
-      ],
-      "resolution": "1080p",
-      "source": "BluRay",
-      "group": "KIMJI",
-      "video": "AV1",
-      "audio": "Opus",
-      "hdr": "",
-      "status": "linked",
-      "library": "red4/tv/Star Trek The Next Generation"
-    },
-    {
       "download": "red4/What.We.Do.in.the.Shadows.S01.1080p.AMZN.WEB-DL.OPUS.5.1.AV1-KIMJI",
       "type": "tv",
       "title": "What We Do in the Shadows",
@@ -8275,22 +8081,6 @@
       "hdr": "",
       "status": "linked",
       "library": "red4/tv/What We Do in the Shadows"
-    },
-    {
-      "download": "red4/Star.Trek.The.Next.Generation.S01.1080p.BluRay.Opus.7.1.AV1-KIMJI",
-      "type": "tv",
-      "title": "Star Trek The Next Generation",
-      "seasons": [
-        1
-      ],
-      "resolution": "1080p",
-      "source": "BluRay",
-      "group": "KIMJI",
-      "video": "AV1",
-      "audio": "Opus",
-      "hdr": "",
-      "status": "linked",
-      "library": "red4/tv/Star Trek The Next Generation"
     },
     {
       "download": "red4/The.Sopranos.S05.1080p.BluRay.Opus.5.1.AV1-KIMJI",
@@ -8341,22 +8131,6 @@
       "library": "red4/tv/What We Do in the Shadows"
     },
     {
-      "download": "red4/Star.Trek.The.Next.Generation.S04.1080p.BluRay.Opus.7.1.AV1-KIMJI",
-      "type": "tv",
-      "title": "Star Trek The Next Generation",
-      "seasons": [
-        4
-      ],
-      "resolution": "1080p",
-      "source": "BluRay",
-      "group": "KIMJI",
-      "video": "AV1",
-      "audio": "Opus",
-      "hdr": "",
-      "status": "linked",
-      "library": "red4/tv/Star Trek The Next Generation"
-    },
-    {
       "download": "red4/Wandavision.S01.1080p.DSNP.WEB-DL.OPUS.5.1.AV1-KIMJI",
       "type": "tv",
       "title": "Wandavision",
@@ -8403,38 +8177,6 @@
       "hdr": "",
       "status": "linked",
       "library": "red4/tv/Firefly"
-    },
-    {
-      "download": "red4/Star.Trek.The.Next.Generation.S05.1080p.BluRay.Opus.7.1.AV1-KIMJI",
-      "type": "tv",
-      "title": "Star Trek The Next Generation",
-      "seasons": [
-        5
-      ],
-      "resolution": "1080p",
-      "source": "BluRay",
-      "group": "KIMJI",
-      "video": "AV1",
-      "audio": "Opus",
-      "hdr": "",
-      "status": "linked",
-      "library": "red4/tv/Star Trek The Next Generation"
-    },
-    {
-      "download": "red4/Star.Trek.The.Next.Generation.S07.1080p.BluRay.Opus.7.1.AV1-KIMJI",
-      "type": "tv",
-      "title": "Star Trek The Next Generation",
-      "seasons": [
-        7
-      ],
-      "resolution": "1080p",
-      "source": "BluRay",
-      "group": "KIMJI",
-      "video": "AV1",
-      "audio": "Opus",
-      "hdr": "",
-      "status": "linked",
-      "library": "red4/tv/Star Trek The Next Generation"
     },
     {
       "download": "red4/The.Sopranos.S03.1080p.BluRay.Opus.5.1.AV1-KIMJI",
@@ -8521,22 +8263,6 @@
       "hdr": "",
       "status": "linked",
       "library": "red4/tv/The Good Place"
-    },
-    {
-      "download": "red4/Star.Trek.The.Next.Generation.S06.1080p.BluRay.Opus.7.1.AV1-KIMJI",
-      "type": "tv",
-      "title": "Star Trek The Next Generation",
-      "seasons": [
-        6
-      ],
-      "resolution": "1080p",
-      "source": "BluRay",
-      "group": "KIMJI",
-      "video": "AV1",
-      "audio": "Opus",
-      "hdr": "",
-      "status": "linked",
-      "library": "red4/tv/Star Trek The Next Generation"
     },
     {
       "download": "red4/What.We.Do.in.the.Shadows.S03.1080p.AMZN.WEB-DL.OPUS.5.1.AV1-KIMJI",
@@ -9566,23 +9292,6 @@
       "hdr": "",
       "status": "linked",
       "library": "red4/movies/Breaking and Exiting (2018)"
-    },
-    {
-      "download": "red4/Dirk Gentlys Holistic Detective Agency (2016) Season 1-2 S01-S02 (1080p BluRay x265 HEVC 10bit AAC 5.1 Silence)",
-      "type": "tv",
-      "title": "Dirk Gentlys Holistic Detective Agency",
-      "seasons": [
-        1,
-        2
-      ],
-      "resolution": "1080p",
-      "source": "BluRay",
-      "group": "unknown",
-      "video": "x265",
-      "audio": "AAC",
-      "hdr": "",
-      "status": "linked",
-      "library": "red4/tv/Dirk Gentlys Holistic Detective Agency"
     },
     {
       "download": "red4/One Battle After Another (2025) (2160p WEB-DL Hybrid H265 DV HDR DDP Atmos 5.1 English - HONE).mkv",
