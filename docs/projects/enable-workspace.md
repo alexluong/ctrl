@@ -97,6 +97,14 @@ Zero global tools; the workspace declares everything (see `../claude-config.md`)
 - MCP: none at first; ClickUp through the CLI (§ ClickUp access).
 - `AGENTS.md` gets a "What to remember" section: client/tenant facts, environment quirks, decisions → memory; task status → Backlog.md; long-form knowledge → `vault/notes`; never credentials.
 
+**Skills that need rewriting:** `ticket`, `investigate`, `spec` and `ops-delete-branches` call the claude.ai ClickUp connector tools (`mcp__claude_ai_ClickUp__*`), which are now disconnected. Point them at clickup-cli when copying. (`ticket` has `disable-model-invocation: true`, so only Alex can trigger it, and it isn't in Claude's skill list.)
+
+**Audit of the current setup, T3 in `ebutler-qa/workspace/main` (2026-09-27):**
+- The team `CLAUDE.md` loaded, `AGENTS.md` did **not** (the CLAUDE.md links it but doesn't `@import` it), which confirms the catch in § AGENTS.md.
+- The 131-note memory index loaded.
+- 12 of 13 skills, plus the plugins (frontend-design, LSP via gopls) and the Artifact tools off, all as expected.
+- The `mcpServers.clickup` block in `.claude/settings.json` is ignored (no server).
+
 **Memory migration:** copy the existing machine-local notes into `vault/memory/` once and review them:
 - `~/.claude/projects/-Users-alexluong-git-hub-ebutler-qa-workspace-git/memory/` (131 notes)
 - `…-ebutler-qa-workspace-dev/memory/` (3)
