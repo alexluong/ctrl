@@ -188,6 +188,12 @@ docs: clickup
 
 Building one is small: official SDKs (TS / Python / Go); a stdio server with a couple of tools is ~30 lines; register with `claude mcp add <name> --scope project -- <cmd>` or `claude mcp add --transport http <name> <url>`. Natural first target: SoLex (mise tasks, dev server, seed already exist).
 
+**Split, if built (2026-09-27, from the Enable workspace):** skills first; an MCP earns its place for other consumers (a remote agent), semantic search, structured queries, or code knowledge. Possible split: context (memory/notes/tasks), code knowledge (architecture, patterns, owners), dev env (worktrees, stacks, seed), ops read-only. Kick-off prompt written for Alex, not started.
+
+## Remote access from team chat (idea, 2026-09-27)
+
+Teammates start a session from ClickUp chat (or Slack) that runs in a context folder with its skills, e.g. to run `investigate` on a ticket themselves. Runs on a dedicated host, not Alex's machine; access lock-down (who, which envs, read-only prod) is the hard part. Brief sent to the `remote-agent` session to explore.
+
 ## Teaching agents
 
 Every user has to teach agents how to work locally and with their team. Keep it small, and make it config rather than prose:
