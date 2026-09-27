@@ -311,6 +311,22 @@ Three layers, each useful without the next:
 
 Framework-first is cheap, starts now, and is what `docs/workflow.md` + the SoLex protocol already are, in prose. Codifying it = turning that prose into skills, schemas and actions.
 
+## Tool picks: tasks (2026-09-27)
+
+Want: "Obsidian for tasks" — local-first, plain files, git-versioned, agents read/write directly. Plane: AGPL but its licensing/pricing moves put Alex off.
+
+| option | shape | notes |
+|---|---|---|
+| **Backlog.md** (MrLesk/Backlog.md) | a task = a markdown file in the repo; CLI + terminal kanban + local web UI | built for humans + agents; acceptance criteria / definition of done, dependencies, milestones, docs + decisions; no server/account/telemetry. Lives in any git repo → fits a context folder |
+| **Obsidian itself** | tasks as notes with frontmatter; Bases + a kanban view plugin (Kanban Bases View, Base Board…) | one tool for notes + tasks; the board depends on community plugins; deps / AC only by convention |
+| Vikunja | self-hosted web app, AGPL, Go | light; agents go through its API, not files |
+| Huly | self-hosted all-in-one, EPL | heavy |
+| Plane | self-hosted, AGPL community edition | commercial pressure |
+| ~~Planka~~ | now "Fair Use" source-available | avoid |
+| GitHub Issues / Projects | hosted | best PR linking (`Closes #n`); not local-first |
+
+Lean: **Backlog.md in the context folder** (tasks next to notes and the manifest; the card id goes in branch names and PR text), with Obsidian for notes. Team contexts keep their tracker (ClickUp for enable, Hookdeck's own) as the provider.
+
 ## Value check: Studio vs plain Claude Code (2026-09-25)
 
 Question (Alex): with all this, is a tool warranted, or is Claude Code + skills enough?
