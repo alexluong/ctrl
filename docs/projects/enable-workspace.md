@@ -88,7 +88,7 @@ Zero global tools; the workspace declares everything (see `../claude-config.md`)
 **User level** (`dotfiles/dot/.claude/settings.json`, applied at setup time):
 - `autoMemoryEnabled: false`, so nothing gets saved machine-local by accident.
 - `pluginConfigs."agents-md@builtin".options.instructionFiles: "claude-md-and-agents-md"`, so sessions inside `wt/*` (team `CLAUDE.md`) also load the workspace `AGENTS.md`.
-- Open: `disableClaudeAiConnectors: true`. It removes Claude Docs / Gmail / Calendar / Drive / ClickUp from CLI + T3 sessions (desktop is controlled on claude.ai).
+- `disableClaudeAiConnectors: true` (applied 2026-09-27). It removes Claude Docs / Gmail / Calendar / Drive / ClickUp from CLI + T3 sessions (desktop is controlled on claude.ai).
 
 **Workspace** (`~/workspaces/enable/.claude/settings.json`):
 - `autoMemoryEnabled: true` + `autoMemoryDirectory: ~/workspaces/enable/vault/memory`. Check that project `true` beats user `false`; the directory needs the folder trusted.
