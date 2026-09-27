@@ -118,10 +118,12 @@ Browser pane, Chrome, terminal, iOS simulator, `ccd_*` (sessions, sidebar, PR, s
 2. Remove the stale `enable-backend` clickup entry.
 3. Plugins: switch gopls-lsp, coderabbit and frontend-design from user scope to project scope where they're used. Figma: ctrl local → the workspaces that do design. Discord: fix it or remove it.
 4. Move `use-railway` from `~/.claude/skills` into hookdeck (or a plugin later).
-5. **claude.ai connectors (ClickUp):** they come from the account, not a file. Options:
-   - toggle per session (desktop)
-   - disable ClickUp on claude.ai and use a project `.mcp.json` in enable instead
-   - an env var to turn off claude.ai MCP servers in Claude Code (`ENABLE_CLAUDEAI_MCP_SERVERS=false`, **unverified**)
+5. **claude.ai connectors (ClickUp):** they come from the account, not a file. Plan: use ClickUp via a project `.mcp.json` in enable (`https://mcp.clickup.com/mcp`, OAuth via `/mcp`) or the REST API plus a token, and disable the connectors in Claude Code. Switches (MCP docs, 2026-09-27):
+   - `"disableClaudeAiConnectors": true` in any settings file. If any source says `true`, that wins; a project `false` can't turn them back on.
+   - `ENABLE_CLAUDEAI_MCP_SERVERS=false claude`: for that shell only.
+   - `deniedMcpServers: ["claude.ai ClickUp"]`: blocks one connector by name or URL pattern.
+   - `/mcp` panel toggle: per project.
+   - **Catch:** these only cover connectors the CLI fetches itself. **Desktop-app sessions (local/SSH) get connectors from claude.ai**, so there the only options are a per-session toggle in the app or disconnecting on claude.ai. Cloud sessions follow org settings.
 6. **Synced account skills:**
    - document skills (docx/pdf/pptx/xlsx) and `skill-creator`: fine as general-purpose, or turn off on claude.ai
    - `morning`, `import-memory`: check whether they're used
