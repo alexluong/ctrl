@@ -117,7 +117,7 @@ Zero global tools; the workspace declares everything (see `../claude-config.md`)
 
 ## Work items
 
-- Backlog.md task IDs (`task-N`), statuses: `todo`, `in-progress`, `review`, `qa`, `needs-alex`, `done`.
+- Backlog.md task IDs (`task-N`), default statuses `To Do`, `In Progress`, `Done`.
 - **The source is just a field.** A task can come from a ClickUp ticket, a freeform ask, a bug found mid-work, a `/spec`, or a pasted report. The lead only works with the queue. The source gets an update when the task finishes, if it has one (e.g. a ClickUp comment, which is outward-facing and needs Alex's OK).
 - **One ID for everything:**
   - agents `dev:task-12` / `review:task-12` / `qa:task-12`
@@ -169,7 +169,7 @@ Zero global tools; the workspace declares everything (see `../claude-config.md`)
 
 ### Setup decisions (2026-09-27)
 
-- Backlog.md: `backlog.config.yml` at the workspace root (a custom backlog dir requires root config), tasks in `vault/backlog/`. CLI works from anywhere in the workspace. Statuses: To Do, In Progress, Review, QA, Needs Alex, Done.
+- Backlog.md: `backlog.config.yml` at the workspace root (a custom backlog dir requires root config), tasks in `vault/backlog/`. CLI works from anywhere in the workspace. Statuses: Backlog.md defaults (To Do, In Progress, Done), per Alex: keep it stock. Review/QA/acceptance are task comments; when blocked, the agent pings Alex directly (no Needs Alex status).
 - Obsidian names a vault after its folder (no separate display name; opening through a symlink still records the real path), so the vault shows as "vault". Renaming it in the app renames the folder.
 - GCP read in `prd`: option (c), Alex's own account as a stopgap until a viewer service account exists (known gap).
 - Enable Mongo READ URL: Alex confirms the user is read-only; no check needed.
