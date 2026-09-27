@@ -2,7 +2,7 @@
 
 Alex's personal agent workspace for Enable (EButler-QA) work. The first concrete run of the Collie Studio ideas (context folder, team-mode protocol, Backlog.md + Obsidian). See `collie-studio.md` for the thinking behind it.
 
-**Status (2026-09-27): plan confirmed, about to scaffold.** Local only: no remotes, nothing pushed, the team repos stay as they are.
+**Status (2026-09-27): scaffolding, checkpoint by checkpoint (Alex reviews each commit).** Remote: `alexluong/enable-workspace` (GitHub, private); pushing at checkpoints is fine. The team repos stay as they are.
 
 ## Why Enable first (over hookdeck)
 
@@ -38,17 +38,17 @@ Alex's personal agent workspace for Enable (EButler-QA) work. The first concrete
       local-env/ seed/ worktree/ qa/ investigate/ spec/ ticket/ ops-*/   ← copied from workspace-claude
       lead/                          ← new
     roles/                           ← new: role prompts, harness-neutral
-      dev.md  reviewer.md  qa.md
+      product.md  dev.md  reviewer.md  qa.md
 
   .claude/                           ← Claude adapter, no content of its own
     skills → ../.agents/skills       ← symlink
-    agents/dev.md reviewer.md qa.md  ← thin wrappers: frontmatter + "follow .agents/roles/<x>.md"
+    agents/product.md dev.md …       ← thin wrappers: frontmatter + "follow .agents/roles/<x>.md"
     hooks/guard-write-access.sh      ← copied
     settings.json                    ← hooks, permissions, plugins, memory (see § Claude config)
 
   vault/                             ← Obsidian vault (a subfolder so Obsidian doesn't index repos/ and wt/)
     backlog/                         ← Backlog.md
-    work/<task-id>/                  ← dev.md, review.md, qa.md, evidence/
+    work/<task-id>/                  ← product.md, dev.md, review.md, qa.md, evidence/
     notes/                           ← knowledge
     memory/                          ← Claude auto-memory (autoMemoryDirectory), in git + visible in Obsidian
     digest.md                        ← lead's digest / needs-alex queue
@@ -157,6 +157,7 @@ Zero global tools; the workspace declares everything (see `../claude-config.md`)
   - spawns workers
   - gathers results into `digest.md`
   - Alex talks to the lead only.
+- **Product:** subagent. Shapes a raw ask into a task (problem, scope, acceptance criteria, open questions) before dev; after QA, checks the result against the criteria. No code.
 - **Dev worker:** subagent, one task, one worktree, one slot, one PR.
   - investigate → plan → fix → boot its own stack → checks → PR
   - escalates instead of guessing on money, data, prod, or off-task work
@@ -164,6 +165,11 @@ Zero global tools; the workspace declares everything (see `../claude-config.md`)
 - **QA:** subagent that runs the existing `/qa` against the worker's slot: the task's criteria, plus the relevant suite or e2e, plus evidence.
 - **Slots:** `PORT = 4400 + slot*100`, following the existing step. The lead tracks which slots are in use. Start with at most 2 parallel workers because of machine load (see SoLex overload in `collie-studio.md`).
 - **Merge:** Alex merges.
+
+#### Setup decisions (2026-09-27)
+
+- GCP read in `prd`: option (c), Alex's own account as a stopgap until a viewer service account exists (known gap).
+- Enable Mongo READ URL: Alex confirms the user is read-only; no check needed.
 
 ### Build order (smallest thing that proves it)
 

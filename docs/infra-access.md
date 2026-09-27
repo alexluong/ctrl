@@ -20,11 +20,11 @@ ops/prd-rw/   ← prd write credentials; the hook always asks, in every permissi
 
 | system | `prd` (read-only) | `prd-rw` | status |
 |---|---|---|---|
-| Enable Mongo | `ENABLE_MONGO_READ_URL` | `ENABLE_MONGO_WRITE_URL` | split exists; verify the READ user has read roles only |
+| Enable Mongo | `ENABLE_MONGO_READ_URL` | `ENABLE_MONGO_WRITE_URL` | ✓ (READ user read-only, per Alex) |
 | hookdeck prod ClickHouse | `alexluong_readonly` (enforced) | none (not needed) | ✓ |
 | hookdeck core PG | none | current user | request/create a read-only role |
 | hookdeck stg ClickHouse | the Railway creds (can write) | same | fine for stg; optional read-only user |
-| GCP | gcloud config `prd` impersonating a **viewer service account** (`auth/impersonate_service_account`) | config `prd-rw` = user account | needs a viewer SA per project (IAM) |
+| GCP | gcloud config `prd` impersonating a **viewer service account** (`auth/impersonate_service_account`) | config `prd-rw` = user account | Enable: stopgap = user account in `prd` too (known gap) until a viewer SA exists |
 | Terraform | `plan` from `prd` (viewer SA) | `apply` only from `prd-rw` | follows GCP |
 | kube | read-only RBAC context if available | current contexts | later |
 
