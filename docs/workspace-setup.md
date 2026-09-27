@@ -1,6 +1,6 @@
 # Workspace setup playbook
 
-How to set up a personal agent workspace (`~/workspaces/<name>`) for a project: agent config, board, notes, memory, isolated tools and infra access, code in worktrees. Reference implementation: Enable (`~/workspaces/enable`, repo `alexluong/enable-workspace`; history in `projects/enable-workspace.md`). Related: `claude-config.md` (zero-global Claude config), `infra-access.md` (the env-dir pattern in depth).
+How to set up a personal agent workspace (`~/workspaces/<name>`) for a project: agent config, board, notes, memory, isolated tools and infra access, code in worktrees. Reference implementations: Enable (`~/workspaces/enable`, repo `alexluong/enable-workspace`; history in `projects/enable-workspace.md`) = one team super-repo with submodules; hookdeck (`~/workspaces/hookdeck`, `projects/hookdeck-workspace.md`) = independent repos, no systems. Related: `claude-config.md` (zero-global Claude config), `infra-access.md` (the env-dir pattern in depth).
 
 Written for whoever runs the setup (Claude or a human). Steps marked **👤** need the person: browser logins, tokens, decisions.
 
@@ -28,7 +28,9 @@ Written for whoever runs the setup (Claude or a human). Steps marked **👤** ne
 ### 0. Decide 👤
 
 - Name + repo (`alexluong/<name>-workspace`, **private**: notes will hold client data).
-- Which code repos, and what a "system" is (sets of submodules/services worked on together).
+- Which code repos, and whether you need "systems" (sets of submodules/services worked on together). One super-repo → systems (Enable). Independent repos → skip them: one bare clone per repo, `wt/<repo>/<name>`, a task picks its repos (hookdeck).
+- Branch naming in team repos: task IDs (`task-N-slug`, Enable) or team style (`feat/<slug>`, hookdeck: the workspace must not surface to the team).
+- An existing repo to reuse? `git switch --orphan workspace` keeps the old layout on `main` as a reference.
 - Environments and credentials: which systems have prod/staging access; which have read-only credentials (a system without one gets nothing in `prd`).
 - Where tickets come from (ClickUp, GitHub, Linear) and which CLI reads them.
 
@@ -134,7 +136,7 @@ From the workspace root:
 - Project doc in ctrl (`docs/projects/<name>-workspace.md`): why, layout, decisions, as built.
 - `infra-access.md`: add the workspace's "as built" section.
 
-## Gotchas (learned on Enable)
+## Gotchas (learned on Enable and hookdeck)
 
 - **AGENTS.md loads natively only without a CLAUDE.md** in the dir or above; the user-level `instructionFiles` setting fixes worktrees of team repos.
 - **Project settings load from the session start dir**, not parents: `.claude` symlink in worktrees if sessions ever start there.
@@ -150,3 +152,10 @@ From the workspace root:
 - **Pinned submodule pointers go stale** (Enable: 40–274 commits): branch from `origin/main`.
 - **A symlinked `.claude` isn't matched by a team `.claude/` gitignore** → `info/exclude`.
 - **New worktrees' `mise.toml` is untrusted** → `mise trust` in the worktree script.
+- **mise shims set the workspace env even with a prefix env var:** `KUBECONFIG=… kubectl …` inside the workspace is overridden by the root `[env]`; run such one-offs outside the workspace (or call the brew binary from `/tmp`).
+- **macOS `/usr/bin/env bash` is 3.2:** `"${arr[@]}"` on an empty array fails under `set -u`; use `${arr[@]+"${arr[@]}"}`.
+- **Team repos may track their own `.claude/`** (hookdeck core, hookdeck-cli): don't symlink over it.
+- **Old auto-memory lives in `~/.claude/projects/<old-path-slug>/memory/`** (one dir per old session root): copy it into `vault/memory/`; scan it and the notes for credentials first (hookdeck: a QA API key → root `.env`).
+- **Bruno keys secret env values by collection path:** moving collections means re-entering them.
+- **`gcloud` from mise has no `gke-gcloud-auth-plugin`:** `gcloud components install gke-gcloud-auth-plugin` (again after a version bump).
+- **Blobs copied from an old branch are free:** `git archive main notes | tar -x` into the orphan branch reuses the same objects.

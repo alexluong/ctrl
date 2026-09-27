@@ -22,7 +22,7 @@ ops/prd-rw/   ← prd write credentials; the hook always asks, in every permissi
 |---|---|---|---|
 | Enable Mongo | `ENABLE_MONGO_READ_URL` | `ENABLE_MONGO_WRITE_URL` | ✓ (READ user read-only, per Alex) |
 | hookdeck prod ClickHouse | `alexluong_readonly` (enforced) | none (not needed) | ✓ |
-| hookdeck core PG | none | current user | request/create a read-only role |
+| hookdeck core PG | `alex.luong.readonly` (SELECT only, per the outpost-cloud skill's 2026-09 check) | none | ✓ (audit below was wrong: not by convention) |
 | hookdeck stg ClickHouse | the Railway creds (can write) | same | fine for stg; optional read-only user |
 | GCP | gcloud config `prd` impersonating a **viewer service account** (`auth/impersonate_service_account`) | config `prd-rw` = user account | Enable: stopgap = user account in `prd` too (known gap) until a viewer SA exists |
 | Terraform | `plan` from `prd` (viewer SA) | `apply` only from `prd-rw` | follows GCP |
@@ -56,6 +56,22 @@ ops/prd-rw/   ← prd write credentials; the hook always asks, in every permissi
 - **Claude:** SessionStart hook exports the root mise env (Claude's shell doesn't run mise's cd hook). `guard-prod.sh`: ask on `prd-rw` and write creds; deny prod identifiers (`enable-production-8178`, `api.enable.tech`, `ENABLE_MONGO_`, `METABASE_`, `CLOUDFLARE_`, `--account`, `--impersonate-service-account`, `ops/prd`) without a `prd`/`prd-rw` prefix; deny reading `ops/*/.env`, `.gcloud/`.
 - **Verified:** root gcloud/terraform/Mongo have no access; `prd` reads Mongo + GCP logs + terraform plan; `prd-rw` asks; secrets reads denied.
 - **Known gap:** gcloud `prd` = Alex's own account (can write) until a viewer SA exists.
+
+## hookdeck, as built (2026-09-27)
+
+`~/workspaces/hookdeck` (details: `projects/hookdeck-workspace.md`): `ops/{stg,prd,prd-rw}/mise.toml` + gitignored `.env` and `outpost/<target>.env`; `bin/stg|prd|prd-rw` wrappers (same `env-run` as Enable, plus `-t <target>`).
+
+- **Split:**
+  - root `.env`: dev/test values only (`TESTINFRA`, `AMPERSAND_DEV_*`, `AMPERSAND_QA_*`).
+  - `prd`: core PG `alex.luong.readonly` (SELECT only; needs the `ssh hd_jumpbox` tunnel Alex starts) + Outpost targets `prod-us`, `prod-eu`, `prod-us-legacy` (ClickHouse + Dragonfly `alexluong_readonly`).
+  - `prd-rw`: Grafana SA token, BetterStack token (both can write; a viewer SA / read token would move them to `prd`). No write DB creds at all (fleet-cleanup deletes can't run until Alex adds them).
+  - `stg`: gcloud only so far; staging ClickHouse/Dragonfly still read from Railway service vars (no `stg` targets yet).
+- **Outpost target:** no default anywhere. `prd -t prod-us ch|df|target`, `prd targets`. `prd pg '<sql>'` for core PG.
+- **gcloud:** workspace `.gcloud`, configs `none` / `stg` (outpost-staging-484815) / `prd` + `prd-rw` (outpost-production-485513), account alex.luong@hookdeck.com; always `--project` (core prod = `hookdeck`). ADC: a copy of the global `hookdeck_adc.json` at `.gcloud/adc-hookdeck.json`, referenced only from `ops/*`; the global file stays until the old clone is retired. `gke-gcloud-auth-plugin` installed as a component of mise's gcloud.
+- **kube:** workspace `.kube/config` = outpost staging/prod + core staging/prod contexts (Ampersand, EKS loadtest, minikube left out), no current-context.
+- **Guard** (`guard-prod.sh`): deny secrets files; ask on `prd-rw`, on `prd` + a mutating kubectl/gcloud/terraform verb (prd identity can write), on `ampersand-prod`, on mutating `railway` commands; deny prod identifiers (`outpost-production-485513`, `gke_hookdeck_us-east1-b_main`, `--project hookdeck`, `hd_jumpbox`, `CORE_PROD_PG_`, `GRAFANA_`, `BETTERSTACK_`, `ops/prd`, `--account`, `--impersonate-service-account`) without `prd`/`prd-rw`; deny Outpost datastore identifiers (`OUTPOST_CLICKHOUSE_`, `*.clickhouse.cloud`, `*.dragonflydb.cloud`) without any env prefix. 26 cases unit-tested.
+- **Verified:** root has no prod vars and no gcloud/kube access; `prd -t prod-us ch` → `alexluong_readonly`, `df PING`; fresh `claude -p` session: unprefixed prod gcloud blocked, `ops/prd/.env` read blocked, write in `wt/outpost/main` denied.
+- **Gaps:** gcloud `prd` = Alex's account (can write); Railway CLI and Doppler logins are machine-global (can write); Grafana/BetterStack reads need `prd-rw`.
 
 ## Current state (audited 2026-09-27)
 
@@ -107,4 +123,4 @@ ops/prd-rw/   ← prd write credentials; the hook always asks, in every permissi
 - `stg` / `prd` / `prd-rw` wrapper tasks
 - hook: always ask on `ops/prd-rw`; reject prod identifiers without `ops/prd` or `ops/prd-rw`
 - `AGENTS.md` rules (prod read-only via `prd …`, cite env in findings)
-- Enable first; hookdeck later (also flip the Outpost target default off prod).
+- Enable first; hookdeck second (done 2026-09-27, Outpost target has no default).
