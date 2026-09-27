@@ -123,7 +123,7 @@ Web-hosted is out (Studio manages local dirs, processes, git). But "web UI" ≠ 
 
 | thing | neutral option | Claude Code |
 |---|---|---|
-| instructions | `AGENTS.md` (Codex, Cursor, Copilot, Gemini, …) | `CLAUDE.md`; `@AGENTS.md` import or symlink |
+| instructions | `AGENTS.md` (Codex, Cursor, Copilot, Gemini, …) | reads `AGENTS.md` natively since v2.1.277, but by default only when no `CLAUDE.md` is in cwd or above; `instructionFiles: claude-md-and-agents-md` (user settings) loads both. Never reads `.agents/` as instructions |
 | skills format | Agent Skills `SKILL.md` (agentskills.io; started at Anthropic, open standard) | same |
 | skills folder | **`.agents/skills`** (repo) + `~/.agents/skills` (user): Codex native; Cursor, Gemini CLI, OpenCode, Copilot, Antigravity read it | `.claude/skills` → symlink to `../.agents/skills` (verify whether Claude reads `.agents/skills` itself) |
 | MCP config | none: `.mcp.json` (Claude), `.cursor/mcp.json`, Codex `config.toml`, `.vscode/mcp.json` | `.mcp.json` / user / local scope |
