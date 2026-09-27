@@ -2,7 +2,20 @@
 
 Alex's personal agent workspace for Enable (EButler-QA) work. The first concrete run of the Collie Studio ideas (context folder, team-mode protocol, Backlog.md + Obsidian). See `collie-studio.md` for the thinking behind it.
 
-**Status (2026-09-27): scaffolding, checkpoint by checkpoint (Alex reviews each commit).** Remote: `alexluong/enable-workspace` (GitHub, private); pushing at checkpoints is fine. The team repos stay as they are.
+**Status (2026-09-27): set up.** Repo `alexluong/enable-workspace` (GitHub, private). Next: Alex's T3 test, then build order step 2 (dev + reviewer on a real task). See § As built for where the setup differs from the plan below.
+
+## As built (2026-09-27)
+
+- **Worktrees:** `bin/wt` (script inside the `worktree` skill). `wt add task-N <system>` with a required system: `enable` (≈90%), `ebchat`, `connectors`, `internal`, `none` (super-repo only); `--with sub1,sub2` for extras. Submodules are partial clones (`--filter=blob:none`): ≈25s, ≈38MB per enable worktree. `wt up|down|rm|ls|init`. Slots: main = 1 (4500, `STACK_NAME=wsmain` so it doesn't share containers with the old `ebutler-qa` main), tasks 2–3; `internal`/`none` get no slot unless `--slot`.
+- **Worktrees never get the team root `.env`** (prod creds); only `dev/env/.env*`.
+- **Backlog.md:** stock statuses (To Do, In Progress, Done). Review/QA/acceptance are task comments; a blocked agent pings Alex directly. `backlog.config.yml` at the root. No webhooks (nearest: `backlog task list --json --watch`).
+- **Obsidian:** vault = `vault/`, shows as "vault" (vault name = folder name; symlink trick doesn't work).
+- **ClickUp:** clickup-cli 0.18.0 via mise; token in the workspace `.env` (`CLICKUP_TOKEN`), no global config (`clickup setup` writes one; don't run it). `CLICKUP_GIT_DETECT=0`. `clickup` skill = cheat sheet + list IDs.
+- **Skills:** copied from workspace-claude (investigate, local-env, qa, seed, spec, ticket, ops-*), ClickUp parts rewritten to the CLI; `session` and their `worktree` dropped. References in `.agents/references/`.
+- **Claude adapter:** `.claude/skills` symlink + `settings.json` (memory → `vault/memory`, gopls-lsp + frontend-design, SessionStart env hook, prod guard, deny reading secrets). Role agent files and a permissions allow list deferred until needed.
+- **Infra:** implemented per `../infra-access.md` (§ Enable, as built).
+- **Deferred:** memory migration (Alex will do it in a separate session); role agent wrappers; hardcoded compose ports.
+- **Local stack blocker found:** Docker Desktop's kernel 7.0 breaks mongo 8.0/8.3 (SERVER-121912) → EButler-QA/workspace#205 pins `mongo:8.2`.
 
 ## Why Enable first (over hookdeck)
 
