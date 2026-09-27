@@ -133,3 +133,25 @@ Browser pane, Chrome, terminal, iOS simulator, `ccd_*` (sessions, sidebar, PR, s
 - Does a project `.mcp.json` server cost context when unused? (Tool search defers them, so mostly names only; still noise and processes.)
 - Can claude.ai connectors be scoped per project at all?
 - coderabbit: used?
+
+## Applied (2026-09-27)
+
+Backups: `~/.claude.json.bak-2026-09-27`, `~/.claude/settings.json.bak-2026-09-27`.
+
+- `claude mcp remove railway -s user`, `claude mcp remove notion -s user`. hookdeck still has both via its `.mcp.json`. Nothing else in `hub/alexluong` uses Railway (no railway.json/toml).
+- `claude mcp remove clickup -s local` in `ebutler-qa/enable-backend` (the stale entry).
+- claude.ai ClickUp connector: disconnected by Alex on claude.ai.
+- Plugins: `discord` disabled (user scope), `figma` disabled (ctrl local). Still installed; re-enable with `claude plugin enable`.
+- Still global:
+  - plugins `gopls-lsp`, `coderabbit`, `frontend-design`
+  - skill `~/.claude/skills/use-railway`
+  - connectors Claude Docs + visualize (account-level; disconnect on claude.ai)
+  - the synced claude.ai skills
+  - desktop-app built-ins
+- **Disable mechanisms:**
+  - a bare tool name, or `mcp__<server>__*`, in `permissions.deny` removes it from context
+  - `skillOverrides: {"<skill>": "off"}`
+  - `syncClaudeAiSkills: false`
+  - `disableBundledSkills: true`
+  - `disableClaudeAiConnectors: true` (CLI only)
+- **visualize** renders only in hosts with an HTML widget renderer (Claude desktop/web/mobile). T3 Code and the terminal CLI can't render it (T3 source: no MCP UI rendering), so it's noise there.
