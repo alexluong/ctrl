@@ -121,10 +121,18 @@ Web-hosted is out (Studio manages local dirs, processes, git). But "web UI" ≠ 
 
 ## Cross-agent portability
 
-- **Skills:** Agent Skills (`SKILL.md` folders, spec at agentskills.io) started at Anthropic and is now an open standard read by Claude Code, Codex, Copilot, Cursor, Gemini CLI, OpenCode, Antigravity, Kiro. Discovery paths differ per tool (`.claude/skills`, `.cursor/skills`, …) → Studio would install one copy and link it where each harness looks.
-- **Instructions:** `AGENTS.md` is the cross-tool file; Claude Code reads `CLAUDE.md` (which can import `AGENTS.md`).
-- **Tools:** MCP is cross-agent.
-- **Harness-specific** (Studio would compile to each): subagent definitions, hooks, slash commands, permissions/settings, plugin packaging. **ACP** covers the client ↔ agent link (a UI driving different agent CLIs).
+| thing | neutral option | Claude Code |
+|---|---|---|
+| instructions | `AGENTS.md` (Codex, Cursor, Copilot, Gemini, …) | `CLAUDE.md`; `@AGENTS.md` import or symlink |
+| skills format | Agent Skills `SKILL.md` (agentskills.io; started at Anthropic, open standard) | same |
+| skills folder | **`.agents/skills`** (repo) + `~/.agents/skills` (user): Codex native; Cursor, Gemini CLI, OpenCode, Copilot, Antigravity read it | `.claude/skills` → symlink to `../.agents/skills` (verify whether Claude reads `.agents/skills` itself) |
+| MCP config | none: `.mcp.json` (Claude), `.cursor/mcp.json`, Codex `config.toml`, `.vscode/mcp.json` | `.mcp.json` / user / local scope |
+| subagents, hooks, slash commands, permissions, plugins | no standard | `.claude/agents`, settings hooks, plugins |
+
+- **Codex skills (docs, 2026-09-27):** scopes = repo `.agents/skills` in every dir from cwd **up to the repo root** · user `~/.agents/skills` · admin `/etc/codex/skills` · system built-ins. Invoked explicitly with `$name` or implicitly by description match; `allow_implicit_invocation: false` in the skill's `agents/openai.yaml`. Same-name skills across scopes aren't merged or ranked.
+- Pattern: author once in neutral form (`AGENTS.md`, `.agents/skills`), link/generate into each harness; keep hooks/subagents thin, real logic in scripts any hook can call. A Studio framework job.
+- **Caveat for context folders:** discovery stops at the repo root, so a context folder's `.agents/skills` above a nested repo (`~/workspaces/hookdeck/outpost`) is invisible to Codex, and possibly to Claude too (its docs also say "up to the repo root") — untested. Fallbacks: context skills at user level namespaced (`hookdeck-*`); symlink them into each repo's gitignored `.agents/skills`; serve them from the workspace MCP (Skills extension).
+- Hooks vs tools vs skills: hook = the harness runs it, can't be skipped (guarantees); MCP tool / script = same steps every time once called (deterministic actions, shared state); skill = judgment. SoLex's 25-item prose checklist was mostly hooks and tools waiting to be written.
 
 ## Workspace MCP (idea)
 
@@ -229,7 +237,7 @@ Wanted: start Claude in any repo and get the same personal setup, the repo's own
   core-wt-<slug>/ …             ← worktrees, gitignored
 ```
 - `workspace.yaml` replaces `.gitmodules` as the manifest; a bootstrap script (or a workspace action) clones whatever's missing on a new machine. No pins: each repo follows its own branch.
-- Start in a repo for single-repo work; start at the root for cross-repo work.
+- Start in a repo for single-repo work; start at the root for cross-repo work. (Parent CLAUDE.md/skills loading across a nested repo boundary is unverified — see § Cross-agent portability.)
 - Migrating hookdeck: `git submodule deinit` + remove from the index, keep the dirs as ignored clones, write the manifest.
 - Open: `~/workspaces/<context>/` vs keeping them under `~/git/…`.
 
