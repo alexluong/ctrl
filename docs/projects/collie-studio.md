@@ -134,6 +134,8 @@ Idea: **one workspace MCP** exposing the context to any agent in any harness: it
 
 **Transports (2026-09-27):** same capabilities either way (tools, resources, prompts, notifications). stdio = spawned per session in the session's cwd/env, no auth, state dies with the session (observed: 5 `railway mcp` processes for 5 open sessions; subagents reuse the parent's). HTTP = one long-running server, shared state, needs to be told the workspace (MCP roots / header), auth if not localhost, can live on another host. Best of both: a tiny **stdio shim per session** (knows cwd for free) forwarding to the **shared daemon** (holds registry, cards, locks).
 
+**Skills over MCP (checked 2026-09-27):** the official MCP Skills extension (`io.modelcontextprotocol/skills`, SEP-2640, Final 2026-09-13) lets a server publish Agent Skills: `skills/list` (frontmatter + file manifest with digests), `skills/get`, and `resources/read` for `SKILL.md` + supporting files. Purpose: "ship the manual with the product". Client support still rolling out; check each harness. For Studio: the workspace MCP could **serve the context's skills** next to its tools, one source for every harness, sidestepping per-tool skill folders and parent-dir loading. Before this: MCP *prompts* (user-invoked templates, slash commands), resources, server instructions, or tools that return "how to drive me" text (T3's `device_open`).
+
 **Config, not code:** one generic workspace MCP reads a per-workspace file; each action becomes a tool; `confirm: true` = the agent must ask first. New workspace = new config, not a new server.
 
 ```yaml
