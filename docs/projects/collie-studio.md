@@ -327,6 +327,15 @@ Want: "Obsidian for tasks" — local-first, plain files, git-versioned, agents r
 
 Lean: **Backlog.md in the context folder** (tasks next to notes and the manifest; the card id goes in branch names and PR text), with Obsidian for notes. Team contexts keep their tracker (ClickUp for enable, Hookdeck's own) as the provider.
 
+## Notes + git (open, 2026-09-27)
+
+Something to think about, not decided. History for notes matters less than for code, but Alex wants meaningful commits over "vault backup" snapshots.
+
+- Obsidian is git-unaware; the Obsidian Git plugin gives timed/debounced auto-commit ("backup" messages), manual commit, branch create/switch, diff + history views. No worktrees, no PRs; switching branches swaps files under Obsidian (index churn, unresolved links). Parallel branches = a worktree per branch opened as its own vault (commit `.obsidian/`).
+- Idea: a **commit cron** (workspace action) — dirty tree under `notes/`, `backlog/` → `claude -p` reads the diff + the in-progress task → task-sized commits with real messages; auto-commit when confident, otherwise propose in the inbox. Never touches other paths.
+- Idea: **two lanes** — trunk for journal/investigations/task progress (progress can live in the Backlog.md task file); branch + PR only for docs that need review (RFC/spec), with the agent doing the git side and review on GitHub/Forgejo. Branch-per-task for all notes rejected-ish: unmerged notes are hidden from other agents, and Obsidian handles branches poorly.
+- Gap for Studio: review UI for notes branches.
+
 ## Value check: Studio vs plain Claude Code (2026-09-25)
 
 Question (Alex): with all this, is a tool warranted, or is Claude Code + skills enough?
