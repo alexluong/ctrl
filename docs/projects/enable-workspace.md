@@ -7,6 +7,8 @@ Alex's personal agent workspace for Enable (EButler-QA) work. The first concrete
 ## As built (2026-09-27)
 
 - **Worktrees:** `bin/wt` (script inside the `worktree` skill). `wt add task-N <system>` with a required system: `enable` (≈90%), `ebchat`, `connectors`, `internal`, `none` (super-repo only); `--with sub1,sub2` for extras. Submodules are partial clones (`--filter=blob:none`): ≈25s, ≈38MB per enable worktree. `wt up|down|rm|ls|init`. Slots: main = 1 (4500, `STACK_NAME=wsmain` so it doesn't share containers with the old `ebutler-qa` main), tasks 2–3; `internal`/`none` get no slot unless `--slot`.
+- **Pristine rule:** `repos/` = bare clones (fetch only); `wt/main` = read-only reference, refreshed by `wt sync`; all changes in `wt/task-N`. Claude edits under both are denied in settings.
+- **Sessions start at the workspace root;** repo paths in skills are relative to a worktree (`cd wt/<name> && …`).
 - **Worktrees never get the team root `.env`** (prod creds); only `dev/env/.env*`.
 - **Backlog.md:** stock statuses (To Do, In Progress, Done). Review/QA/acceptance are task comments; a blocked agent pings Alex directly. `backlog.config.yml` at the root. No webhooks (nearest: `backlog task list --json --watch`).
 - **Obsidian:** vault = `vault/`, shows as "vault" (vault name = folder name; symlink trick doesn't work).
