@@ -166,7 +166,7 @@ Zero global tools; the workspace declares everything (see `../claude-config.md`)
 - **Slots:** `PORT = 4400 + slot*100`, following the existing step. The lead tracks which slots are in use. Start with at most 2 parallel workers because of machine load (see SoLex overload in `collie-studio.md`).
 - **Merge:** Alex merges.
 
-#### Setup decisions (2026-09-27)
+### Setup decisions (2026-09-27)
 
 - GCP read in `prd`: option (c), Alex's own account as a stopgap until a viewer service account exists (known gap).
 - Enable Mongo READ URL: Alex confirms the user is read-only; no check needed.
