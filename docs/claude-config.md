@@ -138,12 +138,12 @@ Browser pane, Chrome, terminal, iOS simulator, `ccd_*` (sessions, sidebar, PR, s
 
 Backups: `~/.claude.json.bak-2026-09-27`, `~/.claude/settings.json.bak-2026-09-27`.
 
-- `claude mcp remove railway -s user`, `claude mcp remove notion -s user`. hookdeck still has both via its `.mcp.json`. Nothing else in `hub/alexluong` uses Railway (no railway.json/toml).
+- `claude mcp remove railway -s user`, `claude mcp remove notion -s user`. Nothing else in `hub/alexluong` uses Railway (no railway.json/toml). **hookdeck now has no notion/Railway either.** Its `settings.local.json` had all three `.mcp.json` servers in `disabledMcpjsonServers` (it relied on the user-level ones). Left off on purpose: new workspaces will declare their own.
 - `claude mcp remove clickup -s local` in `ebutler-qa/enable-backend` (the stale entry).
 - claude.ai ClickUp connector: disconnected by Alex on claude.ai.
-- Plugins: `discord` disabled (user scope), `figma` disabled (ctrl local). Still installed; re-enable with `claude plugin enable`.
+- Plugins: all disabled at user scope (`gopls-lsp`, `coderabbit`, `frontend-design`, `discord`); `figma` disabled in ctrl local. Enabled per project (local scope): hookdeck → gopls-lsp; `ebutler-qa/workspace/main` → gopls-lsp, frontend-design. Still installed (cache); re-enable with `claude plugin enable X --scope project|local`.
+- Desktop app and T3 Code both read user + project + local settings (T3: Agent SDK `settingSources: [user, project, local]`), so per-project enables work in both.
 - Still global:
-  - plugins `gopls-lsp`, `coderabbit`, `frontend-design`
   - skill `~/.claude/skills/use-railway`
   - connectors Claude Docs + visualize (account-level; disconnect on claude.ai)
   - the synced claude.ai skills
