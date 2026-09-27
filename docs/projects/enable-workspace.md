@@ -2,7 +2,7 @@
 
 Alex's personal agent workspace for Enable (EButler-QA) work. The first concrete run of the Collie Studio ideas (context folder, team-mode protocol, Backlog.md + Obsidian). See `collie-studio.md` for the thinking behind it.
 
-**Status (2026-09-27): planned, not scaffolded.** Local only: no remotes, nothing pushed, the team repos stay as they are.
+**Status (2026-09-27): plan confirmed, about to scaffold.** Local only: no remotes, nothing pushed, the team repos stay as they are.
 
 ## Why Enable first (over hookdeck)
 
@@ -44,12 +44,13 @@ Alex's personal agent workspace for Enable (EButler-QA) work. The first concrete
     skills → ../.agents/skills       ← symlink
     agents/dev.md reviewer.md qa.md  ← thin wrappers: frontmatter + "follow .agents/roles/<x>.md"
     hooks/guard-write-access.sh      ← copied
-    settings.json                    ← hooks, permissions, ClickUp MCP
+    settings.json                    ← hooks, permissions, plugins, memory (see § Claude config)
 
   vault/                             ← Obsidian vault (a subfolder so Obsidian doesn't index repos/ and wt/)
     backlog/                         ← Backlog.md
     work/<task-id>/                  ← dev.md, review.md, qa.md, evidence/
     notes/                           ← knowledge
+    memory/                          ← Claude auto-memory (autoMemoryDirectory), in git + visible in Obsidian
     digest.md                        ← lead's digest / needs-alex queue
 
   repos/                             ← gitignored
@@ -79,6 +80,29 @@ Alex's personal agent workspace for Enable (EButler-QA) work. The first concrete
 - **Catch:** the team repo has its own `CLAUDE.md`. So a session started *inside* `wt/task-12/` sees that `CLAUDE.md` and skips `~/workspaces/enable/AGENTS.md`.
 - Fix: user-level setting `pluginConfigs."agents-md@builtin".options.instructionFiles = "claude-md-and-agents-md"` in `~/.claude/settings.json`. It's ignored in project settings, so it has to go there. Alternatively, start sessions at the workspace root.
 - Sessions started at `~/workspaces/enable/` (the lead) have no `CLAUDE.md` above them, so `AGENTS.md` loads.
+
+## Claude config
+
+Zero global tools; the workspace declares everything (see `../claude-config.md`).
+
+**User level** (`dotfiles/dot/.claude/settings.json`, applied at setup time):
+- `autoMemoryEnabled: false`, so nothing gets saved machine-local by accident.
+- `pluginConfigs."agents-md@builtin".options.instructionFiles: "claude-md-and-agents-md"`, so sessions inside `wt/*` (team `CLAUDE.md`) also load the workspace `AGENTS.md`.
+- Open: `disableClaudeAiConnectors: true`. It removes Claude Docs / Gmail / Calendar / Drive / ClickUp from CLI + T3 sessions (desktop is controlled on claude.ai).
+
+**Workspace** (`~/workspaces/enable/.claude/settings.json`):
+- `autoMemoryEnabled: true` + `autoMemoryDirectory: ~/workspaces/enable/vault/memory`. Check that project `true` beats user `false`; the directory needs the folder trusted.
+- `enabledPlugins`: `gopls-lsp` (enable-connectors is Go), `frontend-design`. Moves from `ebutler-qa/workspace/main/.claude/settings.local.json`.
+- Hooks: `guard-write-access.sh`. Permissions: a workspace allow list (docker, bun, make, mongosh, …).
+- MCP: none at first; ClickUp through the CLI (§ ClickUp access).
+- `AGENTS.md` gets a "What to remember" section: client/tenant facts, environment quirks, decisions → memory; task status → Backlog.md; long-form knowledge → `vault/notes`; never credentials.
+
+**Memory migration:** copy the existing machine-local notes into `vault/memory/` once and review them:
+- `~/.claude/projects/-Users-alexluong-git-hub-ebutler-qa-workspace-git/memory/` (131 notes)
+- `…-ebutler-qa-workspace-dev/memory/` (3)
+- The originals stay until the move is verified.
+
+**Surfaces:** open the workspace root in the desktop app / T3 (not `ebutler-qa/workspace`, which is a plain folder and loads nothing). Per-task sessions open `wt/task-N`, which gets config through the `.claude` symlink.
 
 ## Work items
 
@@ -132,7 +156,15 @@ Alex's personal agent workspace for Enable (EButler-QA) work. The first concrete
 
 ### Build order (smallest thing that proves it)
 
-1. Scaffold the layout. Test that Backlog.md works from `vault/backlog`; if not, put `backlog/` at the root and symlink it into the vault. Test the `.claude` symlink in a worktree and the AGENTS.md setting.
+1. Scaffold:
+   - `git init` the workspace; write `.gitignore`, `AGENTS.md`, `.agents/`, `.claude/` (symlinks, settings)
+   - `vault/` with `backlog init` (statuses above); test that the CLI works in `vault/backlog`, else root + symlink
+   - bare-clone `EButler-QA/workspace` into `repos/`; add `wt/main` with the `.claude` symlink
+   - copy skills + hook from workspace-claude
+   - migrate memory
+   - apply the user-level settings in dotfiles
+   - install clickup-cli; token into `.env`
+   - verify with the T3 audit prompt at the root and in `wt/main`: AGENTS.md loaded, skills present, memory dir = vault, no stray MCP
 2. Dev worker, then reviewer, on one real task, driven by hand (no lead). Check worker and review quality.
 3. Add QA.
 4. Add `/lead` and slots; run 2 tasks in parallel.
