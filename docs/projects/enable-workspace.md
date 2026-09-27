@@ -2,7 +2,7 @@
 
 Alex's personal agent workspace for Enable (EButler-QA) work. The first concrete run of the Collie Studio ideas (context folder, team-mode protocol, Backlog.md + Obsidian). See `collie-studio.md` for the thinking behind it.
 
-**Status (2026-09-27): set up.** Repo `alexluong/enable-workspace` (GitHub, private). Next: Alex's T3 test, then build order step 2 (dev + reviewer on a real task). See § As built for where the setup differs from the plan below.
+**Status (2026-09-27): set up.** Repo `alexluong/enable-workspace` (GitHub, private). Next: Alex's T3 test, then build order step 2 (dev + reviewer on a real task). See § As built for where the setup differs from the plan below. Reusable playbook for other workspaces: `../workspace-setup.md`.
 
 ## As built (2026-09-27)
 
@@ -16,7 +16,8 @@ Alex's personal agent workspace for Enable (EButler-QA) work. The first concrete
 - **Skills:** copied from workspace-claude (investigate, local-env, qa, seed, spec, ticket, ops-*), ClickUp parts rewritten to the CLI; `session` and their `worktree` dropped. References in `.agents/references/`.
 - **Claude adapter:** `.claude/skills` symlink + `settings.json` (memory → `vault/memory`, gopls-lsp + frontend-design, SessionStart env hook, prod guard, deny reading secrets). Role agent files and a permissions allow list deferred until needed.
 - **Infra:** implemented per `../infra-access.md` (§ Enable, as built).
-- **Deferred:** memory migration (Alex will do it in a separate session); role agent wrappers; hardcoded compose ports.
+- **Protocol pieces (2026-09-27):** `lead` skill (intake → triage → flow scaled to the task → `wt` + role agents → digest), `.claude/agents/{product,dev,reviewer,qa}.md` wrappers over `.agents/roles/`, `workspace` skill (where things go, memory vs notes, adding things), `local-env` reduced to pointers at the team's own docs. Next: run it on real tasks.
+- **Deferred:** memory migration (Alex, separate session); hardcoded compose ports.
 - **Local stack blocker found:** Docker Desktop's kernel 7.0 breaks mongo 8.0/8.3 (SERVER-121912) → EButler-QA/workspace#205 pins `mongo:8.2`.
 
 ## Why Enable first (over hookdeck)
