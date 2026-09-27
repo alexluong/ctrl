@@ -88,7 +88,7 @@ Alex's personal agent workspace for Enable (EButler-QA) work. The first concrete
 
 Zero global tools; the workspace declares everything (see `../claude-config.md`).
 
-**User level** (`dotfiles/dot/.claude/settings.json`, applied at setup time):
+**User level** (`dotfiles/dot/.claude/settings.json`, applied 2026-09-27; verified in `workspace/main`: CLAUDE.md + AGENTS.md both load, no memory index):
 - `autoMemoryEnabled: false`, so nothing gets saved machine-local by accident.
 - `pluginConfigs."agents-md@builtin".options.instructionFiles: "claude-md-and-agents-md"`, so sessions inside `wt/*` (team `CLAUDE.md`) also load the workspace `AGENTS.md`.
 - `disableClaudeAiConnectors: true` (applied 2026-09-27). It removes Claude Docs / Gmail / Calendar / Drive / ClickUp from CLI + T3 sessions (desktop is controlled on claude.ai).
@@ -165,6 +165,7 @@ Zero global tools; the workspace declares everything (see `../claude-config.md`)
 - **QA:** subagent that runs the existing `/qa` against the worker's slot: the task's criteria, plus the relevant suite or e2e, plus evidence.
 - **Slots:** `PORT = 4400 + slot*100`, following the existing step. The lead tracks which slots are in use. Start with at most 2 parallel workers because of machine load (see SoLex overload in `collie-studio.md`).
 - **Merge:** Alex merges.
+- **Open:** Alex isn't sold on the role order (product shapes → dev → reviewer → qa → product accepts → merge). Revisit after the first real tasks.
 
 ### Setup decisions (2026-09-27)
 
