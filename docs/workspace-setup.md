@@ -40,7 +40,7 @@ Written for whoever runs the setup (Claude or a human). Steps marked **👤** ne
 - `.gitignore`: `/repos/`, `/wt/`, `.env`, `.env.*`, `!.env.example`, `**/.obsidian/workspace*.json`, `**/.obsidian/cache`, `/.gcloud/`, `/local/`, `/ops/*/*` + `!/ops/*/mise.toml`.
 - `AGENTS.md` (layout, how work flows, where commands run, work items, infra access, what to remember, git prefixes). Start from Enable's and replace the specifics.
 - `.agents/roles/{product,dev,reviewer,qa}.md` (copy Enable's; adjust the repo specifics in dev/qa).
-- Dirs: `vault/{backlog,work,notes,memory}`, `ops/{stg,prd,prd-rw}`, `bin/`, `local/`.
+- Dirs: `<name>-vault/{backlog,work,notes,memory}` (the vault folder is named `<name>-vault`, e.g. `enable-vault`: Obsidian names a vault after its folder, and the bare workspace name clashes with repo/system names), `ops/{stg,prd,prd-rw}`, `bin/`, `local/`.
 
 ### 2. Tools (mise) ✅
 
@@ -66,10 +66,10 @@ GOOGLE_APPLICATION_CREDENTIALS = "{{config_root}}/.gcloud/NO-ACCESS-use-stg-prd-
 
 ### 3. Vault + board ✅
 
-- `backlog init <name> --backlog-dir vault/backlog --config-location root --integration-mode none --check-branches false --include-remote false --auto-open-browser false --defaults` (a custom backlog dir needs root config). Keep the stock statuses (To Do, In Progress, Done).
-- Check the CLI from the root and `vault/`: create a task, comment (`--comment-author @dev`), read with `--plain`, delete.
-- 👤 Obsidian: open `vault/` as a vault. The vault name is always the folder name ("vault"); renaming it in the app renames the folder.
-- `vault/digest.md` stub (Needs Alex / In flight / Done recently).
+- `backlog init <name> --backlog-dir <name>-vault/backlog --config-location root --integration-mode none --check-branches false --include-remote false --auto-open-browser false --defaults` (a custom backlog dir needs root config). Keep the stock statuses (To Do, In Progress, Done).
+- Check the CLI from the root and `<name>-vault/`: create a task, comment (`--comment-author @dev`), read with `--plain`, delete.
+- 👤 Obsidian: open `<name>-vault/` as a vault (shows as "<name>-vault"). Don't rename it in the app: that renames the folder and breaks every path. Optional: `~/Obsidian/<name>` symlinks for quick access (the name still comes from the real folder).
+- `<name>-vault/digest.md` stub (Needs Alex / In flight / Done recently).
 
 ### 4. Code: repos + worktrees ✅
 
@@ -95,7 +95,7 @@ GOOGLE_APPLICATION_CREDENTIALS = "{{config_root}}/.gcloud/NO-ACCESS-use-stg-prd-
 
 - `.claude/skills` → `../.agents/skills`.
 - `.claude/agents/<role>.md`: thin wrappers (name, description, "read `.agents/roles/<role>.md` and follow it").
-- `.claude/settings.json`: `autoMemoryEnabled: true`, `autoMemoryDirectory: ~/workspaces/<name>/vault/memory`, `enabledPlugins` for the project (e.g. an LSP), hooks (SessionStart env, PreToolUse guard), `permissions.deny`: `Read`/`Edit` of `.env`, `ops/**/.env`, `.gcloud/**`; `Edit` of `repos/**` and `wt/main/**`.
+- `.claude/settings.json`: `autoMemoryEnabled: true`, `autoMemoryDirectory: ~/workspaces/<name>/<name>-vault/memory`, `enabledPlugins` for the project (e.g. an LSP), hooks (SessionStart env, PreToolUse guard), `permissions.deny`: `Read`/`Edit` of `.env`, `ops/**/.env`, `.gcloud/**`; `Edit` of `repos/**` and `wt/main/**`.
 - Ticket CLI token 👤: create it in the tool, put it in the workspace `.env` (not the CLI's global config; if a `setup` command wrote one, move the token and delete the global file). Disable branch-name ID detection if task branches use Backlog.md IDs.
 
 ### 7. Infra access ✅
@@ -147,7 +147,7 @@ From the workspace root:
 - **`$VAR` in `prd <cmd> "$VAR"` expands in the caller** (empty) → one quoted arg / `bash -c` inside the env.
 - **`--allowedTools` in `claude -p` is variadic**: put the prompt first.
 - **Permission rules:** `Edit(path)` covers all file-editing tools; `Write(...)`/`NotebookEdit(...)` path rules are rejected.
-- **Obsidian vault name = folder name**; symlinks don't change it.
+- **Obsidian vault name = folder name**; symlinks don't change it. Hence `<name>-vault/`. Deleting a symlink a vault was opened through makes Obsidian drop the vault from its list.
 - **Team compose files share project names machine-wide** (`name: <x>-${STACK_NAME}`): pick unique `STACK_NAME`s.
 - **Pinned submodule pointers go stale** (Enable: 40–274 commits): branch from `origin/main`.
 - **A symlinked `.claude` isn't matched by a team `.claude/` gitignore** → `info/exclude`.
@@ -155,7 +155,7 @@ From the workspace root:
 - **mise shims set the workspace env even with a prefix env var:** `KUBECONFIG=… kubectl …` inside the workspace is overridden by the root `[env]`; run such one-offs outside the workspace (or call the brew binary from `/tmp`).
 - **macOS `/usr/bin/env bash` is 3.2:** `"${arr[@]}"` on an empty array fails under `set -u`; use `${arr[@]+"${arr[@]}"}`.
 - **Team repos may track their own `.claude/`** (hookdeck core, hookdeck-cli): don't symlink over it.
-- **Old auto-memory lives in `~/.claude/projects/<old-path-slug>/memory/`** (one dir per old session root): copy it into `vault/memory/`; scan it and the notes for credentials first (hookdeck: a QA API key → root `.env`).
+- **Old auto-memory lives in `~/.claude/projects/<old-path-slug>/memory/`** (one dir per old session root): copy it into `<name>-vault/memory/`; scan it and the notes for credentials first (hookdeck: a QA API key → root `.env`).
 - **Bruno keys secret env values by collection path:** moving collections means re-entering them.
 - **`gcloud` from mise has no `gke-gcloud-auth-plugin`:** `gcloud components install gke-gcloud-auth-plugin` (again after a version bump).
 - **Blobs copied from an old branch are free:** `git archive main notes | tar -x` into the orphan branch reuses the same objects.

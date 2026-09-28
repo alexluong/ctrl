@@ -11,7 +11,7 @@ Alex's personal agent workspace for Enable (EButler-QA) work. The first concrete
 - **Sessions start at the workspace root;** repo paths in skills are relative to a worktree (`cd wt/<name> && …`).
 - **Worktrees never get the team root `.env`** (prod creds); only `dev/env/.env*`.
 - **Backlog.md:** stock statuses (To Do, In Progress, Done). Review/QA/acceptance are task comments; a blocked agent pings Alex directly. `backlog.config.yml` at the root. No webhooks (nearest: `backlog task list --json --watch`).
-- **Obsidian:** vault = `vault/`, shows as "vault" (vault name = folder name; symlink trick doesn't work).
+- **Obsidian:** vault = `enable-vault/` (renamed from `vault/` 2026-09-28 so each workspace's vault has a distinct name; vault name = folder name). `~/Obsidian/<workspace>` symlinks for quick access.
 - **ClickUp:** clickup-cli 0.18.0 via mise; token in the workspace `.env` (`CLICKUP_TOKEN`), no global config (`clickup setup` writes one; don't run it). `CLICKUP_GIT_DETECT=0`. `clickup` skill = cheat sheet + list IDs.
 - **Skills:** copied from workspace-claude (investigate, local-env, qa, seed, spec, ticket, ops-*), ClickUp parts rewritten to the CLI; `session` and their `worktree` dropped. References in `.agents/references/`.
 - **Claude adapter:** `.claude/skills` symlink + `settings.json` (memory → `vault/memory`, gopls-lsp + frontend-design, SessionStart env hook, prod guard, deny reading secrets). Role agent files and a permissions allow list deferred until needed.
