@@ -90,7 +90,8 @@ GOOGLE_APPLICATION_CREDENTIALS = "{{config_root}}/.gcloud/NO-ACCESS-use-stg-prd-
 - Rewrite anything using an MCP/connector to the CLI (ticket tool). Add a ticket-tool skill: a cheat sheet of the ~10 commands used + IDs/conventions; `<cli> --help` for the rest.
 - Replace copies of team docs that drift with thin pointers to the source (Enable: `local-env` points at the team's `dev/README.md` and `cli.ts --help`).
 - Add "where to run" notes: repo paths are relative to a worktree.
-- Workspace skills: `lead` (orchestration), `workspace` (where things go, memory vs notes, how to add things), `worktree`.
+- Workspace skills: `lead` (orchestration), `workspace` (where things go, memory vs notes, how to add things), `worktree`, `done` (session/task wrap-up).
+- `done` is workspace-agnostic: byte-identical in every workspace (`<vault>` placeholder; specifics come from the `workspace`/`worktree` skills). Copy it verbatim from any workspace; when changing it, copy the new version to all (`for w in ~/workspaces/*/; do cp … "$w.agents/skills/done/SKILL.md"; done`) and commit each.
 
 ### 6. Claude wiring ✅
 
