@@ -1,6 +1,6 @@
 # Workspace setup playbook
 
-How to set up a personal agent workspace (`~/workspaces/<name>`) for a project: agent config, board, notes, memory, isolated tools and infra access, code in worktrees. Reference implementations: Enable (`~/workspaces/enable`, repo `alexluong/enable-workspace`; history in `projects/enable-workspace.md`) = one team super-repo with submodules; hookdeck (`~/workspaces/hookdeck`, `projects/hookdeck-workspace.md`) = independent repos, no systems. SoLex (`~/workspaces/solex`, `projects/solex-workspace.md`) = one own repo, no team, no prod: the smallest shape. Related: `claude-config.md` (zero-global Claude config), `infra-access.md` (the env-dir pattern in depth).
+How to set up a personal agent workspace (`~/workspaces/<name>`) for a project: agent config, board, notes, memory, isolated tools and infra access, code in worktrees. Reference implementations: Enable (`~/workspaces/enable`, repo `alexluong/enable-workspace`; history in `projects/enable-workspace.md`) = one team super-repo with submodules; hookdeck (`~/workspaces/hookdeck`, `projects/hookdeck-workspace.md`) = independent repos, no systems. SoLex (`~/workspaces/solex`, `projects/solex-workspace.md`) = one own repo, no team, no prod: the smallest shape. Collie Studio (`~/workspaces/cs`, `projects/cs-workspace.md`) = several own repos, no prod: hookdeck's `wt/<repo>/<name>` with SoLex's skills. Related: `claude-config.md` (zero-global Claude config), `infra-access.md` (the env-dir pattern in depth).
 
 Written for whoever runs the setup (Claude or a human). Steps marked **👤** need the person: browser logins, tokens, decisions.
 
@@ -136,7 +136,7 @@ From the workspace root:
 - Project doc in ctrl (`docs/projects/<name>-workspace.md`): why, layout, decisions, as built.
 - `infra-access.md`: add the workspace's "as built" section.
 
-## Gotchas (learned on Enable, hookdeck and SoLex)
+## Gotchas (learned on Enable, hookdeck, SoLex and cs)
 
 - **AGENTS.md loads natively only without a CLAUDE.md** in the dir or above; the user-level `instructionFiles` setting fixes worktrees of team repos.
 - **Project settings load from the session start dir**, not parents: `.claude` symlink in worktrees if sessions ever start there.
@@ -163,3 +163,7 @@ From the workspace root:
 - **`mise env` keeps the login PATH order:** global installs earlier in PATH (`~/Library/pnpm`, pnpm 10) shadow mise tools (pnpm 11) in Claude's shell. The SessionStart hook also appends `export PATH="$(mise bin-paths | paste -sd: -):$PATH"`. Check `which pnpm node` in the audit. (Enable/hookdeck have the same PATH, unfixed.)
 - **Moving a ctrl project dir into a vault:** copy tracked files, rewrite paths in the live docs only, freeze the old agent/team history under `notes/history/`, move gitignored data (screenshots, exports) to `local/` and scripts to `tools/` (repoint their paths), and leave a pointer `README.md` in ctrl so existing links keep working. Check first that no session is mid-work on those files.
 - **The Bash tool runs zsh:** unquoted `$files` isn't word-split; use `xargs -0` for file lists.
+- **A workspace can come before its repos** (cs: one repo uncommitted, one not created): `wt init` checks `git ls-remote --exit-code <url> HEAD` and skips missing/empty repos; rerun `wt init <repo>` later.
+- **`mise tasks ls` prints a bare name for a task without a description** (no trailing space): detect a task with `mise tasks ls --no-header | awk '{print $1}' | grep -qx setup`.
+- **No `timeout` on macOS:** run the `claude -p` audit without it (Bash tool timeout is enough).
+- **Cross-session messages can be held:** a peer session in another permission mode holds your message for its user's approval, and it can expire undelivered. When coordinating a notes move, ask Alex directly instead of waiting on the peer.
