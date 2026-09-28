@@ -77,19 +77,19 @@ Also applied in the same run: `cloudflare_zone.nhi_luong` was **imported**, not 
 
 ## Tokens
 
-Three permanent, with distinct jobs. Values live in Vaultwarden and untracked `.env` files, never here.
+Three, with distinct jobs. Values live in Vaultwarden and untracked `.env` files, never here.
 
 | Token | ID | Used by | Scope |
 |---|---|---|---|
 | `collielab-terraform` | `a1f74a44…` | terraform: cloudflare provider **and** R2 state backend | account-wide + all zones (DNS/Zone read+write) |
 | `eldobot-exports-rw` | `001ee362…` | eldobot at runtime | that one bucket, object read+write only |
-| `outpost-pr907-test` | `6db5b548…` | **TEMPORARY** — hookdeck/outpost PR #907 CF Queues smoke test; value in `~/.cache/outpost-pr907-cf.env` | Queues Write, account-wide; expires 2026-10-12. Remove with `terraform/outpost_cfqueues_test.tf` (also creates queue `outpost-pr907-test` + http_pull consumer) |
-| `outpost-pr907-test-noperm` | `eba14870…` | **TEMPORARY** — same test, negative case; `CLOUDFLARE_API_TOKEN_NOPERM` in the same env file | Queues Read only, expires 2026-10-12. Push → 401 code 10000 (not 403). Same tf file |
 | *(legacy user token)* | `cd18900d…` | nothing — superseded | zone-scoped, no account access |
 
 **R2 derives S3 credentials from a token**: `Access Key ID` = the token's ID, `Secret Access Key` = `SHA-256(token value)`. So one token serves both the provider (as a Bearer token) and the state backend (as S3 keys) — and **rolling a token silently breaks the S3 secret while the access key ID stays the same**. That failure looks like `SignatureDoesNotMatch` on `terraform init/plan`, and the fix is to re-derive the secret from the new value, not to hunt for a new key pair.
 
 Gotcha that cost real time: a token can carry account-scoped permissions (R2, Workers, etc.) and still 403 on every DNS call, because zone permissions are a **separate policy** with zone-scoped resources. `GET /accounts` returning `count: 0` is the quick tell for "no account resources"; DNS 403s with account access working is the tell for "no zone policy". The working form is one policy per scope — an account policy plus a zone policy listing each zone as `com.cloudflare.api.account.zone.<zone_id>`. The nested "all zones in account" form did not take effect. Policy edits take ~20–30s to propagate.
+
+**Temporary test tokens via terraform** — pattern used 2026-09-28 for hookdeck/outpost PR #907 (CF Queues destination): a throwaway `.tf` file with the fixture (queue + `http_pull` consumer) and `cloudflare_account_token`s, applied, then deleted and applied again. Works because `collielab-terraform` carries `Account API Tokens Write`. Set `expires_on` as a backstop; write values to a mode-600 file in `~/.cache/`. History in collielab `git log -- terraform/outpost_cfqueues_test.tf`. Learned: a valid token lacking Queues Write gets **401 code 10000** on push, not 403.
 
 eldobot's credential is on the VM in `/home/alex/services/eldobot/.env` (previous version backed up as `.env.bak-20260811`), and mirrored on the MBP at `~/.cache/eldobot-r2-creds.env`, mode 600.
 
