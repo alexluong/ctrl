@@ -383,7 +383,7 @@ Alex: "what about backend features, not UI?"
 ## Open questions
 
 Alex's decisions pending:
-- **Naming leftovers:** CLI command (`demo` vs `collie demo`), file extension (`.demo`? `.take`?), npm scope (`@collie/*` now vs standalone first; claim `@collie` before public). See § Naming.
+- **Naming leftovers:** CLI command (`demo` vs `collie demo`), file extension (`.demo`? `.take`?), npm scope: `@collie` is **taken** (an npm user `collie`, 1 package, last active 2022; checked 2026-09-28). `@colliestudio` and `@collielab` are free. Lean: `@colliestudio`, which matches the GitHub org. Alex creates the npm org (free plan, public packages). See § Naming.
 - **Language:** Go (one binary: CLI + runner + server + backend capture, web bundle embedded) vs all-TS (simpler npm shipping, shared types). The recorder/player are JS and the Playwright adapter is TS either way. Lean: Go. Details: [engineering.md § language split](engineering.md#where-each-piece-runs-language-split-leaning).
 - **Sign-in methods** for the sharing server: GitHub only first, or GitHub + Google + email magic link.
 - **What to build next:**
@@ -393,7 +393,7 @@ Alex's decisions pending:
 Known issue: redaction isn't implemented yet. The lab's webhook `secret` would leak in a published demo. Redaction is planned on by default at record time ([engineering.md](engineering.md#private-team-sharing-the-paid-add-on-but-private-first-by-design)).
 
 Answered:
-- ~~Repo~~ (2026-09-28): its own repo `colliestudio/collie-demo`, not a suite monorepo. Create it private and make it public at v1. Before it goes public: claim the npm scope, recheck the name (the AltanS/collie collision) and use no SoLex/Hookdeck content in examples. Inside, a pnpm workspace (`format/ recorder/ playwright/ player/ cli/ server/ skill/`); keep `format/` standalone, since Studio would reuse it. Notes stay in ctrl, the repo holds code only. `~/code/replay-lab` gets frozen once the repo exists. Revisit a suite monorepo when a second Collie tool needs Demo code.
+- ~~Repo~~ (2026-09-28): its own repo `colliestudio/collie-demo`, not a suite monorepo. Create it private and make it public at v1. Before it goes public: claim the npm scope (`@colliestudio`), recheck the name (the AltanS/collie collision) and use no SoLex/Hookdeck content in examples. Inside, a pnpm workspace (`format/ recorder/ playwright/ player/ cli/ server/ skill/`); keep `format/` standalone, since Studio would reuse it. Notes stay in ctrl, the repo holds code only. `~/code/replay-lab` gets frozen once the repo exists. Revisit a suite monorepo when a second Collie tool needs Demo code.
 - ~~License~~ (2026-09-28): **Apache-2.0.** The hosted server can still be kept out of the public repo if it becomes paid ([market.md](market.md#open-core-models)).
 - ~~Name~~: **Collie Demo** (2026-09-25).
 - ~~Does an "agent demo recorder" MCP already exist?~~ Answered in [market.md](market.md): several are video-only; none are DOM replays.
