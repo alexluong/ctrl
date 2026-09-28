@@ -4895,9 +4895,9 @@
       "library": "blue4/movies/Shazam (2019)"
     },
     {
-      "download": "blue4/WALL·E.2008.1080p.BluRay.Opus.5.1.AV1-KIMJI",
+      "download": "blue4/WALL\u00b7E.2008.1080p.BluRay.Opus.5.1.AV1-KIMJI",
       "type": "movie",
-      "title": "WALL·E",
+      "title": "WALL\u00b7E",
       "year": 2008,
       "resolution": "1080p",
       "source": "BluRay",
@@ -4906,7 +4906,7 @@
       "audio": "Opus",
       "hdr": "",
       "status": "linked",
-      "library": "blue4/movies/WALL·E (2008)"
+      "library": "blue4/movies/WALL\u00b7E (2008)"
     },
     {
       "download": "blue4/Spider-Man.Into.the.Spider-Verse.2018.2160p.UHD.BluRay.x265-TERMiNAL",
@@ -9181,7 +9181,67 @@
       "hdr": "",
       "status": "linked",
       "library": "red4/tv/The Great"
+    },
+    {
+      "download": "blue4/Heathers.The.Musical.2022.1080p.WEB.h264-BETTY",
+      "type": "movie",
+      "title": "Heathers The Musical",
+      "year": 2022,
+      "resolution": "1080p",
+      "source": "unknown",
+      "group": "BETTY",
+      "video": "x264",
+      "audio": "",
+      "hdr": "",
+      "status": "pending"
+    },
+    {
+      "download": "blue4/Nathan.for.You.2013.S01-S04.1080p AMZN.WEB-DL.x265.HEVC.10bit.AAC.2.0-ImE",
+      "type": "tv",
+      "title": "Nathan for You",
+      "seasons": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "resolution": "1080p",
+      "source": "WEB-DL",
+      "group": "ImE",
+      "video": "x265",
+      "audio": "AAC",
+      "hdr": "",
+      "status": "linked",
+      "library": "blue4/tv/Nathan for You"
+    },
+    {
+      "download": "blue4/Hamilton.2020.1080p.WEBRip.x265",
+      "type": "movie",
+      "title": "Hamilton",
+      "year": 2020,
+      "resolution": "1080p",
+      "source": "WEBRip",
+      "group": "unknown",
+      "video": "x265",
+      "audio": "",
+      "hdr": "",
+      "status": "linked",
+      "library": "blue4/movies/Hamilton (2020)"
+    },
+    {
+      "download": "blue4/Legally.Blonde.2001.REMASTERED.1080p.BluRay.x265",
+      "type": "movie",
+      "title": "Legally Blonde",
+      "year": 2001,
+      "resolution": "1080p",
+      "source": "BluRay",
+      "group": "unknown",
+      "video": "x265",
+      "audio": "",
+      "hdr": "",
+      "status": "linked",
+      "library": "blue4/movies/Legally Blonde (2001)"
     }
   ],
-  "updated_at": "2026-09-27 17:25:19"
+  "updated_at": "2026-09-28 20:01:49"
 }
