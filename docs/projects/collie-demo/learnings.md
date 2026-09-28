@@ -61,7 +61,7 @@ What we tried, what we learned, and why we landed where we did. Round 2 of explo
 
 ## Next (pending Alex)
 
-Decide v1: the scope cut (UI demos + self-check + publish), Go vs TS, the server in v1 or not, naming leftovers (CLI, extension, scope), license. v1 candidates for collie-lab: `r.highlight`, a `reset` config key, static-asset filtering, the proxy spike.
+Decide v1: the scope cut (UI demos + self-check + publish), Go vs TS, the server in v1 or not, naming leftovers (CLI, extension, scope). Decided 2026-09-28: repo `colliestudio/collie-demo` (private → public at v1), Apache-2.0. v1 candidates for collie-lab: `r.highlight`, a `reset` config key, static-asset filtering, the proxy spike.
 
 ## Artifacts from this round
 
