@@ -77,12 +77,13 @@ Also applied in the same run: `cloudflare_zone.nhi_luong` was **imported**, not 
 
 ## Tokens
 
-Three, with distinct jobs. Values live in Vaultwarden and untracked `.env` files, never here.
+Three permanent, with distinct jobs. Values live in Vaultwarden and untracked `.env` files, never here.
 
 | Token | ID | Used by | Scope |
 |---|---|---|---|
 | `collielab-terraform` | `a1f74a44…` | terraform: cloudflare provider **and** R2 state backend | account-wide + all zones (DNS/Zone read+write) |
 | `eldobot-exports-rw` | `001ee362…` | eldobot at runtime | that one bucket, object read+write only |
+| `outpost-pr907-test` | `6db5b548…` | **TEMPORARY** — hookdeck/outpost PR #907 CF Queues smoke test; value in `~/.cache/outpost-pr907-cf.env` | Queues Write, account-wide; expires 2026-10-12. Remove with `terraform/outpost_cfqueues_test.tf` (also creates queue `outpost-pr907-test` + http_pull consumer) |
 | *(legacy user token)* | `cd18900d…` | nothing — superseded | zone-scoped, no account access |
 
 **R2 derives S3 credentials from a token**: `Access Key ID` = the token's ID, `Secret Access Key` = `SHA-256(token value)`. So one token serves both the provider (as a Bearer token) and the state backend (as S3 keys) — and **rolling a token silently breaks the S3 secret while the access key ID stays the same**. That failure looks like `SignatureDoesNotMatch` on `terraform init/plan`, and the fix is to re-derive the secret from the new value, not to hunt for a new key pair.
