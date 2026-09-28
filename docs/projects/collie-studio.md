@@ -127,6 +127,8 @@ Two kinds of seed:
 | **env** | the baseline every stack needs: tenant(s), users/roles, config, reference data | the project; same for every stack, versioned with the repo (Enable: `dev/seed/tenant/archetypes`) |
 | **task** | the scenario this task is about: the tenant with the quirk, the order in state X, the edge case from the ticket | the task (`vault/work/task-N/`, or the repo when worth keeping); written with the criteria, before implementing |
 
+**Reference: Enable already does most of this** (team repo `dev/seed/`, `mise dev seed …`): `clean` (drop app DBs) → `init` (system admin, roles, permissions, delivery partners) → `tenant <archetype>` (7 config-driven archetypes). Archetypes are **coverage instruments**, not company replicas: each covers a region of the config space, declares capability tags, and seeds one user per role; `dev/seed/tenant/archetypes/README.md` is the catalog + coverage matrix. QA suites declare `seeds: [init, "tenant mintmarket"]` in frontmatter and run clean + those seeds first. So env seed = clean + init + an archetype; a task seed is today either a pick of archetype, a new archetype, or ad hoc (not formalized).
+
 Why a tool: the task seed makes the task reproducible. The dev builds against it; the reviewer and QA reset to the same state; Collie Demo records on it; a bug report becomes a seed. As an action/tool: `seed env`, `seed task task-N`, `reset` (fresh stack + both seeds), exposed as a button and an agent verb. Open: the format (scripts vs declarative scenarios the app's SDK/API replays, e.g. SoLex's `Hotel` object); promoting a task seed to a regression fixture; snapshots to make "fresh" fast.
 
 ## App delivery (open)
