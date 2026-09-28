@@ -1,6 +1,6 @@
 # Workspace setup playbook
 
-How to set up a personal agent workspace (`~/workspaces/<name>`) for a project: agent config, board, notes, memory, isolated tools and infra access, code in worktrees. Reference implementations: Enable (`~/workspaces/enable`, repo `alexluong/enable-workspace`; history in `projects/enable-workspace.md`) = one team super-repo with submodules; hookdeck (`~/workspaces/hookdeck`, `projects/hookdeck-workspace.md`) = independent repos, no systems. Related: `claude-config.md` (zero-global Claude config), `infra-access.md` (the env-dir pattern in depth).
+How to set up a personal agent workspace (`~/workspaces/<name>`) for a project: agent config, board, notes, memory, isolated tools and infra access, code in worktrees. Reference implementations: Enable (`~/workspaces/enable`, repo `alexluong/enable-workspace`; history in `projects/enable-workspace.md`) = one team super-repo with submodules; hookdeck (`~/workspaces/hookdeck`, `projects/hookdeck-workspace.md`) = independent repos, no systems. SoLex (`~/workspaces/solex`, `projects/solex-workspace.md`) = one own repo, no team, no prod: the smallest shape. Related: `claude-config.md` (zero-global Claude config), `infra-access.md` (the env-dir pattern in depth).
 
 Written for whoever runs the setup (Claude or a human). Steps marked **👤** need the person: browser logins, tokens, decisions.
 
@@ -136,7 +136,7 @@ From the workspace root:
 - Project doc in ctrl (`docs/projects/<name>-workspace.md`): why, layout, decisions, as built.
 - `infra-access.md`: add the workspace's "as built" section.
 
-## Gotchas (learned on Enable and hookdeck)
+## Gotchas (learned on Enable, hookdeck and SoLex)
 
 - **AGENTS.md loads natively only without a CLAUDE.md** in the dir or above; the user-level `instructionFiles` setting fixes worktrees of team repos.
 - **Project settings load from the session start dir**, not parents: `.claude` symlink in worktrees if sessions ever start there.
@@ -159,3 +159,7 @@ From the workspace root:
 - **Bruno keys secret env values by collection path:** moving collections means re-entering them.
 - **`gcloud` from mise has no `gke-gcloud-auth-plugin`:** `gcloud components install gke-gcloud-auth-plugin` (again after a version bump).
 - **Blobs copied from an old branch are free:** `git archive main notes | tar -x` into the orphan branch reuses the same objects.
+- **A repo's own per-worktree setup beats slots:** if it already assigns ports/DB per checkout (SoLex `scripts/setup-env.mjs`), `wt add` just runs it. But check what it names things after: SoLex names the compose project after the directory, so every workspace's `task-3` collides → `wt` rewrites it to `<project>-task-N`.
+- **`mise env` keeps the login PATH order:** global installs earlier in PATH (`~/Library/pnpm`, pnpm 10) shadow mise tools (pnpm 11) in Claude's shell. The SessionStart hook also appends `export PATH="$(mise bin-paths | paste -sd: -):$PATH"`. Check `which pnpm node` in the audit. (Enable/hookdeck have the same PATH, unfixed.)
+- **Moving a ctrl project dir into a vault:** copy tracked files, rewrite paths in the live docs only, freeze the old agent/team history under `notes/history/`, move gitignored data (screenshots, exports) to `local/` and scripts to `tools/` (repoint their paths), and leave a pointer `README.md` in ctrl so existing links keep working. Check first that no session is mid-work on those files.
+- **The Bash tool runs zsh:** unquoted `$files` isn't word-split; use `xargs -0` for file lists.
