@@ -23,4 +23,4 @@ r/AnarchyChess video "Sorry, I'm new to chess. Is this legal?" (2026-09-28, via 
 
 ## Status
 
-2026-09-29: rules locked, POC being built (dev agent + separate review/QA agent).
+2026-09-29: POC playable (`pnpm dev`). 64 engine tests incl. 200 random-game invariants; browser QA passed. `?seed=<n>` for a fixed deck. Open cosmetic nits: mobile header wrap, current card below fold on phone, Reverse spin overlaps panels, banner covers board 2.6s.
