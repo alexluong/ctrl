@@ -67,3 +67,16 @@ Alex isn't handy and doesn't want to spend time → buy a prebuilt from a big ch
 - Shops: Phong Vũ, GearVN (HN + HCM), HACOM, An Phát (HN). All do free assembly/testing.
 - Used/"from someone": only via a refurb shop with warranty, not Chợ Tốt/FB.
 - After purchase: Tailscale, BIOS power-on-after-AC-loss, Docker, mise, clone hookdeck workspace, redo gcloud/kube/Doppler/Railway logins.
+
+## Stock check 2026-09-30 (Phong Vũ, An Phát, Hacom, GearVN)
+
+- 14th-gen M70s/neo Gen 5 at An Phát all "Đặt hàng" (no showroom stock) incl. 12U3000LVA. Gen 6 (Core Ultra 200) units are what's in stock. All 16GB units ship 1×16GB (slot free); no 32GB configs.
+- **Pick:** Hacom neo 50t 12UB0008VA — i7-14700 (20C/28T), 16GB, 512GB, NoOS, 23.999.000, còn hàng. hacom.vn/pc-lenovo-thinkcentre-neo-50t-12ub0008va-gen-4-i7-14700-16gb-ram-512gb-ssd-wl-bt-k-m-no-os
+  - + 1×16GB DDR5-5600 JEDEC (Kingmax 6.090.000 / Lexar 6.290.000, Hacom còn hàng) → 32GB dual-channel.
+  - + 1TB NVMe (Kioxia Exceria Plus G3 3.890.000 / Kingston NV3 4.590.000, Hacom còn hàng) for Docker — confirm 2nd M.2 slot.
+  - ≈ 34M VND total. Hacom install not free by default (100k off in-store upgrades >1M).
+  - Raptor Lake i7: make sure BIOS has Intel 0x12B+ microcode (instability fix).
+- Runner-up: neo 50t Gen 6 13BB0006VA — Core Ultra 5 225 (10C), 1×16GB, 512GB, NoOS; Hacom 21.599.000 / An Phát 22.199.000 (stock in HN + HCM).
+- RAM (Sep 2026): 1×16 ~6.1M, 1×32 ~13.7M, 2×16 ~13.9M, 2×32 ~20.5–26M. ThinkCentres ignore XMP → buy JEDEC 5600 sticks.
+- Dual vs single channel: dual (2×16) now; 64GB later = swap to 2×32.
+- Free install: Phong Vũ yes (parts bought with PC); others unverified/paid.
