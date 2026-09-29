@@ -5,7 +5,7 @@ description: How ctrl is organized and maintained - where notes, skills, setting
 
 # Workspace
 
-`~/workspaces/ctrl` is Alex's hub workspace (repo `alexluong/ctrl`, private): notes for every personal domain, workspace playbook, and explorations/POCs before they graduate. Same shape as the other workspaces (`ctrl-vault/docs/workspace-setup.md`, "hub" profile): no board, no roles, no prod access. **The vault is `ctrl-vault/`** (Obsidian names a vault after its folder); "the vault" in skills means this folder. The old path `~/git/hub/alexluong/ctrl` is a symlink here.
+`~/workspaces/ctrl` is Alex's hub workspace (repo `alexluong/ctrl`, private): notes for every personal domain, workspace playbook, and explorations/POCs before they graduate. Same shape as the other workspaces (`ctrl-vault/docs/workspace-setup.md`, "hub" profile): a board but no roles, no prod access. **The vault is `ctrl-vault/`** (Obsidian names a vault after its folder); "the vault" in skills means this folder. The old path `~/git/hub/alexluong/ctrl` is a symlink here.
 
 ## Where things go
 
@@ -21,6 +21,8 @@ description: How ctrl is organized and maintained - where notes, skills, setting
 | machines, workflow, Claude config, infra | `ctrl-vault/docs/*.md` | |
 | real estate | `ctrl-vault/re/` | conventions in `re/notes.md`; binaries on iCloud |
 | bookkeeping | `ctrl-vault/biz/`, `ctrl-vault/re/bookkeeping/` | system in `biz/BOOKKEEPING.md` |
+| task board | `ctrl-vault/backlog/` via the `backlog` CLI | never hand-edit task files; labels in `backlog.config.yml` |
+| per-task notes | `ctrl-vault/work/task-N/` | only when comments aren't enough; `summary.md` at close (`done`) |
 | memory (short facts) | `ctrl-vault/memory/` | auto-memory; see below |
 | exploration/POC code | `repos/` + `wt/` (`worktree` skill) | gitignored |
 | scratch, exports | `local/` | gitignored, never committed |
@@ -47,4 +49,4 @@ description: How ctrl is organized and maintained - where notes, skills, setting
 
 ## Surfaces
 
-Start sessions at `~/workspaces/ctrl` (desktop app, T3, or `claude`). Obsidian opens `ctrl-vault/`.
+Start sessions at `~/workspaces/ctrl` (desktop app, T3, or `claude`). Obsidian opens `ctrl-vault/`. Board UI: `backlog browser`.

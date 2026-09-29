@@ -13,7 +13,7 @@ description: Organize ctrl - memory (small index, long memories into notes, stal
 .agents/skills/tidy/check
 ```
 
-Reports: memory file/index counts, index↔file mismatches, long memories, over-long index lines; backticked `ctrl-vault/…` paths that no longer exist; per worktree: last commit, commits ahead of main; local branches without a worktree; unknown files at the root.
+Reports: memory file/index counts, index↔file mismatches, long memories, over-long index lines; backticked `ctrl-vault/…` paths that no longer exist; per worktree: last commit, commits ahead of main; local branches without a worktree; Done tasks with a `work/task-N/` folder but no `summary.md`; unknown files at the root.
 
 ## 2. Fix mechanically (no approval needed)
 
@@ -26,6 +26,7 @@ Reports: memory file/index counts, index↔file mismatches, long memories, over-
 - **Sort each capture:** a cross-cutting trap stays in memory; knowledge joins the domain doc it belongs to (`docs/…`, `re/notes.md`, `biz/BOOKKEEPING.md`, a project's living doc); a preference or convention moves into the skill/AGENTS.md where it applies; stale → delete. A memory longer than ~25 lines is always a note.
 - **Merge** duplicates; **delete** stale or disproven memories.
 - **Projects:** a living doc in `docs/projects/` with no activity in months → ask Alex: park (status line), drop, or graduate (`workspace-setup`).
+- **Board:** In Progress with no activity for 2+ weeks, or To Do items gone stale → ask Alex: keep, park, or archive (`backlog task archive`).
 - **Keep the memory index under ~150 lines**, grouped: traps (by domain) · recent captures.
 
 Show Alex the plan as a short list (moves, merges, deletes, counts before → after). Apply after OK.

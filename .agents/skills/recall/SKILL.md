@@ -13,7 +13,7 @@ Search ctrl's persistent context and return a short brief with links. Read-only.
 .agents/skills/recall/search <term> [term...]
 ```
 
-Each term is searched separately across, in order: memory (`ctrl-vault/memory`), docs (`ctrl-vault/docs`: ideas, projects, machines, workflow), real estate (`ctrl-vault/re`), biz (`ctrl-vault/biz`, CSVs excluded), and the vault's git history.
+Each term is searched separately across, in order: memory (`ctrl-vault/memory`), docs (`ctrl-vault/docs`: ideas, projects, machines, workflow), real estate (`ctrl-vault/re`), biz (`ctrl-vault/biz`, CSVs excluded), task notes (`ctrl-vault/work`), the board (incl. done tasks), and the vault's git history.
 
 Pick 2–4 specific terms: property (`haverhill`), project (`fitjournal`), tool (`Vaultwarden`, `mise`), person/vendor (`Katie`). Generic words drown the results.
 

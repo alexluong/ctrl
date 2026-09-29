@@ -18,7 +18,7 @@ Written for whoever runs the setup (Claude or a human). Claude: drive it with th
 
 ctrl is a workspace with a reduced shape: notes for every domain plus explorations/POCs that graduate into full workspaces (`workflow.md` § Project lifecycle). Same as a full workspace: `AGENTS.md` + `CLAUDE.md` symlink, `.agents/skills` + `.claude/skills` symlink, auto-memory in `ctrl-vault/memory`, SessionStart env hook, `done` (identical), `recall`/`tidy`/`workspace`/`worktree` (adapted), root favicon, gitignored `repos/` + `wt/` + `local/`.
 
-Different: no board, no roles/agent wrappers, no `lead`, no `ops/` env dirs or prod guard (no prod access). The vault holds domain folders (`docs/`, `re/`, `biz/`) instead of `backlog/work/notes`. `wt` has no fixed repo list or task IDs: `wt init <repo>`, `wt add <repo> <name>`. `check` knows the profile (`hubs=` in the script).
+Different: board optional (ctrl has one, labels by domain, no digest), no roles/agent wrappers, no `lead`, no `ops/` env dirs or prod guard (no prod access). The vault holds domain folders (`docs/`, `re/`, `biz/`) instead of `notes/` (plus `backlog/`, `work/`, `memory/`). `wt` has no fixed repo list or task IDs: `wt init <repo>`, `wt add <repo> <name>`. `check` knows the profile (`hubs=` in the script).
 
 ## Prerequisites (machine, once)
 

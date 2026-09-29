@@ -19,7 +19,10 @@ ctrl-vault/          Obsidian vault: all notes
   docs/              ideas, projects, machines, workflow, workspace playbook
   re/                real estate: deals, logs, bookkeeping (`re/notes.md` = conventions)
   biz/               bookkeeping, invoices (`biz/BOOKKEEPING.md` = the system)
+  backlog/           Backlog.md board (change tasks only through the `backlog` CLI)
+  work/task-N/       per-task notes when a task needs more than comments; summary.md at close
   memory/            agent memory (auto-memory; `MEMORY.md` index)
+backlog.config.yml   board config
 mise.toml            workspace tools
 repos/               bare clones of exploration/POC repos (gitignored, pristine)
 wt/                  worktrees (gitignored): wt/<repo>/main (read-only), wt/<repo>/<name>
@@ -39,6 +42,13 @@ Maintaining the workspace (where things go, memory vs notes, adding skills): `wo
 ## Projects: incubate here, graduate out
 
 Idea (`ctrl-vault/docs/ideas.md`) → exploration/POC in ctrl (living doc `ctrl-vault/docs/projects/<name>.md`, code in `wt/<repo>/…` via `bin/wt`) → own workspace `~/workspaces/<name>` when it needs its own board/memory, holds client data, needs infra credentials, spans several repos, or gets busy enough to crowd ctrl (`workspace-setup` skill). Details: `ctrl-vault/docs/workflow.md` § Project lifecycle. Older personal projects stay in `~/git/hub/alexluong/<name>` with a pointer `CLAUDE.md`.
+
+## Work items
+
+- The board tracks work that spans sessions: explorations/POCs, RE to-dos (tenant, taxes, insurance), machine/infra chores, workspace work. One-shot asks answered in a session don't need a task.
+- Labels: `re`, `biz`, `project` (plus the project's name as a label), `infra`, `machine`, `workspace`. Statuses: `To Do`, `In Progress`, `Done`.
+- CLI from anywhere in the workspace; always `--plain` when reading. Short events → task comments (`--comment "…" --comment-author @claude`); longer notes → `ctrl-vault/work/task-N/*.md`. Durable knowledge still goes to the domain doc (a task links to it, doesn't replace it).
+- Worktree names for task code: `bin/wt add <repo> task-N-<slug>`. Alex's board UI: `backlog browser` (port 6421; other workspaces use 6420).
 
 ## Where commands run
 

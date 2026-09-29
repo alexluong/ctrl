@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # search <term> [term...]: what ctrl already knows about a topic.
 # Each term is searched separately (case-insensitive, fixed string). Sources, in order:
-#   memory, docs, re, biz (no CSVs), vault git history.
+#   memory, docs, re, biz (no CSVs), task notes, the board (incl. done), vault git history.
 set -uo pipefail
 ROOT="$(git -C "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" rev-parse --show-toplevel)"
 cd "$ROOT"
@@ -14,6 +14,8 @@ for t in "$@"; do
   section "docs (ctrl-vault/docs)";     "${RG[@]}" -- "$t" ctrl-vault/docs 2>/dev/null | head -25 || true
   section "real estate (ctrl-vault/re)"; "${RG[@]}" -- "$t" ctrl-vault/re 2>/dev/null | head -20 || true
   section "biz (ctrl-vault/biz)";       "${RG[@]}" -- "$t" ctrl-vault/biz 2>/dev/null | head -10 || true
+  section "task notes (ctrl-vault/work)"; "${RG[@]}" -- "$t" ctrl-vault/work 2>/dev/null | head -10 || true
+  section "board (incl. done)";         mise x -- backlog search "$t" --plain 2>/dev/null | head -15 || true
   section "history (git log)";          git log --oneline -i -F --grep="$t" -n 10 2>/dev/null || true
   echo
 done

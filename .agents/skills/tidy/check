@@ -21,6 +21,13 @@ echo; echo "## Broken vault paths (backticked ctrl-vault/… that don't exist)"
 git grep -hoE '`ctrl-vault/[^` <>*]+`' -- . ':!ctrl-vault/re/log' | tr -d '`' | sort -u | while read -r p; do
   [ -e "$p" ] || echo "  $p"; done
 
+echo; echo "## Done tasks with notes but no summary.md"
+for d in ctrl-vault/work/task-*/; do [ -d "$d" ] || continue; [ -f "$d/summary.md" ] && continue
+  t=$(basename "$d"); mise x -- backlog task "$t" --plain 2>/dev/null | grep -qi "^Status:.*Done" && echo "  $t"; done
+
+echo; echo "## Board"
+mise x -- backlog task list --plain 2>/dev/null | head -30
+
 echo; echo "## Worktrees and branches"
 bin/wt ls 2>/dev/null
 for d in wt/*/*/; do

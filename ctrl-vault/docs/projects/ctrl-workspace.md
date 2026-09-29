@@ -11,7 +11,7 @@ ctrl turned into a hub workspace on 2026-09-29: moved from `~/git/hub/alexluong/
 
 - **Vault = `ctrl-vault/`** holding `docs/`, `re/`, `biz/`, `memory/` (folder names unchanged, paths rewritten to `ctrl-vault/…`). Repo root isn't the vault: Obsidian would index `wt/` code and `.claude/`.
 - **Memory:** auto-memory on, into `ctrl-vault/memory` (in git). Replaces the old "never use memory" rule, whose reason (`~/.claude` doesn't follow Alex across machines) no longer applies.
-- **No board, roles or lead** until explorations need tracking; add Backlog.md then.
+- **Board (added 2026-09-29, same day):** Backlog.md in `ctrl-vault/backlog`, labels `re`, `biz`, `project`, `infra`, `machine`, `workspace`; UI on port 6421 (6420 = other workspaces). No roles, lead or digest.
 - **POC code:** `repos/` + `wt/<repo>/<name>` via a generic `wt` (no repo list, no task IDs). Existing repos in `~/git/hub/alexluong` stay put; pointer `CLAUDE.md`s updated to the new path.
 - **Links:** plain backticked paths, no wikilinks (searchable by Claude, harness-neutral).
 - **Secrets:** `secrets/` stays at the root, gitignored, outside the vault.
@@ -21,7 +21,7 @@ ctrl turned into a hub workspace on 2026-09-29: moved from `~/git/hub/alexluong/
 
 - `AGENTS.md` (`CLAUDE.md` → symlink), `.agents/skills` (+ `.claude/skills` symlink): bookkeeping-import/report, dev-setup, disk-audit, implement, new-project, workspace-setup, done (identical to other workspaces), recall, tidy, worktree, workspace.
 - `.claude/settings.json`: memory dir, SessionStart env hook (`session-env.sh` from cs), deny `.env` read/edit and edits in `repos/`, `wt/*/main`; `additionalDirectories: ~/git/hub/alexluong`.
-- `mise.toml` (was `.mise.toml`): bun, jq, ripgrep; `bin/` on PATH.
+- `mise.toml` (was `.mise.toml`): bun, jq, ripgrep, backlog.md; `bin/` on PATH.
 - Other workspaces' references to `~/git/hub/alexluong/ctrl` / `ctrl/docs/` updated in live files (skills, AGENTS.md, notes); frozen history notes left alone (the symlink keeps old absolute paths resolving).
 
 ## Open
