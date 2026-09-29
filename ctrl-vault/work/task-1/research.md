@@ -56,3 +56,14 @@ Always: 2TB+ NVMe (second M.2 slot for Docker is nice), Linux headless, Tailscal
 - Secrets/logins on new box: gcloud/kube (workspace-scoped), Doppler, Railway need redoing.
 
 Sources (2026-09): Macworld M5 Pro mini review + 2026 Mac Studio; Minisforum store / Newegg MS-A2; ComputingForGeeks Strix Halo prices; Lenovo PSREF (M70s Gen 5, neo 50s/50t Gen 6, M90q Gen 3–5); BuyRefurbished M90q Gen 6.
+
+## Buying plan (2026-09-30)
+
+Alex isn't handy and doesn't want to spend time → buy a prebuilt from a big chain and have the shop do upgrades + testing. No DIY.
+
+- Box: Lenovo ThinkCentre M70s Gen 5 NoOS (12U3000LVA, i5-14400, 8GB/512GB), 17.8M VND.
+- Shop swaps RAM → 1×32GB DDR5 (or 1×16GB if pricey), adds 1TB NVMe, tests. Ubuntu Server 24.04 if they'll do it, else Claude walks Alex through a USB install.
+- VN RAM is very expensive (Sep 2026): GearVN 2×16GB DDR5 kits 13.9–15M VND. Estimate total ~26–30M VND; get quotes.
+- Shops: Phong Vũ, GearVN (HN + HCM), HACOM, An Phát (HN). All do free assembly/testing.
+- Used/"from someone": only via a refurb shop with warranty, not Chợ Tốt/FB.
+- After purchase: Tailscale, BIOS power-on-after-AC-loss, Docker, mise, clone hookdeck workspace, redo gcloud/kube/Doppler/Railway logins.
