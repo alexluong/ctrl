@@ -1,41 +1,56 @@
-# TASK-1: always-on dev box for hookdeck — research (2026-09-30)
+# TASK-1: always-on dev box for hookdeck — research
+
+Started 2026-09-30. Buying in Vietnam. Mac Mini (base M4) stays on arrstack + enable/solex.
 
 ## Workload (from ~/workspaces/hookdeck)
 
 - core: ~24 containers under one compose project (Postgres 17, Redis, Dragonfly, ClickHouse, Bigtable emu, Kafka + ZK + schema-registry + connect, PubSub emu, caddy/coredns/envoy, optional k3s) + ~8 PM2 Node services on host. Warm boot ~2 min.
 - outpost (Go): api/delivery/log + Redis, ClickHouse, RabbitMQ.
-- One stack of each at a time (fixed ports / shared infra); parallelism = agents in worktrees doing builds/tests (25 worktrees now; core worktree ~1.8G node_modules each).
-- Pain today on MBP (M1 Pro 32GB, 460G) is disk, not RAM: Docker regrows 40–50G in 2 weeks, go-build 15G in 4 days. Docker Desktop capped at 16GB.
-- Nothing needs macOS; all Linux images. Claude runs via API — no local LLM, so GPU/unified memory doesn't matter.
+- Today: one stack of each at a time; parallelism = agents in worktrees doing builds/tests (25 worktrees; core worktree ~1.8G node_modules each).
+- **Goal: 5–10+ stacks at once.** That makes RAM the main constraint.
+- Pain today on MBP (M1 Pro 32GB, 460G) is disk: Docker regrows 40–50G in 2 weeks, go-build 15G in 4 days.
+- Nothing needs macOS; all Linux images. Claude runs via API — no local LLM.
 
 ## Sizing
 
-64GB RAM min (96GB comfortable), 2TB SSD, 12–16 fast cores, 10GbE nice-to-have. Tailscale into the mesh.
+Depends on stack mode (**measure one core stack before buying**):
 
-## Options (Sep 2026 prices, DRAM shortage inflated everything)
-
-| Option | Spec | Price | Notes |
+| Mode | Per stack | 10 stacks | Box |
 |---|---|---|---|
-| Minisforum MS-A2 (Linux) | Ryzen 9 9955HX 16C/32T, 96GB DDR5, 2TB | ~$1,919 preconfig ($799 barebone) | native Docker, 3× M.2 + U.2, 2×10G SFP+; ~fan noise, ~25W idle |
-| Mac mini M5 Pro | 18C, 64GB, 1TB | ~$2,899 | same env as MBP, silent, low power; Docker in VM; 1TB tight (external TB5 SSD) |
-| Mac Studio M5 Max | 64GB+ | $2,499 base (36GB) + $400 for 64GB (needs 40-core GPU tier) | overkill unless also for local LLMs |
-| Business mini/SFF, refurb (Lenovo M90q Tiny / HP Elite Mini 800) | e.g. M90q Gen 6, Core Ultra 7 265T, 64GB, 2TB | ~$1,139 refurb | home-server-grade: quiet, ~10W idle, 24/7-rated, vPro remote mgmt; Tiny = 2 SO-DIMM (64GB max), 2 M.2; SFF towers take 128GB |
-| Strix Halo boxes (GTR9 Pro / EVO-X2 / Framework) | Ryzen AI Max+ 395, 128GB | $2k–$4.3k | pay for iGPU/LLM memory we don't need |
+| Fully isolated (own Postgres/Kafka/ClickHouse…) | ~6–10GB (estimate) | 60–100GB+ | 128GB, 16+ cores |
+| Shared infra + per-worktree namespaces (core supports it) | ~2–3GB (PM2 services) + ~8GB shared once | ~30–40GB | 64GB, 10–16 cores |
 
-Leaning (2026-09-30, after "why beefy?"): refurb Lenovo/HP business mini at 64GB; MS-A2 if more cores/10GbE wanted. Either way: Linux (Ubuntu/Debian), headless, Tailscale. CPU floor: Intel 12th gen+ / Ryzen 7000+ (~M1 Pro level); older 8th–10th gen Tinies are slower than the MBP. Oldest M90q to consider: Gen 3 (12th gen, DDR5, 64GB max); prefer 65W non-T i7 (sustained builds). GPU irrelevant (no local LLM; containers + builds are CPU).
+Always: 2TB+ NVMe (second M.2 slot for Docker is nice), Linux headless, Tailscale.
+
+## What matters / doesn't
+
+- **RAM capacity + slots**: the deciding spec. 2 slots ≈ 64GB ceiling; 4 slots = 128–192GB.
+- **CPU**: floor Intel 12th gen / Ryzen 7000 (≈ M1 Pro). Prefer 65W desktop parts over 35W "T" parts (sustained builds throttle). Newest gen buys ~10–20%, not worth a premium.
+- **Top-tier (M4/M5-class) single-core**: +30–50% per core, but agent time is mostly model latency → maybe ~10% faster tasks (unmeasured guess).
+- **GPU**: irrelevant (containers + builds are CPU; browser tests fine on iGPU).
+- **Power**: 10W extra 24/7 ≈ $10–25/yr — tiebreaker only.
+- **24/7 niceties**: BIOS "power on after AC loss", quiet cooling, remote console (vPro on business SKUs, or a JetKVM/PiKVM for DIY).
+
+## Device types
+
+| Type | Examples | RAM ceiling | Fits | Notes |
+|---|---|---|---|---|
+| Business tiny/SFF (prebuilt) | Lenovo ThinkCentre M70s/M90q/neo 50s, HP Elite Mini/SFF, Dell OptiPlex | 64GB (2 slots) | shared-infra mode | reliable, quiet, warranty, vPro on M-series i5/i7 vPro SKUs; proprietary boards/PSU, few upgrade paths. Local VN: M70s Gen 5 i5-14400 8GB/512GB 17.8M VND is best value of the listings seen (neo 30t = laptop chip, skip) |
+| x86 mini PC, laptop chip | Beelink SER9, Minisforum (Ryzen AI 9 HX 370 / 8845HS), MS-A2 (9955HX 16C) | 64–96GB SO-DIMM | shared-infra mode | efficient, small; MS-A2 = 16C, 3 M.2, 10GbE, ~$1.9k w/ 96GB |
+| x86 "Mac-mini-like" (Strix Halo) | Beelink GTR9 Pro, GMKtec EVO-X2, Framework Desktop (Ryzen AI Max+ 395) | 128GB soldered | isolated mode | 16C ≈ M4 Pro multicore, ~10W idle; buy 128GB up front; $2k–4.3k (volatile) |
+| Business workstation tower | Lenovo ThinkStation P3 Tower, ThinkCentre M90t, HP Z2 Tower | 128GB (4 slots) | isolated mode | prebuilt reliability + RAM headroom; pricier than DIY |
+| DIY tower | Ryzen 9 9900X/9950X or Core Ultra 7 265, B650/B860 board, 4 DIMM | 128–192GB | isolated mode | best price/perf, fully upgradable, quiet with big cooler; bigger, ~30–50W idle, no vPro (add KVM), per-part warranty |
+| Mac | Mac mini M4 Pro/M5 Pro, Mac Studio | 64GB (mini) | shared-infra mode | best perf/W, silent; Docker in VM, RAM/SSD pricey, no upgrades. Only if macOS on the box is wanted. Prefer refurb M4 Pro over M5 Pro |
+
+## Leaning
+
+- ≤64GB (shared infra) → prebuilt: business SFF (M70s-class, add RAM + SSD) or efficient mini PC.
+- 128GB+ (isolated stacks) → DIY tower (price/upgradability) or Strix Halo box (compact/efficient).
 
 ## Open questions
 
-- No record found of the earlier HP/Lenovo discussion (vault, git, transcripts).
-- macOS vs Linux: does Alex want T3 Code / Claude desktop running on the box, or remote-drive via ssh/Tailscale?
-- Mac Mini spec: base M4 = 16GB? Enable runs up to 5 stacks (Mongo, 3 Redis, Postgres…) — likely too tight alongside arrstack.
+- Measure core stack RAM: isolated vs shared-infra mode, plus a normal multi-agent session.
+- Mac Mini spec: base M4 = 16GB? Enable runs up to 5 stacks — likely too tight alongside arrstack.
 - Secrets/logins on new box: gcloud/kube (workspace-scoped), Doppler, Railway need redoing.
 
-Sources: Macworld M5 Pro mini review, Macworld 2026 Mac Studio, Minisforum store/Newegg MS-A2, ComputingForGeeks Strix Halo price comparison.
-
-## Update 2026-09-30: Alex may want 5–10+ stacks at once; buying in Vietnam
-
-- Changes sizing. Full isolated core stack ~6–10GB (estimate, unmeasured) → 10 stacks 60–100GB+. Shared infra + per-worktree namespaces (core supports it) → ~2–3GB/worktree for the PM2 services + ~8GB shared infra → 64GB OK. Measure both before buying.
-- Local VN listings (neo 30t/50s/50t, M70s Gen 5): all i5, all cap at 64GB (2 DDR5 UDIMM, per PSREF). Best of them: M70s Gen 5 i5-14400 8GB/512GB, 17.8M VND. The rest either use a laptop chip (neo 30t, i5-13420H) or cost more for less.
-- For 10 stacks: tower with 4 DIMM slots (128GB+), 16+ cores: e.g. Ryzen 9 9950X DIY / ThinkStation P3 Tower-class.
-- "Mac-mini-like" non-Apple (efficient + capable): Strix Halo (Ryzen AI Max+ 395, 16C, 128GB soldered, ~10W idle) is the closest x86 match and fits the 10-stack case; Ryzen AI 300 / 8845HS mini PCs (SO-DIMM, 64–96GB) for the shared-infra case. Power cost gap vs Mac ≈ $10–25/yr, not a deciding factor.
+Sources (2026-09): Macworld M5 Pro mini review + 2026 Mac Studio; Minisforum store / Newegg MS-A2; ComputingForGeeks Strix Halo prices; Lenovo PSREF (M70s Gen 5, neo 50s/50t Gen 6, M90q Gen 3–5); BuyRefurbished M90q Gen 6.
