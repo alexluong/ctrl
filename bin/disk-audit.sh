@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 # Disk usage audit — measures the same buckets every run so snapshots are comparable.
-# MacBook Pro only (460G volume). See docs/machine-disk.md.
+# MacBook Pro only (460G volume). See ctrl-vault/docs/machine-disk.md.
 #
 # Usage: bin/disk-audit.sh [--row]
 #   (no args)  human-readable report + drill-down
-#   --row      single markdown table row, to append to docs/machine-disk.md
+#   --row      single markdown table row, to append to ctrl-vault/docs/machine-disk.md
 #
 # Buckets are defined once, here. If you change a bucket's paths, past snapshots
-# stop being comparable — note it in docs/machine-disk.md when you do.
+# stop being comparable — note it in ctrl-vault/docs/machine-disk.md when you do.
 
 set -uo pipefail
 VOL="/System/Volumes/Data"
@@ -17,7 +17,7 @@ VOL="/System/Volumes/Data"
 # means "this grew past its normal range, go look" — not "this is wasteful".
 # Budgets are independent tripwires, not a partition of the disk: they're allowed
 # to sum past capacity because the buckets don't all peak at once. FREE_FLOOR is
-# the actual act-now signal. Rationale and revisions: docs/machine-disk.md.
+# the actual act-now signal. Rationale and revisions: ctrl-vault/docs/machine-disk.md.
 # NOTE: all figures here are GiB (what df reports). The disk is 460 GiB, which is
 # the same thing as the 494 GB / "500GB" you'll see quoted elsewhere — decimal vs
 # binary, not extra space. Budgets below sum to ~460, i.e. the whole disk, so they
@@ -40,7 +40,7 @@ repos_paths=(
   "$HOME/code"
 )
 # Tooling state: package stores, module caches, installed runtimes, tool VMs.
-# Mixed prunability — see docs/machine-disk.md for what's worth clearing (pnpm
+# Mixed prunability — see ctrl-vault/docs/machine-disk.md for what's worth clearing (pnpm
 # store, Library/Caches) vs what just refills on next use (go modcache,
 # vm_bundles) vs what isn't cache at all (mise/bun/asdf/pyenv/cargo).
 system_paths=(
@@ -189,5 +189,5 @@ for p in "${personal_paths[@]}"; do
 done | sort -rh | head -5 | sed 's/^/    /'
 
 echo
-echo "Snapshot row for docs/machine-disk.md:"
+echo "Snapshot row for ctrl-vault/docs/machine-disk.md:"
 "$0" --row

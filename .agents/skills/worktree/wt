@@ -1,0 +1,124 @@
+#!/usr/bin/env bash
+# wt: worktrees of exploration/POC repos. One bare clone per repo (repos/<repo>.git), worktrees at wt/<repo>/<name>.
+# Repos are whatever is in repos/ (no fixed list); <repo> alone means alexluong/<repo>.
+#
+#   wt init <repo|owner/repo> [...]         bare clone + wt/<repo>/main (read-only reference)
+#   wt add <repo> <name> [--from <ref>] [--no-setup]
+#                                           wt/<repo>/<name> on branch <name> (reused if it exists locally or on origin,
+#                                           else from origin/main or <ref>). Runs `mise run setup` if the repo has it
+#   wt rm <repo> <name> [--force]           remove a worktree (branch kept)
+#   wt sync [repo...]                       fetch + move wt/<repo>/main to origin/main (all repos by default)
+#   wt ls                                   worktrees: branch, vs origin/main, dirty
+set -euo pipefail
+
+ROOT="$(git -C "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" rev-parse --show-toplevel)"
+WT="$ROOT/wt"
+
+die() { echo "wt: $*" >&2; exit 1; }
+bare() { echo "$ROOT/repos/$1.git"; }
+repos() { for b in "$ROOT"/repos/*.git; do [ -d "$b" ] && basename "$b" .git; done; }
+check_repo() { [ -d "$(bare "$1")" ] || die "unknown repo '$1' (wt init $1)"; }
+
+setup_worktree() { # sessions starting inside a worktree get the workspace's Claude wiring
+  [ -e "$1/.claude" ] || ln -s ../../../.claude "$1/.claude"
+  mise trust -q "$1" 2>/dev/null || true
+}
+
+cmd_init() {
+  [ $# -gt 0 ] || die "usage: wt init <repo|owner/repo> [...]"
+  local spec
+  for spec in "$@"; do
+    local r="${spec##*/}" owner="alexluong"; [[ "$spec" == */* ]] && owner="${spec%%/*}"
+    local url="git@github.com:$owner/$r.git" b; b="$(bare "$r")"
+    if [ ! -d "$b" ]; then
+      git ls-remote -q --exit-code "$url" HEAD >/dev/null 2>&1 || { echo "skip $r: $url missing or empty (push a first commit)"; continue; }
+      local ref=() old="$HOME/git/hub/alexluong/$r"
+      [ -e "$old/.git" ] && ref=(--reference "$old" --dissociate)
+      git clone -q --bare ${ref[@]+"${ref[@]}"} "$url" "$b"
+      git -C "$b" config remote.origin.fetch '+refs/heads/*:refs/remotes/origin/*'
+      git -C "$b" fetch -q origin
+    fi
+    grep -qx ".claude" "$b/info/exclude" 2>/dev/null || echo ".claude" >> "$b/info/exclude"
+    local d="$WT/$r/main"
+    if [ ! -d "$d" ]; then
+      mkdir -p "$WT/$r"
+      git -C "$b" worktree add -q --detach "$d" origin/main
+      setup_worktree "$d"
+    fi
+    echo "ok: $r  $(git -C "$d" log --oneline -1)"
+  done
+}
+
+cmd_sync() {
+  local list="${*:-$(repos)}" r
+  for r in $list; do
+    check_repo "$r"; local d="$WT/$r/main"
+    [ -d "$d" ] || { echo "skip $r (no wt/$r/main)"; continue; }
+    git -C "$(bare "$r")" fetch -q --prune origin
+    [ -z "$(git -C "$d" status --porcelain)" ] || die "wt/$r/main has local changes; it must stay pristine"
+    git -C "$d" checkout -q --detach origin/main
+    echo "wt/$r/main at $(git -C "$d" log --oneline -1)"
+  done
+}
+
+cmd_add() {
+  local r="${1:-}" name="${2:-}"; [ -n "$r" ] && [ -n "$name" ] || die "usage: wt add <repo> <name> [--from <ref>] [--no-setup]"
+  shift 2
+  local from="" setup=1
+  while [ $# -gt 0 ]; do
+    case "$1" in
+      --from) from="${2:?--from <ref>}"; shift 2 ;;
+      --no-setup) setup=""; shift ;;
+      *) die "unknown arg $1" ;;
+    esac
+  done
+  [ "$name" = main ] && die "main is the read-only reference"
+  check_repo "$r"
+  local b d; b="$(bare "$r")"; d="$WT/$r/$name"
+  [ -e "$d" ] && { echo "exists: wt/$r/$name"; return; }
+  git -C "$b" fetch -q origin
+  if git -C "$b" show-ref -q --verify "refs/heads/$name"; then
+    git -C "$b" worktree add -q "$d" "$name"
+  elif git -C "$b" show-ref -q --verify "refs/remotes/origin/$name"; then
+    git -C "$b" worktree add -q --track -b "$name" "$d" "origin/$name"
+  else
+    git -C "$b" worktree add -q --no-track -b "$name" "$d" "${from:-origin/main}"
+  fi
+  setup_worktree "$d"
+  if [ -n "$setup" ] && (cd "$d" && mise tasks ls --no-header 2>/dev/null | awk '{print $1}' | grep -qx setup); then
+    (cd "$d" && mise run setup >/dev/null 2>&1) || echo "wt: mise run setup failed in wt/$r/$name (run it there)" >&2
+  fi
+  echo "wt/$r/$name  branch=$(git -C "$d" branch --show-current)  from=$(git -C "$d" log --oneline -1 --format='%h %s' | cut -c1-60)"
+}
+
+cmd_rm() {
+  local r="${1:?usage: wt rm <repo> <name> [--force]}" name="${2:?usage: wt rm <repo> <name> [--force]}"; shift 2
+  [ "$name" = main ] && die "not removing main"
+  local force=(); [ "${1:-}" = --force ] && force=(--force)
+  check_repo "$r"; local d="$WT/$r/$name"
+  [ -d "$d" ] || die "no wt/$r/$name"
+  local link=""; [ -L "$d/.claude" ] && { rm "$d/.claude"; link=1; }
+  git -C "$(bare "$r")" worktree remove ${force[@]+"${force[@]}"} "$d" || { [ -z "$link" ] || ln -s ../../../.claude "$d/.claude"; die "wt/$r/$name has changes (commit them, or --force to discard)"; }
+  echo "removed wt/$r/$name (branch kept)"
+}
+
+cmd_ls() {
+  printf "%-36s %-30s %-10s %s\n" WORKTREE BRANCH "VS MAIN" DIRTY
+  local r d
+  for r in $(repos); do
+    [ -d "$WT/$r" ] || continue
+    for d in "$WT/$r"/*/; do
+      d="${d%/}"; [ -e "$d/.git" ] || continue
+      local br vs dirty
+      br="$(git -C "$d" branch --show-current)"; br="${br:-(detached)}"
+      vs="$(git -C "$d" rev-list --left-right --count "origin/main...HEAD" 2>/dev/null | awk '{printf "-%s +%s", $1, $2}')"
+      dirty="$([ -n "$(git -C "$d" status --porcelain 2>/dev/null)" ] && echo yes || echo -)"
+      printf "%-36s %-30s %-10s %s\n" "wt/$r/$(basename "$d")" "$br" "$vs" "$dirty"
+    done
+  done
+}
+
+case "${1:-}" in
+  init|sync|add|rm|ls) c="$1"; shift; "cmd_$c" "$@" ;;
+  *) sed -n '2,13p' "$0" | sed 's/^# \{0,1\}//'; exit 1 ;;
+esac

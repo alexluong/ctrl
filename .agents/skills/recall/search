@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+# search <term> [term...]: what ctrl already knows about a topic.
+# Each term is searched separately (case-insensitive, fixed string). Sources, in order:
+#   memory, docs, re, biz (no CSVs), vault git history.
+set -uo pipefail
+ROOT="$(git -C "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" rev-parse --show-toplevel)"
+cd "$ROOT"
+[ $# -gt 0 ] || { sed -n '2,4p' "$0" | sed 's/^# \{0,1\}//'; exit 2; }
+RG=(rg --no-heading -i -F -n --max-columns 160 --max-columns-preview -m 3 -g '!*.csv')
+section() { echo; echo "## $1"; }
+for t in "$@"; do
+  echo "# \"$t\""
+  section "memory (ctrl-vault/memory)"; "${RG[@]}" -- "$t" ctrl-vault/memory 2>/dev/null | head -20 || true
+  section "docs (ctrl-vault/docs)";     "${RG[@]}" -- "$t" ctrl-vault/docs 2>/dev/null | head -25 || true
+  section "real estate (ctrl-vault/re)"; "${RG[@]}" -- "$t" ctrl-vault/re 2>/dev/null | head -20 || true
+  section "biz (ctrl-vault/biz)";       "${RG[@]}" -- "$t" ctrl-vault/biz 2>/dev/null | head -10 || true
+  section "history (git log)";          git log --oneline -i -F --grep="$t" -n 10 2>/dev/null || true
+  echo
+done

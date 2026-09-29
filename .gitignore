@@ -1,3 +1,18 @@
 .DS_Store
-# machine-local secrets; canonical copy in Vaultwarden. See docs/machine.md.
-secrets/
+
+# code lives elsewhere
+/repos/
+/wt/
+
+# secrets; canonical copy in Vaultwarden. See ctrl-vault/docs/machine.md.
+/secrets/
+.env
+.env.*
+!.env.example
+
+# obsidian per-device state
+**/.obsidian/workspace*.json
+**/.obsidian/cache
+
+# scratch and data exports; never committed
+/local/

@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+# check: mechanical health report for ctrl (memory, vault paths, worktrees). Read-only.
+set -uo pipefail
+ROOT="$(git -C "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" rev-parse --show-toplevel)"
+cd "$ROOT"
+MI=ctrl-vault/memory/MEMORY.md
+
+echo "## Memory"
+n_files=$(find ctrl-vault/memory -name '*.md' ! -name MEMORY.md | wc -l | tr -d ' ')
+echo "files: $n_files | index lines: $(wc -l < "$MI" | tr -d ' ') (loaded: first 200; target < 150)"
+echo "- in index, file missing:"
+grep -oE '\]\([^)]+\.md\)' "$MI" | sed 's/](\(.*\))/\1/' | sort -u | while read -r f; do [ -f "ctrl-vault/memory/$f" ] || echo "  $f"; done
+echo "- file not in index:"
+find ctrl-vault/memory -name '*.md' ! -name MEMORY.md -exec basename {} \; | sort | while read -r f; do grep -qF "($f)" "$MI" || echo "  $f"; done
+echo "- long memories (> 25 lines):"
+find ctrl-vault/memory -name '*.md' ! -name MEMORY.md | while read -r f; do l=$(wc -l < "$f" | tr -d ' '); [ "$l" -gt 25 ] && echo "  $l $f"; done
+echo "- index lines > 200 chars:"
+awk 'length > 200 {print "  line " NR ": " length " chars"}' "$MI" | head -10
+
+echo; echo "## Broken vault paths (backticked ctrl-vault/… that don't exist)"
+git grep -hoE '`ctrl-vault/[^` <>*]+`' -- . ':!ctrl-vault/re/log' | tr -d '`' | sort -u | while read -r p; do
+  [ -e "$p" ] || echo "  $p"; done
+
+echo; echo "## Worktrees and branches"
+bin/wt ls 2>/dev/null
+for d in wt/*/*/; do
+  d="${d%/}"; [ -e "$d/.git" ] || continue; [ "$(basename "$d")" = main ] && continue
+  echo "- $d: last commit $(git -C "$d" log -1 --format=%cr), +$(git -C "$d" rev-list --count origin/main..HEAD 2>/dev/null) vs main"
+done
+echo "- local branches without a worktree:"
+for b in repos/*.git; do
+  [ -d "$b" ] || continue
+  used="$(git -C "$b" worktree list --porcelain | sed -n 's|^branch refs/heads/||p')"
+  git -C "$b" for-each-ref --format='%(refname:short)' refs/heads | while read -r br; do grep -qx "$br" <<<"$used" || echo "  $(basename "$b" .git): $br"; done
+done
+
+echo; echo "## Untracked, unignored files"
+git status --porcelain --untracked-files=all | sed -n 's/^?? /  /p'

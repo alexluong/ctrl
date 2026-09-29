@@ -1,0 +1,20 @@
+---
+name: new-project
+description: Bootstrap a new personal project — repo + GitHub + local setup + living doc in ctrl + pointer CLAUDE.md. Also recreates the pointer for an existing project on a new machine.
+---
+
+# New Project Bootstrap
+
+Set up a personal project per `ctrl-vault/docs/workflow.md`: code-only repo + living doc in ctrl + machine-local pointer.
+
+## Instructions
+
+Given a project name (ask if not provided; for pointer-only recreation on a new machine, do steps 4–5 only):
+
+1. **Repo** — `mkdir ~/git/hub/alexluong/<name> && git init` (skip if exists).
+2. **Living doc** — create `ctrl/ctrl-vault/docs/projects/<name>.md`: one-line what/why, status line (dated), design principle, plan, open questions. Skip if it exists (it usually will — ideas start in ctrl before the repo). A doc that outgrows one file may become `ctrl/ctrl-vault/docs/projects/<name>/` with a `README.md` entry point (see workflow.md).
+3. **Local scaffold** — stack-appropriate skeleton (Xcode project, `go mod init`, `npm create`, …) per the living doc's stack decision; ask if undecided. Set up the `fix` / `check` commands for the stack (formatter + linter + type-check; see workflow.md "Quality bar"). Write a README with a "Local setup" section (prereqs, deps, build/test/run + fix/check — see workflow.md "Setup doc"). Commit `chore: scaffold project` and create the remote: `gh repo create alexluong/<name> --private --source . --push` (ask before making anything public).
+4. **Pointer CLAUDE.md** in the project repo (machine-local, untracked):
+   - `echo "CLAUDE.md" >> <repo>/.git/info/exclude`
+   - Write `<repo>/CLAUDE.md` covering: repo is code-only; notes live at `~/workspaces/ctrl/ctrl-vault/docs/projects/<name>.md` (or the `<name>/` directory, if that's the form — point at its `README.md`); read it at session start; write decisions back there and commit in ctrl; never create notes/TODO markdown here; no `~/.claude` memory; conventions at `ctrl/ctrl-vault/docs/workflow.md`. (Use `~/git/hub/alexluong/fitjournal/CLAUDE.md` as the template.)
+5. **Index** — add the project to the `alexluong` org list in `ctrl-vault/docs/machine.md` if missing; commit in ctrl (`docs(projects): add <name>`).
