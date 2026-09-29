@@ -80,3 +80,11 @@ Alex isn't handy and doesn't want to spend time → buy a prebuilt from a big ch
 - RAM (Sep 2026): 1×16 ~6.1M, 1×32 ~13.7M, 2×16 ~13.9M, 2×32 ~20.5–26M. ThinkCentres ignore XMP → buy JEDEC 5600 sticks.
 - Dual vs single channel: dual (2×16) now; 64GB later = swap to 2×32.
 - Free install: Phong Vũ yes (parts bought with PC); others unverified/paid.
+
+## Shop follow-up 2026-09-30
+
+Alex prefers GearVN (bought there before); dislikes Phong Vũ-type chains.
+
+- GearVN: no Lenovo/Dell/HP business desktops. Own builds only. "PC GVN Homework i7 14700" 17.990.000 (https://gearvn.com/products/pc-gvn-homework-intel-i7): parts table = Gigabyte H610M-H V3 **DDR4**, 8GB SSTC DDR4, 256GB SSTC Gen3 SSD, CoolerMaster PN600, EDRA mATX case; highlights say 16GB/512GB/RTX 3050 — inconsistent, stock_total 1. Budget parts; use only as a base for a custom quote. Sales 1900.5301, Zalo https://zalo.me/450955578960321912.
+- Hacom 12UB0008VA confirmed: 23.999.000 (promo 20.999.000), 1 unit at Kho HUB (43 Louis 8, Hoàng Mai, HN), 2 RAM slots / 64GB, **1× M.2 only** + 3.5"/2.5" bays, 12-mo warranty, hotline 1900.1903.
+- Phong Vũ has ThinkCentres: neo 50t Gen 6 13BB000AVN (U5 225, 16GB, 512GB, Win11) 24.990.000 in stock.
