@@ -23,4 +23,6 @@ r/AnarchyChess video "Sorry, I'm new to chess. Is this legal?" (2026-09-28, via 
 
 ## Status
 
-2026-09-29: POC playable (`pnpm dev`). 64 engine tests incl. 200 random-game invariants; browser QA passed. `?seed=<n>` for a fixed deck. Open cosmetic nits: mobile header wrap, current card below fold on phone, Reverse spin overlaps panels, banner covers board 2.6s.
+2026-09-30: POC v2 done (22 commits, 87 tests incl. 200 random-game + 100 bot-vs-bot invariant runs; browser QA passed). Features: hot seat + vs computer (greedy 1-ply bot), last-turn arrows, king-danger warning, undo within own turn, localStorage save, rules modal, animations, mobile layout, `?seed=<n>` for a fixed deck.
+
+Next ideas: smarter bot (card-aware), online play, rename + publish.
