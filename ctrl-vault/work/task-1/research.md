@@ -44,6 +44,8 @@ Always: 2TB+ NVMe (second M.2 slot for Docker is nice), Linux headless, Tailscal
 
 ## Leaning
 
+- **Decided 2026-09-30 (Alex): 64GB ceiling is enough; start at 16–32GB.** → 2-slot box that supports 64GB is fine; buy RAM as 1×32GB (not 2×16) so the upgrade is +1×32. 16GB too tight (one core stack ~6–10GB est + builds). DIY/128GB options parked.
+
 - ≤64GB (shared infra) → prebuilt: business SFF (M70s-class, add RAM + SSD) or efficient mini PC.
 - 128GB+ (isolated stacks) → DIY tower (price/upgradability) or Strix Halo box (compact/efficient).
 
