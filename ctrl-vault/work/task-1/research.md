@@ -1,6 +1,6 @@
 # TASK-1: always-on dev box for hookdeck — research
 
-Started 2026-09-30. Buying in Vietnam. Mac Mini (base M4) stays on arrstack + enable/solex.
+Started 2026-09-30. Alex is in **HCMC**. Mac Mini (base M4) stays on arrstack + enable/solex.
 
 ## Workload (from ~/workspaces/hookdeck)
 
@@ -108,3 +108,4 @@ Alex doesn't weigh warranty (dislikes dealing with it) → used deals judged on 
 - HP EliteDesk 800 G8 Mini (Japan off-lease), i7-11700T (8C/16T, 35W), 16GB DDR4, 256GB — 10M. Pass: below CPU floor, T-chip, HP warranty long expired; Z2 Mini G9 at 16M is far stronger, no-name 11900H at 5M similar speed for half.
 - Dell Precision T5610 (2013), 2× Xeon E5-2695 v2 (24C/48T), 32GB DDR3 ECC, 256GB — ~5M each, HCMC (Zalo 0989219822). Pass: ~half M1 Pro single-thread (tsc/jest/pnpm), no AVX2, ~100W+ idle, big + loud. Only upside: cheap DDR3 → lots of RAM.
 - Dell Precision 5820 tower, Xeon W-2245 (8C/16T, 2019), 16GB DDR4 ECC, RTX 2070 8GB, 256GB + 4TB HDD — no price. ≈ M1 Pro multi, slower single; 8 RDIMM slots (cheap used ECC → lots of RAM); ~60–80W idle w/ GPU, big tower. Only if cheap (≲8M, sell the 2070); Z2 Mini G9 still better.
+- Correction: Z2 Mini G9 post gave no location (the "giao tận nơi Hà Nội" line was the 800 G8 post). Ask the seller. HCMC fallbacks: Hugotech neo 50s U7 23.69M, M70s Gen 6 U7 ~25M (nhanhavui / Mạnh Phát), TNC U5 21.49M.
