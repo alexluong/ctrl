@@ -9193,7 +9193,8 @@
       "video": "x264",
       "audio": "",
       "hdr": "",
-      "status": "pending"
+      "status": "linked",
+      "library": "blue4/movies/Heathers The Musical (2022)"
     },
     {
       "download": "blue4/Nathan.for.You.2013.S01-S04.1080p AMZN.WEB-DL.x265.HEVC.10bit.AAC.2.0-ImE",
@@ -9241,7 +9242,39 @@
       "hdr": "",
       "status": "linked",
       "library": "blue4/movies/Legally Blonde (2001)"
+    },
+    {
+      "download": "blue4/Fleabag S02 1080p AMZN WEB-DL h264 EAC3-peaclock",
+      "type": "tv",
+      "title": "Fleabag",
+      "seasons": [
+        2
+      ],
+      "resolution": "1080p",
+      "source": "WEB-DL",
+      "group": "peaclock",
+      "video": "x264",
+      "audio": "DD+",
+      "hdr": "",
+      "status": "linked",
+      "library": "blue4/tv/Fleabag"
+    },
+    {
+      "download": "blue4/Fleabag S01 1080p AMZN WEB-DL h264 EAC3-peaclock",
+      "type": "tv",
+      "title": "Fleabag",
+      "seasons": [
+        1
+      ],
+      "resolution": "1080p",
+      "source": "WEB-DL",
+      "group": "peaclock",
+      "video": "x264",
+      "audio": "DD+",
+      "hdr": "",
+      "status": "linked",
+      "library": "blue4/tv/Fleabag"
     }
   ],
-  "updated_at": "2026-09-28 20:01:49"
+  "updated_at": "2026-09-29 19:55:43"
 }

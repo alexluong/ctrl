@@ -1393,8 +1393,8 @@
       "download": "blue4/Shazam.2019.1080p.BluRay.Opus.7.1.AV1-KIMJI"
     },
     {
-      "torrent": "blue4/dc/WALL·E.2008.1080p.BluRay.Opus.5.1.AV1-KIMJI.torrent",
-      "download": "blue4/WALL·E.2008.1080p.BluRay.Opus.5.1.AV1-KIMJI"
+      "torrent": "blue4/dc/WALL\u00b7E.2008.1080p.BluRay.Opus.5.1.AV1-KIMJI.torrent",
+      "download": "blue4/WALL\u00b7E.2008.1080p.BluRay.Opus.5.1.AV1-KIMJI"
     },
     {
       "torrent": "blue4/dc/Spider-Man.Into.the.Spider-Verse.2018.2160p.UHD.BluRay.x265-TERMiNAL.torrent",
@@ -2867,7 +2867,15 @@
     {
       "torrent": "blue4/dc/Legally.Blonde.2001.REMASTERED.1080p.BluRay.x265.torrent",
       "download": "blue4/Legally.Blonde.2001.REMASTERED.1080p.BluRay.x265"
+    },
+    {
+      "torrent": "blue4/dc/Fleabag.S02.1080p.AMZN.WEB-DL.h264.EAC3-peaclock.torrent",
+      "download": "blue4/Fleabag S02 1080p AMZN WEB-DL h264 EAC3-peaclock"
+    },
+    {
+      "torrent": "blue4/dc/Fleabag.S01.1080p.AMZN.WEB-DL.h264.EAC3-peaclock.torrent",
+      "download": "blue4/Fleabag S01 1080p AMZN WEB-DL h264 EAC3-peaclock"
     }
   ],
-  "updated_at": "2026-09-28 19:59:16"
+  "updated_at": "2026-09-29 19:55:42"
 }
