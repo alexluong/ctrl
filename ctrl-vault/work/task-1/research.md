@@ -89,3 +89,11 @@ Alex prefers GearVN (bought there before); dislikes Phong Vũ-type chains.
 - Hacom 12UB0008VA confirmed: 23.999.000 (promo 20.999.000), 1 unit at Kho HUB (43 Louis 8, Hoàng Mai, HN), 2 RAM slots / 64GB, **1× M.2 only** + 3.5"/2.5" bays, 12-mo warranty, hotline 1900.1903.
 - Phong Vũ has ThinkCentres: neo 50t Gen 6 13BB000AVN (U5 225, 16GB, 512GB, Win11) 24.990.000 in stock.
 - Candidate from Alex (Shopee, seller An Khang): neo 50s Gen 6 13DM003NVA — Core Ultra 7 265, 1×16GB DDR5, 512GB, NoOS, 12-mo — 31.190.000, 10 in stock. Same SKU at Hacom 29.999.000 (hacom.vn/pc-lenovo-thinkcentre-neo-50s-gen-6-pcle0323). PSREF: 2 DDR5 UDIMM (64GB), **2× M.2 2280 PCIe 4.0** + 1× 3.5" bay, 1GbE. Better than the neo 50t i7-14700 pick (2 M.2, newer/cooler CPU, no Raptor Lake instability).
+
+## Other shops for 13DM003NVA (2026-09-30, verified on product pages)
+
+- Hanoi, established: An Khang website 28.790.000 (sẵn hàng; their Shopee is 31.19M) https://www.ankhang.vn/may-tinh-de-ban-lenovo-thinkcentre-neo-50s-gen-6-13dm003nva.html · Phúc Anh 28.990.000 (có hàng, 1900 2164) https://www.phucanh.vn/pc-lenovo-thinkcentre-neo-50s-g6-13dm003nva.html · Laptop World 28.890.000.
+- HCMC: Hugotech 23.690.000 (lowest believable; smaller shop — call first) https://hugotech.vn/pc-lenovo-thinkcentre-neo-50s-gen-6-13dm003nva/
+- Suspicious-cheap: hancomputer.vn 20.54M (NVA), compro.com.vn 15.99M (MVA).
+- Alternatives: M70s Gen 6 12YK001VVA (U7 265/16/512) ~24.95–25.4M (Mạnh Phát HCMC đặt hàng; nhanhavui HCMC; Bảo An HN unverified). M70t Gen 6 12YH002PVA 25.49M Hugotech. 12YH002QVA is 8GB.
+- Seller lists via websosanh.vn/compare-api/get-compare-normal-merchant?rootProductId=<id>.
