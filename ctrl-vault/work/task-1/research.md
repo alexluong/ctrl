@@ -100,6 +100,8 @@ Alex prefers GearVN (bought there before); dislikes Phong Vũ-type chains.
 
 ## FB deals (Alex browsing, 2026-09-30)
 
+Alex doesn't weigh warranty (dislikes dealing with it) → used deals judged on price/perf + condition checks only.
+
 - Dell Pro Micro QCM1250, Core Ultra 5 235T (14C/14T, 35W), 16GB DDR5 SO-DIMM (1 slot free), 256GB NVMe (1 M.2 free), 90W adapter, "lightly used" — 15.5M. Verdict: OK if service tag checks out; T-chip ≈ well below U7 265 sustained. Ask: service tag (Dell warranty lookup), BIOS unlocked/no admin password, SMART hours.
 - FB no-name mini PCs: i5-7400T/7500T 16/256 2M (too old, 4C/4T — skip); i7-10750H 4.2M; i7-11800H 4.5M; i9-11900H 5M (8C/16T laptop chips, DDR4, ≈ M1 Pro multicore). Cheap because old platform + likely used/no-name. Possible as a cheap trial box; ask brand/model, slots, warranty, noise.
 - HP Z2 Mini G9, i5-13500 (14C/20T, 65W desktop), 16GB DDR5 SO-DIMM, 256GB, adapter — 16M. Seller (FB): https://www.facebook.com/groups/610350386210787/user/1032893592/ Workstation mini: 2 SO-DIMM (up to 64–96GB, ECC capable), 2× M.2 Gen4. Best FB deal so far (vs Dell Pro Micro 235T at 15.5M). Same checks (serial → HP warranty, BIOS lock, SSD hours).
