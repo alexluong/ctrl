@@ -1,0 +1,67 @@
+#!/usr/bin/env bash
+# Drift check for agent workspaces against docs/workspace-setup.md.
+# Usage: check [name...]   (default: every ~/workspaces/*/ that has AGENTS.md)
+set -u
+root="$HOME/workspaces"
+std_skills="done lead recall tidy workspace worktree"
+roles="product dev reviewer qa"
+names=("$@")
+if [ ${#names[@]} -eq 0 ]; then
+  for d in "$root"/*/; do [ -f "$d/AGENTS.md" ] && names+=("$(basename "$d")"); done
+fi
+
+# reference done skill = most common hash
+ref_done=$(for n in "${names[@]}"; do md5 -q "$root/$n/.agents/skills/done/SKILL.md" 2>/dev/null; done | sort | uniq -c | sort -rn | awk 'NR==1{print $2}')
+
+fails=0
+for n in "${names[@]}"; do
+  w="$root/$n"; issues=()
+  bad() { issues+=("$1"); }
+  [ -d "$w/.git" ] || { echo "== $n: not a git repo"; fails=$((fails+1)); continue; }
+  # instructions
+  [ "$(readlink "$w/CLAUDE.md" 2>/dev/null)" = "AGENTS.md" ] || bad "CLAUDE.md is not a symlink to AGENTS.md"
+  [ "$(readlink "$w/.claude/skills" 2>/dev/null)" = "../.agents/skills" ] || bad ".claude/skills is not a symlink to ../.agents/skills"
+  for s in $std_skills; do [ -f "$w/.agents/skills/$s/SKILL.md" ] || bad "missing skill: $s"; done
+  for s in recall/search tidy/check; do [ -x "$w/.agents/skills/$s" ] || bad "missing script: $s"; done
+  [ -e "$w/bin/wt" ] || bad "missing bin/wt"
+  [ "$(md5 -q "$w/.agents/skills/done/SKILL.md" 2>/dev/null)" = "$ref_done" ] || bad "done skill differs from the common copy"
+  for r in $roles; do
+    [ -f "$w/.agents/roles/$r.md" ] || bad "missing role: $r"
+    [ -f "$w/.claude/agents/$r.md" ] || bad "missing agent wrapper: $r"
+  done
+  # vault
+  v="$w/$n-vault"
+  if [ -d "$v" ]; then
+    for d in backlog work notes memory; do [ -d "$v/$d" ] || bad "missing $n-vault/$d"; done
+    [ -f "$v/digest.md" ] || bad "missing $n-vault/digest.md"
+  else bad "missing $n-vault/"; fi
+  # settings
+  s="$w/.claude/settings.json"
+  if [ -f "$s" ]; then
+    [ "$(jq -r .autoMemoryEnabled "$s")" = "true" ] || bad "autoMemoryEnabled not true"
+    [ "$(jq -r .autoMemoryDirectory "$s")" = "~/workspaces/$n/$n-vault/memory" ] || bad "autoMemoryDirectory != ~/workspaces/$n/$n-vault/memory"
+    jq -e '.hooks.SessionStart' "$s" >/dev/null || bad "no SessionStart hook"
+    jq -e '.permissions.deny | map(select(test("\\.env"))) | length > 0' "$s" >/dev/null || bad "no .env deny rule"
+    if [ -d "$w/ops" ]; then
+      jq -e '.hooks.PreToolUse' "$s" >/dev/null || bad "has ops/ but no PreToolUse guard"
+      [ -e "$w/bin/prd" ] || bad "has ops/ but no bin/prd"
+    fi
+  else bad "missing .claude/settings.json"; fi
+  # gitignore essentials
+  for p in /repos/ /wt/ .env '.env.*' '!.env.example' /local/ '**/.obsidian/workspace*.json'; do
+    grep -qxF -- "$p" "$w/.gitignore" 2>/dev/null || bad "gitignore missing: $p"
+  done
+  [ -d "$w/.gcloud" ] && { grep -qxF /.gcloud/ "$w/.gitignore" || bad "gitignore missing: /.gcloud/"; }
+  # misc
+  ls "$w"/favicon.* >/dev/null 2>&1 || bad "no root favicon"
+  for f in "$w"/favicon.*; do [ -e "$f" ] && ! git -C "$w" ls-files --error-unmatch "$(basename "$f")" >/dev/null 2>&1 && bad "$(basename "$f") untracked"; done
+  [ -f "$w/mise.toml" ] || bad "missing mise.toml"
+  dirty=$(git -C "$w" status --porcelain | wc -l | tr -d ' ')
+  [ "$dirty" = 0 ] || bad "$dirty uncommitted change(s)"
+  ahead=$(git -C "$w" rev-list --count @{u}..HEAD 2>/dev/null || echo "?")
+  [ "$ahead" = 0 ] || bad "$ahead unpushed commit(s)"
+
+  if [ ${#issues[@]} -eq 0 ]; then echo "== $n: ok"
+  else echo "== $n: ${#issues[@]} issue(s)"; printf '  - %s\n' "${issues[@]}"; fails=$((fails+1)); fi
+done
+exit $((fails > 0))

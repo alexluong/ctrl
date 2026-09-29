@@ -2,12 +2,12 @@
 
 How to set up a personal agent workspace (`~/workspaces/<name>`) for a project: agent config, board, notes, memory, isolated tools and infra access, code in worktrees. Reference implementations: Enable (`~/workspaces/enable`, repo `alexluong/enable-workspace`; history in `projects/enable-workspace.md`) = one team super-repo with submodules; hookdeck (`~/workspaces/hookdeck`, `projects/hookdeck-workspace.md`) = independent repos, no systems. SoLex (`~/workspaces/solex`, `projects/solex-workspace.md`) = one own repo, no team, no prod: the smallest shape. Collie Studio (`~/workspaces/cs`, `projects/cs-workspace.md`) = several own repos, no prod: hookdeck's `wt/<repo>/<name>` with SoLex's skills. Related: `claude-config.md` (zero-global Claude config), `infra-access.md` (the env-dir pattern in depth).
 
-Written for whoever runs the setup (Claude or a human). Steps marked **👤** need the person: browser logins, tokens, decisions.
+Written for whoever runs the setup (Claude or a human). Claude: drive it with the ctrl `workspace-setup` skill (new / audit / sync); its `check` script verifies the structural invariants below. Steps marked **👤** need the person: browser logins, tokens, decisions.
 
 ## Principles
 
 - **One personal repo per workspace** holds agent config, board, notes and memory. Code is never in it: `repos/` (bare clones) and `wt/` (worktrees) are gitignored.
-- **Harness-neutral content, thin Claude wiring:** `AGENTS.md` + `.agents/skills` + `.agents/roles` are the content; `.claude/` only symlinks and settings. No `CLAUDE.md`.
+- **Harness-neutral content, thin Claude wiring:** `AGENTS.md` + `.agents/skills` + `.agents/roles` are the content; `.claude/` only symlinks and settings. `CLAUDE.md` is a tracked symlink to `AGENTS.md` (nothing else in it).
 - **Nothing global:** tools via the workspace `mise.toml`, no global MCP/plugins (`claude-config.md`), tokens in the workspace `.env`, gcloud in a workspace config dir.
 - **No access by default:** the root and worktrees carry no prod credentials; each env is a directory (`ops/stg`, `ops/prd` read-only, `ops/prd-rw`) reached through wrappers.
 - **Pristine sources:** `repos/` fetch-only, `wt/main` read-only reference; every change in `wt/task-N`.
@@ -38,7 +38,7 @@ Written for whoever runs the setup (Claude or a human). Steps marked **👤** ne
 
 - `git init ~/workspaces/<name>`, add the remote.
 - `.gitignore`: `/repos/`, `/wt/`, `.env`, `.env.*`, `!.env.example`, `**/.obsidian/workspace*.json`, `**/.obsidian/cache`, `/.gcloud/`, `/local/`, `/ops/*/*` + `!/ops/*/mise.toml`.
-- `AGENTS.md` (layout, how work flows, where commands run, work items, infra access, what to remember, git prefixes). Start from Enable's and replace the specifics.
+- `AGENTS.md` + `CLAUDE.md` → `AGENTS.md` symlink. `AGENTS.md` covers layout, how work flows, where commands run, work items, infra access, what to remember, git prefixes. Start from Enable's and replace the specifics.
 - `.agents/roles/{product,dev,reviewer,qa}.md` (copy Enable's; adjust the repo specifics in dev/qa).
 - Dirs: `<name>-vault/{backlog,work,notes,memory}` (the vault folder is named `<name>-vault`, e.g. `enable-vault`: Obsidian names a vault after its folder, and the bare workspace name clashes with repo/system names), `ops/{stg,prd,prd-rw}`, `bin/`, `local/`.
 - Root `favicon.svg` (or `.ico`/`.png`): T3 Code auto-detects it as the sidebar project icon. Use the product's brand favicon if one exists in its repos; else a rounded monogram tile in a color not used by other workspaces. Current: enable = brand swirl (`.ico`), hookdeck = brand tile, solex = Fluent Emoji "Hotel" 3D, `favicon.png` (MIT, microsoft/fluentui-emoji; the SoLex hotel, HCM, has no usable logo online: website dead, Facebook only), cs = green tile + solid white border collie head silhouette (line art is unreadable at 16px) (SVG Repo #21797, CC0; collie = herding dog, fits Studio's "you direct many small agents"). A T3 per-project override hides the favicon; clear it to show the file. Fallback without a file: T3 per-project override (Lucide icon + color + 2-char monogram, or emoji), stored only in T3's local DB. T3 caches icon lookups, including "no icon found", so reload T3 after adding or changing a favicon.
