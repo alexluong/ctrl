@@ -32,3 +32,9 @@ Leaning (2026-09-30, after "why beefy?"): refurb Lenovo/HP business mini at 64GB
 - Secrets/logins on new box: gcloud/kube (workspace-scoped), Doppler, Railway need redoing.
 
 Sources: Macworld M5 Pro mini review, Macworld 2026 Mac Studio, Minisforum store/Newegg MS-A2, ComputingForGeeks Strix Halo price comparison.
+
+## Update 2026-09-30: Alex may want 5–10+ stacks at once; buying in Vietnam
+
+- Changes sizing. Full isolated core stack ~6–10GB (estimate, unmeasured) → 10 stacks 60–100GB+. Shared infra + per-worktree namespaces (core supports it) → ~2–3GB/worktree for the PM2 services + ~8GB shared infra → 64GB OK. Measure both before buying.
+- Local VN listings (neo 30t/50s/50t, M70s Gen 5): all i5, all cap at 64GB (2 DDR5 UDIMM, per PSREF). Best of them: M70s Gen 5 i5-14400 8GB/512GB, 17.8M VND. The rest either use a laptop chip (neo 30t, i5-13420H) or cost more for less.
+- For 10 stacks: tower with 4 DIMM slots (128GB+), 16+ cores: e.g. Ryzen 9 9950X DIY / ThinkStation P3 Tower-class.
