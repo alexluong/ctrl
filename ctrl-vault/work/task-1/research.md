@@ -19,11 +19,14 @@
 | Minisforum MS-A2 (Linux) | Ryzen 9 9955HX 16C/32T, 96GB DDR5, 2TB | ~$1,919 preconfig ($799 barebone) | native Docker, 3× M.2 + U.2, 2×10G SFP+; ~fan noise, ~25W idle |
 | Mac mini M5 Pro | 18C, 64GB, 1TB | ~$2,899 | same env as MBP, silent, low power; Docker in VM; 1TB tight (external TB5 SSD) |
 | Mac Studio M5 Max | 64GB+ | $2,499 base (36GB) + $400 for 64GB (needs 40-core GPU tier) | overkill unless also for local LLMs |
+| Business mini/SFF, refurb (Lenovo M90q Tiny / HP Elite Mini 800) | e.g. M90q Gen 6, Core Ultra 7 265T, 64GB, 2TB | ~$1,139 refurb | home-server-grade: quiet, ~10W idle, 24/7-rated, vPro remote mgmt; Tiny = 2 SO-DIMM (64GB max), 2 M.2; SFF towers take 128GB |
 | Strix Halo boxes (GTR9 Pro / EVO-X2 / Framework) | Ryzen AI Max+ 395, 128GB | $2k–$4.3k | pay for iGPU/LLM memory we don't need |
 
-Leaning: MS-A2 + Linux (Ubuntu/Debian), headless, Tailscale. Open questions below.
+Leaning (2026-09-30, after "why beefy?"): refurb Lenovo/HP business mini at 64GB; MS-A2 if more cores/10GbE wanted. Earlier: + Linux (Ubuntu/Debian), headless, Tailscale. Open questions below.
 
 ## Open questions
+
+- No record found of the earlier HP/Lenovo discussion (vault, git, transcripts).
 
 - macOS vs Linux: does Alex want T3 Code / Claude desktop running on the box, or remote-drive via ssh/Tailscale?
 - Mac Mini spec: base M4 = 16GB? Enable runs up to 5 stacks (Mongo, 3 Redis, Postgres…) — likely too tight alongside arrstack.
