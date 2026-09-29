@@ -111,3 +111,12 @@ Alex doesn't weigh warranty (dislikes dealing with it) → used deals judged on 
 - Correction: Z2 Mini G9 post gave no location (the "giao tận nơi Hà Nội" line was the 800 G8 post). Ask the seller. HCMC fallbacks: Hugotech neo 50s U7 23.69M, M70s Gen 6 U7 ~25M (nhanhavui / Mạnh Phát), TNC U5 21.49M.
 - Shopee (HCMC, same-day ship, 13 sold, 5.0★): HP Z2 G9 Mini i7-12700T (12C/20T, 35W), 32GB DDR5, 1TB — 24.48M after voucher. Also offers SFF i5-12500 / i7-12700 / i7-13700 variants. Best "done, no upgrades" option: FB Z2 (13500) + 16GB + 1TB ≈ 26M; Hugotech U7 + 16GB + 1TB ≈ 30–34M. Trade-off: T-chip ~20–30% slower sustained than 13500. Check SFF i7-13700 32/1TB price.
 - Z2 G9 SFF (HP QuickSpecs): 4 DDR5 UDIMM (128GB), 3× M.2 Gen4, PCIe slots. SFF i7-13700 (16C/24T, 65W) vs Mini i7-12700T (35W): ~50%+ faster sustained, 4 slots, cheaper desktop RAM; bigger (~10L), ~15–25W idle. Raptor Lake i7 → update BIOS (microcode 0x12B+) first thing. Lean SFF i7-13700 if ≤ ~3–4M more.
+
+## HCMC refurb workstation specialists (2026-09-30)
+
+- **XEON.VN** — 61 Mai Xuân Thưởng, Q6; Zalo 0982 538 753 (Tue–Sat 9–18); used Grade A mini workstations built to order, 12-mo warranty. Z2 Mini G9 i5-12600/16GB/1TB/T400 from 21.4M (i7-12700/13700 + 32GB options, ask price); Precision 3260 from 21.5M; P360 Tiny from 19.2M; P3 Ultra 22–47M. https://xeon.vn/b/may-tram-hp-z2-mini-g9-workstation
+- TK Computer — 114B Tôn Thất Tùng Q1, 0909 668 826; US like-new imports, since 2004, 12-mo 1-for-1; pricey (OptiPlex 7000 Micro i7-12700/16/1TB 26M).
+- PCViet — Q5, Zalo 0777 771 770; cheapest refurb OptiPlex Micro barebones (7010 Micro 13th-gen T from 7.05M); 1-mo warranty.
+- ICT Sài Gòn (Bình Thạnh), Vi Tính Trần Phú (Q5, since 2015), Khóa Vàng (4 branches), Máy Chủ Sài Gòn (quote-only Z2 Mini G9).
+- OnlyLap (1073/21 CMT8, Tân Sơn Nhất, 0979.60.70.90): mostly old Xeon towers (skip); only fit = HP Z2 Tower G9 i5-13500/8GB/256GB 16.89M.
+- Z2 Mini G9 runs hot/loud under load per VOZ owner; P3 Ultra suggested as cooler alternative. HP spec may list only non-T CPUs for Z2 Mini G9 → verify the Shopee "12700T" (CPU-Z screenshot + serial).
