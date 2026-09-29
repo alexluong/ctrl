@@ -97,3 +97,7 @@ Alex prefers GearVN (bought there before); dislikes Phong Vũ-type chains.
 - Suspicious-cheap: hancomputer.vn 20.54M (NVA), compro.com.vn 15.99M (MVA).
 - Alternatives: M70s Gen 6 12YK001VVA (U7 265/16/512) ~24.95–25.4M (Mạnh Phát HCMC đặt hàng; nhanhavui HCMC; Bảo An HN unverified). M70t Gen 6 12YH002PVA 25.49M Hugotech. 12YH002QVA is 8GB.
 - Seller lists via websosanh.vn/compare-api/get-compare-normal-merchant?rootProductId=<id>.
+
+## FB deals (Alex browsing, 2026-09-30)
+
+- Dell Pro Micro QCM1250, Core Ultra 5 235T (14C/14T, 35W), 16GB DDR5 SO-DIMM (1 slot free), 256GB NVMe (1 M.2 free), 90W adapter, "lightly used" — 15.5M. Verdict: OK if service tag checks out; T-chip ≈ well below U7 265 sustained. Ask: service tag (Dell warranty lookup), BIOS unlocked/no admin password, SMART hours.
