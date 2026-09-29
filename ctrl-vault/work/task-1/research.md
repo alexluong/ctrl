@@ -22,7 +22,7 @@
 | Business mini/SFF, refurb (Lenovo M90q Tiny / HP Elite Mini 800) | e.g. M90q Gen 6, Core Ultra 7 265T, 64GB, 2TB | ~$1,139 refurb | home-server-grade: quiet, ~10W idle, 24/7-rated, vPro remote mgmt; Tiny = 2 SO-DIMM (64GB max), 2 M.2; SFF towers take 128GB |
 | Strix Halo boxes (GTR9 Pro / EVO-X2 / Framework) | Ryzen AI Max+ 395, 128GB | $2k–$4.3k | pay for iGPU/LLM memory we don't need |
 
-Leaning (2026-09-30, after "why beefy?"): refurb Lenovo/HP business mini at 64GB; MS-A2 if more cores/10GbE wanted. Either way: Linux (Ubuntu/Debian), headless, Tailscale. CPU floor: Intel 12th gen+ / Ryzen 7000+ (~M1 Pro level); older 8th–10th gen Tinies are slower than the MBP.
+Leaning (2026-09-30, after "why beefy?"): refurb Lenovo/HP business mini at 64GB; MS-A2 if more cores/10GbE wanted. Either way: Linux (Ubuntu/Debian), headless, Tailscale. CPU floor: Intel 12th gen+ / Ryzen 7000+ (~M1 Pro level); older 8th–10th gen Tinies are slower than the MBP. Oldest M90q to consider: Gen 3 (12th gen, DDR5, 64GB max); prefer 65W non-T i7 (sustained builds). GPU irrelevant (no local LLM; containers + builds are CPU).
 
 ## Open questions
 
