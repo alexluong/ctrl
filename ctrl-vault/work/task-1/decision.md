@@ -58,3 +58,16 @@ Watch Proxmox RAM/CPU graphs a few weeks.
 - RAM full → second 805 G8 (another 64GB), two standalone hosts (a 2-node cluster needs a QDevice tie-breaker).
 - CPU pegged, RAM free → Dell Precision 3260 i7-12700 (~30M+) or P3 Ultra.
 - Both fine → keep. Used business minis resell easily in HCMC.
+
+## First VMs (Alex, 2026-09-30)
+
+Disk per VM = virtual disk size set at creation; on LVM-thin it's a cap, not reserved. Easy to grow later, hard to shrink → start modest.
+
+| VM | Type | vCPU | RAM | Disk | Notes |
+|---|---|---|---|---|---|
+| hookdeck workspace | VM | 8–12 | 24–32GB | 250–300GB | Docker, mise, shared-infra mode for many stacks |
+| arrstack (off Mac Mini) | VM (or LXC+Docker) | 2 | 4–6GB | 32GB | configs only; media/downloads stay on the Samsung T7 (`/Volumes/T7/arr` today) via USB passthrough. T7 filesystem must be Linux-readable (APFS isn't) — check before moving. Who plays the media (Plex/Infuse/…) decides whether T7 needs an SMB share |
+| AI assistant (ClickUp interface) | LXC or VM | 2 | 2–4GB | 20–30GB | always-on, light |
+| Proxmox host | – | – | ~4GB | installer default (~100GB root) | rest of 1TB = LVM-thin pool |
+
+RAM ≈ 34–46GB of 64 → room for one more mid-size VM.
