@@ -1,5 +1,7 @@
 # TASK-1: always-on dev box for hookdeck — research
 
+> **Decided 2026-09-30 → [decision.md](decision.md)** (HP 805 G8 Mini, R7 5700G, 64GB DDR4, xeon.vn, 19.8M, Proxmox). Below is the research trail.
+
 Started 2026-09-30. Alex is in **HCMC**. Mac Mini (base M4) stays on arrstack + enable/solex.
 
 ## Workload (from ~/workspaces/hookdeck)
