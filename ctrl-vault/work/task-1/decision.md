@@ -68,6 +68,8 @@ Disk per VM = virtual disk size set at creation; on LVM-thin it's a cap, not res
 | hookdeck workspace | VM | 8–12 | 24–32GB | 250–300GB | Docker, mise, shared-infra mode for many stacks |
 | arrstack (off Mac Mini) | VM (or LXC+Docker) | 2 | 4–6GB | 32GB | configs only; media/downloads stay on the Samsung T7 (`/Volumes/T7/arr` today) via USB passthrough. T7 filesystem must be Linux-readable (APFS isn't) — check before moving. Who plays the media (Plex/Infuse/…) decides whether T7 needs an SMB share |
 | AI assistant (ClickUp interface) | LXC or VM | 2 | 2–4GB | 20–30GB | always-on, light |
+
+**Measured hookdeck core stack (MBP, idle, 2026-09-30):** containers ~6.0GB (ClickHouse 1.9, k3s 1.2, kafka-connect 1.0, kafka 0.6, kafka-ui 0.4, pubsub 0.4, schema-registry 0.3, rest <0.2 each) + node/PM2 ~2.5GB → **~8.5GB per full stack** idle; ~7GB without k3s + kafka-ui. Per-worktree share in shared-infra mode ≈ node services ~2–2.5GB. A 32GB VM ≈ 3 full stacks, or shared infra + ~8–10 worktrees. Postgres/ClickHouse grow under load.
 | Proxmox host | – | – | ~4GB | installer default (~100GB root) | rest of 1TB = LVM-thin pool |
 
 RAM ≈ 34–46GB of 64 → room for one more mid-size VM.
