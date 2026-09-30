@@ -42,7 +42,7 @@ Proxmox VE 9.2, no-subscription repo. One VM per project; only active projects p
 ## At home
 
 - [ ] Change root password
-- [ ] memtest86+ a few hours (used RAM)
+- [x] memtest86+ (used RAM): pass 1, 0 errors
 - [ ] Find IP in router → https://<ip>:8006
 - [ ] No-subscription repo, updates
 - [ ] DHCP reservation on router
@@ -76,7 +76,7 @@ RAM ≈ 34–46GB of 64 → room for one more mid-size VM.
 
 - Shop installed Proxmox anyway (order note never sent). Hostname `pve1`, static `192.168.1.21/24`, gw `192.168.1.1`, bridge `vmbr0` on `eno1` — matches home LAN, no change needed. Root password from shop (change it).
 - SVM on (`grep -c svm /proc/cpuinfo` = 16). BIOS: **Advanced → Boot Options → After Power Loss = Power On** — set. (Easy BIOS entry: `systemctl reboot --firmware-setup`; F10 spam loops "Exiting…".)
-- memtest86+ (plain, not serial) running at desk, ~1–2h. Then: power off → router via Ethernet → power on → reach https://192.168.1.21:8006.
+- memtest86+ pass 1, 0 errors (2026-09-30). Next: power off → router via Ethernet → power on → reach https://192.168.1.21:8006.
 - Alex's Filco Bluetooth keyboard wouldn't work wired; bought a cheap USB keyboard.
 
 ## Next: discuss management setup
