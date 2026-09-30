@@ -120,3 +120,8 @@ Alex doesn't weigh warranty (dislikes dealing with it) → used deals judged on 
 - ICT Sài Gòn (Bình Thạnh), Vi Tính Trần Phú (Q5, since 2015), Khóa Vàng (4 branches), Máy Chủ Sài Gòn (quote-only Z2 Mini G9).
 - OnlyLap (1073/21 CMT8, Tân Sơn Nhất, 0979.60.70.90): mostly old Xeon towers (skip); only fit = HP Z2 Tower G9 i5-13500/8GB/256GB 16.89M.
 - Z2 Mini G9 runs hot/loud under load per VOZ owner; P3 Ultra suggested as cooler alternative. HP spec may list only non-T CPUs for Z2 Mini G9 → verify the Shopee "12700T" (CPU-Z screenshot + serial).
+
+## Custom build idea (2026-09-30)
+
+- DDR4 is fine for this workload (~5–10% at most vs DDR5). GearVN DDR4-3200 1×16GB: Kingmax Blade X 3.29M, SSTC 3.19M → 2×16 ≈ 6.5M vs DDR5 2×16 ≈ 12–14M. **Saves ~6–7M.** DDR4 ⇒ Intel 12th–14th gen (LGA1700) on a B760M DDR4 board (4 DIMM → up to 128GB). AM5 + Core Ultra 200 are DDR5-only.
+- tncstore.vn = gaming shop, Hanoi-only showroom (172 Lê Thanh Nghị) — not for HCMC.
