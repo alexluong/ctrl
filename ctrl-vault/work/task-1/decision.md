@@ -71,3 +71,18 @@ Disk per VM = virtual disk size set at creation; on LVM-thin it's a cap, not res
 | Proxmox host | – | – | ~4GB | installer default (~100GB root) | rest of 1TB = LVM-thin pool |
 
 RAM ≈ 34–46GB of 64 → room for one more mid-size VM.
+
+## Status 2026-09-30 (box received)
+
+- Shop installed Proxmox anyway (order note never sent). Hostname `pve1`, static `192.168.1.21/24`, gw `192.168.1.1`, bridge `vmbr0` on `eno1` — matches home LAN, no change needed. Root password from shop (change it).
+- SVM on (`grep -c svm /proc/cpuinfo` = 16). BIOS: **Advanced → Boot Options → After Power Loss = Power On** — set. (Easy BIOS entry: `systemctl reboot --firmware-setup`; F10 spam loops "Exiting…".)
+- memtest86+ (plain, not serial) running at desk, ~1–2h. Then: power off → router via Ethernet → power on → reach https://192.168.1.21:8006.
+- Alex's Filco Bluetooth keyboard wouldn't work wired; bought a cheap USB keyboard.
+
+## Next: discuss management setup
+
+Alex wants an agent on the box so both Alex and Claude can manage the host and each VM as they're added. Topics:
+- How Claude reaches it: Tailscale + SSH key, Proxmox API token (pveum) vs shell; Claude Code running on host/VM vs driven from MBP ctrl.
+- Host hygiene checklist (root pw, no-subscription repo, updates, DHCP reservation/exclude .21, backups, UPS).
+- VM base image/template: cloud-init template (Debian 13 / Ubuntu 24.04), toolchain baked in (Docker, mise, Tailscale, Claude Code), clone per project; snapshots before risky runs.
+- Where the config lives (IaC? e.g. a repo with scripts/terraform-provider-proxmox) and a machine doc in ctrl-vault/docs/machine.md.
