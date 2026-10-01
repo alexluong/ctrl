@@ -4,7 +4,22 @@ Research for improving the local dev loop: visual review, Sandcastle and other a
 
 Stars / last-push figures are from the GitHub API on 2026-10-02.
 
-## 1. Visual review
+## 1. Visual recap / visual review
+
+### `/visual-recap` (Steve Sewell, Builder.io): what Alex actually meant
+
+[BuilderIO/skills](https://github.com/BuilderIO/skills) (4.5k stars, MIT, created 2026-06-10, pushed 2026-09-30). Read: README, `skills/visual-recap/SKILL.md`, `references/local-files.md`, `references/connection.md`, `.github/workflows/pr-visual-recap.yml`.
+
+- **What:** turns a branch, commit, PR diff, or the whole current thread's work into an interactive recap: before/after wireframes of UI changes, `data-model` and `api-endpoint` blocks with change flags, file tree, 3-8 tabs of annotated key diffs. Skips itself for small diffs. Sibling `/visual-plan` does the same for plans before coding.
+- **Wireframes are drawn from the diff**, not screenshots of the running app. It complements a verify step; it does not replace one.
+- **Output:** MDX rendered by the Agent-Native Plans app ([BuilderIO/agent-native](https://github.com/BuilderIO/agent-native), source open).
+- **Default mode is hosted:** publishes through a Plan MCP connector to `plan.agent-native.com` (account + OAuth; diff content stored there). Gives shareable links and comments. The skill forbids an inline fallback.
+- **Local-files mode** (`AGENT_NATIVE_PLANS_MODE=local-files`): MDX written to `plans/<slug>/` or a temp dir; `npx @agent-native/core@latest plan local serve --dir <dir> --kind recap --open`. Content stays on the machine, but the viewer is still the hosted Plan UI reading a localhost bridge: needs network, Chromium (Safari blocks it), no hosted comments or sharing. Fully offline requires running the Plan app locally.
+- **GitHub Action** (`pr-visual-recap.yml`): one sticky PR comment with a screenshot + plan link per PR. Needs `PLAN_RECAP_TOKEN` and `ANTHROPIC_API_KEY` (or OpenAI) repo secrets, so hosted mode and API billing.
+- **Install:** `npx @agent-native/skills@latest add --skill visual-recap` (asks hosted / local / self-hosted, can add managed CLAUDE.md blocks and the Action); or `/plugin marketplace add BuilderIO/skills`; or plain copy `npx skills@latest add BuilderIO/skills --skill visual-recap`.
+- **Closest alternative:** visual-explainer `/diff-review` (below): same idea as one self-contained HTML file, no service, no account, no comments.
+
+### Other tools under "visual review"
 
 Two meanings. (a) is the more common skill; the tools Alex half-remembered are (b).
 
@@ -100,7 +115,7 @@ Sandcastle adds container isolation for unattended runs and a scripted plan → 
 ## Candidate changes to our workflow
 
 1. **Verify step in `implement`** between test and review: drive the app (T3 preview tools first, agent-browser fallback, agent-device for iOS), scope from the diff, mark each `qa/` case pass/fail/skip, attach before/after to the PR. `qa/` specs double as poteto's "feature map" if they gain a "how to reach it" line.
-2. **Human review UI:** trial difit on the next delegated PR; Plannotator if plan review in the terminal is the pain.
+2. **Recap for review:** trial `/visual-recap` in local-files mode on the next large delegated PR (at `implement`'s land step). Open decision: hosted mode (comments, shareable link, Action; diffs on Builder's servers) vs local-files vs visual-explainer (no service). difit / Plannotator only if inline comment-back is wanted.
 3. **Native sandbox** on for delegated/unattended agents. Unverified: whether it applies under the T3 Code harness.
 4. **Borrow from pstack:** pass/fail finish condition before any long run; decomposition checkpoint before parallel agents; repeated review findings become a lint in the project's `check`.
 5. Sandcastle: skip for now (see § 2 Read).
