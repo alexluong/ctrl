@@ -145,6 +145,38 @@ Skip: `setup-matt-pocock-skills` tracker wiring, `git-guardrails` hook (conflict
 
 Real-artifact evidence before "done"; reviewer separate from author; lessons become lints; small vertical units that each end in a check.
 
+## 5. Code design: codebase-design and zero-tech-debt (2026-10-02)
+
+### `codebase-design` (Matt Pocock)
+
+`mattpocock-skills/skills/engineering/codebase-design/` (SKILL.md, DEEPENING.md, DESIGN-IT-TWICE.md). Model-invoked vocabulary skill, about 115 lines; other skills load it.
+
+- **Fixed vocabulary**, used exactly: module (anything with an interface and an implementation, any scale), interface (everything a caller must know: types plus invariants, ordering, error modes, config, performance), depth (behaviour reachable per unit of interface), seam (where an interface lives), adapter (what fills a seam), leverage (what callers get), locality (what maintainers get). Banned synonyms: component, service, API, boundary.
+- **Deletion test:** imagine deleting the module. Complexity vanishes → it was a pass-through. Complexity reappears across N callers → it earns its keep.
+- **The interface is the test surface.** Wanting to test past the interface means the module is the wrong shape.
+- **One adapter = hypothetical seam, two = real.** Production + test double counts as two. A single-adapter seam is indirection.
+- **Dependency categories decide the test strategy** (DEEPENING.md): in-process → merge and test directly; local-substitutable (PGLite, in-memory fs) → test with the stand-in, no port; remote-but-owned → port + in-memory adapter; true external → injected port + mock.
+- **Replace, don't layer:** once tests exist at the deepened interface, delete the old shallow-module unit tests.
+- **Design it twice:** 3+ parallel subagents each design the interface under a different constraint (minimal interface / max flexibility / common caller trivial / ports and adapters); compare on depth, locality, seam placement; give one recommendation.
+- Companion `/improve-codebase-architecture`: scope to hot spots from `git log`, a subagent explores for friction, output is a self-contained HTML report in the temp dir with before/after diagrams and a strength badge per candidate, then grilling on the chosen one. Proposes no interfaces until a candidate is picked.
+
+### `zero-tech-debt` (Jeremy Longshore, not Matt Pocock)
+
+Not in `mattpocock/skills` at d81f3a1 (no match in skills, changelog, or deprecated list; clone is shallow so older history unchecked). The skill by this name is [jeremylongshore/tons-of-skills-marketplace](https://github.com/jeremylongshore/tons-of-skills-marketplace) `plugins/skill-enhancers/zero-tech-debt` (2.8k stars, MIT, v1.1.0). A Matt Pocock tweet surfaced in search for the term but could not be opened, so any link between him and this skill is unconfirmed.
+
+- **Core:** "Treat the current implementation as evidence, not authority." Rebuild toward the intended shape, not the minimal diff. Explicitly not for hotfixes, bug repros, security backports.
+- **Workflow:** define the end state in 1-3 paragraphs (stop if you can't) → audit reality against it (why it exists, who calls it, does it still earn value) → delete before adding → optimize around the final shape → collapse duplicate decision logic (permissions, validation, retry in one place) → remove historical leakage (`_v2`, `Legacy*`, names that leak old infra) → validate (re-grep deleted paths, walk UI flows, tests assert intended behaviour not historical quirks).
+- **Rules worth keeping:** never add a new abstraction in the same change that removes an old one; a rename updates every caller in the same commit; one coherent end state per refactor; deeper rot found mid-flight is documented and deferred, not chained.
+- **Audit greps:** TODO/DEPRECATED markers, `_v2|_old|_new|_legacy` names, stale flags, pass-through wrappers, dual-mode forks, duplicate config keys, comments that explain a name is wrong, tests asserting "legacy behavior", single-implementation interfaces.
+- **Report format:** Deleted (counts) / Unified (N paths → 1) / Renamed (with the domain reason) / Intentionally left alone / Deferred (as tickets).
+- **Preflight** is partly team/production-shaped (rollback via flag, in-flight migrations, telemetry and on-call alerts): mostly n/a for personal projects.
+
+### Read
+
+- The two agree: inline single-implementation indirection, test intended behaviour through the interface, delete rather than wrap. They differ in job: `codebase-design` is a vocabulary for deciding shape; `zero-tech-debt` is a procedure for a cleanup pass.
+- pstack states the same cleanup rules more tightly (subtract-before-you-add, redesign-from-first-principles, migrate-callers-then-delete-legacy-apis). `zero-tech-debt` adds the audit greps and the report format.
+- `codebase-design` is the stronger steal: small, precise, and usable as the standard a reviewer agent enforces.
+
 ## Candidate changes to our workflow
 
 Proposal as of 2026-10-02; nothing applied.
@@ -161,3 +193,5 @@ Proposal as of 2026-10-02; nothing applied.
 5. **Recap for review**: `/visual-recap` trial was started on hookdeck/terraform-provider-hookdeck#230 and stopped before running any Builder tooling. Pocock's `pr` template covers part of the need with no service.
 6. **Native sandbox** for delegated agents. Unverified under T3 Code.
 7. Sandcastle: skip for now (see § 2 Read).
+8. **Design standard for reviewers**: adopt the `codebase-design` vocabulary, deletion test, two-adapter rule, and interface-as-test-surface as the review standard (read at review, not in CLAUDE.md). Design-it-twice in `implement`'s plan step when a real design fork exists.
+9. **Refactor path** in `implement`: end state in 1-3 paragraphs → audit → delete first (never add an abstraction in the same change) → validate → report as Deleted / Unified / Renamed / Left alone / Deferred (deferred items go to the board). Convention for personal projects: no compatibility shims; migrate callers and delete in the same change.
