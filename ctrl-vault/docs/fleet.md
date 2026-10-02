@@ -1,6 +1,6 @@
 # Fleet: how the MBP manages the other machines
 
-**Status (2026-10-02): §1 SSH and §3 repo decided and built (collielab `d8dc870`); §2 `fleet` script, §4 gateway and the Mini question (§5) still proposals.** Alex's ask: a "ctrl system" where the MBP is the control point for `g8`, `mini`, `vultr` and the VMs to come: SSH, running and deploying things on them, where config lives, clean URLs through a gateway.
+**Status (2026-10-02): §1 SSH, §3 repo and §4 gateway built (collielab `d8dc870`, `3e27e1f`). Still proposals: §2 a general `fleet` script (the gateway has its own `push.sh`), §5 the Mini's `media/` repo, §6 a dedicated domain.** Alex's ask: a "ctrl system" where the MBP is the control point for `g8`, `mini`, `vultr` and the VMs to come: SSH, running and deploying things on them, where config lives, clean URLs through a gateway.
 Map of machines and addresses: `home-systems.md`. Cloud VM: `collielab.md`. Mini: `mac-mini.md`. g8 setup: `work/task-2/plan.md`. Gateway task: TASK-3.
 
 ## Machines (2026-10-02)
@@ -79,6 +79,8 @@ Already-known gaps this closes: `vultr`'s `/etc/caddy/Caddyfile` is in no repo (
 
 ## 4. Gateway and URLs
 
+**Built 2026-10-02** as designed below: container 110 `gw` on g8 (`192.168.1.110`, 1 core, 512MB, starts with the host), Caddy 2.11 with the Cloudflare DNS module, three wildcard certificates issued, every route tested from the MBP. URLs: `home-systems.md`. Runbook: `collielab/hosts/gw/README.md`. Token `lab-gateway-acme` (DNS edit on the `alexluong.com` zone only) made with terraform; copy in `ctrl/secrets/gw/caddy.env`.
+
 Goal: `https://jellyfin.mini.lab.alexluong.com` instead of `http://mini.lab.alexluong.com:8096`, real certificate, no port.
 
 **Naming rule (one rule for everything):**
@@ -142,6 +144,31 @@ Getting real spare capacity on the Mini means moving the media services to a VM 
 
 Making it dependable (Alex, at the Mini, once): full disk access for remote users; SSH keys only; ethernet if the cable can reach; decide auto-restart + FileVault (hands-off recovery needs auto-restart on and either FileVault off with auto-login, or accepting an unlock at the screen after each power cut). Then from the MBP: Colima + `up.sh core` as a launch agent, cap qBittorrent's memory, fix `gluetun` / `seedboxapi`.
 
+## 6. A dedicated domain for the lab (proposal; Alex asked 2026-10-02, open to buying one)
+
+Today everything hangs under `lab.alexluong.com`. Proposal: buy **`collielab.net`** (free on 2026-10-02; `.com` and `.org` are taken by others; name matches the repo) and move the lab onto it.
+
+| Today | With `collielab.net` |
+|---|---|
+| `jellyfin.lab.alexluong.com` | `jellyfin.collielab.net` |
+| `jellyfin.mini.lab.alexluong.com` | `jellyfin.mini.collielab.net` |
+| `mini.lab.alexluong.com` (SSH) | `mini.collielab.net` |
+| `vultr.alexluong.com` | `vultr.collielab.net` |
+| later, away from home | `jellyfin.ts.collielab.net` |
+
+Same three rules (machine, service on a machine, short alias), one level shorter. Public sites stay where they are (`alexluong.com`, `collie.studio`).
+
+Why it is worth ~$12 a year:
+
+- **The gateway's token can then only touch `collielab.net`.** Today it can edit all DNS of `alexluong.com` (the personal site), because Cloudflare tokens are per zone, not per subdomain.
+- Home services stop sharing a site with `alexluong.com` in the browser (cookies set for `.alexluong.com` are visible to every `*.lab.alexluong.com` app and the other way round).
+- Private addresses and machine names leave the domain that carries Alex's name.
+- Shorter to type into a TV or a Kobo.
+
+Avoid `.dev` / `.app`: browsers force HTTPS on them, which breaks the plain `:port` fallback addresses.
+
+Cost of moving now: small, nothing but the MBP uses the names yet (new zone in terraform, new records and token, search-and-replace in `ssh/config`, `ssh/known_hosts`, the Caddyfile, `new-vm`; machine hostnames on g8 and the VMs). It gets more expensive once Kobos, TVs and bookmarks use the URLs, so decide before pointing devices at them. Buying needs Alex (Cloudflare Registrar, in the dashboard).
+
 ## Order
 
 1. `collielab`: `ssh/` + `Include`, `hosts/` skeleton, `bin/fleet` (diff/push/run). Bring `vultr`'s Caddyfile into `hosts/vultr/` (read-only copy first, then push becomes the way to change it).
@@ -153,6 +180,6 @@ Making it dependable (Alex, at the Mini, once): full disk access for remote user
 ## Decisions needed (Alex)
 
 1. ~~Infra repo~~ decided: `collielab`, a directory per machine.
-2. Gateway: central on g8 with `<service>.<machine>.lab` names + a few short aliases (recommended) vs per-machine.
+2. ~~Gateway~~ built (Alex: "do whatever you think is best"): central on g8, `<service>.<machine>.lab` names + short aliases.
 3. Mini: `media/` → own repo, single clone on the Mini, driven from the MBP over SSH (recommended, §5) vs a ctrl clone on the Mini limited to `media/`.
 4. Gateway container number/address in g8's block (`hookdeck` is promised 101): proposal `gw` = container 110 = `.110`, infra containers 110-119.

@@ -27,6 +27,7 @@ Scanned from the MBP 2026-10-02 (ping sweep, mDNS, port probes); re-scan before 
 | .7 | Chromecast | 90:ca:fa:ad:e9:ee | DHCP | |
 | .10 | `rml-225f38`: "Rainbow Music Led" LED strip controller (ESP chip, web UI on :80) | c8:2b:96:22:5f:38 | DHCP | identified from its web page title |
 | **.100** | **`g8`: HP EliteDesk 805 G8 Mini (Proxmox)** | 84:69:93:4f:fe:41 | **typed into the box** | wired to router; was `pve1` at `.21` until 2026-10-02 |
+| **.110** | **`gw`: home gateway (Caddy), container 110 on g8** | bc:24:11:72:65:0e | typed in | `ssh gw`; `https://gw.lab.alexluong.com` lists the URLs |
 | .39 | Hannah's iPad | private MAC | DHCP | |
 | **.90** | **Mac Mini (`alexs-Mac-mini.local`)** | a6:54:90:62:c6:fe (private, Wi-Fi) | DHCP, reserved | media host; on Wi-Fi, ethernet unplugged |
 | .91 | MacBook Pro (`Alexs-MacBook-Pro`) | private MAC | DHCP | Wi-Fi (`en0`) |
@@ -91,9 +92,10 @@ Full write-up: `mac-mini.md` (specs, storage, service/port map, startup, migrati
 | Target | Web | SSH | Status |
 |---|---|---|---|
 | Router | `https://192.168.1.1` | n/a | works; login in Vaultwarden |
-| g8 host | `https://192.168.1.100:8006` | `ssh g8` | both work |
+| g8 host | `https://pve.g8.lab.alexluong.com` (or `https://192.168.1.100:8006`) | `ssh g8` | both work |
 | `hookdeck` VM | T3 app → Add environment → SSH (`docs/t3-code-remote.md`) | `ssh hookdeck` | works; logins pending (`work/task-2/hookdeck-vm.md`) |
-| Mac Mini | `http://mini.lab.alexluong.com:<port>` (ports above) | `ssh mini` | both work |
+| Mac Mini | `https://<service>.lab.alexluong.com` (gateway; list at `https://gw.lab.alexluong.com`) | `ssh mini` | both work |
+| Gateway | `https://gw.lab.alexluong.com` | `ssh gw` | works |
 | collielab VM | `vault.collie.studio` etc. | `ssh vultr` | works |
 
 Home-only today: everything on `192.168.1.x` is reachable only on home Wi-Fi. Tailscale (planned) makes g8, its VMs and the Mini reachable from anywhere.
@@ -139,7 +141,22 @@ Templates use VM IDs 9000+.
 | `mini.lab.alexluong.com` | `192.168.1.90` | `http://mini.lab.alexluong.com:8096` (Jellyfin), `:32400` (Plex), `:8080` (qBittorrent) |
 | `hookdeck.lab.alexluong.com` | `192.168.1.101` | `ssh hookdeck` |
 
-One record per machine or VM is added as it is created. Ports and the certificate warning go away with the gateway (TASK-3, not started), when these names move to it. The names are publicly resolvable (private addresses, nothing reachable from outside).
+One record per machine or VM is added as it is created.
+
+**Gateway (built 2026-10-02, TASK-3):** `gw`, container 110 on g8 at `192.168.1.110`, Caddy. Wildcard records `*.lab`, `*.mini.lab`, `*.g8.lab`, `*.hookdeck.lab` → `.110` (`terraform/lab_gateway.tf`); Let's Encrypt wildcard certificates. Routing table and runbook: `collielab/hosts/gw/` (`Caddyfile`, `push.sh`, `README.md`). Home network only.
+
+| URL | Service |
+|---|---|
+| `https://jellyfin.lab.alexluong.com` (= `jellyfin.mini.lab…`) | Jellyfin |
+| `https://plex.lab.alexluong.com` (= `plex.mini.lab…`) | Plex |
+| `https://books.lab.alexluong.com` (= `books.mini.lab…`) | Calibre-Web, Alex |
+| `https://books-hannah.lab.alexluong.com` (= `books-hannah.mini.lab…`) | Calibre-Web, Hannah |
+| `https://audiobooks.lab.alexluong.com` (= `audiobooks.mini.lab…`) | Audiobookshelf |
+| `https://qbt.mini.lab.alexluong.com`, `https://qbt-private.mini.lab.alexluong.com` | qBittorrent |
+| `https://radarr.` / `sonarr.` / `prowlarr.` / `bazarr.mini.lab.alexluong.com` | only while started (502 otherwise) |
+| `https://pve.g8.lab.alexluong.com` | Proxmox UI (no certificate warning) |
+
+Rule: `<machine>.lab…` is the machine (SSH, still its own address); `<service>.<machine>.lab…` goes through the gateway; short aliases `<service>.lab…` for what gets typed into devices. The old `:<port>` addresses still work and are the fallback when g8 is down. Not done: Kobos and TV apps still point at `192.168.1.90` (wait for the domain decision, `fleet.md` § 6); `*.hookdeck.lab` has no routes yet.
 
 **If the range changes later:** update the DNS records, the gateway's backend addresses and the fixed addresses on g8, the Mini and VMs; devices that use URLs (Kobo, TV apps) keep working. So point the Kobos (today `192.168.1.90`, typed in their config; Calibre-Web on the Mini, `:8074` Alex / `:8073` Hannah) and the TV's Jellyfin/Plex apps at URLs once the gateway exists. Other costs: house offline a few minutes; router admin moves; mesh nodes might need re-pairing; a Viettel reset puts the range back. To avoid locking g8 out: give it both addresses first, switch the router, then drop the old one.
 

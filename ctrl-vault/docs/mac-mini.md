@@ -6,7 +6,7 @@ what the machine is, what runs on it, how to reach it, and what would block movi
 the stack to a Linux VM on Proxmox later.
 
 _No secrets live in this file — only where they live. Captured 2026-10-02 from a session on the Mini._
-Home map (addresses, naming, other machines): `home-systems.md`. Stack docs: `media/README.md` (repo root); `media-ops` skill.
+Home map (addresses, naming, other machines): `home-systems.md`. **URLs for the services below (no port, HTTPS): `https://gw.lab.alexluong.com`** (gateway on g8, 2026-10-02). Stack docs: `media/README.md` (repo root); `media-ops` skill.
 The Mini's ctrl clone is at `~/git/hub/alexluong/ctrl` (no `~/workspaces/` there); the stack runs from its `media/`.
 
 ## Specs
