@@ -10,7 +10,7 @@ Scanned from the MBP 2026-10-02 (ping sweep, mDNS, port probes); re-scan before 
 - ISP: Viettel (fiber). LAN `192.168.1.0/24`, gateway `192.168.1.1`, DNS = Viettel's (handed out by the router).
 - Router: **ZTE F6601P** (Viettel ONT + router + Wi-Fi, internet login by PPPoE on the router), `192.168.1.1`, admin UI `https://192.168.1.1` (login in Vaultwarden). 3 of 4 LAN ports in use.
 - Mesh nodes: 2 × **ZTE H3601P**, `192.168.1.3` and `192.168.1.5` (admin UI on each).
-- DHCP pool: `.2–.254`, lease time 1 hour (read from the router 2026-10-02). To change: end → `.99`.
+- DHCP pool: **`.2–.99`** (end changed from `.254` by Alex 2026-10-02), lease time 1 hour. `.100–.254` is never handed out.
 - Wi-Fi name: "Dunder Mifflin". Router sits in a closed cabinet with the G8.
 - Router menus: Local Network → LAN → DHCP; "DHCP Binding" (reservations) at the bottom; the same page lists handed-out addresses (incl. stale ones). **Never factory-reset**: it wipes the fiber login and internet stays down until Viettel reprovisions (support 18008119).
 - Viettel blocks some sites at DNS level and hijacks port 53; only encrypted DNS gets around it. Direction was hosted encrypted DNS per device, not a home DNS server (power cuts happen overnight).
@@ -26,7 +26,7 @@ Scanned from the MBP 2026-10-02 (ping sweep, mDNS, port probes); re-scan before 
 | .4 | Chromecast | 90:ca:fa:b1:7c:6e | DHCP | the "unidentified" device in the handoff notes |
 | .7 | Chromecast | 90:ca:fa:ad:e9:ee | DHCP | |
 | .10 | `rml-225f38`: "Rainbow Music Led" LED strip controller (ESP chip, web UI on :80) | c8:2b:96:22:5f:38 | DHCP | identified from its web page title |
-| **.21** | **`pve1`: HP EliteDesk 805 G8 Mini (Proxmox)** | 84:69:93:4f:fe:41 | **static, set on the box** | wired to router |
+| **.100** | **`g8`: HP EliteDesk 805 G8 Mini (Proxmox)** | 84:69:93:4f:fe:41 | **typed into the box** | wired to router; was `pve1` at `.21` until 2026-10-02 |
 | .39 | Hannah's iPad | private MAC | DHCP | |
 | **.90** | **Mac Mini (`alexs-Mac-mini.local`)** | a6:54:90:62:c6:fe (private → Wi-Fi?) | DHCP | media host |
 | .91 | MacBook Pro (`Alexs-MacBook-Pro`) | private MAC | DHCP | Wi-Fi (`en0`) |
@@ -51,16 +51,16 @@ Earlier scheme: `.80–.89` boards and DIY, `.90–.99` consumer devices, everyt
 
 ## Servers
 
-### pve1 (HP EliteDesk 805 G8 Mini)
+### g8 (HP EliteDesk 805 G8 Mini)
 
 Ryzen 7 5700G (8c/16t), 64GB DDR4, 1TB NVMe. Proxmox VE 9.0.3, installed by the shop (xeon.vn); as-delivered state: `work/task-2/discovery.md`. Buying trail: `work/task-1/decision.md`. Setup: TASK-2, `work/task-2/plan.md`.
 
 | | |
 |---|---|
-| Address | `192.168.1.21/24`, gw `.1`, bridge `vmbr0` on `eno1` |
-| Web UI | `https://192.168.1.21:8006`, user `root`, realm Linux PAM (self-signed cert) |
-| SSH | `root@192.168.1.21`, key `id_ed25519`: works (2026-10-02). Password login still on |
-| Root password | Vaultwarden, item `pve1 root (Proxmox)` |
+| Address | `192.168.1.100/24`, gw `.1`, bridge `vmbr0` on `eno1`. Hostname `g8.lab.alexluong.com`. DNS `192.168.1.1`, `1.1.1.1` |
+| Web UI | `https://192.168.1.100:8006`, user `root`, realm Linux PAM (self-signed cert) |
+| SSH | `ssh g8` (MBP `~/.ssh/config`: `root@192.168.1.100`, key `id_ed25519` from Keychain). Password login still on |
+| Root password | Vaultwarden, item `g8 root (Proxmox)` (Alex to rename the item and its URL) |
 | BIOS | SVM on; After Power Loss = Power On (Advanced → Boot Options) |
 | Console | none remote; needs monitor (DisplayPort) + USB keyboard at the box |
 | VMs | none yet. First: hookdeck workspace |
@@ -85,16 +85,16 @@ Ryzen 7 5700G (8c/16t), 64GB DDR4, 1TB NVMe. Proxmox VE 9.0.3, installed by the 
 | Target | Web | SSH | Status |
 |---|---|---|---|
 | Router | `https://192.168.1.1` | n/a | works; login in Vaultwarden |
-| pve1 host (to be `g8`) | `https://192.168.1.21:8006` | `root@192.168.1.21` | both work |
-| pve1 VMs | n/a | `alex@<vm>` | none yet |
+| g8 host | `https://192.168.1.100:8006` | `ssh g8` | both work |
+| g8 VMs | n/a | `alex@<vm>` | none yet |
 | Mac Mini | Jellyfin/Plex/qBittorrent ports above | off | Remote Login to enable |
 | collielab VM | `vault.collie.studio` etc. | `sshmylab` | works |
 
-Home-only today: everything on `192.168.1.x` is reachable only on home Wi-Fi. Tailscale (planned) makes pve1, its VMs and the Mini reachable from anywhere.
+Home-only today: everything on `192.168.1.x` is reachable only on home Wi-Fi. Tailscale (planned) makes g8, its VMs and the Mini reachable from anywhere.
 
-## Naming, numbering, URLs (agreed 2026-10-02, not applied yet)
+## Naming, numbering, URLs (agreed 2026-10-02; names and addresses applied, URLs not yet)
 
-**Names.** Physical machines: `g8` (HP 805 G8, today still hostname `pve1`; rename before the first VM), `mini` (Mac Mini), `mbp`. VMs by purpose: `hookdeck`, `enable`, `solex`, `cs`, `ixchel`, later `media`. The same name is the Proxmox VM name, hostname, Tailscale name and DNS label.
+**Names.** Physical machines: `g8` (HP 805 G8; renamed from `pve1` 2026-10-02), `mini` (Mac Mini), `mbp`. VMs by purpose: `hookdeck`, `enable`, `solex`, `cs`, `ixchel`, later `media`. The same name is the Proxmox VM name, hostname, Tailscale name and DNS label.
 
 **Home range: stay on `192.168.1.x`** (Alex, 2026-10-02). A move to an uncommon range (e.g. `192.168.77.x`) is deferred; once devices use URLs it is a DNS change plus the fixed addresses, not a per-device chore.
 
@@ -145,4 +145,4 @@ Claude can only use keys loaded in the agent (no passphrase prompt). After a res
 - [ ] Mac Mini: Remote Login + MBP key, specs, wired vs Wi-Fi → `mac-mini.md`
 - [ ] Later: Tailscale account + install on MBP/phone, `ts` names
 - [ ] Identify the unidentified devices (`.57`, `.124`, `.129/.130`)
-- [ ] Router: pool was `.2–.254` (lease 1h, read 2026-10-02); set the end to `.99`
+- [ ] Re-scan after 2026-10-02 18:00: `.124` and `.131` (old leases) should have moved below `.100`

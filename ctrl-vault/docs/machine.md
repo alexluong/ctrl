@@ -4,7 +4,7 @@ Alex's personal machine conventions (macOS). How Claude works across these repos
 
 ## Devices
 
-Two Macs plus `pve1` (HP EliteDesk 805 G8 Mini, Proxmox; always-on VM host). Assume
+Two Macs plus `g8` (HP EliteDesk 805 G8 Mini, Proxmox; always-on VM host; `ssh g8`). Assume
 the MacBook Pro unless a doc says otherwise — most tooling here is written for it.
 Home network map (IPs, access, what runs where): `home-systems.md`.
 

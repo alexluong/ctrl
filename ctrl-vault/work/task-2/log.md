@@ -15,3 +15,10 @@ Newest last. One entry per change: what, why, how to undo. Read-only checks go i
 - **MBP agent (Alex):** `ssh-add --apple-use-keychain ~/.ssh/id_ed25519` (passphrase saved in Keychain) so Claude can use the key. Undo: `ssh-add -d ~/.ssh/id_ed25519`.
 - **MBP `known_hosts`:** host key for `192.168.1.21` accepted on first connect.
 - Discovery run (read-only): `discovery.md`.
+- **Router (Alex):** Local Network → LAN → DHCP Server: DHCP End IP Address `192.168.1.254` → `192.168.1.99`. Pool is now `.2–.99`; the 5 DHCP Bindings untouched. Undo: set the end back to `.254`.
+- **G8 address `.21` → `.100`:** checked `.100` unanswered, added it live (`ip addr add`), tested SSH and web UI on it, then `/etc/network/interfaces` `address 192.168.1.100/24` (kept `.21` as a second address through the reboot, removed after).
+- **G8 name `pve1` → `g8`:** `/etc/hostname` = `g8`; `/etc/hosts` = `192.168.1.100 g8.lab.alexluong.com g8`; postfix `myhostname=g8.lab.alexluong.com`; reboot (back in ~2 min); removed `/etc/pve/nodes/pve1` (no guests) and its old stats; `pvecm updatecerts --force` (new certificate for `g8`, `192.168.1.100`).
+- **G8 shop leftovers replaced:** `/etc/resolv.conf` = `search lab.alexluong.com`, `nameserver 192.168.1.1`, `nameserver 1.1.1.1` (was `connected.com.vn`, `8.8.8.8`); `root@pam` email → Alex's (was `xeon@connected.com.vn`).
+- Originals of every changed file: `/root/pre-rename-backup-20261002/` on the box (incl. the old node dir). Undo = copy back + reboot.
+- **MBP `~/.ssh/config`:** appended `Host g8` (`192.168.1.100`, `root`, `id_ed25519`, `UseKeychain`/`AddKeysToAgent` so the key reloads after a restart). Backup: `~/.ssh/config.bak-20261002`. Removed the `192.168.1.21` entry from `known_hosts`.
+- Verified after: `ssh g8` works, web UI 200 on `.100`, `.21` no longer answers, all Proxmox services active, no failed units, both storages active. Still above `.99` on old leases: `.124`, `.131`.
