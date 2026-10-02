@@ -98,6 +98,18 @@ Templates use VM IDs 9000+.
 
 **If the range changes later:** update the DNS records, the gateway's backend addresses and the fixed addresses on g8, the Mini and VMs; devices that use URLs (Kobo, TV apps) keep working. So point the Kobo (today `192.168.1.90`, typed in its config; service/port on the Mini not found by scan, Mini session to document) and the TV's Jellyfin/Plex apps at URLs once the gateway exists. Other costs: house offline a few minutes; router admin moves; mesh nodes might need re-pairing; a Viettel reset puts the range back. To avoid locking g8 out: give it both addresses first, switch the router, then drop the old one.
 
+## SSH keys on the MBP (2026-10-02)
+
+| Key | Passphrase | In agent | Used for |
+|---|---|---|---|
+| `github_alexluong` | yes (Keychain) | yes | GitHub, collielab VM (`sshmylab`), **home servers and VMs** |
+| `gitlab_alexluong` | yes | no | GitLab |
+| `id_ed25519` | yes | no | nothing known (created 2026-08-30) |
+| `id_ed_hookdeck` | no | no | Hookdeck jump boxes (`hd_jumpbox`, `hd_jumpbox_stg`) |
+| `google_compute_engine` | no | no | gcloud |
+
+One personal key (`github_alexluong`) for all of Alex's own machines: it is the only one loaded in the agent, so it is the only one Claude can use without a prompt. `~/.ssh/config` has no entries for home machines yet; its first line includes `~/.colima/ssh_config`, which no longer exists (harmless).
+
 ## Open
 
 - [ ] Router: DHCP pool range; apply the address plan; save router login to Vaultwarden

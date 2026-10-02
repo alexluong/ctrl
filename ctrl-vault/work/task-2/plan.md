@@ -14,7 +14,7 @@ Claude runs on the MBP (ctrl session) and manages the box over SSH. Home map and
 
 ## Manual steps (Alex) before Claude can start
 
-1. **SSH key to the box** (own terminal): `ssh-copy-id -i ~/.ssh/id_ed25519.pub root@192.168.1.21` → `yes` → root password.
+1. **SSH key to the box** (own terminal): `ssh-copy-id -i ~/.ssh/github_alexluong.pub root@192.168.1.21` (the key already loaded in the agent, same one the cloud VM accepts; `id_ed25519` has a passphrase and isn't loaded, so Claude can't use it) → `yes` → root password.
 2. **Root password in Vaultwarden**: item named for the box (`g8 root (Proxmox)`), user `root`, URL `https://192.168.1.21:8006`.
 3. **Router** (`http://192.168.1.1`, ZTE F6601P): log in (sticker under the router; save the login to Vaultwarden), send a screenshot of the LAN/DHCP page. Then, with Claude: DHCP pool → `.150–.254`, check how the Mini holds `.90`.
 
@@ -70,7 +70,7 @@ machine. Plan first; don't change anything until I confirm.
   Sharing → Remote Login) and to limit it to my user.
 - Then add this public key to ~/.ssh/authorized_keys (create with correct
   permissions, don't duplicate):
-  ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMjg8Brv2ipx0cshwJ1gBlXvoSrrAJjO2MbIEPXkPZgD alexluong@Alexs-MacBook-Pro.local
+  ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBYHGTf54CozHoY9Heb3Rgw4NDtMpwytqACJIsNNzjtN alex@alexluong.com
 - Propose turning off password login for SSH (keys only) and show me the change
   before applying.
 - Tell me the command to test from the MacBook Pro: ssh <user>@192.168.1.90
