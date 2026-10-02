@@ -35,13 +35,13 @@ Private (randomized) MACs change if the device's Wi-Fi setting is "Rotating"; a 
 
 ### pve1 (HP EliteDesk 805 G8 Mini)
 
-Ryzen 7 5700G (8c/16t), 64GB DDR4, 1TB NVMe. Proxmox VE, installed by the shop (xeon.vn). Buying trail: `work/task-1/decision.md`. Setup: TASK-2, `work/task-2/plan.md`.
+Ryzen 7 5700G (8c/16t), 64GB DDR4, 1TB NVMe. Proxmox VE 9.0.3, installed by the shop (xeon.vn); as-delivered state: `work/task-2/discovery.md`. Buying trail: `work/task-1/decision.md`. Setup: TASK-2, `work/task-2/plan.md`.
 
 | | |
 |---|---|
 | Address | `192.168.1.21/24`, gw `.1`, bridge `vmbr0` on `eno1` |
 | Web UI | `https://192.168.1.21:8006`, user `root`, realm Linux PAM (self-signed cert) |
-| SSH | `root@192.168.1.21`: **MBP key not installed yet** (password login only) |
+| SSH | `root@192.168.1.21`, key `id_ed25519`: works (2026-10-02). Password login still on |
 | Root password | Vaultwarden, item `pve1 root (Proxmox)` |
 | BIOS | SVM on; After Power Loss = Power On (Advanced → Boot Options) |
 | Console | none remote; needs monitor (DisplayPort) + USB keyboard at the box |
@@ -66,7 +66,7 @@ Ryzen 7 5700G (8c/16t), 64GB DDR4, 1TB NVMe. Proxmox VE, installed by the shop (
 | Target | Web | SSH | Status |
 |---|---|---|---|
 | Router | `http://192.168.1.1` | n/a | login on the router's sticker (save to Vaultwarden) |
-| pve1 host | `https://192.168.1.21:8006` | `root@192.168.1.21` | web works; SSH key pending |
+| pve1 host (to be `g8`) | `https://192.168.1.21:8006` | `root@192.168.1.21` | both work |
 | pve1 VMs | n/a | `alex@<vm>` | none yet |
 | Mac Mini | Jellyfin/Plex/qBittorrent ports above | off | Remote Login to enable |
 | collielab VM | `vault.collie.studio` etc. | `sshmylab` | works |
@@ -102,18 +102,17 @@ Templates use VM IDs 9000+.
 
 | Key | Passphrase | In agent | Used for |
 |---|---|---|---|
-| `github_alexluong` | yes (Keychain) | yes | GitHub, collielab VM (`sshmylab`), **home servers and VMs** |
+| `github_alexluong` | yes (Keychain) | yes | GitHub, collielab VM (`sshmylab`) |
 | `gitlab_alexluong` | yes | no | GitLab |
-| `id_ed25519` | yes | no | nothing known (created 2026-08-30) |
+| `id_ed25519` | yes (Keychain) | yes, since 2026-10-02 | **home servers and VMs** (Alex's choice) |
 | `id_ed_hookdeck` | no | no | Hookdeck jump boxes (`hd_jumpbox`, `hd_jumpbox_stg`) |
 | `google_compute_engine` | no | no | gcloud |
 
-One personal key (`github_alexluong`) for all of Alex's own machines: it is the only one loaded in the agent, so it is the only one Claude can use without a prompt. `~/.ssh/config` has no entries for home machines yet; its first line includes `~/.colima/ssh_config`, which no longer exists (harmless).
+Claude can only use keys loaded in the agent (no passphrase prompt). After a restart `id_ed25519` reloads only if `~/.ssh/config` names it with `UseKeychain yes` + `AddKeysToAgent yes`: add that with the `g8` host entry. `~/.ssh/config` has no entries for home machines yet; its first line includes `~/.colima/ssh_config`, which no longer exists (harmless).
 
 ## Open
 
 - [ ] Router: DHCP pool range; apply the address plan; save router login to Vaultwarden
-- [ ] pve1: `ssh-copy-id` from the MBP
 - [ ] Mac Mini: Remote Login + MBP key, specs, wired vs Wi-Fi → `mac-mini.md`
 - [ ] Later: Tailscale account + install on MBP/phone, `ts` names
 - [ ] Identify the unidentified devices (`.57`, `.124`, `.129/.130`)

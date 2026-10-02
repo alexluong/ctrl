@@ -14,7 +14,7 @@ Claude runs on the MBP (ctrl session) and manages the box over SSH. Home map and
 
 ## Manual steps (Alex) before Claude can start
 
-1. **SSH key to the box** (own terminal): `ssh-copy-id -i ~/.ssh/github_alexluong.pub root@192.168.1.21` (the key already loaded in the agent, same one the cloud VM accepts; `id_ed25519` has a passphrase and isn't loaded, so Claude can't use it) → `yes` → root password.
+1. ~~SSH key to the box~~ done 2026-10-02: `id_ed25519` installed with `ssh-copy-id`, loaded in the agent with `ssh-add --apple-use-keychain`.
 2. **Root password in Vaultwarden**: item named for the box (`g8 root (Proxmox)`), user `root`, URL `https://192.168.1.21:8006`.
 3. **Router** (`http://192.168.1.1`, ZTE F6601P): log in (sticker under the router; save the login to Vaultwarden), send a screenshot of the LAN/DHCP page. Then, with Claude: DHCP pool → `.150–.254`, check how the Mini holds `.90`.
 
@@ -22,7 +22,7 @@ Later, inside the VM (Alex types these; Claude can't): `claude` login, `gh auth 
 
 ## Order (agreed 2026-10-02: keep it simple, stay on `192.168.1.x`, Tailscale later)
 
-0. **Discovery (read-only)**: Proxmox version, storage layout, bridge config, repos, disk health (`smartctl`), BIOS version. **Audit what the shop left**: `authorized_keys`, users, cron, extra repos/packages. Anything odd → reinstall from the official ISO.
+0. **Discovery (read-only)**: done 2026-10-02, see `discovery.md` (clean, no reinstall). Proxmox version, storage layout, bridge config, repos, disk health (`smartctl`), BIOS version. **Audit what the shop left**: `authorized_keys`, users, cron, extra repos/packages. Anything odd → reinstall from the official ISO.
 1. **Router**: DHCP pool → `.150–.254` so `.90–.149` is never handed out. The box's address is typed into the box (not from the router), so nothing to confirm on the router for it beyond the pool.
 2. **Box address and name** (before any VM exists): rename `pve1` → `g8`, move `192.168.1.21` → `192.168.1.91`. `.91` is the MBP's address today, so first the pool change, then the MBP reconnects to Wi-Fi and gets a new address, then the box moves. Done with both addresses on the box for a moment so it is never unreachable.
 3. **Host basics**: no-subscription repo, updates, `amd64-microcode`, SSH password login off (keys only), BIOS update if outdated.
@@ -70,7 +70,7 @@ machine. Plan first; don't change anything until I confirm.
   Sharing → Remote Login) and to limit it to my user.
 - Then add this public key to ~/.ssh/authorized_keys (create with correct
   permissions, don't duplicate):
-  ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBYHGTf54CozHoY9Heb3Rgw4NDtMpwytqACJIsNNzjtN alex@alexluong.com
+  ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMjg8Brv2ipx0cshwJ1gBlXvoSrrAJjO2MbIEPXkPZgD alexluong@Alexs-MacBook-Pro.local
 - Propose turning off password login for SSH (keys only) and show me the change
   before applying.
 - Tell me the command to test from the MacBook Pro: ssh <user>@192.168.1.90
