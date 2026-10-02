@@ -7,6 +7,19 @@ Map of machines and addresses: `../home-systems.md`. How the MBP manages machine
 |---|---|---|---|---|
 | `hookdeck-ws` | 101 / `192.168.1.101` | 8 vCPU, 32GB, 250GB | `hookdeck-ws.md` | built 2026-10-02; in use from T3 on the MBP since that evening |
 
+## Planned (Alex, 2026-10-03)
+
+| VM | Holds | Why this grouping | Size (estimate, not measured) |
+|---|---|---|---|
+| `enable-ws` (102) | the Enable workspace | another company's production access (gcloud stg/prd/prd-rw, Mongo read and write, Cloudflare): its own VM, like hookdeck | 4 vCPU, 8–12GB, 80GB |
+| `personal-ws` (103) | `solex`, `cs` and later personal projects, each at `~/workspaces/<name>` | Alex's own projects, no client secrets: one VM instead of a fixed block of memory each | 4 vCPU, 8GB, 80–100GB |
+
+Rule: a workspace gets its own VM when its credentials must stay apart from the others (client or employer access); personal workspaces share one. **`ctrl` stays on the MBP**: it drives the machines (SSH to g8, gw, the VMs) and holds personal records, and a VM never gets keys to the host or other machines. The template is the same for all of them; a template never carries a login, a secret or a private key.
+
+On a shared VM: one T3 environment with one project per workspace; one GitHub key for the VM; machine-wide logins (e.g. Cloudflare for solex) are visible to every workspace on it, which is acceptable only because all are Alex's own; give each workspace's dev servers and board their own ports (`ctrl/services.conf` already assigns the boards).
+
+Memory on g8 (64GB): hookdeck 32 + enable 8–12 + personal 8 = about 50GB, leaving room for the monitoring VM (TASK-7).
+
 ## Playbooks
 
 - **`playbook.md`: put a workspace on a VM** (the repeatable process: size, survey, create, setup script, logins, clone, secrets, T3, sync, record). Use it for `enable`, `solex`, `cs` and any later workspace. Includes the survey prompt and the traps met the first time.
