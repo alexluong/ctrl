@@ -12,7 +12,7 @@ Where the details are:
 | Workspace VMs | `vms/README.md`, `vms/hookdeck-ws.md` |
 | Every change made, with undo | `work/task-2/log.md` |
 | Runbooks and all config | repo `collielab` (`~/git/hub/alexluong/collielab`): `README.md`, `hosts/g8/README.md`, `hosts/gw/README.md` |
-| Board | TASK-2 (g8 + hookdeck VM), TASK-3 (gateway), TASK-4 (BIOS, kernel) |
+| Board | TASK-2 (g8 + hookdeck-ws VM), TASK-3 (gateway), TASK-4 (BIOS, kernel) |
 
 ## Machines (2026-10-02)
 
@@ -21,7 +21,7 @@ Where the details are:
 | `mbp` | control point | `.91` | n/a | n/a | yes (ctrl sessions) |
 | `g8` | HP 805 G8, Proxmox host, 64GB | `.100` | `ssh g8` (root) | is root | no, stays bare |
 | `gw` | home gateway, container 110 on g8 | `.110` | `ssh gw` (root) | is root | no |
-| `hookdeck` | workspace VM 101 on g8 | `.101` | `ssh hookdeck-ws` | yes (passwordless) | yes |
+| `hookdeck-ws` | workspace VM 101 on g8 | `.101` | `ssh hookdeck-ws` | yes (passwordless) | yes |
 | `mini` | Mac Mini M4 16GB, media + 2 × 4TB drives | `.90` (Wi-Fi) | `ssh mini` | no (password) | has Claude; see § The Mini |
 | `vultr` | Debian 12 cloud VM, 1GB, public services | `vultr.alexluong.com` | `ssh vultr` | no (password) | no |
 
@@ -60,7 +60,7 @@ Where the details are:
 
 | Piece | State |
 |---|---|
-| SSH config in git | done; `g8`, `gw`, `mini`, `vultr`, `hookdeck` all connect using only the repo's host keys |
+| SSH config in git | done; `g8`, `gw`, `mini`, `vultr`, `hookdeck-ws` all connect using only the repo's host keys |
 | DNS | `terraform/alexluong_com.tf` (machines), `terraform/lab_gateway.tf` (wildcards → `gw`, the token) |
 | g8 | Proxmox 9.2.21, kernel pinned to 6.14.11; template VM 9000; `bin/new-vm` |
 | Gateway | container 110, Caddy + Cloudflare DNS module, Let's Encrypt wildcards; `hosts/gw/push.sh` validates then reloads; backend addresses in its `/etc/hosts` (`hosts/gw/machines`) so requests never wait on DNS |
@@ -92,9 +92,9 @@ Common jobs: add a URL → `collielab/hosts/gw/README.md`. New VM → `collielab
    - Start Colima + the core stack at login (user launch agent, `collielab/hosts/mini/`).
    - `gluetun` unhealthy (DNS/TLS timeouts through the VPN); `seedboxapi` crash-looping (expired MAM session, needs a new session ID from Alex); qBittorrent memory.
    - Ethernet, if a cable can reach.
-2. **Backups:** nothing is backed up; the `hookdeck` VM holds real setup. Target: Blue4 on the Mini.
+2. **Backups:** nothing is backed up; the `hookdeck-ws` VM holds real setup. Target: Blue4 on the Mini.
 3. **Devices → URLs:** Kobos and TV apps still use `192.168.1.90`. Try one Kobo first: untested whether Kobo firmware trusts Let's Encrypt and whether Calibre-Web's Kobo sync works behind the gateway.
-4. **hookdeck routes** on the gateway (`*.hookdeck.lab` has DNS but no site block; its T3 server listens on `127.0.0.1` only).
+4. **hookdeck-ws routes** on the gateway (`*.hookdeck-ws.lab` has DNS but no site block; its T3 server listens on `127.0.0.1` only).
 5. **vultr:** deploy its Caddyfile from git (needs one sudo step from Alex); move `services/` under `hosts/vultr/`.
 6. **A general `fleet` script** (diff/push/run per machine). Not written; the gateway has its own `push.sh`. Write it when a second machine needs pushing.
 7. **Tailscale** for access away from home (`*.ts.alexluong.com` names); on the Mini only today.

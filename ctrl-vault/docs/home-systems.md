@@ -130,7 +130,7 @@ Templates use VM IDs 9000+.
 - One-of-a-kind services, flat: `jellyfin.lab.alexluong.com`, `plex.lab…`, `qbt.lab…`, `g8.lab…` (Proxmox UI). URL survives a move between hosts.
 - Per-workspace services under the workspace: `hookdeck-ws.lab.alexluong.com` (main page, T3), `board.hookdeck.lab…`, `t3.enable.lab…`. A host can't share a name with a flat service.
 - **Two name sets, same gateway (a container on g8 running Caddy):** `*.lab.alexluong.com` → the gateway's home address, works at home on every device with no Tailscale (verified: router and Viettel DNS return private addresses for public names). `*.ts.alexluong.com` → the gateway's Tailscale address, works anywhere with Tailscale on, whatever range the other network uses (proposed). Same service names under both: `jellyfin.lab…` / `jellyfin.ts…`. No subnet router needed. Without Tailscale away: nothing connects.
-- Caddy gets Let's Encrypt wildcard certificates by DNS check (no open ports); one wildcard per level (`*.lab…`, `*.hookdeck.lab…`). Only the gateway holds the Cloudflare token (scoped to `alexluong.com`); VMs hold none.
+- Caddy gets Let's Encrypt wildcard certificates by DNS check (no open ports); one wildcard per level (`*.lab…`, `*.hookdeck-ws.lab…`). Only the gateway holds the Cloudflare token (scoped to `alexluong.com`); VMs hold none.
 - SSH: `ssh g8`, `ssh hookdeck-ws`, `ssh mini` via `~/.ssh/config` aliases.
 
 **Records that exist** (collielab `terraform/alexluong_com.tf`, DNS-only, applied 2026-10-02):
@@ -143,7 +143,7 @@ Templates use VM IDs 9000+.
 
 One record per machine or VM is added as it is created.
 
-**Gateway (built 2026-10-02, TASK-3):** `gw`, container 110 on g8 at `192.168.1.110`, Caddy. Wildcard records `*.lab`, `*.mini.lab`, `*.g8.lab`, `*.hookdeck.lab`, `*.calibre.lab`, `*.calibre.mini.lab` → `.110` (`terraform/lab_gateway.tf`); Let's Encrypt wildcard certificates. Routing table and runbook: `collielab/hosts/gw/` (`Caddyfile`, `push.sh`, `README.md`). Home network only.
+**Gateway (built 2026-10-02, TASK-3):** `gw`, container 110 on g8 at `192.168.1.110`, Caddy. Wildcard records `*.lab`, `*.mini.lab`, `*.g8.lab`, `*.hookdeck-ws.lab`, `*.calibre.lab`, `*.calibre.mini.lab` → `.110` (`terraform/lab_gateway.tf`); Let's Encrypt wildcard certificates. Routing table and runbook: `collielab/hosts/gw/` (`Caddyfile`, `push.sh`, `README.md`). Home network only.
 
 | URL | Service |
 |---|---|
@@ -160,7 +160,7 @@ One record per machine or VM is added as it is created.
 
 `g8.lab` vs `pve.g8.lab`: the first is the box itself (`192.168.1.100`: SSH, and Proxmox on `:8006` with its self-signed certificate); the second is the Proxmox web page through the gateway (no port, real certificate).
 
-Rule: `<machine>.lab…` is the machine (SSH, still its own address); `<service>.<machine>.lab…` goes through the gateway; short aliases `<service>.lab…` for what gets typed into devices. The old `:<port>` addresses still work and are the fallback when g8 is down. Not done: Kobos and TV apps still point at `192.168.1.90` (domain decided: stays `alexluong.com`, so this can go ahead); `*.hookdeck.lab` has no routes yet.
+Rule: `<machine>.lab…` is the machine (SSH, still its own address); `<service>.<machine>.lab…` goes through the gateway; short aliases `<service>.lab…` for what gets typed into devices. The old `:<port>` addresses still work and are the fallback when g8 is down. Not done: Kobos and TV apps still point at `192.168.1.90` (domain decided: stays `alexluong.com`, so this can go ahead); `*.hookdeck-ws.lab` has no routes yet.
 
 **If the range changes later:** update the DNS records, the gateway's backend addresses and the fixed addresses on g8, the Mini and VMs; devices that use URLs (Kobo, TV apps) keep working. So point the Kobos (today `192.168.1.90`, typed in their config; Calibre-Web on the Mini, `:8074` Alex / `:8073` Hannah) and the TV's Jellyfin/Plex apps at URLs once the gateway exists. Other costs: house offline a few minutes; router admin moves; mesh nodes might need re-pairing; a Viettel reset puts the range back. To avoid locking g8 out: give it both addresses first, switch the router, then drop the old one.
 
