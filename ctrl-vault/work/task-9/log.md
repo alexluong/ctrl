@@ -16,5 +16,13 @@ Design: `design.md`. Newest at the bottom. Each change has its undo.
 - MBP: Tailscale not installed.
 - Userspace mode on `gw` does not fit option 2: with no `tailscale0` interface the kernel has nothing to forward home traffic into. The tun device is needed.
 
+**Tailnet cleanup (Alex):** `67ee56ee4fc5` and `poc-client` removed; two machines left (`alexs-mac-mini`, `iphone-15-pro`).
+
 **Changes**
-- none yet
+
+1. **gw: tun device passed into container 110** (Alex's OK).
+   - On g8: `pct set 110 --dev0 /dev/net/tun`. Adds `dev0: /dev/net/tun` to `/etc/pve/lxc/110.conf`. Config before the change: `g8:/root/110.conf.before-task9`.
+   - **No restart was needed**: the device appeared in the running container at once (Proxmox 9.2.21). Checked: a dummy tun interface could be created and deleted inside gw; Caddy stayed active; `https://lab.alexluong.com` returned 200.
+   - Not yet seen: the device coming back after a container restart (expected, it is in the config).
+   - `collielab/hosts/gw/create.sh` got the same `--dev0` line so a rebuild matches.
+   - Undo: `ssh g8 'pct set 110 --delete dev0'` (after removing Tailscale from gw).
