@@ -3,6 +3,8 @@
 VM 101 on g8, `hookdeck.lab.alexluong.com` = `192.168.1.101`, `ssh hookdeck` (user `alex`, passwordless sudo). 8 vCPU, 32GB RAM (fixed, no ballooning), 250GB thin disk, starts with the host. Debian 13 from the base template.
 Scripts and runbook: `collielab/hosts/g8/README.md`. What the workspace needs and why: `hookdeck-vm-requirements.md`. T3: `docs/t3-code-remote.md`. Change log: `log.md`.
 
+**The living doc for this VM is `docs/vms/hookdeck.md`** (tools, logins and their state, secret files, first run). This file keeps the build-day state and decisions.
+
 ## State when handed over
 
 Ready, with no login and no secret on it:
