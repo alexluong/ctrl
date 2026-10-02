@@ -1,10 +1,10 @@
 ---
 id: TASK-1
 title: Buy always-on dev box for hookdeck agents
-status: In Progress
+status: Done
 assignee: []
 created_date: '2026-09-29 19:45'
-updated_date: '2026-09-30 11:10'
+updated_date: '2026-10-02 21:53'
 labels:
   - machine
   - infra
@@ -31,5 +31,11 @@ author: @claude
 created: 2026-09-30 11:10
 ---
 Box received; Proxmox pre-installed at 192.168.1.21, BIOS power-on-after-loss set, memtest running. Next: management setup discussion (see decision.md Status).
+---
+
+author: @claude
+created: 2026-10-02 21:53
+---
+Closed 2026-10-03: the HP EliteDesk 805 G8 was bought and is in service as g8 (TASK-2). Decision and research: ctrl-vault/work/task-1/.
 ---
 <!-- COMMENTS:END -->

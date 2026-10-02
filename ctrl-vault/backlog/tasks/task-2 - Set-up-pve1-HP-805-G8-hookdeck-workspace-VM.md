@@ -1,10 +1,10 @@
 ---
 id: TASK-2
 title: Set up pve1 (HP 805 G8) + hookdeck workspace VM
-status: In Progress
+status: Done
 assignee: []
 created_date: '2026-10-02 08:44'
-updated_date: '2026-10-02 11:02'
+updated_date: '2026-10-02 21:53'
 labels:
   - machine
   - infra
@@ -43,5 +43,11 @@ author: @claude
 created: 2026-10-02 11:02
 ---
 2026-10-02: VM template (9000) and hookdeck VM (101, 192.168.1.101, ssh hookdeck) built from scripts in collielab (hosts/g8, bin/new-vm; new VM in ~40s). T3 server runs in the VM on loopback, reached over SSH. All tools installed; no login or secret on it. Left for Alex: first-run list in work/task-2/hookdeck-vm.md.
+---
+
+author: @claude
+created: 2026-10-02 21:53
+---
+Closed 2026-10-03: g8 set up, hookdeck-ws in daily use from T3, playbooks written. Summary: ctrl-vault/work/task-2/summary.md. Follow-ups: TASK-8, 9, 10, 11, 12.
 ---
 <!-- COMMENTS:END -->
