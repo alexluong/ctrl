@@ -31,9 +31,9 @@ All run on the VM (`ssh hookdeck-ws`); each prints a link and a code to finish i
 | gcloud | copied from the MBP with `.gcloud/` and `.kube/` (the workspace keeps its gcloud state in its own folder). Fresh login instead: from `~/workspaces/hookdeck`, `gcloud auth login alex.luong@hookdeck.com --no-launch-browser`, `gcloud auth application-default login --no-launch-browser`, then unset the account on config `none` and move the ADC file to `.gcloud/adc-hookdeck.json` | `stg`, `prd` wrappers, terraform, kubectl | done 2026-10-02 (copied; `bin/stg kubectl --context outpost-staging-us get ns` works) |
 | Notion MCP | in a Claude session in the workspace: `/mcp` → notion → authenticate | `notion-publish-spec` skill | to do; the sign-in redirects to `localhost` on the VM, so paste the final URL back into Claude if the page fails to load |
 | AWS | `~/.aws/config` copied from the MBP, then `aws sso login --profile personal --use-device-code` | Ampersand work | to do, when needed |
-| Docker Hub | `docker login` | only to push dev images | when needed |
+| Docker Hub | `docker login` | only to push dev images | when needed; Alex has the account (logged in on the MBP), not yet on the VM |
 | npm | `~/.npmrc` (one token line) copied from the MBP | publishing | when needed |
-| Jumpbox tunnels (prod, staging) | `~/.ssh/id_ed_hookdeck` + the `hd_jumpbox`, `hd_jumpbox_stg` blocks from the MBP's `~/.ssh/config` | `prd pg`, staging PG | **copied 2026-10-02** (key, host blocks, host fingerprints; login tested, no tunnel running). The same key also opens Alex's GitLab on the MBP. Undo: `rm ~/.ssh/id_ed_hookdeck* ~/.ssh/config` on the VM. Next: a user service per tunnel, switched from the MBP menubar |
+| Jumpbox tunnels (prod, staging) | `~/.ssh/id_ed_hookdeck` + the `hd_jumpbox`, `hd_jumpbox_stg` blocks from the MBP's `~/.ssh/config` | `prd pg`, staging PG | **copied 2026-10-02** (key, host blocks, host fingerprints; login tested, no tunnel running). The same key also opens Alex's GitLab on the MBP. Undo: `rm ~/.ssh/id_ed_hookdeck* ~/.ssh/config` on the VM. Next: a switch in the MBP menubar (TASK-6) |
 
 Doppler and Railway logins are machine-wide and can write. gcloud `prd` is Alex's own account and can write; the workspace's guard hooks ask on mutating commands but are not a boundary.
 
