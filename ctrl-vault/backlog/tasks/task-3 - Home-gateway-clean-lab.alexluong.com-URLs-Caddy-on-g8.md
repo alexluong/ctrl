@@ -4,7 +4,7 @@ title: 'Home gateway: clean lab.alexluong.com URLs (Caddy on g8)'
 status: In Progress
 assignee: []
 created_date: '2026-10-02 10:08'
-updated_date: '2026-10-02 14:09'
+updated_date: '2026-10-02 17:02'
 labels:
   - machine
   - infra
@@ -31,5 +31,11 @@ author: @claude
 created: 2026-10-02 14:09
 ---
 2026-10-02: 502 on pve.g8.lab (Alex): Caddy looked up the backend name through the router on each new connection; a lookup takes ~1s there and one timed out. Fix: backend machine addresses in gw's /etc/hosts (collielab hosts/gw/machines, installed by push.sh; survives a container restart). Requests now ~20ms. Also since: lab.alexluong.com index page, alex.calibre / hannah.calibre names, private qBittorrent left off, domain stays alexluong.com.
+---
+
+author: @claude
+created: 2026-10-02 17:02
+---
+2026-10-02: first hookdeck-ws routes. Site block *.hookdeck-ws.lab in the Caddyfile; dozzle (:8888) and isaiah (:8889) routed, cards on the index page (collielab 5df18d1). Left for hookdeck-ws: core's <ns>.localhost URLs, board, T3.
 ---
 <!-- COMMENTS:END -->
