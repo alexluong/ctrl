@@ -4,7 +4,7 @@ title: Set up pve1 (HP 805 G8) + hookdeck workspace VM
 status: In Progress
 assignee: []
 created_date: '2026-10-02 08:44'
-updated_date: '2026-10-02 09:58'
+updated_date: '2026-10-02 10:26'
 labels:
   - machine
   - infra
@@ -31,5 +31,11 @@ author: @claude
 created: 2026-10-02 09:58
 ---
 2026-10-02: router pool now .2-.99; box renamed pve1 -> g8 and moved .21 -> .100; ssh g8 works from the MBP. Next: host updates (181), SSH keys only, BIOS update, then VM template.
+---
+
+author: @claude
+created: 2026-10-02 10:26
+---
+2026-10-02: Mac Mini reachable from the MBP (ssh mini); PR #1 from the Mini's clone merged (media/ domain + docs/mac-mini.md). MBP aliases now use names: g8 -> g8.lab.alexluong.com, mini -> mini.lab.alexluong.com; ssh vultr replaces sshmylab. Left on the Mini: SSH keys only (Alex, sudo), move its clone to main. g8 next: BIOS update, then VM template.
 ---
 <!-- COMMENTS:END -->
