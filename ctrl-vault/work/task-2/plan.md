@@ -49,8 +49,11 @@ machine. Plan first; don't change anything until I confirm.
 - Model, chip, RAM, internal disk size and free space, macOS version, hostname.
 - Network: wired or Wi-Fi, IP, MAC, and whether Wi-Fi uses a private address
   (Fixed or Rotating). Expected today: 192.168.1.90, alexs-Mac-mini.local.
+- How is the address fixed: typed into this Mac's network settings, or handed out
+  by the router? (I plan to move the home network to 192.168.77.x.)
 - Is Remote Login (SSH) on? Which user accounts exist?
-- What runs here: Colima/Docker containers, Plex, Jellyfin, qBittorrent, anything
+- What runs here: Colima/Docker containers, Plex, Jellyfin, qBittorrent, the book
+  server my Kobo syncs with (service, port, how the Kobo is pointed at it), anything
   on port 53, launch agents/login items, what starts after a reboot.
 - External drives: the Samsung T7 (mount point, filesystem, size, free space) and
   any others.

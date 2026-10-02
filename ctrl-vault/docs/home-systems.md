@@ -53,7 +53,7 @@ Ryzen 7 5700G (8c/16t), 64GB DDR4, 1TB NVMe. Proxmox VE, installed by the shop (
 |---|---|
 | Address | `192.168.1.90` (DHCP), `alexs-Mac-mini.local` |
 | SSH | **off** (Remote Login disabled; port 22 closed) |
-| Services seen | qBittorrent `:8080`, Jellyfin `:8096`, Plex `:32400`, AirPlay `:5000/:7000`, something on `:53` |
+| Services seen | Kobo book sync (port unknown), qBittorrent `:8080` and `:8081`, Jellyfin `:8096`, Plex `:32400`, AirPlay `:5000/:7000`, something on `:53` |
 | Arrstack | `hub/alexluong/arr` (gluetun, qbittorrent, prowlarr, radarr, sonarr) on Colima; data on Samsung T7 (`/Volumes/T7/arr`) |
 | Unknown | exact specs, macOS version, wired vs Wi-Fi, T7 filesystem. Details go in `mac-mini.md` (written from a session on the Mini) |
 
@@ -96,7 +96,7 @@ Templates use VM IDs 9000+.
 - Caddy gets Let's Encrypt wildcard certificates by DNS check (no open ports); one wildcard per level (`*.lab…`, `*.hookdeck.lab…`). Only the gateway holds the Cloudflare token (scoped to `alexluong.com`); VMs hold none.
 - SSH: `ssh g8`, `ssh hookdeck`, `ssh mini` via `~/.ssh/config` aliases.
 
-**Range-change risks** (why it's done carefully): house offline a few minutes; router admin moves to `192.168.77.1`; fixed-address devices need changing by hand (g8; the Mini if its address is set on the Mac); apps with a typed-in address need re-entering (TV Jellyfin/Plex → `192.168.1.90`); the 2 mesh nodes might need re-pairing; a Viettel reset or router swap puts the range back to `192.168.1.x`. To avoid locking g8 out: give it both addresses first, switch the router, then drop the old one.
+**Range-change risks** (why it's done carefully): house offline a few minutes; router admin moves to `192.168.77.1`; fixed-address devices need changing by hand (g8; the Mini if its address is set on the Mac); apps with a typed-in address need re-entering (TV Jellyfin/Plex → `192.168.1.90`; **Kobo e-reader book sync → `192.168.1.90`**, set in the Kobo's config, service/port on the Mini not found by scan, Mini session to document); the 2 mesh nodes might need re-pairing; a Viettel reset or router swap puts the range back to `192.168.1.x`. To avoid locking g8 out: give it both addresses first, switch the router, then drop the old one.
 
 ## Open
 
