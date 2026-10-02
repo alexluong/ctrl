@@ -104,10 +104,12 @@ Home-only today: everything on `192.168.1.x` is reachable only on home Wi-Fi. Ta
 | `.2–.79` | handed out automatically by the router (phones, TVs, guests, mesh nodes) |
 | `.80–.99` | **reserved on the router** (DHCP Binding; the machine asks, always gets the same answer): `.80` ESP32, `mini` `.90`, `mbp` `.91`, Kobos `.92–.93`; future Macs/Windows PCs `.94+` (grow down into the `.80s` if needed) |
 | `.100–.254` | **ours, typed into the machine; the router never hands these out** (pool = `.2–.99`). No router change per machine or VM |
-| `.100–.119` | `g8` block: host `.100`, its VMs and containers `.101–.119`. **Proxmox VM ID = last number**: `hookdeck` = VM 101 = `.101` |
-| `.120–.139`, `.140–.159`, … | one block of 20 per further host: host first, its VMs after |
+| `.100–.149` | `g8` block (50, Alex): host `.100`, its VMs and containers `.101–.149`. **Proxmox VM ID = last number**: `hookdeck` = VM 101 = `.101` |
+| `.150–.199`, `.200–.249` | one block of 50 per further host: host first, its VMs after |
 
 The split is by how the address gets fixed, not by kind of machine: Macs, PCs and Kobos ask the router, so they are fixed by a reservation, which must sit inside the pool; Proxmox and its VMs have the address typed in, which must sit outside the pool. Whether this router honours reservations outside the pool is unknown, hence the pool end at `.99`. The Mini is as much a server as the G8; it stays at `.90` for now (moving it is cheap once devices use URLs).
+
+**How `.100+` is kept free** (no per-address reservation exists or is needed): the router can only hand out addresses inside its pool, so pool end `.99` is the guarantee. Checks: (1) the router's DHCP page shows end `.99` and its allocated-address list shows nothing above; (2) a sweep from the MBP an hour after the change (lease time 1h) finds only our machines at `.100+`; (3) the VM-creation script tests that an address gets no reply (`arping`) before using it.
 
 Every VM has its own address (it is a separate machine on the network); the address is set by the VM-creation script, nothing to do on the router.
 
