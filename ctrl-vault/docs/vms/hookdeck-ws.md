@@ -79,6 +79,16 @@ State: all 13 paths copied 2026-10-02 (rsync from the MBP, no Mac-only paths ins
 - Core URLs are `http://<ns>.localhost` on the VM's own port 80. From the MBP's browser: `ssh -L 80:127.0.0.1:80 hookdeck-ws` while no stack runs on the MBP; later the gateway (TASK-3) or `pnpm start --tailscale`.
 - Outpost and the PM2 services listen on all addresses, so they are reachable from the home network at `hookdeck-ws.lab.alexluong.com:<port>`.
 
+## Syncing work from the MBP
+
+Team repos keep task branches in each machine's own bare clones, so unpushed work has to be carried over. Without touching GitHub, from the MBP's `~/workspaces/hookdeck`:
+
+```sh
+git -C repos/<repo>.git push hookdeck-ws:workspaces/hookdeck/repos/<repo>.git "refs/heads/${b}:refs/heads/${b}"
+```
+
+(Refused when the VM already has a newer version of that branch from GitHub: push it as `mbp/<branch>` instead.) Uncommitted changes: `git -C wt/<repo>/<task> diff HEAD --binary > x.patch`, copy to the VM's `local/`. The workspace repo itself goes through GitHub (`git push`, then `git pull` on the VM). First sync 2026-10-02: `work/task-2/log.md`. The VM has only the `main` worktrees; a task continues there after `bin/wt add` for it.
+
 ## Differences from the MBP
 
 - `.agents/skills/worktree/wt:30` (`OLD=…/git/hub/alexluong/hookdeck`): no env-file source on the VM.
