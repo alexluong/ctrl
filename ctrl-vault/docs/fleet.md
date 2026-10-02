@@ -1,6 +1,6 @@
 # Fleet: how the MBP manages the other machines
 
-**Status: proposal (2026-10-02), not decided.** Alex's ask: a "ctrl system" where the MBP is the control point for `g8`, `mini`, `vultr` and the VMs to come: SSH, running and deploying things on them, where config lives, clean URLs through a gateway.
+**Status (2026-10-02): §1 SSH and §3 repo decided and built (collielab `d8dc870`); §2 `fleet` script, §4 gateway and the Mini question (§5) still proposals.** Alex's ask: a "ctrl system" where the MBP is the control point for `g8`, `mini`, `vultr` and the VMs to come: SSH, running and deploying things on them, where config lives, clean URLs through a gateway.
 Map of machines and addresses: `home-systems.md`. Cloud VM: `collielab.md`. Mini: `mac-mini.md`. g8 setup: `work/task-2/plan.md`. Gateway task: TASK-3.
 
 ## Machines (2026-10-02)
@@ -15,14 +15,14 @@ Map of machines and addresses: `home-systems.md`. Cloud VM: `collielab.md`. Mini
 
 ## 1. SSH
 
-Today: aliases `g8`, `mini`, `vultr` in the MBP's `~/.ssh/config`, by domain name; host keys in `~/.ssh/known_hosts`. Both exist only on the MBP.
+Built 2026-10-02: `collielab/ssh/config` (blocks for `g8`, `mini`, `vultr`), `ssh/known_hosts`, `ssh/authorized_keys`; the MBP's `~/.ssh/config` includes it (backup `~/.ssh/config.bak-20261002-fleet`). Verified: all three connect using only the repo's host keys. `vultr` now takes `id_ed25519` too.
 
-Proposed:
+How it works:
 
 - **The fleet's SSH config lives in git**, in the infra repo (§3): `ssh/config` (one `Host` block per machine) and `ssh/known_hosts` (their host keys). `~/.ssh/config` gets one line, `Include <repo>/ssh/config`; the blocks set `UserKnownHostsFile` to the repo file. A new control machine (or an agent on a VM that is allowed to reach others) gets every alias and never sees a "trust this host?" prompt. No secrets in either file.
 - **Adding a machine = one commit:** DNS record (terraform), `Host` block, host key line. The VM-creation script does all three.
 - **Names only.** `<machine>.lab.alexluong.com` at home, `vultr.alexluong.com` in the cloud. Fallback by address when DNS is down stays documented in `home-systems.md`.
-- **Keys:** one key per control machine (MBP: `id_ed25519`); `ssh/authorized_keys` in the repo is the list every managed machine gets. `vultr` still takes `github_alexluong`; add `id_ed25519` there so one key covers the fleet.
+- **Keys:** one key per control machine (MBP: `id_ed25519`); `ssh/authorized_keys` in the repo is the list every managed machine gets. One key covers the fleet.
 - **sudo:** agents cannot type a password, so on `mini` and `vultr` anything needing root stops and waits for Alex. Design around it instead of opening sudo: services run in Docker or as user-level services (launchd agents on the Mini, `systemd --user` or the docker group on Linux); the few root steps (sshd config, Caddy install) are one-time, done by Alex, logged. If that gets tedious on one machine: a sudoers rule limited to named commands (`systemctl reload caddy`), never blanket.
 - **Away from home:** Tailscale, later (already agreed). The same aliases get a second name set (`*.ts.alexluong.com`).
 
@@ -55,11 +55,11 @@ Push from the MBP rather than `git pull` on each machine: machines need no GitHu
 
 | Repo | Holds |
 |---|---|
-| `collielab` (planned name `collielab/infra`) | **all machine config**: `terraform/` (DNS, Vultr), `hosts/<machine>/` (per-machine files and scripts), `ssh/`, `bin/fleet`, VM template and creation scripts. Already holds terraform and `vultr`'s services, and the `lab.alexluong.com` records |
+| `collielab` (planned name `collielab/infra`) | **decided (Alex, 2026-10-02): ctrl is docs and notes, the actual work lives in collielab or other repos.** All machine config: `terraform/` (DNS, Vultr), `hosts/<machine>/` (per-machine files and scripts), `ssh/`, `bin/fleet`, VM template and creation scripts. Already holds terraform and `vultr`'s services, and the `lab.alexluong.com` records |
 | `ctrl` | the map and the history: `home-systems.md`, this doc, change logs, board, decisions. Also `media/` (the Mini's stack) for now |
 | `dotfiles` | setting up a Mac for Alex (apps, shell). Adds the `Include` line for the fleet SSH config |
 
-Proposed `collielab` layout:
+`collielab` layout (`ssh/`, `hosts/{g8,gw,mini,vultr}/` and a README exist; `hosts/vultr/Caddyfile` is a read-only copy for now; `bin/fleet` and the `services/` move not done):
 
 ```
 terraform/
@@ -93,7 +93,7 @@ This replaces the earlier "flat for one-of-a-kind, nested for workspaces" split 
 
 - A small Debian 13 container on g8 (`gw`), Caddy with the Cloudflare DNS module, config = `hosts/gw/Caddyfile` in git, pushed with `fleet push gw`.
 - DNS: wildcard records `*.mini.lab`, `*.g8.lab`, `*.<vm>.lab` (and the aliases) → the gateway's address; the bare machine names keep pointing at the machines.
-- Certificates: Let's Encrypt wildcard per machine level, proven through DNS, so nothing is opened to the internet. Only `gw` holds the Cloudflare token.
+- Certificates: Let's Encrypt wildcard per machine level, proven through DNS, so nothing is opened to the internet. Only `gw` holds a Cloudflare token: a new one limited to DNS edit on the `alexluong.com` zone, created with terraform (`cloudflare_account_token`; the terraform token can create tokens, see `collielab.md` § Tokens). The terraform token itself never goes on a machine: it covers the whole account.
 - Caddy forwards to `192.168.1.90:8096` etc. over the home network.
 
 Why central: one routing file, one certificate holder, one token (a Cloudflare token can't be limited to `lab.` names, only to the whole `alexluong.com` zone, so fewer holders is better); adding a URL is one line + one push; the Tailscale name set later needs only the gateway on Tailscale. Cost: if g8 is down, the Mini's URLs stop working (the ports still do). g8 powers itself back on after a power cut; the Mini does not.
@@ -104,17 +104,33 @@ Per-machine gateways (Caddy on each machine) would keep each machine independent
 
 **Per-service settings to expect:** Proxmox UI needs HTTPS to the backend with its self-signed cert accepted; qBittorrent checks the Host header (allow the new name); Jellyfin and Plex want the gateway listed as a known proxy / custom URL.
 
+## 5. The Mini: managed from the MBP, and where `media/` goes (proposal)
+
+Checked over SSH 2026-10-02:
+
+| Works | Does not |
+|---|---|
+| Docker (`docker --context colima-arr …`), Colima, git, tmux, Tailscale CLI | **reading `/Volumes/Blue4`, `/Volumes/Red4`** ("Operation not permitted": macOS privacy; fix = System Settings → General → Sharing → Remote Login → (i) → "Allow full disk access for remote users", Alex, one click) |
+| | the login Keychain (locked for SSH sessions) |
+| | anything needing sudo or a click on the screen |
+
+So with the full-disk-access switch on, media work can be driven from the MBP: long jobs run in `tmux` on the Mini and survive the MBP sleeping. Sessions started on the Mini stay as the fallback for the right-hand column.
+
+`media/` is two different things: config and scripts (compose, `up.sh`, `catalog.py`; change rarely) and **data the scripts write on the Mini** (`catalog.json`, `downloads.json`: 21 commits each, the busiest files). The data is why the Mini has to commit, and a second clone of a repo the MBP also writes is how PR #1 happened.
+
+Proposal: **no workspace for the Mini** (it is a machine, not a project; board, notes and the `media-ops` skill stay in ctrl). `media/` becomes its **own repo with one working clone, on the Mini**; the MBP session edits and commits there over SSH. One writer, so no second timeline. ctrl's clone leaves the Mini. Machine-level files (launch agents) go in `collielab/hosts/mini/`.
+
 ## Order
 
 1. `collielab`: `ssh/` + `Include`, `hosts/` skeleton, `bin/fleet` (diff/push/run). Bring `vultr`'s Caddyfile into `hosts/vultr/` (read-only copy first, then push becomes the way to change it).
-2. Gateway (TASK-3): container on g8, Cloudflare token (Alex creates, DNS edit on `alexluong.com`), wildcard records, routes for the Mini's services and the Proxmox UI. Then point the Kobos and TV apps at URLs.
+2. Gateway (TASK-3): container on g8, Cloudflare token (terraform), wildcard records, routes for the Mini's services and the Proxmox UI. Then point the Kobos and TV apps at URLs.
 3. VM template + `hookdeck` VM (TASK-2 steps 4-5), created by a script that also adds DNS, SSH block, host key and gateway routes.
 4. Mini: Colima autostart as a user launch agent, SSH keys only (Alex), clone onto `main`.
 5. Tailscale + `*.ts` names. Backups (g8 → Mini drive).
 
 ## Decisions needed (Alex)
 
-1. Infra repo = `collielab` (recommended) vs a new repo vs inside ctrl.
+1. ~~Infra repo~~ decided: `collielab`, a directory per machine.
 2. Gateway: central on g8 with `<service>.<machine>.lab` names + a few short aliases (recommended) vs per-machine.
-3. Mini's agent: keeps its own ctrl clone, limited to `media/` (recommended) vs no agent there, everything driven from the MBP.
+3. Mini: `media/` → own repo, single clone on the Mini, driven from the MBP over SSH (recommended, §5) vs a ctrl clone on the Mini limited to `media/`.
 4. Gateway container number/address in g8's block (`hookdeck` is promised 101): proposal `gw` = container 110 = `.110`, infra containers 110-119.

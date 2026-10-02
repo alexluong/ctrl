@@ -10,7 +10,7 @@ terraform/    cloudflare DNS + vultr VM
 incidents/    postmortems (2025-05-17 VM disk space)
 ```
 
-No README, no CLAUDE.md at root (as of 2026-08-11).
+Since 2026-10-02 also `ssh/` (fleet SSH config, host keys) and `hosts/<machine>/` (per-machine config: `g8`, `gw`, `mini`, `vultr`), plus a root README. It is the repo for all machine config; design in `fleet.md`.
 
 ## The VM
 
@@ -101,7 +101,7 @@ eldobot's credential is on the VM in `/home/alex/services/eldobot/.env` (previou
 
 ## Open items
 
-- **`/etc/caddy/Caddyfile` is unversioned** — the routing table for every public hostname lives only on the VM. Should be a file in this repo, deployed to `/etc/caddy/`. Two entries are already stale (`portainer`, `dashboard` point at nothing).
+- **`/etc/caddy/Caddyfile` is only copied, not deployed** (copy at `hosts/vultr/Caddyfile`, 2026-10-02; changing it still means sudo on the VM) — the routing table for every public hostname lives only on the VM. Should be a file in this repo, deployed to `/etc/caddy/`. Two entries are already stale (`portainer`, `dashboard` point at nothing).
 - **`~/services/caddy/` is dead** and should be deleted so nobody edits it by mistake.
 - Portainer and the observability stack are stopped with 4 orphaned volumes still on disk — decide: revive or remove.
 - `alexluong.com`'s PocketBase `data.db` has no backup beyond weekly Vultr snapshots (see `projects/alexluong-com.md`).

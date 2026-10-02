@@ -148,11 +148,11 @@ One record per machine or VM is added as it is created. Ports and the certificat
 |---|---|---|---|
 | `github_alexluong` | yes (Keychain) | yes | GitHub, collielab VM (`ssh vultr`) |
 | `gitlab_alexluong` | yes | no | GitLab |
-| `id_ed25519` | yes (Keychain) | yes, since 2026-10-02 | **home servers and VMs** (Alex's choice) |
+| `id_ed25519` | yes (Keychain) | yes, since 2026-10-02 | **every fleet machine**: g8, mini, vultr, VMs (Alex's choice) |
 | `id_ed_hookdeck` | no | no | Hookdeck jump boxes (`hd_jumpbox`, `hd_jumpbox_stg`) |
 | `google_compute_engine` | no | no | gcloud |
 
-Claude can only use keys loaded in the agent (no passphrase prompt). After a restart `id_ed25519` reloads only if `~/.ssh/config` names it with `UseKeychain yes` + `AddKeysToAgent yes`: add that with the `g8` host entry. `~/.ssh/config` has `Host g8`, `Host mini`, `Host vultr` (all with those two lines). **Rule (Alex, 2026-10-02): aliases point at domain names, not addresses**, wherever a name exists; an address change is then one DNS record. The names need working DNS (internet up); with it down, `ssh root@192.168.1.100` / `ssh alex@192.168.1.90` still work. Its first line includes `~/.colima/ssh_config`, which no longer exists (harmless).
+Claude can only use keys loaded in the agent (no passphrase prompt). After a restart `id_ed25519` reloads only if `~/.ssh/config` names it with `UseKeychain yes` + `AddKeysToAgent yes`: add that with the `g8` host entry. The fleet blocks (`g8`, `mini`, `vultr`, with those two lines) live in git, `collielab/ssh/config`, pulled in by an `Include` line in `~/.ssh/config`; host keys in `collielab/ssh/known_hosts` (see `fleet.md`). **Rule (Alex, 2026-10-02): aliases point at domain names, not addresses**, wherever a name exists; an address change is then one DNS record. The names need working DNS (internet up); with it down, `ssh root@192.168.1.100` / `ssh alex@192.168.1.90` still work. Its first line includes `~/.colima/ssh_config`, which no longer exists (harmless).
 
 ## Open
 
