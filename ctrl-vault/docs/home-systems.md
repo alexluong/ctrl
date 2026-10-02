@@ -77,7 +77,7 @@ Home-only today: everything on `192.168.1.x` is reachable only on home Wi-Fi. Ta
 
 **Names.** Physical machines: `g8` (HP 805 G8, today still hostname `pve1`; rename before the first VM), `mini` (Mac Mini), `mbp`. VMs by purpose: `hookdeck`, `enable`, `solex`, `cs`, `ixchel`, later `media`. The same name is the Proxmox VM name, hostname, Tailscale name and DNS label.
 
-**Home range: move `192.168.1.x` → `192.168.77.x`** (proposed, Alex leaning yes). Reason: the URLs below point at home addresses and are reached from outside through Tailscale; `192.168.1.x` is the most common range elsewhere, and a clash makes the URLs fail on that network.
+**Home range: stay on `192.168.1.x`** (Alex, 2026-10-02). A move to an uncommon range (e.g. `192.168.77.x`) is deferred; once devices use URLs it is a DNS change plus the fixed addresses, not a per-device chore.
 
 | Range | Use |
 |---|---|
@@ -92,11 +92,11 @@ Templates use VM IDs 9000+.
 
 - One-of-a-kind services, flat: `jellyfin.lab.alexluong.com`, `plex.lab…`, `qbt.lab…`, `g8.lab…` (Proxmox UI). URL survives a move between hosts.
 - Per-workspace services under the workspace: `hookdeck.lab.alexluong.com` (main page, T3), `board.hookdeck.lab…`, `t3.enable.lab…`. A host can't share a name with a flat service.
-- Records point at **home addresses** (a gateway container on g8 running Caddy). At home they work on every device with no Tailscale (verified: router and Viettel DNS return private addresses for public names). Away: Tailscale on, g8 shares the home network (subnet router), same URLs. Away without Tailscale: nothing connects.
+- **Two name sets, same gateway (a container on g8 running Caddy):** `*.lab.alexluong.com` → the gateway's home address, works at home on every device with no Tailscale (verified: router and Viettel DNS return private addresses for public names). `*.ts.alexluong.com` → the gateway's Tailscale address, works anywhere with Tailscale on, whatever range the other network uses (proposed). Same service names under both: `jellyfin.lab…` / `jellyfin.ts…`. No subnet router needed. Without Tailscale away: nothing connects.
 - Caddy gets Let's Encrypt wildcard certificates by DNS check (no open ports); one wildcard per level (`*.lab…`, `*.hookdeck.lab…`). Only the gateway holds the Cloudflare token (scoped to `alexluong.com`); VMs hold none.
 - SSH: `ssh g8`, `ssh hookdeck`, `ssh mini` via `~/.ssh/config` aliases.
 
-**Range-change risks** (why it's done carefully): house offline a few minutes; router admin moves to `192.168.77.1`; fixed-address devices need changing by hand (g8; the Mini if its address is set on the Mac); apps with a typed-in address need re-entering (TV Jellyfin/Plex → `192.168.1.90`; **Kobo e-reader book sync → `192.168.1.90`**, set in the Kobo's config, service/port on the Mini not found by scan, Mini session to document); the 2 mesh nodes might need re-pairing; a Viettel reset or router swap puts the range back to `192.168.1.x`. To avoid locking g8 out: give it both addresses first, switch the router, then drop the old one.
+**If the range changes later:** update the DNS records, the gateway's backend addresses and the fixed addresses on g8, the Mini and VMs; devices that use URLs (Kobo, TV apps) keep working. So point the Kobo (today `192.168.1.90`, typed in its config; service/port on the Mini not found by scan, Mini session to document) and the TV's Jellyfin/Plex apps at URLs once the gateway exists. Other costs: house offline a few minutes; router admin moves; mesh nodes might need re-pairing; a Viettel reset puts the range back. To avoid locking g8 out: give it both addresses first, switch the router, then drop the old one.
 
 ## Open
 
@@ -105,4 +105,4 @@ Templates use VM IDs 9000+.
 - [ ] Mac Mini: Remote Login + MBP key, specs, wired vs Wi-Fi → `mac-mini.md`
 - [ ] Tailscale account + install on MBP/phone
 - [ ] Identify the unidentified devices (`.57`, `.124`, `.129/.130`)
-- [ ] Confirm the range change to `192.168.77.x`; confirm how the Mini is fixed at `.90` (router reservation vs set on the Mac)
+- [ ] Confirm how the Mini is fixed at `.90` (router reservation vs set on the Mac)
