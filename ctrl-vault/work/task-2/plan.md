@@ -26,7 +26,7 @@ Later, inside the VM (Alex types these; Claude can't): `claude` login, `gh auth 
 0. **Discovery (read-only)**: Proxmox version, storage layout, bridge config, repos, disk health (`smartctl`), BIOS version. **Audit what the shop left**: `authorized_keys`, users, cron, extra repos/packages. Anything odd → reinstall from the official ISO.
 1. **Host basics**: no-subscription repo, updates, `amd64-microcode`, Tailscale on the host, SSH password login off (keys only), BIOS update if outdated.
 2. **VM template**: Debian 13 cloud image + cloud-init: user `alex`, MBP key, qemu-guest-agent, Docker, mise, git, GitHub CLI, Claude Code, Tailscale.
-3. **hookdeck VM**: clone of the template. Start: 8 vCPU, 32GB RAM, 250GB disk, static `192.168.1.22`. Then hookdeck workspace + repos, one core stack up (~8.5GB idle), T3 Code server as a service on the VM's Tailscale address. Stop for Alex to test from the MBP and phone.
+3. **hookdeck VM**: clone of the template. Start: 8 vCPU, 32GB RAM, 250GB disk, VM ID 130, static `192.168.1.30` (scheme in `docs/home-systems.md`). Then hookdeck workspace + repos, one core stack up (~8.5GB idle), T3 Code server as a service on the VM's Tailscale address. Stop for Alex to test from the MBP and phone.
 4. **After the milestone**: snapshots/backup target, more workspace VMs from the same scripts, arrstack move, runbook ("add a workspace", "restore a VM").
 
 ## Open questions

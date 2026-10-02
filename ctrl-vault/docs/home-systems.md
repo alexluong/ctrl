@@ -21,7 +21,7 @@ Scanned from the MBP 2026-10-02 (ping sweep, mDNS, port probes); re-scan before 
 | .5 | ZTE H3601P mesh node | 80:2d:1a:0c:13:74 | DHCP? | |
 | .4 | Chromecast | 90:ca:fa:b1:7c:6e | DHCP | |
 | .7 | Chromecast | 90:ca:fa:ad:e9:ee | DHCP | |
-| .10 | `rml-225f38` (Espressif IoT, web UI on :80) | c8:2b:96:22:5f:38 | DHCP | what is it? |
+| .10 | `rml-225f38`: "Rainbow Music Led" LED strip controller (ESP chip, web UI on :80) | c8:2b:96:22:5f:38 | DHCP | identified from its web page title |
 | **.21** | **`pve1`: HP EliteDesk 805 G8 Mini (Proxmox)** | 84:69:93:4f:fe:41 | **static, set on the box** | wired to router |
 | .39 | Hannah's iPad | private MAC | DHCP | |
 | **.90** | **Mac Mini (`alexs-Mac-mini.local`)** | a6:54:90:62:c6:fe (private → Wi-Fi?) | DHCP | media host |
@@ -73,14 +73,29 @@ Ryzen 7 5700G (8c/16t), 64GB DDR4, 1TB NVMe. Proxmox VE, installed by the shop (
 
 Home-only today: everything on `192.168.1.x` is reachable only on home Wi-Fi. Tailscale (planned) makes pve1, its VMs and the Mini reachable from anywhere.
 
-## Address plan (proposed, not applied)
+## Naming, numbering, URLs (proposed 2026-10-02, not applied)
 
-- `.1–.9` network gear (as is)
-- `.20–.49` servers and VMs, static: pve1 `.21`, hookdeck VM `.22`, later VMs `.23+`
-- `.50–.254` DHCP pool
-- Mac Mini: router reservation to keep `.90`
+**Names.** Physical machines by what they are: `pve1` (G8), `mini` (Mac Mini), `mbp`. VMs by workspace: `hookdeck`, `enable`, `solex`, `cs`, `ixchel`. The same name is the Proxmox VM name, the hostname, the Tailscale name and the DNS label.
 
-Applying it = one router change (DHCP pool start → `.50`) plus one reservation.
+**Addresses.**
+
+| Range | Use |
+|---|---|
+| `.1–.9` | network gear (as is) |
+| `.20–.29` | physical servers, static: `pve1` = `.21` |
+| `.30–.49` | VMs and containers, static. **Proxmox VM ID = 100 + last number**: `hookdeck` = VM 130 = `.30`, next = 131 = `.31` |
+| `.50–.254` | DHCP pool (phones, TVs, laptops) |
+| `.90` | Mac Mini, kept by a router reservation |
+
+Templates use VM IDs 9000+. Applying it = one router change (DHCP pool start → `.50`) plus the Mini reservation.
+
+**URLs.** Zone `home.collie.studio` (`collie.studio` is already the lab zone, DNS in Cloudflare via collielab terraform).
+
+- One wildcard record `*.home.collie.studio` → the Tailscale address of a small gateway container on pve1 running Caddy. Private address, so the names resolve publicly but only connect from Alex's Tailscale devices (home or away, same URL).
+- Caddy gets a real wildcard certificate from Let's Encrypt using a DNS check (no open ports). Only the gateway holds the Cloudflare token; VMs hold none.
+- Flat names, one level: `pve1.home.collie.studio` (Proxmox UI), `hookdeck.home.collie.studio` (T3 server), `jellyfin.home.collie.studio`, `plex.…`, `qbt.…`. A service of a VM: `<service>-<vm>`, e.g. `board-hookdeck.home.collie.studio`. Adding one = one line in the gateway's Caddy config.
+- SSH doesn't go through the gateway: `ssh hookdeck`, `ssh pve1`, `ssh mini` via Tailscale names plus `~/.ssh/config` aliases.
+- Open: the Cloudflare token can only be scoped per zone, so the gateway's token could edit all of `collie.studio` (incl. `vault`). Alternative: a separate cheap domain for home.
 
 ## Open
 
@@ -88,4 +103,5 @@ Applying it = one router change (DHCP pool start → `.50`) plus one reservation
 - [ ] pve1: `ssh-copy-id` from the MBP
 - [ ] Mac Mini: Remote Login + MBP key, specs, wired vs Wi-Fi → `mac-mini.md`
 - [ ] Tailscale account + install on MBP/phone
-- [ ] Identify `.10` (`rml-225f38`) and the unidentified devices
+- [ ] Identify the unidentified devices (`.57`, `.124`, `.129/.130`)
+- [ ] Decide naming/numbering/URL proposal; confirm the Mini is really fixed at `.90` (router reservation vs luck)
