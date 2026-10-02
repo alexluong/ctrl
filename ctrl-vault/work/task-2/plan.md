@@ -14,25 +14,27 @@ Claude runs on the MBP (ctrl session) and manages the box over SSH. Home map and
 
 ## Manual steps (Alex) before Claude can start
 
-1. **SSH key to pve1** (own terminal): `ssh-copy-id -i ~/.ssh/id_ed25519.pub root@192.168.1.21` → `yes` → root password.
-2. **Root password in Vaultwarden**: item `pve1 root (Proxmox)`, user `root`, URL `https://192.168.1.21:8006`.
-3. **Router** (`http://192.168.1.1`, ZTE F6601P): log in, read the DHCP pool range, then keep `.21` safe (see `docs/home-systems.md` § Address plan). Save the router login to Vaultwarden.
-4. **Tailscale**: create the account (tailscale.com, sign in with Google/GitHub), install the app on the MBP and phone. Later, per machine, Alex opens a login link Claude prints.
+1. **SSH key to the box** (own terminal): `ssh-copy-id -i ~/.ssh/id_ed25519.pub root@192.168.1.21` → `yes` → root password.
+2. **Root password in Vaultwarden**: item named for the box (`g8 root (Proxmox)`), user `root`, URL `https://192.168.1.21:8006`.
+3. **Router** (`http://192.168.1.1`, ZTE F6601P): log in (sticker under the router; save the login to Vaultwarden), send a screenshot of the LAN/DHCP page. Then, with Claude: DHCP pool → `.150–.254`, check how the Mini holds `.90`.
 
-Later, inside the VM (Alex types these; Claude can't): `claude` login, `gh auth login`, Tailscale login link, hookdeck env/secrets.
+Later, inside the VM (Alex types these; Claude can't): `claude` login, `gh auth login`, hookdeck env/secrets.
 
-## Phases
+## Order (agreed 2026-10-02: keep it simple, stay on `192.168.1.x`, Tailscale later)
 
 0. **Discovery (read-only)**: Proxmox version, storage layout, bridge config, repos, disk health (`smartctl`), BIOS version. **Audit what the shop left**: `authorized_keys`, users, cron, extra repos/packages. Anything odd → reinstall from the official ISO.
-1. **Host basics**: rename `pve1` → `g8` and move it to `.91` (before any VM exists); no-subscription repo, updates, `amd64-microcode`, Tailscale on the host, SSH password login off (keys only), BIOS update if outdated.
-2. **VM template**: Debian 13 cloud image + cloud-init: user `alex`, MBP key, qemu-guest-agent, Docker, mise, git, GitHub CLI, Claude Code, Tailscale.
-3. **hookdeck VM**: clone of the template. Start: 8 vCPU, 32GB RAM, 250GB disk, VM ID 110, address `.110` (scheme in `docs/home-systems.md`). Then hookdeck workspace + repos, one core stack up (~8.5GB idle), T3 Code server as a service on the VM's Tailscale address. Stop for Alex to test from the MBP and phone.
-4. **After the milestone**: snapshots/backup target, more workspace VMs from the same scripts, arrstack move, runbook ("add a workspace", "restore a VM").
+1. **Router**: DHCP pool → `.150–.254` so `.90–.149` is never handed out. The box's address is typed into the box (not from the router), so nothing to confirm on the router for it beyond the pool.
+2. **Box address and name** (before any VM exists): rename `pve1` → `g8`, move `192.168.1.21` → `192.168.1.91`. `.91` is the MBP's address today, so first the pool change, then the MBP reconnects to Wi-Fi and gets a new address, then the box moves. Done with both addresses on the box for a moment so it is never unreachable.
+3. **Host basics**: no-subscription repo, updates, `amd64-microcode`, SSH password login off (keys only), BIOS update if outdated.
+4. **VM template**: Debian 13 cloud image + cloud-init: user `alex`, MBP key, qemu-guest-agent, Docker, mise, git, GitHub CLI, Claude Code. VM ID 9000.
+5. **hookdeck VM**: clone of the template. Start: 8 vCPU, 32GB RAM, 250GB disk, VM ID 110, `192.168.1.110`. Then hookdeck workspace + repos, one core stack up (~8.5GB idle), T3 Code server as a service. Stop for Alex to test from the MBP.
+6. **Gateway + `lab` URLs**: small container on g8 with Caddy, `*.lab.alexluong.com` → its home address, Let's Encrypt by DNS check. Then point the Kobo and TV apps at URLs. Scheme: `docs/home-systems.md`.
+7. **Later**: Tailscale + `*.ts.alexluong.com` names (access away from home), snapshots/backup target, more workspace VMs from the same scripts, arrstack move, runbook ("add a workspace", "restore a VM").
 
 ## Open questions
 
 - Repo for the scripts. Proposal: new private repo in the `collielab` org (personal infra); inventory summarized in `docs/home-systems.md`.
-- T3 server: must start after Tailscale is up; how it authenticates.
+- T3 server: how it authenticates; which address it listens on (behind the gateway).
 - Stack approach inside the VM (full stacks vs shared infra); not every stack runs all the time.
 - Backup target: Mac Mini share needs enough space (VM backups 100GB+).
 

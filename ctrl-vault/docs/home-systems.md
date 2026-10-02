@@ -103,6 +103,6 @@ Templates use VM IDs 9000+.
 - [ ] Router: DHCP pool range; apply the address plan; save router login to Vaultwarden
 - [ ] pve1: `ssh-copy-id` from the MBP
 - [ ] Mac Mini: Remote Login + MBP key, specs, wired vs Wi-Fi → `mac-mini.md`
-- [ ] Tailscale account + install on MBP/phone
+- [ ] Later: Tailscale account + install on MBP/phone, `ts` names
 - [ ] Identify the unidentified devices (`.57`, `.124`, `.129/.130`)
 - [ ] Confirm how the Mini is fixed at `.90` (router reservation vs set on the Mac)
