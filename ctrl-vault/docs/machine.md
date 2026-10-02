@@ -10,11 +10,11 @@ Home network map (IPs, access, what runs where): `home-systems.md`.
 
 | | MacBook Pro | Mac Mini |
 |---|---|---|
-| Role | primary dev machine | media/arrstack host (confirm) |
-| Model | MacBookPro18,3 — M1 Pro, 32GB | (TBD) |
-| Name | `Alexs-MacBook-Pro` | (TBD) |
-| Disk | 460G — see `ctrl-vault/docs/machine-disk.md` | (TBD) |
-| macOS | 26.5.2 | (TBD) |
+| Role | primary dev machine; control point for the fleet (`fleet.md`) | media host + storage (`mac-mini.md`) |
+| Model | MacBookPro18,3 — M1 Pro, 32GB | Mac16,10 — M4, 16GB |
+| Name | `Alexs-MacBook-Pro` | `alexs-Mac-mini` (`ssh mini`) |
+| Disk | 460G — see `ctrl-vault/docs/machine-disk.md` | 245G internal + 2 × 4TB USB (Blue4, Red4) |
+| macOS | 26.5.2 | 15.5 |
 
 The Mac Mini runs the arrstack (`hub/alexluong/arr`) — that repo's README
 describes Colima setup that applies to the Mini, **not** the MBP. Colima was
