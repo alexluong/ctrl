@@ -92,10 +92,11 @@ Common jobs: add a URL → `collielab/hosts/gw/README.md`. New VM → `collielab
    - Start Colima + the core stack at login (user launch agent, `collielab/hosts/mini/`).
    - `gluetun` unhealthy (DNS/TLS timeouts through the VPN); `seedboxapi` crash-looping (expired MAM session, needs a new session ID from Alex); qBittorrent memory.
    - Ethernet, if a cable can reach.
-2. **Backups:** nothing is backed up; the `hookdeck-ws` VM holds real setup. Target: Blue4 on the Mini.
+2. **Backups:** nothing is backed up; the `hookdeck-ws` VM holds real setup. **TASK-13** (where they go, how often, restore test; options: file + rclone to R2, Blue4 on the Mini, Proxmox Backup Server, files-only from inside the VM).
 3. **Devices → URLs:** Kobos and TV apps still use `192.168.1.90`. Try one Kobo first: untested whether Kobo firmware trusts Let's Encrypt and whether Calibre-Web's Kobo sync works behind the gateway.
 4. **hookdeck-ws routes** on the gateway (`*.hookdeck-ws.lab` has DNS but no site block; its T3 server listens on `127.0.0.1` only).
 5. **vultr:** deploy its Caddyfile from git (needs one sudo step from Alex); move `services/` under `hosts/vultr/`.
 6. **A general `fleet` script** (diff/push/run per machine). Not written; the gateway has its own `push.sh`. Write it when a second machine needs pushing.
 7. **Tailscale** for access away from home (`*.ts.alexluong.com` names); on the Mini only today.
-8. g8: BIOS update and kernel retest (TASK-4, Alex at the box); small UPS.
+8. g8: BIOS update and kernel retest (TASK-4, Alex at the box; add-on: memory reporting for VM 101); small UPS.
+9. **Monitoring:** none beyond the Proxmox UI (no temperatures, no alerts). **TASK-7**: a `mon` VM with Grafana; Alex wants metrics synced to R2 (Thanos or VictoriaMetrics, undecided).
