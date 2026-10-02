@@ -16,3 +16,6 @@
 
 # scratch and data exports; never committed
 /local/
+
+# per-machine tool overrides
+.mise.local.toml

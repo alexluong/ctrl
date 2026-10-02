@@ -1,0 +1,30 @@
+# ALWAYS-ON stack (~310 MB, two instances). Ebook readers for alex + hannah.
+# Part of the always-on set: download + private + calibre + audiobookshelf.
+services:
+  calibre-web-hannah:
+    image: linuxserver/calibre-web:latest
+    container_name: calibre-web-hannah
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - ${DATA_PATH}/calibre-web-hannah:/config
+      - /Volumes/Blue4/arr/media/books/library:/library
+    ports:
+      - 8073:8083
+    restart: unless-stopped
+
+  calibre-web-alex:
+    image: linuxserver/calibre-web:latest
+    container_name: calibre-web-alex
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - ${DATA_PATH}/calibre-web-alex:/config
+      - /Volumes/Blue4/arr/media/books/library:/library
+    ports:
+      - 8074:8083
+    restart: unless-stopped

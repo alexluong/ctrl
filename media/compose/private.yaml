@@ -1,0 +1,42 @@
+# ALWAYS-ON stack (~125 MB). Secondary torrent client on 8081 (PIA Netherlands).
+# Was DE Frankfurt until 2026-07-15, when PIA's German endpoints started failing
+# the OpenVPN TLS handshake (both Frankfurt + Berlin) and gluetun flapped ~every
+# 15s. Switched to Netherlands (adjacent, reliable). Retry a DE region later if a
+# German exit is needed and PIA has fixed those servers.
+# Part of the always-on set: download + private + calibre + audiobookshelf.
+services:
+  gluetun-private:
+    image: qmcgaw/gluetun:latest
+    container_name: gluetun-private
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    environment:
+      - VPN_SERVICE_PROVIDER=${VPN_SERVICE_PROVIDER}
+      - OPENVPN_USER=${OPENVPN_USER}
+      - OPENVPN_PASSWORD=${OPENVPN_PASSWORD}
+      - SERVER_REGIONS=Netherlands
+      - VPN_PORT_FORWARDING=${VPN_PORT_FORWARDING}
+      - TZ=${TZ}
+    volumes:
+      - ${DATA_PATH}/gluetun-private:/gluetun
+    ports:
+      - 8081:8081
+    restart: unless-stopped
+
+  qbittorrent-private:
+    image: linuxserver/qbittorrent:latest
+    container_name: qbittorrent-private
+    network_mode: "service:gluetun-private"
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - WEBUI_PORT=8081
+    volumes:
+      - ${DATA_PATH}/qbittorrent-private:/config
+      - /Volumes/Red4/arr/.private/downloads:/downloads
+    depends_on:
+      - gluetun-private
+    restart: unless-stopped

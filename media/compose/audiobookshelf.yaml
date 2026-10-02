@@ -1,0 +1,17 @@
+# ALWAYS-ON stack (~40 MB). Audiobook + podcast server.
+# Part of the always-on set: download + private + calibre + audiobookshelf.
+services:
+  audiobookshelf:
+    image: ghcr.io/advplyr/audiobookshelf:latest
+    container_name: audiobookshelf
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - ${DATA_PATH}/audiobookshelf:/config
+      - /Volumes/Blue4/arr/media/audiobooks:/audiobooks
+      - ${DATA_PATH}/audiobookshelf/metadata:/metadata
+    ports:
+      - 13378:80
+    restart: unless-stopped
