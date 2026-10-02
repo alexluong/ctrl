@@ -1,0 +1,108 @@
+#!/usr/bin/env bash
+# svc: start/stop long-running local processes (keep-awake, boards, tunnels). Services are the lines of services.conf.
+# Each service runs in its own process group with output appended to ~/Library/Logs/svc/<name>.log.
+# The menubar (menubar/svc.10s.sh, SwiftBar) is a front end to this script.
+#
+#   svc ls                                  services: state, url
+#   svc start|stop|restart|toggle <name>
+#   svc status <name>                       exit 0 if running
+#   svc logs <name> [-f]                    tail the log
+#   svc open <name>                         open the service's url
+set -euo pipefail
+
+ROOT="$(git -C "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" rev-parse --show-toplevel)"
+CONF="$ROOT/services.conf"
+LOGS="$HOME/Library/Logs/svc"
+STATE="$HOME/.local/state/svc"
+export PATH="/opt/homebrew/bin:$HOME/.local/bin:$PATH" # SwiftBar starts us with a bare PATH
+
+die() { echo "svc: $*" >&2; exit 1; }
+trim() { local s="$1"; s="${s#"${s%%[![:space:]]*}"}"; echo "${s%"${s##*[![:space:]]}"}"; }
+notify() { # failures from the menubar have no terminal to print to
+  [ -t 2 ] || osascript -e "display notification \"$2\" with title \"svc: $1\"" >/dev/null 2>&1 || true
+}
+
+# services.conf lines: name | dir | url | command   ('---' = menu separator, '#' = comment)
+each() { # each <fn>: calls fn name dir url cmd per service, fn --- per separator
+  local name dir url cmd
+  while IFS='|' read -r name dir url cmd; do
+    name="$(trim "$name")"
+    case "$name" in ''|'#'*) continue ;; ---) "$1" ---; continue ;; esac
+    dir="$(trim "$dir")"; "$1" "$name" "${dir/#\~/$HOME}" "$(trim "$url")" "$(trim "$cmd")"
+  done < "$CONF"
+}
+
+load() { # sets DIR URL CMD for service $1
+  DIR='' URL='' CMD=''
+  pick() { if [ "$1" = "$WANT" ]; then DIR="$2" URL="$3" CMD="$4"; fi; }
+  WANT="$1" each pick
+  [ -n "$CMD" ] || die "unknown service '$1' (svc ls)"
+}
+
+pidfile() { echo "$STATE/$1.pid"; }
+started() { trim "$(ps -o lstart= -p "$1" 2>/dev/null)"; }
+running() { # pid alone can be reused after a reboot, so the pidfile also holds the process start time
+  local pid at
+  [ -f "$(pidfile "$1")" ] || return 1
+  { read -r pid; read -r at; } < "$(pidfile "$1")" || return 1
+  [ -n "$pid" ] && [ "$(started "$pid")" = "$at" ]
+}
+pid_of() { head -1 "$(pidfile "$1")"; }
+
+start() {
+  local name="$1" log="$LOGS/$1.log" pid
+  load "$name"
+  running "$name" && { echo "$name already running ($(pid_of "$name"))"; return; }
+  [ -d "$DIR" ] || die "$name: no such dir $DIR"
+  mkdir -p "$LOGS" "$STATE"
+  if [ -f "$log" ] && [ "$(stat -f %z "$log")" -gt 1000000 ]; then
+    tail -c 200000 "$log" > "$log.tmp" && mv "$log.tmp" "$log"
+  fi
+  echo "--- $(date '+%Y-%m-%d %H:%M:%S') start: $CMD" >> "$log"
+  set -m # own process group, so stop takes the children too
+  (cd "$DIR" && exec nohup mise exec -- bash -c "exec $CMD" >> "$log" 2>&1 < /dev/null) &
+  pid=$!
+  set +m
+  sleep 1
+  if ! kill -0 "$pid" 2>/dev/null; then
+    notify "$name failed to start" "$(tail -1 "$log")"
+    tail -5 "$log" >&2
+    die "$name exited right away (svc logs $name)"
+  fi
+  printf '%s\n%s\n' "$pid" "$(started "$pid")" > "$(pidfile "$name")"
+  echo "$name started ($pid)"
+}
+
+stop() {
+  local name="$1" pid
+  load "$name"
+  running "$name" || { rm -f "$(pidfile "$name")"; echo "$name not running"; return; }
+  pid="$(pid_of "$name")"
+  kill -TERM -- "-$pid" 2>/dev/null || kill -TERM "$pid" 2>/dev/null || true
+  for _ in 1 2 3 4 5 6 7 8 9 10; do kill -0 "$pid" 2>/dev/null || break; sleep 0.5; done
+  kill -0 "$pid" 2>/dev/null && { kill -KILL -- "-$pid" 2>/dev/null || true; }
+  rm -f "$(pidfile "$name")"
+  echo "--- $(date '+%Y-%m-%d %H:%M:%S') stop" >> "$LOGS/$name.log"
+  echo "$name stopped"
+}
+
+ls_row() {
+  [ "$1" = --- ] && { echo ---; return; }
+  local state=stopped
+  running "$1" && state=running
+  printf '%s\t%s\t%s\n' "$1" "$state" "${3:--}"
+}
+
+cmd="${1:-ls}"; name="${2:-}"
+case "$cmd" in
+  ls)      if [ -t 1 ]; then each ls_row | grep -v '^---$' | column -t -s $'\t'; else each ls_row; fi ;;
+  start)   start "${name:?svc start <name>}" ;;
+  stop)    stop "${name:?svc stop <name>}" ;;
+  restart) stop "${name:?svc restart <name>}"; start "$name" ;;
+  toggle)  load "${name:?svc toggle <name>}"; if running "$name"; then stop "$name"; else start "$name"; fi ;;
+  status)  load "${name:?svc status <name>}"; if running "$name"; then echo running; else echo stopped; exit 1; fi ;;
+  logs)    load "${name:?svc logs <name>}"; [ -f "$LOGS/$name.log" ] || die "$name: no log yet"
+           if [ "${3:-}" = -f ]; then exec tail -n 50 -f "$LOGS/$name.log"; else exec tail -n 50 "$LOGS/$name.log"; fi ;;
+  open)    load "${name:?svc open <name>}"; [ "$URL" != - ] && [ -n "$URL" ] || die "$name has no url"; open "$URL" ;;
+  *)       sed -n '2,11p' "$0" | sed 's/^# \{0,1\}//'; exit 1 ;;
+esac

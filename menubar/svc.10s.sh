@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+# SwiftBar plugin: menubar front end to bin/svc. Click a service to toggle it; submenu has open/log/restart.
+# The 10s in the filename is the refresh interval (catches services that died on their own).
+# <swiftbar.hideAbout>true</swiftbar.hideAbout>
+# <swiftbar.hideRunInTerminal>true</swiftbar.hideRunInTerminal>
+# <swiftbar.hideLastUpdated>true</swiftbar.hideLastUpdated>
+# <swiftbar.hideDisablePlugin>true</swiftbar.hideDisablePlugin>
+
+ROOT="$(cd "$(dirname "$(readlink -f "$0")")/.." && pwd)"
+SVC="$ROOT/bin/svc"
+LOGS="$HOME/Library/Logs/svc"
+
+rows="$("$SVC" ls 2>&1)" || { echo "svc ⚠️"; echo "---"; echo "$rows"; exit 0; }
+count="$(grep -c $'\trunning\t' <<< "$rows")"
+
+if [ "$count" -gt 0 ]; then echo "$count | sfimage=bolt.fill"; else echo " | sfimage=bolt"; fi
+echo "---"
+while IFS=$'\t' read -r name state url; do
+  [ "$name" = --- ] && { echo "---"; continue; }
+  act="bash=$SVC param1=toggle param2=$name terminal=false refresh=true"
+  if [ "$state" = running ]; then echo "$name | checked=true $act"; else echo "$name | $act"; fi
+  [ "$url" != - ] && [ "$state" = running ] && echo "-- Open $url | href=$url"
+  [ "$state" = running ] && echo "-- Restart | bash=$SVC param1=restart param2=$name terminal=false refresh=true"
+  [ -f "$LOGS/$name.log" ] && echo "-- Log | bash=/usr/bin/open param1=-a param2=Console param3=$LOGS/$name.log terminal=false"
+done <<< "$rows"
+echo "---"
+echo "Edit services.conf | bash=/usr/bin/open param1=-t param2=$ROOT/services.conf terminal=false"
+echo "Logs folder | bash=/usr/bin/open param1=$LOGS terminal=false"
+echo "Refresh | refresh=true"

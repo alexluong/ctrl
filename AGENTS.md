@@ -14,7 +14,8 @@ Alex's personal operations hub and incubator workspace (`~/workspaces/ctrl`, rep
 AGENTS.md            this file (always-on rules; CLAUDE.md is a symlink to it)
 .agents/skills/      skills (SKILL.md + scripts)
 .claude/             Claude wiring only: skills symlink, hooks/, settings.json
-bin/                 wt (worktrees), disk-audit.sh
+bin/                 wt (worktrees), disk-audit.sh, svc (start/stop local services)
+menubar/             SwiftBar plugins (svc.10s.sh = menubar front end to bin/svc)
 ctrl-vault/          Obsidian vault: all notes
   docs/              ideas, projects, machines, workflow, workspace playbook
   re/                real estate: deals, logs, bookkeeping (`re/notes.md` = conventions)
@@ -24,6 +25,7 @@ ctrl-vault/          Obsidian vault: all notes
   memory/            agent memory (auto-memory; `MEMORY.md` index)
 backlog.config.yml   board config
 mise.toml            workspace tools
+services.conf        services for bin/svc (keep-awake, boards, tunnels)
 repos/               bare clones of exploration/POC repos (gitignored, pristine)
 wt/                  worktrees (gitignored): wt/<repo>/main (read-only), wt/<repo>/<name>
 secrets/             machine-local secrets (gitignored; canonical copy in Vaultwarden)
