@@ -17,14 +17,21 @@ count="$(grep -c $'\trunning\t' <<< "$rows")"
 if [ "$count" -gt 0 ]; then echo "$count | sfimage=bolt.fill"; else echo " | sfimage=bolt"; fi
 echo "---"
 group=''
-while IFS=$'\t' read -r name state url; do
+while IFS=$'\t' read -r name state url host; do
   if [ "$name" = --- ]; then group="$state"; echo "---"; echo "$group | size=11"; continue; fi
   label="${name#"$group"-}"
   act="bash=$SVC param1=toggle param2=$name terminal=false refresh=true"
-  if [ "$state" = running ]; then echo "$label | checked=true $act"; else echo "$label | $act"; fi
+  case "$state" in
+    running) echo "$label | checked=true $act" ;;
+    failing) echo "$label ⚠️ | $act" ;;          # remote service in a restart loop; click stops it
+    offline) echo "$label ($host offline)"; continue ;; # no action = greyed out
+    *)       echo "$label | $act" ;;
+  esac
   [ "$url" != - ] && [ "$state" = running ] && echo "-- Open $url | href=$url"
   [ "$state" = running ] && echo "-- Restart | bash=$SVC param1=restart param2=$name terminal=false refresh=true"
-  if [ -f "$LOGS/$name.log" ]; then
+  if [ "$host" != - ]; then
+    echo "-- Log | bash=$SVC param1=logs param2=$name param3=-f terminal=true"
+  elif [ -f "$LOGS/$name.log" ]; then
     echo "-- Log | bash=/usr/bin/open param1=-a param2=Console param3=$LOGS/$name.log terminal=false"
   else
     echo "-- No log yet" # no action = greyed out

@@ -1,9 +1,11 @@
 #!/usr/bin/env bash
 # svc: start/stop long-running local processes (keep-awake, boards, tunnels). Services are the lines of services.conf.
 # Each service runs in its own process group with output appended to ~/Library/Logs/svc/<name>.log.
+# A service whose dir is '<ssh host>:<dir>' runs on that host instead, as a systemd user unit (svc-<name>): it
+# outlives this machine sleeping or leaving the network; here we only send start/stop and read its state.
 # The menubar (menubar/svc.10s.sh, SwiftBar) is a front end to this script.
 #
-#   svc ls                                  services: state, url
+#   svc ls                                  services: state, url, host
 #   svc start|stop|restart|toggle <name>
 #   svc status <name>                       exit 0 if running
 #   svc logs <name> [-f]                    tail the log
@@ -35,11 +37,53 @@ each() { # each <fn>: calls fn name dir url cmd per service, fn --- group per gr
   done < "$CONF"
 }
 
-load() { # sets DIR URL CMD for service $1
-  DIR='' URL='' CMD=''
+load() { # sets DIR URL CMD for service $1, and HOST when its dir is '<ssh host>:<dir>'
+  DIR='' URL='' CMD='' HOST=''
   pick() { if [ "$1" = "$WANT" ]; then DIR="$2" URL="$3" CMD="$4"; fi; }
   WANT="$1" each pick
   [ -n "$CMD" ] || die "unknown service '$1' (svc ls)"
+  if [[ "$DIR" =~ $REMOTE ]]; then HOST="${BASH_REMATCH[1]}"; DIR="${BASH_REMATCH[2]}"; fi
+}
+
+REMOTE='^([A-Za-z0-9_.-]+):(.*)$'
+SSH=(ssh -n -o BatchMode=yes -o ConnectTimeout=3 -o ControlMaster=auto -o "ControlPath=$HOME/.ssh/svc-%C" -o ControlPersist=120)
+OFFLINE=' ' # hosts that did not answer in this run, so a menubar refresh waits for the timeout once, not per service
+rstate() { # rstate <host> <name>: sets RSTATE to running | stopped | failing (restart loop) | offline
+  local out rc=0
+  case "$OFFLINE" in *" $1 "*) RSTATE=offline; return ;; esac
+  out="$("${SSH[@]}" "$1" systemctl --user is-active "svc-$2" 2>/dev/null)" || rc=$?
+  if [ "$rc" = 255 ]; then OFFLINE="$OFFLINE$1 "; RSTATE=offline; return; fi
+  case "$out" in active) RSTATE=running ;; activating) RSTATE=failing ;; *) RSTATE=stopped ;; esac
+}
+
+rstart() {
+  local name="$1" unit="svc-$1"
+  rstate "$HOST" "$name"
+  case "$RSTATE" in
+    offline) notify "$name" "$HOST is unreachable"; die "$name: $HOST is unreachable" ;;
+    running) echo "$name already running on $HOST"; return ;;
+    failing) "${SSH[@]}" "$HOST" systemctl --user stop "$unit" || true ;;
+  esac
+  # mise by full path: ssh and systemd both start with a bare PATH
+  "${SSH[@]}" "$HOST" "cd $DIR && systemd-run --user --quiet --collect --same-dir --unit=$unit -p Restart=on-failure -p RestartSec=10 \"\$HOME/.local/bin/mise\" exec -- bash -c $(printf '%q' "exec $CMD")" \
+    || die "$name: could not start on $HOST"
+  sleep 2
+  rstate "$HOST" "$name"
+  if [ "$RSTATE" != running ]; then
+    "${SSH[@]}" "$HOST" "journalctl --user -u $unit -n 5 --no-pager -o cat; systemctl --user stop $unit" >&2 || true
+    notify "$name failed to start" "on $HOST (svc logs $name)"
+    die "$name exited right away on $HOST (svc logs $name)"
+  fi
+  echo "$name started on $HOST"
+}
+
+rstop() {
+  rstate "$HOST" "$1"
+  case "$RSTATE" in
+    offline) notify "$1" "$HOST is unreachable"; die "$1: $HOST is unreachable" ;;
+    stopped) echo "$1 not running" ;;
+    *) "${SSH[@]}" "$HOST" systemctl --user stop "svc-$1"; echo "$1 stopped on $HOST" ;;
+  esac
 }
 
 pidfile() { echo "$STATE/$1.pid"; }
@@ -55,6 +99,7 @@ pid_of() { head -1 "$(pidfile "$1")"; }
 start() {
   local name="$1" log="$LOGS/$1.log" pid
   load "$name"
+  [ -z "$HOST" ] || { rstart "$name"; return; }
   running "$name" && { echo "$name already running ($(pid_of "$name"))"; return; }
   [ -d "$DIR" ] || die "$name: no such dir $DIR"
   mkdir -p "$LOGS" "$STATE"
@@ -79,6 +124,7 @@ start() {
 stop() {
   local name="$1" pid
   load "$name"
+  [ -z "$HOST" ] || { rstop "$name"; return; }
   running "$name" || { rm -f "$(pidfile "$name")"; echo "$name not running"; return; }
   pid="$(pid_of "$name")"
   kill -TERM -- "-$pid" 2>/dev/null || kill -TERM "$pid" 2>/dev/null || true
@@ -91,9 +137,10 @@ stop() {
 
 ls_row() {
   [ "$1" = --- ] && { printf -- '---\t%s\n' "$2"; return; }
-  local state=stopped
-  running "$1" && state=running
-  printf '%s\t%s\t%s\n' "$1" "$state" "${3:--}"
+  local state=stopped host=-
+  if [[ "$2" =~ $REMOTE ]]; then host="${BASH_REMATCH[1]}"; rstate "$host" "$1"; state="$RSTATE"
+  elif running "$1"; then state=running; fi
+  printf '%s\t%s\t%s\t%s\n' "$1" "$state" "${3:--}" "$host"
 }
 
 cmd="${1:-ls}"; name="${2:-}"
@@ -102,9 +149,15 @@ case "$cmd" in
   start)   start "${name:?svc start <name>}" ;;
   stop)    stop "${name:?svc stop <name>}" ;;
   restart) stop "${name:?svc restart <name>}"; start "$name" ;;
-  toggle)  load "${name:?svc toggle <name>}"; if running "$name"; then stop "$name"; else start "$name"; fi ;;
-  status)  load "${name:?svc status <name>}"; if running "$name"; then echo running; else echo stopped; exit 1; fi ;;
-  logs)    load "${name:?svc logs <name>}"; [ -f "$LOGS/$name.log" ] || die "$name: no log yet"
+  toggle)  load "${name:?svc toggle <name>}"
+           if [ -n "$HOST" ]; then rstate "$HOST" "$name"; if [ "$RSTATE" = stopped ]; then start "$name"; else stop "$name"; fi
+           elif running "$name"; then stop "$name"; else start "$name"; fi ;;
+  status)  load "${name:?svc status <name>}"
+           if [ -n "$HOST" ]; then rstate "$HOST" "$name"; echo "$RSTATE"; [ "$RSTATE" = running ]; exit; fi
+           if running "$name"; then echo running; else echo stopped; exit 1; fi ;;
+  logs)    load "${name:?svc logs <name>}"
+           [ -z "$HOST" ] || exec ssh "$HOST" journalctl --user -u "svc-$name" -n 50 --no-pager ${3:+-f}
+           [ -f "$LOGS/$name.log" ] || die "$name: no log yet"
            if [ "${3:-}" = -f ]; then exec tail -n 50 -f "$LOGS/$name.log"; else exec tail -n 50 "$LOGS/$name.log"; fi ;;
   open)    load "${name:?svc open <name>}"; [ "$URL" != - ] && [ -n "$URL" ] || die "$name has no url"; open "$URL" ;;
   *)       sed -n '2,11p' "$0" | sed 's/^# \{0,1\}//'; exit 1 ;;
