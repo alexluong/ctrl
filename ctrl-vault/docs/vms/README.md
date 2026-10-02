@@ -5,7 +5,7 @@ Map of machines and addresses: `../home-systems.md`. How the MBP manages machine
 
 | VM | ID / address | Size | Doc | State |
 |---|---|---|---|---|
-| `hookdeck-ws` | 101 / `192.168.1.101` | 8 vCPU, 32GB, 250GB | `hookdeck-ws.md` | built 2026-10-02; logged in, secrets copied; T3 connection from the MBP not yet tested |
+| `hookdeck-ws` | 101 / `192.168.1.101` | 8 vCPU, 32GB, 250GB | `hookdeck-ws.md` | built 2026-10-02; in use from T3 on the MBP since that evening |
 
 ## Playbooks
 
@@ -23,6 +23,8 @@ Purpose, VM ID, address, size, date built, workspace repo and branch, path on th
 ## Secret files                  (paths and purpose only; where the canonical copy lives)
 ## First run                     (ordered steps from a fresh VM to a working session)
 ## Running the stack             (how, ports, how to reach it from the MBP)
+## Services around sessions      (tunnels, board, anything the MBP menubar ran for this workspace: how it runs on the VM)
+## Resources                     (allocated, measured use, date)
 ## Differences from the MBP      (Mac-only paths, things that behave differently on Linux)
 ## Open points
 ```

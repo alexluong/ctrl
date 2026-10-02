@@ -14,6 +14,7 @@ Scripts: `collielab` (`bin/new-vm`, `hosts/g8/`, `hosts/workspace-vm/`, `hosts/<
 | raised file-watch and open-file limits, capped container logs | CLIs outside mise (e.g. Doppler), language servers, browsers for tests |
 | T3 service on loopback, reached over SSH | Docker images of its dev stacks |
 | | logins and secret files |
+| | services around sessions (tunnels, board: what the MBP menubar ran for it) |
 | | Mac-only assumptions in its scripts |
 
 ## Steps
@@ -84,7 +85,7 @@ From the MBP, the gitignored files the survey listed, paths kept:
 cd ~/workspaces/<name> && rsync -aR <paths…> <name>-ws:workspaces/<name>/
 ```
 
-Never print their contents. After: env files to mode 600, `git status` on the VM must show none of them, grep the copied config folders for `/Users/` paths. A workspace that keeps cloud state in its own folder (hookdeck: `.gcloud/`, `.kube/`) gets that login by this copy.
+Outside the workspace folder too, when the survey lists them: SSH keys and `Host` blocks for tunnels (`~/.ssh/config` on the VM holds only this workspace's hosts; add the hosts' fingerprints to `known_hosts` so a background tunnel does not stop at a prompt), `~/.npmrc`, `~/.aws/config`. Never print their contents. After: env files to mode 600, `git status` on the VM must show none of them, grep the copied config folders for `/Users/` paths. A workspace that keeps cloud state in its own folder (hookdeck: `.gcloud/`, `.kube/`) gets that login by this copy.
 
 ### 9. Remaining logins (A, as the survey lists)
 
@@ -97,6 +98,10 @@ T3 app → Settings → Connections → Add environment → SSH → `<name>-ws`;
 ### 11. Bring over unpushed work (C)
 
 Fetch on the MBP, list branches with commits that are on no remote, copy them straight to the VM's clones (no GitHub), carry uncommitted changes as patches. Commands: `hookdeck-ws.md` § Syncing work from the MBP.
+
+### 11a. Services around sessions (C, with Alex)
+
+What the MBP's menubar ran for this workspace (`ctrl/services.conf`: tunnels, board): sessions on the VM need them on the VM. Until there is a switch (TASK-6 or the control-panel idea), record in `vms/<name>-ws.md` the command for each and test it once. Check each tunnel's forwarded ports against the ports the dev stacks publish (`docker ps`, compose files): hookdeck's staging tunnel and its outpost stack both want 26379.
 
 ### 12. Record and snapshot (C)
 
@@ -116,6 +121,8 @@ Fetch on the MBP, list branches with commits that are on no remote, copy them st
 | GitHub | `ssh <name>-ws 'gh auth status; git ls-remote git@github.com:<org>/<repo>.git HEAD'` |
 | secrets invisible to git | `ssh <name>-ws 'cd ~/workspaces/<name> && git status --short'` |
 | a stack starts | the workspace's own start command |
+| a session starts | T3 on the MBP: new thread in the project, a first prompt answers |
+| tunnels, if any | start each once on the VM; `ss -ltn` shows its ports |
 
 ## Traps met the first time
 
@@ -127,6 +134,8 @@ Fetch on the MBP, list branches with commits that are on no remote, copy them st
 - **Shell scripts with `set -o pipefail`**: `ls missing-dir | …` aborts the script.
 - **zsh on the MBP:** `"$b:refs/…"` applies a modifier to `$b`; write `"${b}:refs/…"`. Unquoted variables are not split into words.
 - **Outpost-style containers running as root** leave root-owned files in bind-mounted worktrees on Linux.
+- **A tunnel and a dev stack can want the same local port** (hookdeck: 26379); the tunnel then refuses to start.
+- **systemd user services do not get the shell's PATH**: `~/.config/environment.d/` expands `${HOME}`, not `%h`; call tools by full path or through `mise exec`.
 - **T3 server and app versions must match**; bump `T3_VERSION` in `provision.sh` and run `t3 update` in each VM when the app updates.
 - **Shared checkouts:** other sessions work in `ctrl` and `collielab` at the same time: pull first, add files by name.
 
@@ -164,9 +173,13 @@ Investigate:
    assumptions, arm64-only images.
 6. Claude Code config the workspace relies on: .claude/settings.json (hooks, permissions, plugins),
    .mcp.json servers and what each needs, global ~/.claude files it depends on.
-7. Logins the workspace uses (CLI, what for, read or write reach) and every gitignored secret or
-   credential file Alex would have to copy (path and purpose only), including cloud config folders
-   and SSH tunnels.
+7. Logins the workspace uses (CLI, what for, read or write reach, Docker registries included) and
+   every gitignored secret or credential file Alex would have to copy (path and purpose only),
+   including cloud config folders, and SSH keys and Host blocks in ~/.ssh/config used for tunnels.
+7b. Services Alex runs around sessions on the Mac for this workspace: its group in
+   ~/workspaces/ctrl/services.conf (menubar: tunnels, board), launch agents, anything a skill says
+   "Alex starts". For each: the command, the local ports it opens, and whether those ports clash
+   with ports the dev stacks publish.
 8. Workload shape from the 10 most recent session transcripts under ~/.claude/projects/ for this
    workspace (count tool calls with grep/jq, do not dump them): commands run most, test and build
    tools, browsers, background jobs, how many sessions and worktrees at once.

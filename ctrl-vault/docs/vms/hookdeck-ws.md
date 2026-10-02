@@ -79,6 +79,25 @@ State: all 13 paths copied 2026-10-02 (rsync from the MBP, no Mac-only paths ins
 - Core URLs are `http://<ns>.localhost` on the VM's own port 80. From the MBP's browser: `ssh -L 80:127.0.0.1:80 hookdeck-ws` while no stack runs on the MBP; later the gateway (TASK-3) or `pnpm start --tailscale`.
 - Outpost and the PM2 services listen on all addresses, so they are reachable from the home network at `hookdeck-ws.lab.alexluong.com:<port>`.
 
+## Services around sessions
+
+What the MBP's menubar (`ctrl/services.conf`) ran for this workspace, and its state on the VM. A switch for these is open: TASK-6 (menubar reaching into the VM, parked) or a control panel on the VM (Collie Studio idea: `~/workspaces/cs/cs-vault/notes/studio/workspace-control.md`).
+
+| Service | On the VM today |
+|---|---|
+| Prod jumpbox tunnel | by hand: `ssh hookdeck-ws`, then `ssh -N hd_jumpbox` (keep the shell open, or `ssh -fN hd_jumpbox` and `pkill -f "ssh -fN hd_jumpbox"` to close). `prd pg` then works in VM sessions. Off after a VM reboot |
+| Staging jumpbox tunnel | `ssh -N hd_jumpbox_stg`. **Fails while the outpost stack is up**: the tunnel forwards local port 26379 (staging Dragonfly) and the outpost stack's Redis publishes 26379. Same clash on the MBP; it comes from the workspace, not the VM. Stop the outpost stack first, or run the tunnel without that forward |
+| Board (`backlog browser -p 6422`) | not run on the VM yet. It binds 127.0.0.1 only: from the MBP `ssh -L 6422:127.0.0.1:6422 hookdeck-ws`, later the gateway (TASK-3). The MBP's menubar board shows the MBP's checkout |
+| Keep-awake | not needed: the VM does not sleep |
+
+## Resources
+
+Allocated: 8 of g8's 16 CPU threads (shared, not reserved), 32GB of 64GB RAM (fixed, reserved while the VM runs), 250GB disk as a ceiling on g8's 816GB pool (thin: only what is written takes space).
+
+Measured 2026-10-02 23:30 with 6 Claude sessions and both stacks up (22 containers): RAM 15GB used of 32GB (containers 7.4GB), load 1.2 on 8 threads, disk 50GB of 250GB (Docker images 26GB, build cache 7GB, volumes 5GB). On g8: the pool is 7% used; 27GB RAM and 8 threads are left for other VMs.
+
+Change the size (on g8): `qm set 101 --cores N`, `qm set 101 --memory MB` (both need a VM restart), `qm resize 101 scsi0 +50G` (live, grow only).
+
 ## Syncing work from the MBP
 
 Team repos keep task branches in each machine's own bare clones, so unpushed work has to be carried over. Without touching GitHub, from the MBP's `~/workspaces/hookdeck`:
@@ -102,5 +121,6 @@ git -C repos/<repo>.git push hookdeck-ws:workspaces/hookdeck/repos/<repo>.git "r
 1. **Not decided:** whether all hookdeck sessions move to the VM. Alex is trying the VM first (2026-10-02: "not a rule yet"); both machines work today. While both are in use: push on the machine you leave, pull on the one you go to (board, memory and digest are committed from where sessions run). Written up in the workspace repo: `hookdeck-vault/notes/machines.md`.
 2. The prod-reaching files and logins (the bold rows above) are now on the VM, on Alex's say-so (2026-10-02). Kubeconfigs have no default context by design: pass `--context`.
 3. Saving the VM's identity (GitHub key, optionally the gh and Claude logins) to `ctrl/secrets/hookdeck-ws/` so a rebuilt VM needs no re-registration: offered, not decided.
-4. No backups yet. Snapshots on g8: `clean-setup` (before any login), `ready` (logged in, secrets copied, core deps installed).
+4. Template rebuild pending: the fix for the service PATH (`collielab` `6b3a54a`) is in `provision.sh` and applied on this VM, but template 9000 still carries the old file; rebuild it before the next VM (`collielab/hosts/g8/README.md`).
+4a. No backups yet. Snapshots on g8: `clean-setup` (before any login), `ready` (logged in, secrets copied, core deps installed).
 5. Doppler and Railway logins are machine-wide today. Moving them into the workspace like gcloud: possible for Doppler (`DOPPLER_CONFIG_DIR`), not for Railway (use workspace tokens in `ops/<env>/.env`): `work/task-2/doppler-railway-creds.md`.
