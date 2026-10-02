@@ -317,6 +317,18 @@ only returns once iCloud uploads and macOS evicts the local copies.
 
 ## History
 
+- **2026-10-03** — Docker-only pass, no full audit (no snapshot row). Free space
+  was **10G**, six days after the 09-27 floor: `Docker.raw` 3.2 → 71G (67 images
+  44G, 140 volumes 21G, build cache 19G), no stacks running. Alex chose a **full
+  wipe again**, named dev DBs included (`hookdeck_*`, `outpost_*`,
+  `enable-*_mongo_data`). **10 → 68G free**, `Docker.raw` 14G right after and
+  still TRIMming. Direction from Alex: dev stacks are moving to ws, so Docker on
+  the MBP should stay small and mostly not running. That makes the `docker`
+  budget note ("primary dev runtime", 120G) stale; lower it at the next full
+  audit once the move has happened. Docker Desktop left running at Alex's
+  choice, limits unchanged (8 CPU / 16G RAM / 256G max disk), autostart already
+  off, Resource Saver on. Leftover: inactive `multiarch` buildx builder.
+
 - **2026-09-26** — Free space **14.7G** four days after the last clean. Docker
   had stopped (daemon down, `Docker.raw` 97.8G). Movers: `system` +8.8 to 79.7
   (over): go-build back to **15G** four days after `go clean -cache` took it
