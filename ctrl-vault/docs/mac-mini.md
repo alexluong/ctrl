@@ -113,7 +113,7 @@ iStat Menus, Setapp, Logi G HUB.
 - Connect: `ssh alex@100.91.137.41` (Tailscale) · `ssh alex@alexs-Mac-mini.local`
   · `ssh alex@192.168.1.90`.
 
-**Keys-only hardening** (recommended; apply after confirming key login works):
+**Keys only: applied 2026-10-02** with `collielab/hosts/mini/root-setup.sh` (writes `/etc/ssh/sshd_config.d/100-keys-only.conf`; verified from the MBP: password login refused). Undo: delete that file. What it amounts to:
 ```sh
 sudo tee /etc/ssh/sshd_config.d/100-keys-only.conf >/dev/null <<'EOF'
 PasswordAuthentication no

@@ -75,7 +75,7 @@ Full write-up: `mac-mini.md` (specs, storage, service/port map, startup, migrati
 |---|---|
 | Specs | M4, 16GB, 245GB internal (~61GB free), macOS 15.5. Only user `alex` |
 | Address | `192.168.1.90` (router reservation, Wi-Fi), `mini.lab.alexluong.com`, `alexs-Mac-mini.local`, Tailscale `100.91.137.41` |
-| SSH | `ssh mini` (MBP `~/.ssh/config`: `alex@mini.lab.alexluong.com`, key `id_ed25519`). Remote Login on since 2026-10-02, limited to `alex`. **Password login still on** (keys-only needs sudo: Alex) |
+| SSH | `ssh mini` (MBP `~/.ssh/config`: `alex@mini.lab.alexluong.com`, key `id_ed25519`). Remote Login on since 2026-10-02, limited to `alex`. Keys only (password login off since 2026-10-02). SSH can't read `/Volumes/*` until "Allow full disk access for remote users" is switched on |
 | Storage | 2 × 4TB USB drives, APFS: `/Volumes/Blue4` (817GB free), `/Volumes/Red4` (191GB free). There is no Samsung T7 |
 | Services | Plex `:32400` (native app); in the Colima `arr` VM: Jellyfin `:8096`, qBittorrent `:8080` / `:8081` (private), Calibre-Web `:8074` (Alex) / `:8073` (Hannah) (the Kobo sync), Audiobookshelf `:13378`; on demand: radarr/sonarr/prowlarr/bazarr. `:53` is Colima's own networking, not a DNS server |
 | After a power cut | stays off (auto-restart off by choice); after power-on SSH and Plex come back, **containers do not** until `media/scripts/vm-start.sh` + `up.sh core` |
@@ -159,7 +159,8 @@ Claude can only use keys loaded in the agent (no passphrase prompt). After a res
 
 - [ ] Router: DHCP pool range; apply the address plan; save router login to Vaultwarden
 - [x] Mac Mini: Remote Login + MBP key, specs → `mac-mini.md` (2026-10-02)
-- [ ] Mac Mini: SSH keys only (Alex, needs sudo; command in `mac-mini.md`); move its ctrl clone to `main` once the session there is idle; wire it (new router binding for the ethernet MAC)
+- [x] Mac Mini: SSH keys only (2026-10-02)
+- [ ] Mac Mini: full disk access for remote users (Alex, Settings click); auto-restart / FileVault choice; move its ctrl clone to `main` once the session there is idle; wire it (new router binding for the ethernet MAC)
 - [ ] Later: Tailscale account + install on MBP/phone, `ts` names
 - [ ] Identify the unidentified devices (`.57`, `.124`, `.129/.130`)
 - [ ] Re-scan after 2026-10-02 18:00: `.124` and `.131` (old leases) should have moved below `.100`
