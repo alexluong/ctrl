@@ -8,7 +8,7 @@ Scanned from the MBP 2026-10-02 (ping sweep, mDNS, port probes); re-scan before 
 ## Network
 
 - ISP: Viettel (fiber). LAN `192.168.1.0/24`, gateway `192.168.1.1`, DNS = Viettel's (handed out by the router).
-- Router: **ZTE F6601P** (Viettel ONT + router + Wi-Fi), `192.168.1.1`, admin UI `http://192.168.1.1`.
+- Router: **ZTE F6601P** (Viettel ONT + router + Wi-Fi, internet login by PPPoE on the router), `192.168.1.1`, admin UI `https://192.168.1.1` (login in Vaultwarden). 3 of 4 LAN ports in use.
 - Mesh nodes: 2 × **ZTE H3601P**, `192.168.1.3` and `192.168.1.5` (admin UI on each).
 - DHCP pool range: **unknown, check in router**. Leases seen from `.3` to `.131`, so the pool likely starts near `.2` and `.21` sits inside it.
 - Wi-Fi name: "Dunder Mifflin". Router sits in a closed cabinet with the G8.
@@ -35,15 +35,17 @@ Scanned from the MBP 2026-10-02 (ping sweep, mDNS, port probes); re-scan before 
 
 Private (randomized) MACs change if the device's Wi-Fi setting is "Rotating"; a router reservation only holds when it is "Fixed" or the device is wired.
 
-## Existing reservations on the router (from the handoff notes; check against the router page)
+## Reservations on the router (DHCP Binding; confirmed from the router page 2026-10-02)
 
-| IP | Device | MAC the router sees | Checked 2026-10-02 |
+| IP | Binding name | Device | MAC bound |
 |---|---|---|---|
-| .80 | ESP32 (`esp32-978698`, Kobo page-turner remote) | f0:24:f9:97:86:98 | planned, no reply to ping |
-| .90 | Mac Mini (Wi-Fi) | a6:54:90:62:c6:fe (its Fixed private address; hardware `1c:f6:4c:48:61:cd`, ethernet `1c:f6:4c:38:57:c2`) | holds `.90` |
-| .91 | MacBook Pro | 0e:90:e1:ca:88:2a (private; hardware `f8:4d:89:5f:c9:81`) | holds `.91` |
-| .92 | Kobo 1 | a4:3c:d7:3a:65:42 | asleep |
-| .93 | Kobo 2 | a4:3c:d7:56:bb:f9 | asleep |
+| .80 | `md5stickc` | M5StickC (ESP32, Kobo page-turner remote) | f0:24:f9:97:86:98 |
+| .90 | `Mac Mini` | Mac Mini, Wi-Fi | a6:54:90:62:c6:fe (its Fixed private address; hardware `1c:f6:4c:48:61:cd`, ethernet `1c:f6:4c:38:57:c2`) |
+| .91 | `MBP` | MacBook Pro, Wi-Fi | 0e:90:e1:ca:88:2a (private; hardware `f8:4d:89:5f:c9:81`) |
+| .92 | `Kobo Alex` | Kobo | a4:3c:d7:3a:65:42 |
+| .93 | `Kobo Ha` | Kobo | a4:3c:d7:56:bb:f9 |
+
+If a Mac's private Wi-Fi address changes (setting switched to Rotating or Off, or the Mini moves to ethernet), its binding stops matching.
 
 Earlier scheme: `.80–.89` boards and DIY, `.90–.99` consumer devices, everything else handed out automatically.
 
@@ -82,7 +84,7 @@ Ryzen 7 5700G (8c/16t), 64GB DDR4, 1TB NVMe. Proxmox VE 9.0.3, installed by the 
 
 | Target | Web | SSH | Status |
 |---|---|---|---|
-| Router | `http://192.168.1.1` | n/a | login on the router's sticker (save to Vaultwarden) |
+| Router | `https://192.168.1.1` | n/a | works; login in Vaultwarden |
 | pve1 host (to be `g8`) | `https://192.168.1.21:8006` | `root@192.168.1.21` | both work |
 | pve1 VMs | n/a | `alex@<vm>` | none yet |
 | Mac Mini | Jellyfin/Plex/qBittorrent ports above | off | Remote Login to enable |
@@ -135,4 +137,4 @@ Claude can only use keys loaded in the agent (no passphrase prompt). After a res
 - [ ] Mac Mini: Remote Login + MBP key, specs, wired vs Wi-Fi → `mac-mini.md`
 - [ ] Later: Tailscale account + install on MBP/phone, `ts` names
 - [ ] Identify the unidentified devices (`.57`, `.124`, `.129/.130`)
-- [ ] Router page: confirm the reservations table above and the pool range
+- [ ] Router page: read the pool range, set it to `.150–.254`
