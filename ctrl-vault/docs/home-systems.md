@@ -14,7 +14,7 @@ Scanned from the MBP 2026-10-02 (ping sweep, mDNS, port probes); re-scan before 
 - Wi-Fi name: "Dunder Mifflin". Router sits in a closed cabinet with the G8.
 - Router menus: Local Network → LAN → DHCP; "DHCP Binding" (reservations) at the bottom; the same page lists handed-out addresses (incl. stale ones). **Never factory-reset**: it wipes the fiber login and internet stays down until Viettel reprovisions (support 18008119).
 - Viettel blocks some sites at DNS level and hijacks port 53; only encrypted DNS gets around it. Direction was hosted encrypted DNS per device, not a home DNS server (power cuts happen overnight).
-- Tailscale: handoff notes say in use (Mini, remote access with Jump Desktop); **not installed on the MBP** (checked 2026-10-02). No port forwards known.
+- Tailscale: on the Mini (`alexs-mac-mini`, `100.91.137.41`, account `lhtanh98@`; its other nodes are long offline); **not installed on the MBP or g8** (checked 2026-10-02). No port forwards known.
 
 ## Devices
 
@@ -28,7 +28,7 @@ Scanned from the MBP 2026-10-02 (ping sweep, mDNS, port probes); re-scan before 
 | .10 | `rml-225f38`: "Rainbow Music Led" LED strip controller (ESP chip, web UI on :80) | c8:2b:96:22:5f:38 | DHCP | identified from its web page title |
 | **.100** | **`g8`: HP EliteDesk 805 G8 Mini (Proxmox)** | 84:69:93:4f:fe:41 | **typed into the box** | wired to router; was `pve1` at `.21` until 2026-10-02 |
 | .39 | Hannah's iPad | private MAC | DHCP | |
-| **.90** | **Mac Mini (`alexs-Mac-mini.local`)** | a6:54:90:62:c6:fe (private → Wi-Fi?) | DHCP | media host |
+| **.90** | **Mac Mini (`alexs-Mac-mini.local`)** | a6:54:90:62:c6:fe (private, Wi-Fi) | DHCP, reserved | media host; on Wi-Fi, ethernet unplugged |
 | .91 | MacBook Pro (`Alexs-MacBook-Pro`) | private MAC | DHCP | Wi-Fi (`en0`) |
 | .131 | `HNNHPHM-PC` (Windows, SMB open) | f0:57:a6:cf:9c:7f | DHCP | |
 | .57, .124, .129/.130 | unidentified, private MACs, no open ports | | DHCP | phones/watches likely |
@@ -69,12 +69,18 @@ Ryzen 7 5700G (8c/16t), 64GB DDR4, 1TB NVMe. Proxmox VE 9.2.21 (kernel 7.0.14; u
 
 | | |
 |---|---|
-| Address | `192.168.1.90` (DHCP), `alexs-Mac-mini.local` |
-| SSH | **off** (Remote Login disabled; port 22 closed) |
-| Services seen | Kobo book sync (port unknown), qBittorrent `:8080` and `:8081`, Jellyfin `:8096`, Plex `:32400`, AirPlay `:5000/:7000`, something on `:53` |
-| Arrstack | `hub/alexluong/arr` (gluetun, qbittorrent, prowlarr, radarr, sonarr) on Colima; data on Samsung T7 (`/Volumes/T7/arr`) |
-| Also (handoff notes) | Audiobookshelf, Kavita, Calibre-Web (Kobo sync); TerraMaster DAS attached; on Wi-Fi; remote access via Jump Desktop and Tailscale |
-| Unknown | exact specs, macOS version, T7 filesystem. Details go in `mac-mini.md` (written from a session on the Mini) |
+Full write-up: `mac-mini.md` (specs, storage, service/port map, startup, migration blockers). Stack: `media/` at the repo root, `media-ops` skill.
+
+| | |
+|---|---|
+| Specs | M4, 16GB, 245GB internal (~61GB free), macOS 15.5. Only user `alex` |
+| Address | `192.168.1.90` (router reservation, Wi-Fi), `mini.lab.alexluong.com`, `alexs-Mac-mini.local`, Tailscale `100.91.137.41` |
+| SSH | `ssh mini` (MBP `~/.ssh/config`: `alex@192.168.1.90`, key `id_ed25519`). Remote Login on since 2026-10-02, limited to `alex`. **Password login still on** (keys-only needs sudo: Alex) |
+| Storage | 2 × 4TB USB drives, APFS: `/Volumes/Blue4` (817GB free), `/Volumes/Red4` (191GB free). There is no Samsung T7 |
+| Services | Plex `:32400` (native app); in the Colima `arr` VM: Jellyfin `:8096`, qBittorrent `:8080` / `:8081` (private), Calibre-Web `:8074` (Alex) / `:8073` (Hannah) (the Kobo sync), Audiobookshelf `:13378`; on demand: radarr/sonarr/prowlarr/bazarr. `:53` is Colima's own networking, not a DNS server |
+| After a power cut | stays off (auto-restart off by choice); after power-on SSH and Plex come back, **containers do not** until `media/scripts/vm-start.sh` + `up.sh core` |
+| ctrl clone | `~/git/hub/alexluong/ctrl` (stack runs from its `media/`). Old `hub/alexluong/arr` repo is superseded (22 unpushed commits + dirty tree left there) |
+| Seen 2026-10-02 | `gluetun` unhealthy (DNS/TLS timeouts through the VPN), `seedboxapi` crash-looping (expired MAM session). A stopped Colima profile `hookdeck` also exists |
 
 ### collielab VM (cloud, Vultr)
 
@@ -87,7 +93,7 @@ Ryzen 7 5700G (8c/16t), 64GB DDR4, 1TB NVMe. Proxmox VE 9.2.21 (kernel 7.0.14; u
 | Router | `https://192.168.1.1` | n/a | works; login in Vaultwarden |
 | g8 host | `https://192.168.1.100:8006` | `ssh g8` | both work |
 | g8 VMs | n/a | `alex@<vm>` | none yet |
-| Mac Mini | Jellyfin/Plex/qBittorrent ports above | off | Remote Login to enable |
+| Mac Mini | `http://mini.lab.alexluong.com:<port>` (ports above) | `ssh mini` | both work |
 | collielab VM | `vault.collie.studio` etc. | `sshmylab` | works |
 
 Home-only today: everything on `192.168.1.x` is reachable only on home Wi-Fi. Tailscale (planned) makes g8, its VMs and the Mini reachable from anywhere.
@@ -134,7 +140,7 @@ Templates use VM IDs 9000+.
 
 One record per machine or VM is added as it is created. Ports and the certificate warning go away with the gateway (TASK-3, not started), when these names move to it. The names are publicly resolvable (private addresses, nothing reachable from outside).
 
-**If the range changes later:** update the DNS records, the gateway's backend addresses and the fixed addresses on g8, the Mini and VMs; devices that use URLs (Kobo, TV apps) keep working. So point the Kobo (today `192.168.1.90`, typed in its config; service/port on the Mini not found by scan, Mini session to document) and the TV's Jellyfin/Plex apps at URLs once the gateway exists. Other costs: house offline a few minutes; router admin moves; mesh nodes might need re-pairing; a Viettel reset puts the range back. To avoid locking g8 out: give it both addresses first, switch the router, then drop the old one.
+**If the range changes later:** update the DNS records, the gateway's backend addresses and the fixed addresses on g8, the Mini and VMs; devices that use URLs (Kobo, TV apps) keep working. So point the Kobos (today `192.168.1.90`, typed in their config; Calibre-Web on the Mini, `:8074` Alex / `:8073` Hannah) and the TV's Jellyfin/Plex apps at URLs once the gateway exists. Other costs: house offline a few minutes; router admin moves; mesh nodes might need re-pairing; a Viettel reset puts the range back. To avoid locking g8 out: give it both addresses first, switch the router, then drop the old one.
 
 ## SSH keys on the MBP (2026-10-02)
 
@@ -146,12 +152,13 @@ One record per machine or VM is added as it is created. Ports and the certificat
 | `id_ed_hookdeck` | no | no | Hookdeck jump boxes (`hd_jumpbox`, `hd_jumpbox_stg`) |
 | `google_compute_engine` | no | no | gcloud |
 
-Claude can only use keys loaded in the agent (no passphrase prompt). After a restart `id_ed25519` reloads only if `~/.ssh/config` names it with `UseKeychain yes` + `AddKeysToAgent yes`: add that with the `g8` host entry. `~/.ssh/config` has no entries for home machines yet; its first line includes `~/.colima/ssh_config`, which no longer exists (harmless).
+Claude can only use keys loaded in the agent (no passphrase prompt). After a restart `id_ed25519` reloads only if `~/.ssh/config` names it with `UseKeychain yes` + `AddKeysToAgent yes`: add that with the `g8` host entry. `~/.ssh/config` has `Host g8` and `Host mini` (both with those two lines); its first line includes `~/.colima/ssh_config`, which no longer exists (harmless).
 
 ## Open
 
 - [ ] Router: DHCP pool range; apply the address plan; save router login to Vaultwarden
-- [ ] Mac Mini: Remote Login + MBP key, specs, wired vs Wi-Fi → `mac-mini.md`
+- [x] Mac Mini: Remote Login + MBP key, specs → `mac-mini.md` (2026-10-02)
+- [ ] Mac Mini: SSH keys only (Alex, needs sudo; command in `mac-mini.md`); move its ctrl clone to `main` once the session there is idle; wire it (new router binding for the ethernet MAC)
 - [ ] Later: Tailscale account + install on MBP/phone, `ts` names
 - [ ] Identify the unidentified devices (`.57`, `.124`, `.129/.130`)
 - [ ] Re-scan after 2026-10-02 18:00: `.124` and `.131` (old leases) should have moved below `.100`

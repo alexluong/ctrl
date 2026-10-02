@@ -16,6 +16,7 @@ AGENTS.md            this file (always-on rules; CLAUDE.md is a symlink to it)
 .claude/             Claude wiring only: skills symlink, hooks/, settings.json
 bin/                 wt (worktrees), disk-audit.sh, svc (start/stop local services)
 menubar/             SwiftBar plugins (svc.10s.sh = menubar front end to bin/svc)
+media/               media stack on the Mac Mini: compose, scripts, catalog, docs (`media-ops` skill)
 ctrl-vault/          Obsidian vault: all notes
   docs/              ideas, projects, machines, workflow, workspace playbook
   re/                real estate: deals, logs, bookkeeping (`re/notes.md` = conventions)
@@ -39,7 +40,8 @@ Maintaining the workspace (where things go, memory vs notes, adding skills): `wo
 - `re`: real estate: deals, notes, logs, bookkeeping (`ctrl-vault/re/notes.md` for conventions & context)
 - `biz`: bookkeeping, invoices (`ctrl-vault/biz/BOOKKEEPING.md`)
 - `docs`: ideas (`ideas.md`), cross-domain notes; `machine.md` = machine/repo layout; `home-systems.md` = home network, devices, IPs, access (`home-network-handoff.md` = earlier router notes); `workflow.md` = how Claude works across repos (session modes, git, quality bar, project lifecycle); `workspace-setup.md` = the agent-workspace playbook; `projects/<name>.md` (or `projects/<name>/` with a `README.md`) = each project's living doc
-- Planned: `media` (plex/arr, migrating from `~/git/hub/alexluong/arr`), `finance`, `career`
+- `media` lives at the repo root (`media/`, not in the vault): Plex/Jellyfin/arr stack that runs on the Mac Mini from its own ctrl clone; work on it over `ssh mini`. Machine doc: `ctrl-vault/docs/mac-mini.md`
+- Planned: `finance`, `career`
 
 ## Projects: incubate here, graduate out
 

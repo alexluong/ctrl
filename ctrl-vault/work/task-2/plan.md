@@ -36,9 +36,11 @@ Later, inside the VM (Alex types these; Claude can't): `claude` login, `gh auth 
 - Repo for the scripts. Proposal: new private repo in the `collielab` org (personal infra); inventory summarized in `docs/home-systems.md`.
 - T3 server: how it authenticates; which address it listens on (behind the gateway).
 - Stack approach inside the VM (full stacks vs shared infra); not every stack runs all the time.
-- Backup target: Mac Mini share needs enough space (VM backups 100GB+).
+- Backup target: Mac Mini share needs enough space (VM backups 100GB+). Mini has 817GB free on Blue4, 191GB on Red4 (APFS USB drives, 2026-10-02), on Wi-Fi.
 
 ## Prompt for the Mac Mini session
+
+**Done 2026-10-02**: result in `docs/mac-mini.md` (PR #1, merged); `ssh mini` works from the MBP. Left: SSH keys only on the Mini (Alex, sudo). Kept for reference.
 
 Paste into a Claude Code session running **on the Mac Mini**. Output lands in `docs/mac-mini.md`.
 

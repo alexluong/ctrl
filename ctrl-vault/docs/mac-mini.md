@@ -5,7 +5,9 @@ containers) and is managed remotely over SSH from the MacBook Pro. This document
 what the machine is, what runs on it, how to reach it, and what would block moving
 the stack to a Linux VM on Proxmox later.
 
-_No secrets live in this file — only where they live. Captured 2026-10-02._
+_No secrets live in this file — only where they live. Captured 2026-10-02 from a session on the Mini._
+Home map (addresses, naming, other machines): `home-systems.md`. Stack docs: `media/README.md` (repo root); `media-ops` skill.
+The Mini's ctrl clone is at `~/git/hub/alexluong/ctrl` (no `~/workspaces/` there); the stack runs from its `media/`.
 
 ## Specs
 
@@ -23,15 +25,17 @@ _No secrets live in this file — only where they live. Captured 2026-10-02._
 
 - **On Wi-Fi, not wired.** Ethernet `en0` is inactive (no cable plugged).
 - Active interface: **Wi-Fi `en1` → `192.168.1.90`** (netmask /24).
-  - MAC `a6:54:90:62:c6:fe` — a **private/randomized** Wi-Fi address (locally
-    administered). The IP has been stable but *could* drift; prefer the mDNS or
-    Tailscale name below over the raw IP.
+  - MAC `a6:54:90:62:c6:fe` — a **private** Wi-Fi address (hardware `1c:f6:4c:48:61:cd`).
+    The router reserves `.90` for this MAC (DHCP Binding `Mac Mini`), so the IP holds
+    as long as the Wi-Fi private-address setting stays Fixed and the Mini stays on Wi-Fi.
+    Plugging in ethernet (`1c:f6:4c:38:57:c2`) needs a new binding.
 - **Tailscale** (host app): this node = `alexs-mac-mini` → **`100.91.137.41`**,
   reachable from anywhere on the tailnet (account `lhtanh98@`).
-- Three ways to reach it, most → least robust to IP changes:
-  1. `alex@100.91.137.41` (Tailscale — works off-LAN)
-  2. `alex@alexs-Mac-mini.local` (mDNS — survives DHCP changes on-LAN)
-  3. `alex@192.168.1.90` (raw LAN IP)
+- Ways to reach it:
+  1. **`ssh mini`** from the MBP (alias in `~/.ssh/config` → `alex@192.168.1.90`, key `id_ed25519`); home only
+  2. `mini.lab.alexluong.com` (public DNS record → `192.168.1.90`); home only
+  3. `alex@alexs-Mac-mini.local` (mDNS)
+  4. `alex@100.91.137.41` (Tailscale — works away from home; the MBP has no Tailscale yet)
 
 > `*:53` is held by `limactl usernet` (Colima's internal user-mode networking) —
 > **not** a DNS server you run. Ignore it.

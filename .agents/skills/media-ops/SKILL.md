@@ -21,7 +21,8 @@ this file routes; the docs have the specifics.
 
 ## Environment
 
-- Repo root: `/Users/alex/git/hub/alexluong/ctrl`. Monorepo; media lives in `media/`.
+- The stack runs on the **Mac Mini**. Repo root there: `/Users/alex/git/hub/alexluong/ctrl`; media lives in `media/`.
+  From the MBP: `ssh mini` (machine doc: `ctrl-vault/docs/mac-mini.md`); nothing runs on the MBP.
 - Containers run in the Colima **`arr`** VM → Docker context **`colima-arr`**
   (`export DOCKER_CONTEXT=colima-arr`, or `docker --context colima-arr ...`).
 - VM sized in `scripts/vm-start.sh` (**8 GB / 6 CPU**). Host is a 16 GB M4 Mac Mini.
