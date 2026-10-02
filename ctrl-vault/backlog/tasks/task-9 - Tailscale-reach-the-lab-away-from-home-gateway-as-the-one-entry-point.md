@@ -1,9 +1,12 @@
 ---
 id: TASK-9
-title: 'Tailscale: reach the lab away from home (gateway as the one entry point)'
+title: >-
+  Tailscale: one address set for the lab, home devices reach it through the
+  gateway (explore)
 status: To Do
 assignee: []
 created_date: '2026-10-02 18:41'
+updated_date: '2026-10-02 21:02'
 labels:
   - infra
   - machine
@@ -14,15 +17,17 @@ ordinal: 9000
 ## Description
 
 <!-- SECTION:DESCRIPTION:BEGIN -->
-hookdeck sessions now run only on the VM (2026-10-03), so away from home there is no hookdeck work until this exists. Design already proposed in docs/home-systems.md § URLs: Tailscale on the gateway (gw) only; *.ts.alexluong.com -> the gateway's Tailscale address, same service names as *.lab; no subnet router, no Tailscale on VMs, so it does not depend on how many VMs exist. Gap in that design: SSH (T3 connects to a workspace VM over SSH, not HTTP). Proposed: the gateway as SSH jump host when not at home (ProxyJump in collielab/ssh/config, chosen automatically), so VMs still need nothing. Alternatives if that fails: Tailscale on each workspace VM (baked into the template; one login per VM) or a subnet router advertising only g8's block as narrow routes (192.168.1.x clashes with cafe/hotel networks otherwise). Touches gw: coordinate with TASK-3.
+Direction Alex likes (2026-10-03), to prove before deciding: every lab machine on the tailnet, all names point at Tailscale addresses, one static route on the home router sends the tailnet range to the gateway so devices at home need no app; away it works with the app on. Same URL, same ssh, same T3 environment everywhere. Design, checks in order, weak points, hardening list and fallbacks: ctrl-vault/work/task-9/design.md. Nothing is installed yet. Touches gw (coordinate with TASK-3) and the router (Alex's say-so).
 <!-- SECTION:DESCRIPTION:END -->
 
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
-- [ ] #1 Alex: Tailscale account chosen (the Mini is on lhtanh98@ today; MBP has none), installed on the MBP and phone
-- [ ] #2 gw joined to the tailnet (container needs /dev/net/tun or userspace mode); *.ts.alexluong.com records and certificates
-- [ ] #3 Away from home with Tailscale on: lab URLs open under *.ts, including hookdeck-ws services
-- [ ] #4 Away from home: ssh hookdeck-ws and the T3 app connect with no manual step; at home nothing changes with Tailscale on or off
-- [ ] #5 Works from a network that itself uses 192.168.1.x
-- [ ] #6 Docs: home-systems.md, fleet.md, t3-code-remote.md, vms/playbook.md (nothing per VM, or the per-VM step)
+- [ ] #1 Alex: tailnet/account confirmed; stale nodes removed; Tailscale on the MBP and phone
+- [ ] #2 Tailscale runs in the gw container and on hookdeck-ws
+- [ ] #3 Proof without the router: MBP with Tailscale off and a hand-added route reaches ssh, T3 and a gateway page through gw
+- [ ] #4 Router: static route possible and working, or the fallback (design.md) chosen
+- [ ] #5 Names point at Tailscale addresses; at home with no app and away with the app: ssh, T3, lab pages, Jellyfin on the phone all work
+- [ ] #6 Access rules: gw reaches VMs and the Mini only; VMs cannot start connections to other machines; other people's devices get media only
+- [ ] #7 Hardening list in design.md done or explicitly skipped
+- [ ] #8 bin/new-vm joins a new VM to the tailnet; docs updated (home-systems.md, fleet.md, t3-code-remote.md, vms/playbook.md)
 <!-- AC:END -->
