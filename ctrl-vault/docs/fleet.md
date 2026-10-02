@@ -120,6 +120,28 @@ So with the full-disk-access switch on, media work can be driven from the MBP: l
 
 Proposal: **no workspace for the Mini** (it is a machine, not a project; board, notes and the `media-ops` skill stay in ctrl). `media/` becomes its **own repo with one working clone, on the Mini**; the MBP session edits and commits there over SSH. One writer, so no second timeline. ctrl's clone leaves the Mini. Machine-level files (launch agents) go in `collielab/hosts/mini/`.
 
+### What the Mini is for (Alex asked 2026-10-02: use it for more than media)
+
+Measured 2026-10-02: 16GB RAM, of which the media VM holds 8.4GB (qBittorrent alone 5.6GB) and 4.7GB is already compressed, so **~4-6GB is spare**. Internal disk 61GB free; `~/.colima` is 63GB and includes a stopped 50GB `hookdeck` profile from before g8 (plus 2GB of hookdeck clones). On Wi-Fi. **FileVault is on, no auto-login, auto-restart off**: after a power cut it stays off, and after power-on nothing starts (containers, likely SSH too; untested) until someone unlocks it at the screen.
+
+So the split:
+
+| | g8 | Mini |
+|---|---|---|
+| Good at | Linux/Docker, lots of RAM (64GB), wired, comes back by itself | things only a Mac does; fast cores; 8TB of drives attached |
+| Role | **the server**: workspace VMs, gateway, every new Linux workload | **the Mac in the fleet + the storage box** |
+
+New general workloads go to g8, not the Mini: it has the RAM and restarts unattended. The Mini gets:
+
+1. Media stack and the drives (today).
+2. **Backups of g8's VMs** onto Blue4 (817GB free); already in the g8 plan, wants the Mini wired.
+3. **Mac-only jobs:** Xcode builds for `fitjournal` (SwiftUI; needs ~40GB disk, so clear the old `hookdeck` Colima profile first), anything needing a real logged-in browser or macOS apps (e.g. fetching bank/PM statements for bookkeeping: idea, not planned).
+4. **Watchdog from outside g8:** a small check that g8, the gateway and vultr answer, notifying Alex. Must not live on the thing it watches.
+
+Getting real spare capacity on the Mini means moving the media services to a VM on g8 (they are Linux containers and gain nothing from macOS). Blocked: the drives are APFS and nearly full, so it needs a third drive to shuffle ~6TB through. Later, if ever.
+
+Making it dependable (Alex, at the Mini, once): full disk access for remote users; SSH keys only; ethernet if the cable can reach; decide auto-restart + FileVault (hands-off recovery needs auto-restart on and either FileVault off with auto-login, or accepting an unlock at the screen after each power cut). Then from the MBP: Colima + `up.sh core` as a launch agent, cap qBittorrent's memory, fix `gluetun` / `seedboxapi`.
+
 ## Order
 
 1. `collielab`: `ssh/` + `Include`, `hosts/` skeleton, `bin/fleet` (diff/push/run). Bring `vultr`'s Caddyfile into `hosts/vultr/` (read-only copy first, then push becomes the way to change it).
