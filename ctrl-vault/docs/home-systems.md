@@ -1,7 +1,7 @@
 # Home systems
 
 Map of the home network: devices, addresses, what runs where, how each is reached.
-Machine conventions (repo layout, MBP tooling): `machine.md`. Cloud homelab VM: `collielab.md`.
+Machine conventions (repo layout, MBP tooling): `machine.md`. Cloud homelab VM: `collielab.md`. How the MBP manages all of them (SSH, config in git, gateway, agents): `fleet.md` (proposal).
 Earlier router work (existing reservations, router menus, DNS notes): `home-network-handoff.md`, reconciled below.
 Scanned from the MBP 2026-10-02 (ping sweep, mDNS, port probes); re-scan before trusting a DHCP address.
 
@@ -84,7 +84,7 @@ Full write-up: `mac-mini.md` (specs, storage, service/port map, startup, migrati
 
 ### collielab VM (cloud, Vultr)
 
-`ssh vultr` → `alex@149.28.40.6` (alias in `~/.ssh/config`; `sshmylab` still works, it now runs `ssh vultr`). Vaultwarden etc. See `collielab.md`. The address is in the alias because the VM has no DNS-only name: every record for it is Cloudflare-proxied (and points at its IPv6), which SSH can't go through.
+`ssh vultr` → `alex@vultr.alexluong.com` (alias in `~/.ssh/config`; `sshmylab` still works, it now runs `ssh vultr`). Vaultwarden etc. See `collielab.md`. `vultr.alexluong.com` is a DNS-only A record (→ `149.28.40.6`, follows the instance in terraform) added 2026-10-02 for SSH: every other record for the VM is Cloudflare-proxied, which SSH can't go through. It makes the VM's address public by name.
 
 ## Access (from the MBP)
 

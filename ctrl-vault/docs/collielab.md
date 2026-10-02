@@ -14,7 +14,7 @@ No README, no CLAUDE.md at root (as of 2026-08-11).
 
 ## The VM
 
-Vultr instance `lab` (terraform-managed): `vhp-1c-1gb-intel`, Debian 12, region `ewr` (New Jersey), weekly backups Thursdays 11:00. Reachable as `ssh vultr` (= `ssh alex@149.28.40.6`; `~/.ssh/config` on the MBP, old shell alias `sshmylab` — the alias is not in `~/.ssh/config` on every machine; use the IP if it doesn't resolve). Docker is old: `docker-compose` v1 binary, **no `docker compose` plugin**.
+Vultr instance `lab` (terraform-managed): `vhp-1c-1gb-intel`, Debian 12, region `ewr` (New Jersey), weekly backups Thursdays 11:00. Reachable as `ssh vultr` (alias in the MBP's `~/.ssh/config`) = `ssh alex@vultr.alexluong.com` (DNS-only A record in `terraform/alexluong_com.tf`, `149.28.40.6`); works from any machine with a key on the VM. Docker is old: `docker-compose` v1 binary, **no `docker compose` plugin**.
 
 ## Services
 

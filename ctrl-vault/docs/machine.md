@@ -47,7 +47,7 @@ Org semantics: alexluong = personal apps (deploy onto collielab); collielab = th
 
 ## Shell shortcuts
 
-- `ssh vultr` (`~/.ssh/config`; old alias `sshmylab` runs the same) → `alex@149.28.40.6` (the homelab VM; managed via `hub/alexluong/collielab`)
+- `ssh vultr` (`~/.ssh/config`; old alias `sshmylab` runs the same) → `alex@vultr.alexluong.com` (the homelab VM; managed via `hub/alexluong/collielab`)
 - `svc` → `~/workspaces/ctrl/bin/svc` (symlink in `~/.local/bin`, so it works from any directory)
 
 ## Local services (svc + SwiftBar, set up 2026-10-02)
