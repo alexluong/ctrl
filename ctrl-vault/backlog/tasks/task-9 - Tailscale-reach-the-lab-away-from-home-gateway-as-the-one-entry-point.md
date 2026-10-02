@@ -3,10 +3,10 @@ id: TASK-9
 title: >-
   Tailscale: one address set for the lab, home devices reach it through the
   gateway (explore)
-status: To Do
+status: In Progress
 assignee: []
 created_date: '2026-10-02 18:41'
-updated_date: '2026-10-02 21:02'
+updated_date: '2026-10-02 22:05'
 labels:
   - infra
   - machine
@@ -31,3 +31,13 @@ Direction Alex likes (2026-10-03), to prove before deciding: every lab machine o
 - [ ] #7 Hardening list in design.md done or explicitly skipped
 - [ ] #8 bin/new-vm joins a new VM to the tailnet; docs updated (home-systems.md, fleet.md, t3-code-remote.md, vms/playbook.md)
 <!-- AC:END -->
+
+## Comments
+
+<!-- COMMENTS:BEGIN -->
+author: @claude
+created: 2026-10-02 22:05
+---
+2026-10-03: gw has the tun device (no restart needed) and Tailscale (100.126.136.120). Forwarding proof passed from the MBP with a hand-added route, target = the Mini: ping, ssh, Jellyfin, lab pages on gw's 100.x. gw forwarding + masquerade and the MBP route are runtime only. Left for #3: T3, needs Tailscale on hookdeck-ws. Details: work/task-9/log.md
+---
+<!-- COMMENTS:END -->

@@ -33,4 +33,28 @@ Design: `design.md`. Newest at the bottom. Each change has its undo.
    - Checked after: `/etc/resolv.conf` unchanged (still `192.168.1.1`); default route unchanged; `tailscale ping` to the Mini answers directly over the home network (`192.168.1.90:41641`); Caddy active; `https://lab.alexluong.com` 200; forwarding still off.
    - Tailscale's firewall chains as installed: forwarded packets going out of `tailscale0` are accepted unless their sender is in `100.64.0.0/10`; masquerade exists only for packets that came in from `tailscale0` (the subnet-router direction). So home → tailnet needs our own masquerade rule, as design.md expected.
    - Open: key expiry is still on for gw (default 180 days); turn off before relying on it.
-   - Undo: `ssh gw 'tailscale logout; apt purge -y tailscale; rm /etc/apt/sources.list.d/tailscale.list /usr/share/keyrings/tailscale-archive-keyring.gpg'`, then remove `gw` in the admin console. (`iptables` stays unless purged too.)
+   - Undo (below, after change 4): see the end of this entry.
+
+3. **gw: forwarding and masquerade, runtime only** (Alex's OK). Gone when gw restarts.
+   - `sysctl -w net.ipv4.ip_forward=1`
+   - `nft add table ip task9`; `nft 'add chain ip task9 post { type nat hook postrouting priority 100; }'`; `nft add rule ip task9 post ip saddr 192.168.1.0/24 oifname tailscale0 counter masquerade`
+   - Undo: `ssh gw 'nft delete table ip task9; sysctl -w net.ipv4.ip_forward=0'`
+
+4. **MBP: hand-added route, runtime only** (Alex ran it). Gone at reboot.
+   - `sudo route add -net 100.64.0.0/10 192.168.1.110`
+   - Undo: `sudo route delete -net 100.64.0.0/10`
+
+**Proof, from the MBP with no Tailscale installed (all passed):**
+
+| Test | Result |
+|---|---|
+| `ping 100.91.137.41` (Mini) | 0% loss, ~6–20 ms |
+| traceroute | 2 hops: `192.168.1.110`, then the Mini |
+| `ssh` to the Mini's `100.x`, host key checked as `mini.lab.alexluong.com` | logged in; Mini sees the client as `100.126.136.120` (gw) |
+| `http://100.91.137.41:8096/health` (Jellyfin direct) | 200 |
+| `https://lab.alexluong.com` forced to `100.126.136.120` | 200, certificate valid |
+| `https://jellyfin.lab.alexluong.com/health` forced to `100.126.136.120` | 200 |
+
+Not tested: T3 (hookdeck-ws is not on the tailnet yet).
+
+   - Undo for change 2: `ssh gw 'tailscale logout; apt purge -y tailscale; rm /etc/apt/sources.list.d/tailscale.list /usr/share/keyrings/tailscale-archive-keyring.gpg'`, then remove `gw` in the admin console. (`iptables` stays unless purged too.)

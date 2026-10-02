@@ -48,6 +48,12 @@ From a discussion with Alex. **Nothing is built or installed.** The direction be
 4. **Range of the route.** Tailnet addresses are spread over `100.64.0.0/10`. Viettel's visible hops do not use that range (traceroute 2026-10-03: `125.235.x`, `10.255.x`, `27.68.x`; not proof). Narrower is safer: Tailscale's "IP pool" setting can keep our nodes in one small block (to verify it exists on this plan), else one route per machine (a router change per VM, which Alex does not want).
 5. **iPhone behaviour** with and without the app, on home Wi-Fi and on cellular.
 
+### Results so far (2026-10-03; steps and undo in `log.md`)
+
+- **Check 1: passed.** `pct set 110 --dev0 /dev/net/tun` gave the running container the device with no restart. Tailscale 1.102.4 runs in `gw` with the normal kernel interface; `gw` = `100.126.136.120`. Userspace mode would not have worked for this design (no interface to forward into).
+- **Check 2: passed for ssh and web, target = the Mini** (already on the tailnet, so no test VM was needed). MBP without Tailscale + `route add -net 100.64.0.0/10 192.168.1.110`: ping, `ssh` to the Mini's `100.x` (pinned host key accepted; the Mini sees the connection as coming from `gw`'s `100.x`), Jellyfin on the Mini's `100.x`, and `https://lab.alexluong.com` / `https://jellyfin.lab…` on `gw`'s `100.x` with a valid certificate. On `gw` it took `net.ipv4.ip_forward=1` plus one masquerade rule of our own (`ip saddr 192.168.1.0/24 oifname tailscale0 masquerade`); Tailscale's own rules already accept the forwarded packets. Both are runtime only so far.
+- **Not yet:** T3 (needs Tailscale on `hookdeck-ws`), checks 3–5, making the `gw` settings permanent, key expiry off on servers.
+
 ## Weak points
 
 - At home the gateway is the door for every device without the app. g8 off → names stop for them. Keep `mini.lab` → `192.168.1.90` as the emergency way in.
