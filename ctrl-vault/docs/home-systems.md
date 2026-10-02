@@ -152,7 +152,7 @@ One record per machine or VM is added as it is created.
 | `https://alex.calibre.lab.alexluong.com` (= `alex.calibre.mini.lab…`) | Calibre-Web, Alex (names chosen by Alex) |
 | `https://hannah.calibre.lab.alexluong.com` (= `hannah.calibre.mini.lab…`) | Calibre-Web, Hannah |
 | `https://audiobooks.lab.alexluong.com` (= `audiobooks.mini.lab…`) | Audiobookshelf |
-| `https://qbt.mini.lab.alexluong.com`, `https://qbt-private.mini.lab.alexluong.com` | qBittorrent |
+| `https://qbt.mini.lab.alexluong.com` | qBittorrent (the private instance is left out of the gateway and the index page on purpose, Alex 2026-10-02; still at `mini.lab.alexluong.com:8081`) |
 | `https://radarr.` / `sonarr.` / `prowlarr.` / `bazarr.mini.lab.alexluong.com` | only while started (502 otherwise) |
 | `https://pve.g8.lab.alexluong.com` | Proxmox UI (no certificate warning) |
 
