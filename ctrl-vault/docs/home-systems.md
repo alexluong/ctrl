@@ -73,29 +73,30 @@ Ryzen 7 5700G (8c/16t), 64GB DDR4, 1TB NVMe. Proxmox VE, installed by the shop (
 
 Home-only today: everything on `192.168.1.x` is reachable only on home Wi-Fi. Tailscale (planned) makes pve1, its VMs and the Mini reachable from anywhere.
 
-## Naming, numbering, URLs (proposed 2026-10-02, not applied)
+## Naming, numbering, URLs (agreed 2026-10-02, not applied yet)
 
-**Names.** Physical machines by what they are: `pve1` (G8), `mini` (Mac Mini), `mbp`. VMs by workspace: `hookdeck`, `enable`, `solex`, `cs`, `ixchel`. The same name is the Proxmox VM name, the hostname, the Tailscale name and the DNS label.
+**Names.** Physical machines: `g8` (HP 805 G8, today still hostname `pve1`; rename before the first VM), `mini` (Mac Mini), `mbp`. VMs by purpose: `hookdeck`, `enable`, `solex`, `cs`, `ixchel`, later `media`. The same name is the Proxmox VM name, hostname, Tailscale name and DNS label.
 
-**Addresses.**
+**Home range: move `192.168.1.x` → `192.168.77.x`** (proposed, Alex leaning yes). Reason: the URLs below point at home addresses and are reached from outside through Tailscale; `192.168.1.x` is the most common range elsewhere, and a clash makes the URLs fail on that network.
 
 | Range | Use |
 |---|---|
-| `.1–.9` | network gear (as is) |
-| `.20–.29` | physical servers, static: `pve1` = `.21` |
-| `.30–.49` | VMs and containers, static. **Proxmox VM ID = 100 + last number**: `hookdeck` = VM 130 = `.30`, next = 131 = `.31` |
-| `.50–.254` | DHCP pool (phones, TVs, laptops) |
-| `.90` | Mac Mini, kept by a router reservation |
+| `.1–.9` | network gear |
+| `.90–.99` | physical servers, fixed: `mini` = `.90`, `g8` = `.91` |
+| `.100–.149` | VMs and containers, fixed. **Proxmox VM ID = last number**: `hookdeck` = VM 110 = `.110` |
+| `.150–.254` | DHCP pool (phones, TVs, laptops) |
 
-Templates use VM IDs 9000+. Applying it = one router change (DHCP pool start → `.50`) plus the Mini reservation.
+Templates use VM IDs 9000+.
 
-**URLs.** Zone `home.collie.studio` (`collie.studio` is already the lab zone, DNS in Cloudflare via collielab terraform).
+**URLs.** Zone `lab.alexluong.com` (unused as of 2026-10-02; DNS in Cloudflare via collielab terraform; records DNS-only, so Cloudflare's one-level certificate limit doesn't apply).
 
-- One wildcard record `*.home.collie.studio` → the Tailscale address of a small gateway container on pve1 running Caddy. Private address, so the names resolve publicly but only connect from Alex's Tailscale devices (home or away, same URL).
-- Caddy gets a real wildcard certificate from Let's Encrypt using a DNS check (no open ports). Only the gateway holds the Cloudflare token; VMs hold none.
-- Flat names, one level: `pve1.home.collie.studio` (Proxmox UI), `hookdeck.home.collie.studio` (T3 server), `jellyfin.home.collie.studio`, `plex.…`, `qbt.…`. A service of a VM: `<service>-<vm>`, e.g. `board-hookdeck.home.collie.studio`. Adding one = one line in the gateway's Caddy config.
-- SSH doesn't go through the gateway: `ssh hookdeck`, `ssh pve1`, `ssh mini` via Tailscale names plus `~/.ssh/config` aliases.
-- Open: the Cloudflare token can only be scoped per zone, so the gateway's token could edit all of `collie.studio` (incl. `vault`). Alternative: a separate cheap domain for home.
+- One-of-a-kind services, flat: `jellyfin.lab.alexluong.com`, `plex.lab…`, `qbt.lab…`, `g8.lab…` (Proxmox UI). URL survives a move between hosts.
+- Per-workspace services under the workspace: `hookdeck.lab.alexluong.com` (main page, T3), `board.hookdeck.lab…`, `t3.enable.lab…`. A host can't share a name with a flat service.
+- Records point at **home addresses** (a gateway container on g8 running Caddy). At home they work on every device with no Tailscale (verified: router and Viettel DNS return private addresses for public names). Away: Tailscale on, g8 shares the home network (subnet router), same URLs. Away without Tailscale: nothing connects.
+- Caddy gets Let's Encrypt wildcard certificates by DNS check (no open ports); one wildcard per level (`*.lab…`, `*.hookdeck.lab…`). Only the gateway holds the Cloudflare token (scoped to `alexluong.com`); VMs hold none.
+- SSH: `ssh g8`, `ssh hookdeck`, `ssh mini` via `~/.ssh/config` aliases.
+
+**Range-change risks** (why it's done carefully): house offline a few minutes; router admin moves to `192.168.77.1`; fixed-address devices need changing by hand (g8; the Mini if its address is set on the Mac); apps with a typed-in address need re-entering (TV Jellyfin/Plex → `192.168.1.90`); the 2 mesh nodes might need re-pairing; a Viettel reset or router swap puts the range back to `192.168.1.x`. To avoid locking g8 out: give it both addresses first, switch the router, then drop the old one.
 
 ## Open
 
@@ -104,4 +105,4 @@ Templates use VM IDs 9000+. Applying it = one router change (DHCP pool start →
 - [ ] Mac Mini: Remote Login + MBP key, specs, wired vs Wi-Fi → `mac-mini.md`
 - [ ] Tailscale account + install on MBP/phone
 - [ ] Identify the unidentified devices (`.57`, `.124`, `.129/.130`)
-- [ ] Decide naming/numbering/URL proposal; confirm the Mini is really fixed at `.90` (router reservation vs luck)
+- [ ] Confirm the range change to `192.168.77.x`; confirm how the Mini is fixed at `.90` (router reservation vs set on the Mac)
