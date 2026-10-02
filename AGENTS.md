@@ -41,6 +41,7 @@ Maintaining the workspace (where things go, memory vs notes, adding skills): `wo
 - `biz`: bookkeeping, invoices (`ctrl-vault/biz/BOOKKEEPING.md`)
 - `docs`: ideas (`ideas.md`), cross-domain notes; `machine.md` = machine/repo layout; `vms/<name>.md` = what each workspace VM on g8 needs (tools, logins, secret files; `vms/README.md` = index and template); `t3-code-remote.md` = T3 Code against a remote machine; `home-systems.md` = home network, devices, IPs, access (`home-network-handoff.md` = earlier router notes); `workflow.md` = how Claude works across repos (session modes, git, quality bar, project lifecycle); `workspace-setup.md` = the agent-workspace playbook; `projects/<name>.md` (or `projects/<name>/` with a `README.md`) = each project's living doc
 - `media` lives at the repo root (`media/`, not in the vault): Plex/Jellyfin/arr stack that runs on the Mac Mini from its own ctrl clone; work on it over `ssh mini`. Machine doc: `ctrl-vault/docs/mac-mini.md`
+- Machines and infra (g8, gateway, Mini, cloud VM): notes here (`ctrl-vault/docs/fleet.md` = rules, state, open items); the config and scripts that get applied live in the `collielab` repo at `~/git/hub/alexluong/collielab` (one checkout, direct to `main`). Mac setup: `~/git/hub/alexluong/dotfiles`. Both stay outside ctrl
 - Planned: `finance`, `career`
 
 ## Projects: incubate here, graduate out
