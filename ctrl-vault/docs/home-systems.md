@@ -53,7 +53,7 @@ Earlier scheme: `.80–.89` boards and DIY, `.90–.99` consumer devices, everyt
 
 ### g8 (HP EliteDesk 805 G8 Mini)
 
-Ryzen 7 5700G (8c/16t), 64GB DDR4, 1TB NVMe. Proxmox VE 9.2.21 (kernel 7.0.14; upgraded 2026-10-02 from the 9.0.3 installed by the shop (xeon.vn)); as-delivered state: `work/task-2/discovery.md`. Buying trail: `work/task-1/decision.md`. Setup: TASK-2, `work/task-2/plan.md`.
+Ryzen 7 5700G (8c/16t), 64GB DDR4, 1TB NVMe. Proxmox VE 9.2.21 (kernel **pinned to 6.14.11-9-pve**: 7.0.14 has clock problems on this box, see `work/task-2/kernel-7-clock-issues.md`, TASK-4; upgraded 2026-10-02 from the 9.0.3 installed by the shop (xeon.vn)); as-delivered state: `work/task-2/discovery.md`. Buying trail: `work/task-1/decision.md`. Setup: TASK-2, `work/task-2/plan.md`.
 
 | | |
 |---|---|

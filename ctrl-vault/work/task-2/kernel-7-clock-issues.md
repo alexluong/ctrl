@@ -17,7 +17,11 @@ Both appeared with the first boot of kernel 7.0.14-20-pve (Proxmox 9.2.21); the 
 - Cause: a February 2026 kernel rework by the ACPI maintainer that moved the CMOS clock from PNP devices to platform devices ("ACPI: x86/rtc-cmos: Use platform device for driver binding", commit 2a78e4210444, plus "ACPI: PNP: Drop CMOS RTC PNP device support"). It is known to have broken attachment on some machines (`rtc_cmos PNP0B00:00: error -ENXIO: IRQ index 0 not found`), with a follow-up fix. This box fails silently, so it may be a variant; this BIOS lists no interrupt for the clock chip, which the old code worked around.
 - Effect: time is still right (read at boot, kept by chrony). The hardware clock is no longer written back; no wake alarms. Low impact.
 
-## Options
+## Outcome (2026-10-02)
+
+Pinned 6.14.11-9-pve and rebooted: both problems gone. Clocksource `tsc`, clock read 71 ns per call (1421 ns on HPET under 7.0), `rtc_cmos 00:02: registered as rtc0`, `hwclock` works. So the trigger is kernel 7.0 on this box, not a hardware fault. Staying pinned; BIOS update and a 7.0 retest are TASK-4.
+
+## Options (as weighed before the test)
 
 1. Boot the installed 6.14.11-9-pve kernel and pin it (`proxmox-boot-tool kernel pin 6.14.11-9-pve`): expect both problems gone; older kernel line.
 2. Install and pin `proxmox-kernel-6.17` (6.17.13-21): newer than 6.14, predates the February 2026 rework.
