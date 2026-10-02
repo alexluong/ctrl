@@ -33,7 +33,7 @@ All run on the VM (`ssh hookdeck-ws`); each prints a link and a code to finish i
 | AWS | `~/.aws/config` copied from the MBP, then `aws sso login --profile personal --use-device-code` | Ampersand work | to do, when needed |
 | Docker Hub | `docker login` | only to push dev images | when needed |
 | npm | `~/.npmrc` (one token line) copied from the MBP | publishing | when needed |
-| Prod Postgres tunnel | `~/.ssh/id_ed_hookdeck` + the `hd_jumpbox`, `hd_jumpbox_stg` blocks from the MBP's `~/.ssh/config` | `prd pg` | when needed |
+| Jumpbox tunnels (prod, staging) | `~/.ssh/id_ed_hookdeck` + the `hd_jumpbox`, `hd_jumpbox_stg` blocks from the MBP's `~/.ssh/config` | `prd pg`, staging PG | **copied 2026-10-02** (key, host blocks, host fingerprints; login tested, no tunnel running). The same key also opens Alex's GitLab on the MBP. Undo: `rm ~/.ssh/id_ed_hookdeck* ~/.ssh/config` on the VM. Next: a user service per tunnel, switched from the MBP menubar |
 
 Doppler and Railway logins are machine-wide and can write. gcloud `prd` is Alex's own account and can write; the workspace's guard hooks ask on mutating commands but are not a boundary.
 
