@@ -58,7 +58,7 @@ Ryzen 7 5700G (8c/16t), 64GB DDR4, 1TB NVMe. Proxmox VE 9.0.3, installed by the 
 | | |
 |---|---|
 | Address | `192.168.1.100/24`, gw `.1`, bridge `vmbr0` on `eno1`. Hostname `g8.lab.alexluong.com`. DNS `192.168.1.1`, `1.1.1.1` |
-| Web UI | `https://192.168.1.100:8006`, user `root`, realm Linux PAM (self-signed cert) |
+| Web UI | `https://g8.lab.alexluong.com:8006` (or `https://192.168.1.100:8006`), user `root`, realm Linux PAM (self-signed cert) |
 | SSH | `ssh g8` (MBP `~/.ssh/config`: `root@192.168.1.100`, key `id_ed25519` from Keychain). Password login still on |
 | Root password | Vaultwarden, item `g8 root (Proxmox)` (Alex to rename the item and its URL) |
 | BIOS | SVM on; After Power Loss = Power On (Advanced → Boot Options) |
@@ -124,6 +124,15 @@ Templates use VM IDs 9000+.
 - **Two name sets, same gateway (a container on g8 running Caddy):** `*.lab.alexluong.com` → the gateway's home address, works at home on every device with no Tailscale (verified: router and Viettel DNS return private addresses for public names). `*.ts.alexluong.com` → the gateway's Tailscale address, works anywhere with Tailscale on, whatever range the other network uses (proposed). Same service names under both: `jellyfin.lab…` / `jellyfin.ts…`. No subnet router needed. Without Tailscale away: nothing connects.
 - Caddy gets Let's Encrypt wildcard certificates by DNS check (no open ports); one wildcard per level (`*.lab…`, `*.hookdeck.lab…`). Only the gateway holds the Cloudflare token (scoped to `alexluong.com`); VMs hold none.
 - SSH: `ssh g8`, `ssh hookdeck`, `ssh mini` via `~/.ssh/config` aliases.
+
+**Records that exist** (collielab `terraform/alexluong_com.tf`, DNS-only, applied 2026-10-02):
+
+| Name | Address | Use today |
+|---|---|---|
+| `g8.lab.alexluong.com` | `192.168.1.100` | `https://g8.lab.alexluong.com:8006` (Proxmox, self-signed cert warning) |
+| `mini.lab.alexluong.com` | `192.168.1.90` | `http://mini.lab.alexluong.com:8096` (Jellyfin), `:32400` (Plex), `:8080` (qBittorrent) |
+
+One record per machine or VM is added as it is created. Ports and the certificate warning go away with the gateway, when these names move to it. The names are publicly resolvable (private addresses, nothing reachable from outside).
 
 **If the range changes later:** update the DNS records, the gateway's backend addresses and the fixed addresses on g8, the Mini and VMs; devices that use URLs (Kobo, TV apps) keep working. So point the Kobo (today `192.168.1.90`, typed in its config; service/port on the Mini not found by scan, Mini session to document) and the TV's Jellyfin/Plex apps at URLs once the gateway exists. Other costs: house offline a few minutes; router admin moves; mesh nodes might need re-pairing; a Viettel reset puts the range back. To avoid locking g8 out: give it both addresses first, switch the router, then drop the old one.
 

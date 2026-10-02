@@ -22,3 +22,4 @@ Newest last. One entry per change: what, why, how to undo. Read-only checks go i
 - Originals of every changed file: `/root/pre-rename-backup-20261002/` on the box (incl. the old node dir). Undo = copy back + reboot.
 - **MBP `~/.ssh/config`:** appended `Host g8` (`192.168.1.100`, `root`, `id_ed25519`, `UseKeychain`/`AddKeysToAgent` so the key reloads after a restart). Backup: `~/.ssh/config.bak-20261002`. Removed the `192.168.1.21` entry from `known_hosts`.
 - Verified after: `ssh g8` works, web UI 200 on `.100`, `.21` no longer answers, all Proxmox services active, no failed units, both storages active. Still above `.99` on old leases: `.124`, `.131`.
+- **DNS (collielab terraform, Alex approved):** added A records `g8.lab.alexluong.com` → `192.168.1.100` and `mini.lab.alexluong.com` → `192.168.1.90`, DNS-only. collielab commit `fe385c3`. Undo: delete the two resources in `terraform/alexluong_com.tf`, `terraform apply`.
