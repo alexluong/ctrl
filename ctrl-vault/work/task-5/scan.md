@@ -105,3 +105,12 @@ Alex, 2026-10-02:
 - g8: Ryzen 7 5700G (8 cores / 16 threads), 62GB RAM with 47GB free, 810GB free VM storage. `hookdeck-ws` has 32GB assigned.
 - Jellyfin runs in a Linux container on the Mini, so it cannot use the M4's video hardware; Plex (native app) can.
 - Books and audiobooks, all on Blue4: `media/books` 20GB, `media/audiobooks` 2GB, app config under `data/` about 12MB. Fits g8 easily (800GB free). Catch: new books arrive through qBittorrent on the Mini and are hardlinked into the library on the same drive; with the library on g8 each new book needs a copy step to g8.
+
+## Jump Desktop Connect not starting at login (checked 2026-10-02, read-only)
+
+Alex's experience: he has to turn it on by hand. What the Mini shows: the root service (`/Library/LaunchDaemons/com.p5sys.jump.connect.service.plist`) starts at boot and is kept alive. The per-user part (`/Library/LaunchAgents/com.p5sys.jump.connect.agent.plist`) has `RunAtLoad = 0`: it only starts when the service sends it a signal, not at login. Last boot and login were 2026-09-25; the user part was started 2026-10-02 17:09, so it did not come up by itself. Candidate fix (not applied): add the app to Login Items, or its own "start at login" setting; then test with a reboot.
+
+## Ideas for using the Mini's CPU (2026-10-02, brainstorm, nothing decided)
+
+- **Local CI** (Alex's idea): GitHub Actions self-hosted runner on the Mini for personal repos. VMs push a branch and the runner picks the job up from GitHub, so no VM holds a key to the Mini (keeps the fleet rule). Linux jobs in a small separate Colima VM (about 4 CPU / 4GB); Xcode jobs need a runner on macOS itself. Private repos only. Not for Hookdeck org repos without the company's say.
+- Jellyfin as a native app (hardware transcoding), re-encode the library to HEVC, Whisper subtitles, Mac-only builds, backup target for g8.
