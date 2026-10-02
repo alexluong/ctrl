@@ -2,6 +2,7 @@
 
 Map of the home network: devices, addresses, what runs where, how each is reached.
 Machine conventions (repo layout, MBP tooling): `machine.md`. Cloud homelab VM: `collielab.md`.
+Earlier router work (existing reservations, router menus, DNS notes): `home-network-handoff.md`, reconciled below.
 Scanned from the MBP 2026-10-02 (ping sweep, mDNS, port probes); re-scan before trusting a DHCP address.
 
 ## Network
@@ -10,7 +11,10 @@ Scanned from the MBP 2026-10-02 (ping sweep, mDNS, port probes); re-scan before 
 - Router: **ZTE F6601P** (Viettel ONT + router + Wi-Fi), `192.168.1.1`, admin UI `http://192.168.1.1`.
 - Mesh nodes: 2 × **ZTE H3601P**, `192.168.1.3` and `192.168.1.5` (admin UI on each).
 - DHCP pool range: **unknown, check in router**. Leases seen from `.3` to `.131`, so the pool likely starts near `.2` and `.21` sits inside it.
-- No Tailscale anywhere yet. No port forwards known.
+- Wi-Fi name: "Dunder Mifflin". Router sits in a closed cabinet with the G8.
+- Router menus: Local Network → LAN → DHCP; "DHCP Binding" (reservations) at the bottom; the same page lists handed-out addresses (incl. stale ones). **Never factory-reset**: it wipes the fiber login and internet stays down until Viettel reprovisions (support 18008119).
+- Viettel blocks some sites at DNS level and hijacks port 53; only encrypted DNS gets around it. Direction was hosted encrypted DNS per device, not a home DNS server (power cuts happen overnight).
+- Tailscale: handoff notes say in use (Mini, remote access with Jump Desktop); **not installed on the MBP** (checked 2026-10-02). No port forwards known.
 
 ## Devices
 
@@ -19,7 +23,7 @@ Scanned from the MBP 2026-10-02 (ping sweep, mDNS, port probes); re-scan before 
 | .1 | ZTE F6601P router | 68:9e:29:a2:a1:d6 | fixed | gateway, DHCP, DNS relay |
 | .3 | ZTE H3601P mesh node | 80:2d:1a:0c:16:70 | DHCP? | |
 | .5 | ZTE H3601P mesh node | 80:2d:1a:0c:13:74 | DHCP? | |
-| .4 | Chromecast | 90:ca:fa:b1:7c:6e | DHCP | |
+| .4 | Chromecast | 90:ca:fa:b1:7c:6e | DHCP | the "unidentified" device in the handoff notes |
 | .7 | Chromecast | 90:ca:fa:ad:e9:ee | DHCP | |
 | .10 | `rml-225f38`: "Rainbow Music Led" LED strip controller (ESP chip, web UI on :80) | c8:2b:96:22:5f:38 | DHCP | identified from its web page title |
 | **.21** | **`pve1`: HP EliteDesk 805 G8 Mini (Proxmox)** | 84:69:93:4f:fe:41 | **static, set on the box** | wired to router |
@@ -30,6 +34,18 @@ Scanned from the MBP 2026-10-02 (ping sweep, mDNS, port probes); re-scan before 
 | .57, .124, .129/.130 | unidentified, private MACs, no open ports | | DHCP | phones/watches likely |
 
 Private (randomized) MACs change if the device's Wi-Fi setting is "Rotating"; a router reservation only holds when it is "Fixed" or the device is wired.
+
+## Existing reservations on the router (from the handoff notes; check against the router page)
+
+| IP | Device | MAC the router sees | Checked 2026-10-02 |
+|---|---|---|---|
+| .80 | ESP32 (`esp32-978698`, Kobo page-turner remote) | f0:24:f9:97:86:98 | planned, no reply to ping |
+| .90 | Mac Mini (Wi-Fi) | a6:54:90:62:c6:fe (its Fixed private address; hardware `1c:f6:4c:48:61:cd`, ethernet `1c:f6:4c:38:57:c2`) | holds `.90` |
+| .91 | MacBook Pro | 0e:90:e1:ca:88:2a (private; hardware `f8:4d:89:5f:c9:81`) | holds `.91` |
+| .92 | Kobo 1 | a4:3c:d7:3a:65:42 | asleep |
+| .93 | Kobo 2 | a4:3c:d7:56:bb:f9 | asleep |
+
+Earlier scheme: `.80–.89` boards and DIY, `.90–.99` consumer devices, everything else handed out automatically.
 
 ## Servers
 
@@ -55,7 +71,8 @@ Ryzen 7 5700G (8c/16t), 64GB DDR4, 1TB NVMe. Proxmox VE 9.0.3, installed by the 
 | SSH | **off** (Remote Login disabled; port 22 closed) |
 | Services seen | Kobo book sync (port unknown), qBittorrent `:8080` and `:8081`, Jellyfin `:8096`, Plex `:32400`, AirPlay `:5000/:7000`, something on `:53` |
 | Arrstack | `hub/alexluong/arr` (gluetun, qbittorrent, prowlarr, radarr, sonarr) on Colima; data on Samsung T7 (`/Volumes/T7/arr`) |
-| Unknown | exact specs, macOS version, wired vs Wi-Fi, T7 filesystem. Details go in `mac-mini.md` (written from a session on the Mini) |
+| Also (handoff notes) | Audiobookshelf, Kavita, Calibre-Web (Kobo sync); TerraMaster DAS attached; on Wi-Fi; remote access via Jump Desktop and Tailscale |
+| Unknown | exact specs, macOS version, T7 filesystem. Details go in `mac-mini.md` (written from a session on the Mini) |
 
 ### collielab VM (cloud, Vultr)
 
@@ -82,9 +99,11 @@ Home-only today: everything on `192.168.1.x` is reachable only on home Wi-Fi. Ta
 | Range | Use |
 |---|---|
 | `.1–.9` | network gear |
-| `.90–.99` | physical servers, fixed: `mini` = `.90`, `g8` = `.91` |
-| `.100–.149` | VMs and containers, fixed. **Proxmox VM ID = last number**: `hookdeck` = VM 110 = `.110` |
-| `.150–.254` | DHCP pool (phones, TVs, laptops) |
+| `.80–.89` | boards and DIY devices (existing) |
+| `.90–.99` | Alex's own devices, reserved on the router (existing): `mini` `.90`, `mbp` `.91`, Kobos `.92–.93` |
+| `.100–.109` | physical servers, fixed: `g8` = **`.100`** |
+| `.110–.149` | VMs and containers, fixed. **Proxmox VM ID = last number**: `hookdeck` = VM 110 = `.110` |
+| `.150–.254` | DHCP pool (to set on the router; today it seems to cover everything) |
 
 Templates use VM IDs 9000+.
 
@@ -116,4 +135,4 @@ Claude can only use keys loaded in the agent (no passphrase prompt). After a res
 - [ ] Mac Mini: Remote Login + MBP key, specs, wired vs Wi-Fi → `mac-mini.md`
 - [ ] Later: Tailscale account + install on MBP/phone, `ts` names
 - [ ] Identify the unidentified devices (`.57`, `.124`, `.129/.130`)
-- [ ] Confirm how the Mini is fixed at `.90` (router reservation vs set on the Mac)
+- [ ] Router page: confirm the reservations table above and the pool range

@@ -38,7 +38,7 @@ Maintaining the workspace (where things go, memory vs notes, adding skills): `wo
 
 - `re`: real estate: deals, notes, logs, bookkeeping (`ctrl-vault/re/notes.md` for conventions & context)
 - `biz`: bookkeeping, invoices (`ctrl-vault/biz/BOOKKEEPING.md`)
-- `docs`: ideas (`ideas.md`), cross-domain notes; `machine.md` = machine/repo layout; `home-systems.md` = home network, devices, IPs, access; `workflow.md` = how Claude works across repos (session modes, git, quality bar, project lifecycle); `workspace-setup.md` = the agent-workspace playbook; `projects/<name>.md` (or `projects/<name>/` with a `README.md`) = each project's living doc
+- `docs`: ideas (`ideas.md`), cross-domain notes; `machine.md` = machine/repo layout; `home-systems.md` = home network, devices, IPs, access (`home-network-handoff.md` = earlier router notes); `workflow.md` = how Claude works across repos (session modes, git, quality bar, project lifecycle); `workspace-setup.md` = the agent-workspace playbook; `projects/<name>.md` (or `projects/<name>/` with a `README.md`) = each project's living doc
 - Planned: `media` (plex/arr, migrating from `~/git/hub/alexluong/arr`), `finance`, `career`
 
 ## Projects: incubate here, graduate out

@@ -16,15 +16,15 @@ Claude runs on the MBP (ctrl session) and manages the box over SSH. Files here: 
 
 1. ~~SSH key to the box~~ done 2026-10-02: `id_ed25519` installed with `ssh-copy-id`, loaded in the agent with `ssh-add --apple-use-keychain`.
 2. **Root password in Vaultwarden**: item named for the box (`g8 root (Proxmox)`), user `root`, URL `https://192.168.1.21:8006`.
-3. **Router** (`http://192.168.1.1`, ZTE F6601P): log in (sticker under the router; save the login to Vaultwarden), send a screenshot of the LAN/DHCP page. Then, with Claude: DHCP pool → `.150–.254`, check how the Mini holds `.90`.
+3. **Router** (`http://192.168.1.1`, ZTE F6601P): log in (sticker under the router; save the login to Vaultwarden), send a screenshot of the LAN/DHCP page. Then, with Claude: DHCP pool → `.150–.254`, confirm the existing reservations.
 
 Later, inside the VM (Alex types these; Claude can't): `claude` login, `gh auth login`, hookdeck env/secrets.
 
 ## Order (agreed 2026-10-02: keep it simple, stay on `192.168.1.x`, Tailscale later)
 
 0. **Discovery (read-only)**: done 2026-10-02, see `discovery.md` (clean, no reinstall). Proxmox version, storage layout, bridge config, repos, disk health (`smartctl`), BIOS version. **Audit what the shop left**: `authorized_keys`, users, cron, extra repos/packages. Anything odd → reinstall from the official ISO.
-1. **Router**: DHCP pool → `.150–.254` so `.90–.149` is never handed out. The box's address is typed into the box (not from the router), so nothing to confirm on the router for it beyond the pool.
-2. **Box address and name** (before any VM exists): rename `pve1` → `g8`, move `192.168.1.21` → `192.168.1.91`. `.91` is the MBP's address today, so first the pool change, then the MBP reconnects to Wi-Fi and gets a new address, then the box moves. Done with both addresses on the box for a moment so it is never unreachable.
+1. **Router**: read the DHCP page (pool range, existing reservations: `docs/home-systems.md`), then pool → `.150–.254` so `.100–.149` is never handed out. Reserved devices (`.80–.99`) keep their addresses through their bindings.
+2. **Box address and name** (before any VM exists): rename `pve1` → `g8`, move `192.168.1.21` → `192.168.1.100`. Done with both addresses on the box for a moment so it is never unreachable. (`.91` was the first idea, but it is the MBP's reserved address.)
 3. **Host basics**: no-subscription repo, updates, `amd64-microcode`, SSH password login off (keys only), BIOS update if outdated.
 4. **VM template**: Debian 13 cloud image + cloud-init: user `alex`, MBP key, qemu-guest-agent, Docker, mise, git, GitHub CLI, Claude Code. VM ID 9000.
 5. **hookdeck VM**: clone of the template. Start: 8 vCPU, 32GB RAM, 250GB disk, VM ID 110, `192.168.1.110`. Then hookdeck workspace + repos, one core stack up (~8.5GB idle), T3 Code server as a service. Stop for Alex to test from the MBP.
