@@ -179,7 +179,7 @@ Not in `mattpocock/skills` at d81f3a1 (no match in skills, changelog, or depreca
 
 ## Candidate changes to our workflow
 
-Proposal as of 2026-10-02; nothing applied.
+Proposal as of 2026-10-02; nothing applied. **Retargeted:** the list below was written against ctrl's `implement`; the real target is the shared lead/role files in the cs, enable, hookdeck and solex workspaces, which already run criteria → dev → reviewer → qa with evidence. Land these through `workspace-sync.md` (step 4), not in ctrl alone. The Collie Recap idea is tracked in `~/workspaces/cs/cs-vault/notes/demo/README.md`.
 
 1. **`implement` skill**
    - Plan step records a **finish condition**: pass/fail checks matched to the change type.
