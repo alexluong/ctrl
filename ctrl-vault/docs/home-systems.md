@@ -64,7 +64,7 @@ Ryzen 7 5700G (8c/16t), 64GB DDR4, 1TB NVMe. Proxmox VE 9.2.21 (kernel **pinned 
 | Root password | Vaultwarden, item `g8 root (Proxmox)` (Alex to rename the item and its URL) |
 | BIOS | SVM on; After Power Loss = Power On (Advanced → Boot Options) |
 | Console | none remote; needs monitor (DisplayPort) + USB keyboard at the box |
-| VMs | template 9000 `debian13-base`; **101 `hookdeck`** (`192.168.1.101`, 8 vCPU, 32GB, 250GB). Scripts and runbook: `collielab/hosts/g8/README.md`; new VM = `bin/new-vm <id> <name> …` |
+| VMs | template 9000 `debian13-base`; **101 `hookdeck-ws`** (`192.168.1.101`, 8 vCPU, 32GB, 250GB). Scripts and runbook: `collielab/hosts/g8/README.md`; new VM = `bin/new-vm <id> <name> …` |
 
 ### Mac Mini (base M4)
 
@@ -93,7 +93,7 @@ Full write-up: `mac-mini.md` (specs, storage, service/port map, startup, migrati
 |---|---|---|---|
 | Router | `https://192.168.1.1` | n/a | works; login in Vaultwarden |
 | g8 host | `https://pve.g8.lab.alexluong.com` (or `https://192.168.1.100:8006`) | `ssh g8` | both work |
-| `hookdeck` VM | T3 app → Add environment → SSH (`docs/t3-code-remote.md`) | `ssh hookdeck` | works; logins pending (`work/task-2/hookdeck-vm.md`) |
+| `hookdeck-ws` VM | T3 app → Add environment → SSH (`docs/t3-code-remote.md`) | `ssh hookdeck-ws` | works; logins pending (`work/task-2/hookdeck-vm.md`) |
 | Mac Mini | `https://<service>.lab.alexluong.com` (gateway; list at `https://lab.alexluong.com`) | `ssh mini` | both work |
 | Gateway | `https://lab.alexluong.com` | `ssh gw` | works |
 | collielab VM | `vault.collie.studio` etc. | `ssh vultr` | works |
@@ -102,7 +102,7 @@ Home-only today: everything on `192.168.1.x` is reachable only on home Wi-Fi. Ta
 
 ## Naming, numbering, URLs (agreed 2026-10-02; names and addresses applied, URLs not yet)
 
-**Names.** Physical machines: `g8` (HP 805 G8; renamed from `pve1` 2026-10-02), `mini` (Mac Mini), `mbp`. VMs by purpose: `hookdeck`, `enable`, `solex`, `cs`, `ixchel`, later `media`. The same name is the Proxmox VM name, hostname, Tailscale name and DNS label.
+**Names.** Physical machines: `g8` (HP 805 G8; renamed from `pve1` 2026-10-02), `mini` (Mac Mini), `mbp`. VMs by purpose; **workspace VMs are `<workspace>-ws`** (Alex, 2026-10-02: plain `hookdeck` was ambiguous): `hookdeck-ws`, later `enable-ws`, `solex-ws`, `cs-ws`; others by role (`gw`, `ixchel`, `media`). The same name is the Proxmox VM name, hostname, Tailscale name and DNS label.
 
 **Home range: stay on `192.168.1.x`** (Alex, 2026-10-02). A move to an uncommon range (e.g. `192.168.77.x`) is deferred; once devices use URLs it is a DNS change plus the fixed addresses, not a per-device chore.
 
@@ -112,7 +112,7 @@ Home-only today: everything on `192.168.1.x` is reachable only on home Wi-Fi. Ta
 | `.2–.79` | handed out automatically by the router (phones, TVs, guests, mesh nodes) |
 | `.80–.99` | **reserved on the router** (DHCP Binding; the machine asks, always gets the same answer): `.80` ESP32, `mini` `.90`, `mbp` `.91`, Kobos `.92–.93`; future Macs/Windows PCs `.94+` (grow down into the `.80s` if needed) |
 | `.100–.254` | **ours, typed into the machine; the router never hands these out** (pool = `.2–.99`). No router change per machine or VM |
-| `.100–.149` | `g8` block (50, Alex): host `.100`, its VMs and containers `.101–.149`. **Proxmox VM ID = last number**: `hookdeck` = VM 101 = `.101` |
+| `.100–.149` | `g8` block (50, Alex): host `.100`, its VMs and containers `.101–.149`. **Proxmox VM ID = last number**: `hookdeck-ws` = VM 101 = `.101` |
 | `.150–.199`, `.200–.249` | one block of 50 per further host: host first, its VMs after |
 
 The split is by how the address gets fixed, not by kind of machine: Macs, PCs and Kobos ask the router, so they are fixed by a reservation, which must sit inside the pool; Proxmox and its VMs have the address typed in, which must sit outside the pool. Whether this router honours reservations outside the pool is unknown, hence the pool end at `.99`. The Mini is as much a server as the G8; it stays at `.90` for now (moving it is cheap once devices use URLs).
@@ -128,10 +128,10 @@ Templates use VM IDs 9000+.
 **URLs.** Zone `lab.alexluong.com` (unused as of 2026-10-02; DNS in Cloudflare via collielab terraform; records DNS-only, so Cloudflare's one-level certificate limit doesn't apply).
 
 - One-of-a-kind services, flat: `jellyfin.lab.alexluong.com`, `plex.lab…`, `qbt.lab…`, `g8.lab…` (Proxmox UI). URL survives a move between hosts.
-- Per-workspace services under the workspace: `hookdeck.lab.alexluong.com` (main page, T3), `board.hookdeck.lab…`, `t3.enable.lab…`. A host can't share a name with a flat service.
+- Per-workspace services under the workspace: `hookdeck-ws.lab.alexluong.com` (main page, T3), `board.hookdeck.lab…`, `t3.enable.lab…`. A host can't share a name with a flat service.
 - **Two name sets, same gateway (a container on g8 running Caddy):** `*.lab.alexluong.com` → the gateway's home address, works at home on every device with no Tailscale (verified: router and Viettel DNS return private addresses for public names). `*.ts.alexluong.com` → the gateway's Tailscale address, works anywhere with Tailscale on, whatever range the other network uses (proposed). Same service names under both: `jellyfin.lab…` / `jellyfin.ts…`. No subnet router needed. Without Tailscale away: nothing connects.
 - Caddy gets Let's Encrypt wildcard certificates by DNS check (no open ports); one wildcard per level (`*.lab…`, `*.hookdeck.lab…`). Only the gateway holds the Cloudflare token (scoped to `alexluong.com`); VMs hold none.
-- SSH: `ssh g8`, `ssh hookdeck`, `ssh mini` via `~/.ssh/config` aliases.
+- SSH: `ssh g8`, `ssh hookdeck-ws`, `ssh mini` via `~/.ssh/config` aliases.
 
 **Records that exist** (collielab `terraform/alexluong_com.tf`, DNS-only, applied 2026-10-02):
 
@@ -139,7 +139,7 @@ Templates use VM IDs 9000+.
 |---|---|---|
 | `g8.lab.alexluong.com` | `192.168.1.100` | `https://g8.lab.alexluong.com:8006` (Proxmox, self-signed cert warning) |
 | `mini.lab.alexluong.com` | `192.168.1.90` | `http://mini.lab.alexluong.com:8096` (Jellyfin), `:32400` (Plex), `:8080` (qBittorrent) |
-| `hookdeck.lab.alexluong.com` | `192.168.1.101` | `ssh hookdeck` |
+| `hookdeck-ws.lab.alexluong.com` | `192.168.1.101` | `ssh hookdeck-ws` |
 
 One record per machine or VM is added as it is created.
 

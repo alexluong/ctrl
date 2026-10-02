@@ -26,7 +26,7 @@ How the T3 Code desktop app on the MBP drives agent sessions on another machine 
 
 ## Connect from the MBP (by hand, in the app)
 
-1. Settings → Connections → Add environment → SSH → `hookdeck` (or `alex@hookdeck.lab.alexluong.com`).
+1. Settings → Connections → Add environment → SSH → `hookdeck-ws` (or `alex@hookdeck-ws.lab.alexluong.com`).
 2. Settings → Providers → pick that environment → enable Claude (set "Binary path" to `/home/alex/.local/bin/claude` if it isn't found). Claude must be logged in on the VM first.
 3. Add a project: from the app against that environment, or on the VM `t3 project add ~/workspaces/hookdeck --title hookdeck`.
 

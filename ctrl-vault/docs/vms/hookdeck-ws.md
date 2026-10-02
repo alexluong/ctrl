@@ -1,8 +1,8 @@
-# hookdeck VM
+# hookdeck-ws VM
 
-Hookdeck work (core, outpost, the Ampersand customer repos) for agent sessions started from T3 on the MBP. VM 101 on g8, `hookdeck.lab.alexluong.com` = `192.168.1.101`, `ssh hookdeck` (user `alex`). 8 vCPU, 32GB RAM, 250GB disk. Built 2026-10-02.
+Named `hookdeck-ws` (renamed from `hookdeck` 2026-10-02). Hookdeck work (core, outpost, the Ampersand customer repos) for agent sessions started from T3 on the MBP. VM 101 on g8, `hookdeck-ws.lab.alexluong.com` = `192.168.1.101`, `ssh hookdeck-ws` (user `alex`). 8 vCPU, 32GB RAM, 250GB disk. Built 2026-10-02.
 Workspace: `alexluong/hookdeck-workspace`, branch `workspace`, at `~/workspaces/hookdeck` (the path is hardcoded in its `.claude/settings.json`).
-Scripts: `collielab/hosts/hookdeck/setup.sh`. Full survey behind this doc: `work/task-2/hookdeck-vm-requirements.md`. Build decisions: `work/task-2/hookdeck-vm.md`.
+Scripts: `collielab/hosts/hookdeck-ws/setup.sh`. Full survey behind this doc: `work/task-2/hookdeck-vm-requirements.md`. Build decisions: `work/task-2/hookdeck-vm.md`.
 
 ## Tools beyond the base
 
@@ -20,14 +20,14 @@ Not installed (used by a few skills; add when needed): `hookdeck` CLI, clickhous
 
 ## Logins
 
-All run on the VM (`ssh hookdeck`); each prints a link and a code to finish in the MBP's browser. **Run them from `~/workspaces/hookdeck`**: railway, gcloud, kubectl, terraform and aws are pinned by the workspace `mise.toml` and only exist inside that folder (outside it: "No version is set for shim"). Doppler, gh and claude work anywhere.
+All run on the VM (`ssh hookdeck-ws`); each prints a link and a code to finish in the MBP's browser. **Run them from `~/workspaces/hookdeck`**: railway, gcloud, kubectl, terraform and aws are pinned by the workspace `mise.toml` and only exist inside that folder (outside it: "No version is set for shim"). Doppler, gh and claude work anywhere.
 
 | What | Command on the VM | Used for | State (2026-10-02) |
 |---|---|---|---|
 | Claude | `claude` | every session | done |
 | GitHub CLI + SSH key | `gh auth login` (SSH, upload `~/.ssh/id_ed25519.pub`) | clone/push, `gh pr`; key covers `alexluong`, `hookdeck`, `amp-labs` | done, all repos reachable |
-| Doppler | `doppler login`, then `doppler setup --project services --config dev --no-interactive` in `wt/core/main/local-dev` | core dev stack env (projects services, clients, ingest, outpost-infra) | to do |
-| Railway | `railway login --browserless` | Railway MCP server, outpost fleet reads | to do |
+| Doppler | `doppler login`, then `doppler setup --no-interactive` in `wt/core/main/local-dev` and `server` | core dev stack env (projects services, clients, ingest, outpost-infra) | done (machine-wide login; `services/dev` set up in core main) |
+| Railway | `railway login --browserless` (from the workspace folder) | Railway MCP server, outpost fleet reads | done (machine-wide login) |
 | gcloud | from `~/workspaces/hookdeck` (`echo $CLOUDSDK_CONFIG` must end in `/hookdeck/.gcloud`): `gcloud auth login alex.luong@hookdeck.com --no-launch-browser`, `gcloud auth application-default login --no-launch-browser`; then unset the account on config `none` and move `.gcloud/application_default_credentials.json` → `.gcloud/adc-hookdeck.json`. **Or** copy `.gcloud/` and `.kube/` from the MBP | `stg`, `prd` wrappers, terraform, kubectl | to do |
 | Notion MCP | in a Claude session in the workspace: `/mcp` → notion → authenticate | `notion-publish-spec` skill | to do; the sign-in redirects to `localhost` on the VM, so paste the final URL back into Claude if the page fails to load |
 | AWS | `~/.aws/config` copied from the MBP, then `aws sso login --profile personal --use-device-code` | Ampersand work | to do, when needed |
@@ -46,7 +46,7 @@ cd ~/workspaces/hookdeck && rsync -avR --ignore-missing-args \
   .env ops/prd/.env ops/prd-rw/.env ops/stg/.env ops/prd/outpost/ .gcloud/ .kube/ \
   wt/core/main/local-dev/env/.env.dev wt/outpost/main/.env wt/outpost/main/.outpost.yaml \
   wt/outpost/main/spec-sdk-tests/.env wt/terraform-provider-hookdeck/main/.env.test wt/amp-server/main/.env \
-  hookdeck:workspaces/hookdeck/
+  hookdeck-ws:workspaces/hookdeck/
 ```
 
 | Path | Purpose | Reach |
@@ -65,19 +65,19 @@ State: none copied yet (2026-10-02). On the VM, `bin/wt` cannot copy env files i
 
 ## First run (from a fresh VM)
 
-1. `bin/new-vm 101 hookdeck 8 32768 250` and `hosts/hookdeck/setup.sh` (collielab).
+1. `bin/new-vm 101 hookdeck-ws 8 32768 250` and `hosts/hookdeck-ws/setup.sh` (collielab).
 2. On the VM: `claude`, `gh auth login`.
 3. `git clone -b workspace git@github.com:alexluong/hookdeck-workspace.git ~/workspaces/hookdeck && cd ~/workspaces/hookdeck && mise trust && mise install && mise trust ops/*/mise.toml && bin/wt init` (done 2026-10-02: 8 repos, `repos/` 1.2GB).
 4. Secret files (above), then the logins in the table.
-5. T3 app on the MBP: Settings → Connections → Add environment → SSH → `hookdeck`; Providers → enable Claude; add project `~/workspaces/hookdeck`.
-6. Core, first time: in `wt/core/main`: `corepack enable && pnpm install`.
+5. T3 app on the MBP: Settings → Connections → Add environment → SSH → `hookdeck-ws`; Providers → enable Claude; add project `~/workspaces/hookdeck`.
+6. Core, first time: in `wt/core/main`: `corepack enable && pnpm install` (done 2026-10-02: 1.5 minutes, native modules built, 2.2GB).
 
 ## Running the stack
 
 - Core: `HTTP_INGESTION_PATH=<wt/http-ingestion/…> pnpm start -n hookdeck-local` in a core worktree (skill `core-local-dev`). Outpost: `make up` / `make up/test`.
 - One core and one outpost stack at a time (fixed compose project names and ports).
-- Core URLs are `http://<ns>.localhost` on the VM's own port 80. From the MBP's browser: `ssh -L 80:127.0.0.1:80 hookdeck` while no stack runs on the MBP; later the gateway (TASK-3) or `pnpm start --tailscale`.
-- Outpost and the PM2 services listen on all addresses, so they are reachable from the home network at `hookdeck.lab.alexluong.com:<port>`.
+- Core URLs are `http://<ns>.localhost` on the VM's own port 80. From the MBP's browser: `ssh -L 80:127.0.0.1:80 hookdeck-ws` while no stack runs on the MBP; later the gateway (TASK-3) or `pnpm start --tailscale`.
+- Outpost and the PM2 services listen on all addresses, so they are reachable from the home network at `hookdeck-ws.lab.alexluong.com:<port>`.
 
 ## Differences from the MBP
 
@@ -91,5 +91,6 @@ State: none copied yet (2026-10-02). On the VM, `bin/wt` cannot copy env files i
 
 1. Sessions on the MBP and the VM at once will conflict (board, memory, digest are committed from where sessions run). Push the MBP's unpushed work, then pick one place.
 2. Which prod-reaching files and logins belong on an always-on agent machine (the bold rows above).
-3. Saving the VM's identity (GitHub key, optionally the gh and Claude logins) to `ctrl/secrets/hookdeck/` so a rebuilt VM needs no re-registration: offered, not decided.
+3. Saving the VM's identity (GitHub key, optionally the gh and Claude logins) to `ctrl/secrets/hookdeck-ws/` so a rebuilt VM needs no re-registration: offered, not decided.
 4. No backups yet; snapshot `clean-setup` is from before the logins.
+5. Doppler and Railway logins are machine-wide today. Moving them into the workspace like gcloud: possible for Doppler (`DOPPLER_CONFIG_DIR`), not for Railway (use workspace tokens in `ops/<env>/.env`): `work/task-2/doppler-railway-creds.md`.

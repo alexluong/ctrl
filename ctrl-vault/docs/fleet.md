@@ -9,7 +9,7 @@ Where the details are:
 | Addresses, devices, URLs, router | `home-systems.md` |
 | Mac Mini | `mac-mini.md` |
 | Cloud VM, terraform, tokens | `collielab.md` |
-| Workspace VMs | `vms/README.md`, `vms/hookdeck.md` |
+| Workspace VMs | `vms/README.md`, `vms/hookdeck-ws.md` |
 | Every change made, with undo | `work/task-2/log.md` |
 | Runbooks and all config | repo `collielab` (`~/git/hub/alexluong/collielab`): `README.md`, `hosts/g8/README.md`, `hosts/gw/README.md` |
 | Board | TASK-2 (g8 + hookdeck VM), TASK-3 (gateway), TASK-4 (BIOS, kernel) |
@@ -21,7 +21,7 @@ Where the details are:
 | `mbp` | control point | `.91` | n/a | n/a | yes (ctrl sessions) |
 | `g8` | HP 805 G8, Proxmox host, 64GB | `.100` | `ssh g8` (root) | is root | no, stays bare |
 | `gw` | home gateway, container 110 on g8 | `.110` | `ssh gw` (root) | is root | no |
-| `hookdeck` | workspace VM 101 on g8 | `.101` | `ssh hookdeck` | yes (passwordless) | yes |
+| `hookdeck` | workspace VM 101 on g8 | `.101` | `ssh hookdeck-ws` | yes (passwordless) | yes |
 | `mini` | Mac Mini M4 16GB, media + 2 × 4TB drives | `.90` (Wi-Fi) | `ssh mini` | no (password) | has Claude; see § The Mini |
 | `vultr` | Debian 12 cloud VM, 1GB, public services | `vultr.alexluong.com` | `ssh vultr` | no (password) | no |
 
