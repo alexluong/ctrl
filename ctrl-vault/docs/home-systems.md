@@ -59,7 +59,7 @@ Ryzen 7 5700G (8c/16t), 64GB DDR4, 1TB NVMe. Proxmox VE 9.2.21 (kernel 7.0.14; u
 |---|---|
 | Address | `192.168.1.100/24`, gw `.1`, bridge `vmbr0` on `eno1`. Hostname `g8.lab.alexluong.com`. DNS `192.168.1.1`, `1.1.1.1` |
 | Web UI | `https://g8.lab.alexluong.com:8006` (or `https://192.168.1.100:8006`), user `root`, realm Linux PAM (self-signed cert) |
-| SSH | `ssh g8` (MBP `~/.ssh/config`: `root@192.168.1.100`, key `id_ed25519` from Keychain). Keys only (password login off since 2026-10-02) |
+| SSH | `ssh g8` (MBP `~/.ssh/config`: `root@g8.lab.alexluong.com`, key `id_ed25519` from Keychain). Keys only (password login off since 2026-10-02) |
 | Root password | Vaultwarden, item `g8 root (Proxmox)` (Alex to rename the item and its URL) |
 | BIOS | SVM on; After Power Loss = Power On (Advanced → Boot Options) |
 | Console | none remote; needs monitor (DisplayPort) + USB keyboard at the box |
@@ -75,7 +75,7 @@ Full write-up: `mac-mini.md` (specs, storage, service/port map, startup, migrati
 |---|---|
 | Specs | M4, 16GB, 245GB internal (~61GB free), macOS 15.5. Only user `alex` |
 | Address | `192.168.1.90` (router reservation, Wi-Fi), `mini.lab.alexluong.com`, `alexs-Mac-mini.local`, Tailscale `100.91.137.41` |
-| SSH | `ssh mini` (MBP `~/.ssh/config`: `alex@192.168.1.90`, key `id_ed25519`). Remote Login on since 2026-10-02, limited to `alex`. **Password login still on** (keys-only needs sudo: Alex) |
+| SSH | `ssh mini` (MBP `~/.ssh/config`: `alex@mini.lab.alexluong.com`, key `id_ed25519`). Remote Login on since 2026-10-02, limited to `alex`. **Password login still on** (keys-only needs sudo: Alex) |
 | Storage | 2 × 4TB USB drives, APFS: `/Volumes/Blue4` (817GB free), `/Volumes/Red4` (191GB free). There is no Samsung T7 |
 | Services | Plex `:32400` (native app); in the Colima `arr` VM: Jellyfin `:8096`, qBittorrent `:8080` / `:8081` (private), Calibre-Web `:8074` (Alex) / `:8073` (Hannah) (the Kobo sync), Audiobookshelf `:13378`; on demand: radarr/sonarr/prowlarr/bazarr. `:53` is Colima's own networking, not a DNS server |
 | After a power cut | stays off (auto-restart off by choice); after power-on SSH and Plex come back, **containers do not** until `media/scripts/vm-start.sh` + `up.sh core` |
@@ -84,7 +84,7 @@ Full write-up: `mac-mini.md` (specs, storage, service/port map, startup, migrati
 
 ### collielab VM (cloud, Vultr)
 
-`sshmylab` → `alex@149.28.40.6`. Vaultwarden etc. See `collielab.md`.
+`ssh vultr` → `alex@149.28.40.6` (alias in `~/.ssh/config`; `sshmylab` still works, it now runs `ssh vultr`). Vaultwarden etc. See `collielab.md`. The address is in the alias because the VM has no DNS-only name: every record for it is Cloudflare-proxied (and points at its IPv6), which SSH can't go through.
 
 ## Access (from the MBP)
 
@@ -94,7 +94,7 @@ Full write-up: `mac-mini.md` (specs, storage, service/port map, startup, migrati
 | g8 host | `https://192.168.1.100:8006` | `ssh g8` | both work |
 | g8 VMs | n/a | `alex@<vm>` | none yet |
 | Mac Mini | `http://mini.lab.alexluong.com:<port>` (ports above) | `ssh mini` | both work |
-| collielab VM | `vault.collie.studio` etc. | `sshmylab` | works |
+| collielab VM | `vault.collie.studio` etc. | `ssh vultr` | works |
 
 Home-only today: everything on `192.168.1.x` is reachable only on home Wi-Fi. Tailscale (planned) makes g8, its VMs and the Mini reachable from anywhere.
 
@@ -146,13 +146,13 @@ One record per machine or VM is added as it is created. Ports and the certificat
 
 | Key | Passphrase | In agent | Used for |
 |---|---|---|---|
-| `github_alexluong` | yes (Keychain) | yes | GitHub, collielab VM (`sshmylab`) |
+| `github_alexluong` | yes (Keychain) | yes | GitHub, collielab VM (`ssh vultr`) |
 | `gitlab_alexluong` | yes | no | GitLab |
 | `id_ed25519` | yes (Keychain) | yes, since 2026-10-02 | **home servers and VMs** (Alex's choice) |
 | `id_ed_hookdeck` | no | no | Hookdeck jump boxes (`hd_jumpbox`, `hd_jumpbox_stg`) |
 | `google_compute_engine` | no | no | gcloud |
 
-Claude can only use keys loaded in the agent (no passphrase prompt). After a restart `id_ed25519` reloads only if `~/.ssh/config` names it with `UseKeychain yes` + `AddKeysToAgent yes`: add that with the `g8` host entry. `~/.ssh/config` has `Host g8` and `Host mini` (both with those two lines); its first line includes `~/.colima/ssh_config`, which no longer exists (harmless).
+Claude can only use keys loaded in the agent (no passphrase prompt). After a restart `id_ed25519` reloads only if `~/.ssh/config` names it with `UseKeychain yes` + `AddKeysToAgent yes`: add that with the `g8` host entry. `~/.ssh/config` has `Host g8`, `Host mini`, `Host vultr` (all with those two lines). **Rule (Alex, 2026-10-02): aliases point at domain names, not addresses**, wherever a name exists; an address change is then one DNS record. The names need working DNS (internet up); with it down, `ssh root@192.168.1.100` / `ssh alex@192.168.1.90` still work. Its first line includes `~/.colima/ssh_config`, which no longer exists (harmless).
 
 ## Open
 

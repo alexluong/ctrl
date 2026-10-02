@@ -32,7 +32,7 @@ The Mini's ctrl clone is at `~/git/hub/alexluong/ctrl` (no `~/workspaces/` there
 - **Tailscale** (host app): this node = `alexs-mac-mini` → **`100.91.137.41`**,
   reachable from anywhere on the tailnet (account `lhtanh98@`).
 - Ways to reach it:
-  1. **`ssh mini`** from the MBP (alias in `~/.ssh/config` → `alex@192.168.1.90`, key `id_ed25519`); home only
+  1. **`ssh mini`** from the MBP (alias in `~/.ssh/config` → `alex@mini.lab.alexluong.com`, key `id_ed25519`); home only
   2. `mini.lab.alexluong.com` (public DNS record → `192.168.1.90`); home only
   3. `alex@alexs-Mac-mini.local` (mDNS)
   4. `alex@100.91.137.41` (Tailscale — works away from home; the MBP has no Tailscale yet)

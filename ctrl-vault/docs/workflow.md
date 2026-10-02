@@ -41,7 +41,7 @@ Two ways to work on a project; both keep notes in ctrl:
 
    The loop, and where it stops on its own:
 
-   - **Diagnose** — read-only against the VM (`ssh alex@149.28.40.6`, `docker ps`, `docker logs`, `docker exec` reads) and the repo. No confirmation needed; do this freely and lead with findings.
+   - **Diagnose** — read-only against the VM (`ssh vultr`, `docker ps`, `docker logs`, `docker exec` reads) and the repo. No confirmation needed; do this freely and lead with findings.
    - **Change** — edit the repo, commit. Direct to main. Not pushed by default.
    - **Push / apply / deploy** — `git push`, `terraform apply`, and anything that restarts or reconfigures a live service are **confirm-first, every time**. They are outward-facing and users are on the other end (vaultwarden, eldobot's leagues). Claude prepares them and stops; Alex says go. A `terraform plan` is read-only and doesn't need asking.
    - **Record** — what changed, what's still open, in `ctrl-vault/docs/collielab.md` (or the service's own doc). Incidents get `collielab/incidents/YYYY-MM-DD_slug.md`.
