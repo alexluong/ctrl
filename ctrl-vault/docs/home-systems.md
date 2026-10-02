@@ -132,7 +132,7 @@ Templates use VM IDs 9000+.
 | `g8.lab.alexluong.com` | `192.168.1.100` | `https://g8.lab.alexluong.com:8006` (Proxmox, self-signed cert warning) |
 | `mini.lab.alexluong.com` | `192.168.1.90` | `http://mini.lab.alexluong.com:8096` (Jellyfin), `:32400` (Plex), `:8080` (qBittorrent) |
 
-One record per machine or VM is added as it is created. Ports and the certificate warning go away with the gateway, when these names move to it. The names are publicly resolvable (private addresses, nothing reachable from outside).
+One record per machine or VM is added as it is created. Ports and the certificate warning go away with the gateway (TASK-3, not started), when these names move to it. The names are publicly resolvable (private addresses, nothing reachable from outside).
 
 **If the range changes later:** update the DNS records, the gateway's backend addresses and the fixed addresses on g8, the Mini and VMs; devices that use URLs (Kobo, TV apps) keep working. So point the Kobo (today `192.168.1.90`, typed in its config; service/port on the Mini not found by scan, Mini session to document) and the TV's Jellyfin/Plex apps at URLs once the gateway exists. Other costs: house offline a few minutes; router admin moves; mesh nodes might need re-pairing; a Viettel reset puts the range back. To avoid locking g8 out: give it both addresses first, switch the router, then drop the old one.
 

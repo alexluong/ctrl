@@ -28,7 +28,7 @@ Later, inside the VM (Alex types these; Claude can't): `claude` login, `gh auth 
 3. **Host basics**: no-subscription repo, updates, `amd64-microcode`, SSH password login off (keys only), BIOS update if outdated.
 4. **VM template**: Debian 13 cloud image + cloud-init: user `alex`, MBP key, qemu-guest-agent, Docker, mise, git, GitHub CLI, Claude Code. VM ID 9000.
 5. **hookdeck VM**: clone of the template. Start: 8 vCPU, 32GB RAM, 250GB disk, VM ID 101, `192.168.1.101`. Then hookdeck workspace + repos, one core stack up (~8.5GB idle), T3 Code server as a service. Stop for Alex to test from the MBP.
-6. **Gateway + `lab` URLs**: small container on g8 with Caddy, `*.lab.alexluong.com` → its home address, Let's Encrypt by DNS check. Then point the Kobo and TV apps at URLs. Scheme: `docs/home-systems.md`.
+6. **Gateway + `lab` URLs**: split out to **TASK-3** (Alex, 2026-10-02: later). Until then: `g8.lab.alexluong.com:8006`, `mini.lab.alexluong.com:<port>`; one DNS record per VM as it is created.
 7. **Later**: Tailscale + `*.ts.alexluong.com` names (access away from home), snapshots/backup target, more workspace VMs from the same scripts, arrstack move, runbook ("add a workspace", "restore a VM").
 
 ## Open questions
