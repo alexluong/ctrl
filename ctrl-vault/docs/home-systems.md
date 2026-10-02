@@ -101,14 +101,15 @@ Home-only today: everything on `192.168.1.x` is reachable only on home Wi-Fi. Ta
 | Range | Use |
 |---|---|
 | `.1` | router |
-| `.2–.79` | handed out automatically by the router (phones, TVs, guests, mesh nodes). Pool = `.2–.99` |
-| `.80–.89` | boards and DIY devices, reserved on the router (existing) |
-| `.90–.99` | personal devices, reserved on the router (existing): `mini` `.90`, `mbp` `.91`, Kobos `.92–.93`; room for Hannah's PC etc. |
-| `.100–.109` | machines we manage as servers, address set on the machine: `g8` = **`.100`**; next PC `.101`, … |
-| `.110–.199` | VMs and containers, address set on the VM. **Proxmox VM ID = last number**, unique across all hosts: `hookdeck` = VM 110 = `.110` |
-| `.200–.254` | spare |
+| `.2–.79` | handed out automatically by the router (phones, TVs, guests, mesh nodes) |
+| `.80–.99` | **reserved on the router** (DHCP Binding; the machine asks, always gets the same answer): `.80` ESP32, `mini` `.90`, `mbp` `.91`, Kobos `.92–.93`; future Macs/Windows PCs `.94+` (grow down into the `.80s` if needed) |
+| `.100–.254` | **ours, typed into the machine; the router never hands these out** (pool = `.2–.99`). No router change per machine or VM |
+| `.100–.119` | `g8` block: host `.100`, its VMs and containers `.101–.119`. **Proxmox VM ID = last number**: `hookdeck` = VM 101 = `.101` |
+| `.120–.139`, `.140–.159`, … | one block of 20 per further host: host first, its VMs after |
 
-The pool ends at `.99` (not `.150–.254`) so the existing reservations stay inside it; whether this router honours reservations outside the pool is unknown. The Mini stays at `.90`; moving it into the server block is optional and cheap once devices use URLs.
+The split is by how the address gets fixed, not by kind of machine: Macs, PCs and Kobos ask the router, so they are fixed by a reservation, which must sit inside the pool; Proxmox and its VMs have the address typed in, which must sit outside the pool. Whether this router honours reservations outside the pool is unknown, hence the pool end at `.99`. The Mini is as much a server as the G8; it stays at `.90` for now (moving it is cheap once devices use URLs).
+
+Every VM has its own address (it is a separate machine on the network); the address is set by the VM-creation script, nothing to do on the router.
 
 **More machines are coming** (Alex, 2026-10-02): Hannah's current PC becomes a shared one, Hannah gets a new PC, maybe more. Rule for every machine we manage: a name, a fixed address in its block, the MBP's key installed, and an alias in the MBP's `~/.ssh/config`, so everything is reachable from the MBP (`ssh <name>`). The MBP is the control point; Windows PCs can take SSH too (OpenSSH Server).
 
