@@ -53,13 +53,13 @@ Earlier scheme: `.80–.89` boards and DIY, `.90–.99` consumer devices, everyt
 
 ### g8 (HP EliteDesk 805 G8 Mini)
 
-Ryzen 7 5700G (8c/16t), 64GB DDR4, 1TB NVMe. Proxmox VE 9.0.3, installed by the shop (xeon.vn); as-delivered state: `work/task-2/discovery.md`. Buying trail: `work/task-1/decision.md`. Setup: TASK-2, `work/task-2/plan.md`.
+Ryzen 7 5700G (8c/16t), 64GB DDR4, 1TB NVMe. Proxmox VE 9.2.21 (kernel 7.0.14; upgraded 2026-10-02 from the 9.0.3 installed by the shop (xeon.vn)); as-delivered state: `work/task-2/discovery.md`. Buying trail: `work/task-1/decision.md`. Setup: TASK-2, `work/task-2/plan.md`.
 
 | | |
 |---|---|
 | Address | `192.168.1.100/24`, gw `.1`, bridge `vmbr0` on `eno1`. Hostname `g8.lab.alexluong.com`. DNS `192.168.1.1`, `1.1.1.1` |
 | Web UI | `https://g8.lab.alexluong.com:8006` (or `https://192.168.1.100:8006`), user `root`, realm Linux PAM (self-signed cert) |
-| SSH | `ssh g8` (MBP `~/.ssh/config`: `root@192.168.1.100`, key `id_ed25519` from Keychain). Password login still on |
+| SSH | `ssh g8` (MBP `~/.ssh/config`: `root@192.168.1.100`, key `id_ed25519` from Keychain). Keys only (password login off since 2026-10-02) |
 | Root password | Vaultwarden, item `g8 root (Proxmox)` (Alex to rename the item and its URL) |
 | BIOS | SVM on; After Power Loss = Power On (Advanced → Boot Options) |
 | Console | none remote; needs monitor (DisplayPort) + USB keyboard at the box |
