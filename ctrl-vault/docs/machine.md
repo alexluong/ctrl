@@ -59,7 +59,8 @@ Long-running local processes (keep-awake, backlog boards, SSH tunnels) are start
 - **Logs:** `~/Library/Logs/svc/<name>.log` (SwiftBar keeps no output of what it launches, so `svc` does; trimmed to the last 200KB once past 1MB). Pids: `~/.local/state/svc/`.
 - **Ports:** boards started by `svc` use 6421 (ctrl) to 6425, leaving each workspace's default 6420 free for a manual `backlog browser`.
 - **Not handled:** nothing restarts after a reboot or a crash; a service that dies shows as stopped. `caffeinate` (`caffeinate -d`, Alex's usual flags) does not survive closing the lid.
-- **New machine:** install SwiftBar, set the plugin folder, `ln -s ~/workspaces/ctrl/bin/svc ~/.local/bin/svc`, turn on Launch at Login in SwiftBar's preferences.
+- **Where the settings live:** services, `svc` and the plugin are in ctrl (git). SwiftBar's own state is one key, `PluginDirectory`, in `~/Library/Preferences/com.ameba.SwiftBar.plist`. The dotfiles repo installs the app (`Brewfile.base`) and runs `scripts/setup-menubar.sh` (plugin folder + `svc` symlink).
+- **New machine:** dotfiles `scripts/setup-menubar.sh` after cloning ctrl, then turn on Launch at Login in SwiftBar's preferences.
 
 ## Disk
 
