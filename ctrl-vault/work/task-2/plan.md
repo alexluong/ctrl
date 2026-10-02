@@ -1,7 +1,7 @@
 # TASK-2 plan: set up pve1 + hookdeck workspace VM
 
 Milestone (Alex, 2026-10-02): get the G8 (`pve1`) set up with **one VM, the hookdeck workspace**. Other workspaces (enable, solex, cs, ixchel), arrstack and backups come after.
-Claude runs on the MBP (ctrl session) and manages the box over SSH. Home map and addresses: `docs/home-systems.md`. Hardware and sizing numbers: `work/task-1/decision.md`.
+Claude runs on the MBP (ctrl session) and manages the box over SSH. Files here: `plan.md` (this), `discovery.md` (the box as delivered), `log.md` (every change made, with how to undo). Home map and addresses: `docs/home-systems.md`. Hardware and sizing numbers: `work/task-1/decision.md`.
 
 ## Rules
 
