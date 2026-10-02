@@ -21,7 +21,11 @@ while IFS=$'\t' read -r name state url; do
   if [ "$state" = running ]; then echo "$name | checked=true $act"; else echo "$name | $act"; fi
   [ "$url" != - ] && [ "$state" = running ] && echo "-- Open $url | href=$url"
   [ "$state" = running ] && echo "-- Restart | bash=$SVC param1=restart param2=$name terminal=false refresh=true"
-  [ -f "$LOGS/$name.log" ] && echo "-- Log | bash=/usr/bin/open param1=-a param2=Console param3=$LOGS/$name.log terminal=false"
+  if [ -f "$LOGS/$name.log" ]; then
+    echo "-- Log | bash=/usr/bin/open param1=-a param2=Console param3=$LOGS/$name.log terminal=false"
+  else
+    echo "-- No log yet" # no action = greyed out
+  fi
 done <<< "$rows"
 echo "---"
 echo "Edit services.conf | bash=/usr/bin/open param1=-t param2=$ROOT/services.conf terminal=false"
