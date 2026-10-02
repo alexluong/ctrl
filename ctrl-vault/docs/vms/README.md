@@ -5,7 +5,7 @@ Map of machines and addresses: `../home-systems.md`. How the MBP manages machine
 
 | VM | ID / address | Size | Doc | State |
 |---|---|---|---|---|
-| `hookdeck-ws` | 101 / `192.168.1.101` | 8 vCPU, 32GB, 250GB | `hookdeck-ws.md` | built 2026-10-02; logins in progress |
+| `hookdeck-ws` | 101 / `192.168.1.101` | 8 vCPU, 32GB, 250GB | `hookdeck-ws.md` | built 2026-10-02; logged in, secrets copied; T3 connection from the MBP not yet tested |
 
 ## Adding a workspace VM
 

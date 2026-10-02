@@ -14,7 +14,7 @@ Scripts: `collielab/hosts/hookdeck-ws/setup.sh`. Full survey behind this doc: `w
 | Playwright Chromium system libraries | QA skill, website tests | `setup.sh` |
 | IPv4 first for `*.localhost` | core's Caddy listens on 127.0.0.1:80 only | `setup.sh` (`/etc/gai.conf`) |
 | 26 public Docker images of the core and outpost stacks | first stack boot without a long pull | `~/prepull-images.sh` on the VM |
-| `gke-gcloud-auth-plugin` | kubectl against GKE | **to do**: `gcloud components install gke-gcloud-auth-plugin` in the workspace |
+| `gke-gcloud-auth-plugin` | kubectl against GKE | by hand 2026-10-02: `gcloud components install gke-gcloud-auth-plugin` in the workspace (redo after a gcloud version bump) |
 
 Not installed (used by a few skills; add when needed): `hookdeck` CLI, clickhouse client, ffmpeg, cloudflared, k6, goreleaser, speakeasy.
 
@@ -28,7 +28,7 @@ All run on the VM (`ssh hookdeck-ws`); each prints a link and a code to finish i
 | GitHub CLI + SSH key | `gh auth login` (SSH, upload `~/.ssh/id_ed25519.pub`) | clone/push, `gh pr`; key covers `alexluong`, `hookdeck`, `amp-labs` | done, all repos reachable |
 | Doppler | `doppler login`, then `doppler setup --no-interactive` in `wt/core/main/local-dev` and `server` | core dev stack env (projects services, clients, ingest, outpost-infra) | done (machine-wide login; `services/dev` set up in core main) |
 | Railway | `railway login --browserless` (from the workspace folder) | Railway MCP server, outpost fleet reads | done (machine-wide login) |
-| gcloud | from `~/workspaces/hookdeck` (`echo $CLOUDSDK_CONFIG` must end in `/hookdeck/.gcloud`): `gcloud auth login alex.luong@hookdeck.com --no-launch-browser`, `gcloud auth application-default login --no-launch-browser`; then unset the account on config `none` and move `.gcloud/application_default_credentials.json` → `.gcloud/adc-hookdeck.json`. **Or** copy `.gcloud/` and `.kube/` from the MBP | `stg`, `prd` wrappers, terraform, kubectl | to do |
+| gcloud | copied from the MBP with `.gcloud/` and `.kube/` (the workspace keeps its gcloud state in its own folder). Fresh login instead: from `~/workspaces/hookdeck`, `gcloud auth login alex.luong@hookdeck.com --no-launch-browser`, `gcloud auth application-default login --no-launch-browser`, then unset the account on config `none` and move the ADC file to `.gcloud/adc-hookdeck.json` | `stg`, `prd` wrappers, terraform, kubectl | done 2026-10-02 (copied; `bin/stg kubectl --context outpost-staging-us get ns` works) |
 | Notion MCP | in a Claude session in the workspace: `/mcp` → notion → authenticate | `notion-publish-spec` skill | to do; the sign-in redirects to `localhost` on the VM, so paste the final URL back into Claude if the page fails to load |
 | AWS | `~/.aws/config` copied from the MBP, then `aws sso login --profile personal --use-device-code` | Ampersand work | to do, when needed |
 | Docker Hub | `docker login` | only to push dev images | when needed |
@@ -61,7 +61,7 @@ cd ~/workspaces/hookdeck && rsync -avR --ignore-missing-args \
 | `wt/terraform-provider-hookdeck/main/.env.test` | acceptance tests | **prod API keys** |
 | `wt/amp-server/main/.env` | Ampersand | customer |
 
-State: none copied yet (2026-10-02). On the VM, `bin/wt` cannot copy env files into new worktrees from the old MBP clone (`$HOME/git/hub/alexluong/hookdeck` does not exist there), so `wt/<repo>/main` is the place they must be.
+State: all 13 paths copied 2026-10-02 (rsync from the MBP, no Mac-only paths inside `.gcloud` / `.kube`; env files set to mode 600; git sees none of them). On the VM, `bin/wt` cannot copy env files into new worktrees from the old MBP clone (`$HOME/git/hub/alexluong/hookdeck` does not exist there), so `wt/<repo>/main` is the place they must be.
 
 ## First run (from a fresh VM)
 
@@ -90,7 +90,7 @@ State: none copied yet (2026-10-02). On the VM, `bin/wt` cannot copy env files i
 ## Open points
 
 1. Sessions on the MBP and the VM at once will conflict (board, memory, digest are committed from where sessions run). Push the MBP's unpushed work, then pick one place.
-2. Which prod-reaching files and logins belong on an always-on agent machine (the bold rows above).
+2. The prod-reaching files and logins (the bold rows above) are now on the VM, on Alex's say-so (2026-10-02). Kubeconfigs have no default context by design: pass `--context`.
 3. Saving the VM's identity (GitHub key, optionally the gh and Claude logins) to `ctrl/secrets/hookdeck-ws/` so a rebuilt VM needs no re-registration: offered, not decided.
-4. No backups yet; snapshot `clean-setup` is from before the logins.
+4. No backups yet. Snapshots on g8: `clean-setup` (before any login), `ready` (logged in, secrets copied, core deps installed).
 5. Doppler and Railway logins are machine-wide today. Moving them into the workspace like gcloud: possible for Doppler (`DOPPLER_CONFIG_DIR`), not for Railway (use workspace tokens in `ops/<env>/.env`): `work/task-2/doppler-railway-creds.md`.
