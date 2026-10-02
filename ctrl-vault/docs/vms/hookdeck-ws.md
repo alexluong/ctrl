@@ -89,7 +89,7 @@ State: all 13 paths copied 2026-10-02 (rsync from the MBP, no Mac-only paths ins
 
 ## Open points
 
-1. Sessions on the MBP and the VM at once will conflict (board, memory, digest are committed from where sessions run). Push the MBP's unpushed work, then pick one place.
+1. Decided (Alex, 2026-10-02): sessions run on the VM; the MBP is the client (written up in the workspace repo: `hookdeck-vault/notes/machines.md`). Still to do: audit and push the MBP's unpushed work, stop its stacks, clean it up later.
 2. The prod-reaching files and logins (the bold rows above) are now on the VM, on Alex's say-so (2026-10-02). Kubeconfigs have no default context by design: pass `--context`.
 3. Saving the VM's identity (GitHub key, optionally the gh and Claude logins) to `ctrl/secrets/hookdeck-ws/` so a rebuilt VM needs no re-registration: offered, not decided.
 4. No backups yet. Snapshots on g8: `clean-setup` (before any login), `ready` (logged in, secrets copied, core deps installed).
