@@ -90,4 +90,17 @@ Removing apps that have root daemons (PIA, iStat, Logitech, CleanMyMac) needs su
 
 ## Decisions
 
-(none yet)
+Alex, 2026-10-02:
+
+- **Hookdeck work on the Mini: delete it, no need to save** the unpushed commits and stashes ("it's been a long time, no problem"). Still waits for his go on the actual delete.
+- **Apps: keep the list, don't act yet.** Leanings: 1Password remove (definite), Bitwarden probably remove, Parsec remove, PIA app maybe, Setapp/iStat discuss later.
+- The Mini is used at the screen only now and then, mainly to turn on Jump Desktop Connect. **Wanted: Jump Desktop Connect starts by itself at login.**
+- Apple services (Messages, Photos, iCloud Drive): maybe, not yet.
+- Claude on the Mini: keep for now.
+- Open question he raised: what the Mini is for besides media (see `docs/fleet.md` § The Mini).
+
+## Measurements for the "what is the Mini for" question (2026-10-02)
+
+- Mini: M4 10 cores, 16GB. Container memory: qBittorrent 4.7GB, Jellyfin 457MB, calibre-web 189MB + 154MB, audiobookshelf 45MB, the rest under 60MB each. Moving books and audiobooks to g8 frees about 0.4GB on the Mini.
+- g8: Ryzen 7 5700G (8 cores / 16 threads), 62GB RAM with 47GB free, 810GB free VM storage. `hookdeck-ws` has 32GB assigned.
+- Jellyfin runs in a Linux container on the Mini, so it cannot use the M4's video hardware; Plex (native app) can.
