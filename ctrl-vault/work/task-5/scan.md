@@ -104,3 +104,4 @@ Alex, 2026-10-02:
 - Mini: M4 10 cores, 16GB. Container memory: qBittorrent 4.7GB, Jellyfin 457MB, calibre-web 189MB + 154MB, audiobookshelf 45MB, the rest under 60MB each. Moving books and audiobooks to g8 frees about 0.4GB on the Mini.
 - g8: Ryzen 7 5700G (8 cores / 16 threads), 62GB RAM with 47GB free, 810GB free VM storage. `hookdeck-ws` has 32GB assigned.
 - Jellyfin runs in a Linux container on the Mini, so it cannot use the M4's video hardware; Plex (native app) can.
+- Books and audiobooks, all on Blue4: `media/books` 20GB, `media/audiobooks` 2GB, app config under `data/` about 12MB. Fits g8 easily (800GB free). Catch: new books arrive through qBittorrent on the Mini and are hardlinked into the library on the same drive; with the library on g8 each new book needs a copy step to g8.
