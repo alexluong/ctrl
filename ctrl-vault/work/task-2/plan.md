@@ -19,6 +19,17 @@ Claude runs on the MBP (ctrl session) and manages the box over SSH. Files here: 
 5. Saving a VM's identity (GitHub key, logins) to `ctrl/secrets/<vm>/` so a rebuilt VM needs no re-registration: offered, not decided.
 6. Other tasks: TASK-3 gateway, TASK-4 BIOS + kernel 7.0 retest. Later: Tailscale, backups to the Mini, more workspace VMs (`enable-ws` next?), TASK-1 can close.
 
+## Next, in order (2026-10-03)
+
+hookdeck-ws is in daily use and is the only home of hookdeck sessions. Other VMs wait until hookdeck is finalized (Alex).
+
+1. **TASK-9 Tailscale** (explore; `../task-9/design.md`): away from home there is no hookdeck work until it exists.
+2. **TASK-12 backups**: the VM's disk is the single copy of unpushed work.
+3. **TASK-8 workspace self-setup**, hookdeck part from the VM's lead, then the machine side (template rebuild included).
+4. Small: login in front of Dozzle/Isaiah; board on the VM; carry MBP-only task branches; TASK-6 (menubar switch) is paused behind the control-panel idea.
+5. Then **TASK-11 cs-ws** (shared personal VM; cheapest proof of the new flow) and **TASK-10 enable-ws**.
+6. Host: TASK-3 gateway (other session), TASK-4 BIOS + kernel, TASK-7 monitoring. TASK-1 can close.
+
 ## Rules
 
 - Read-only discovery first; each change proposed before it runs.
