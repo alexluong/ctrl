@@ -155,6 +155,7 @@ One record per machine or VM is added as it is created.
 | `https://qbt.mini.lab.alexluong.com` | qBittorrent (the private instance is left out of the gateway and the index page on purpose, Alex 2026-10-02; still at `mini.lab.alexluong.com:8081`) |
 | `https://radarr.` / `sonarr.` / `prowlarr.` / `bazarr.mini.lab.alexluong.com` | only while started (502 otherwise) |
 | `https://pve.g8.lab.alexluong.com` | Proxmox UI (no certificate warning) |
+| `https://dozzle.hookdeck-ws.lab.alexluong.com` / `isaiah.hookdeck-ws.lab…` | Docker UIs on hookdeck-ws (Dozzle = logs, `:8888`; Isaiah = manage, `:8889`) |
 
 **Index page with links to all of it: `https://lab.alexluong.com`** (`collielab/hosts/gw/site/index.html`; a new service gets a route in the Caddyfile and a card there).
 

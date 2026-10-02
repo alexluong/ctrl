@@ -88,6 +88,7 @@ What the MBP's menubar (`ctrl/services.conf`) ran for this workspace, and its st
 | Prod jumpbox tunnel | by hand: `ssh hookdeck-ws`, then `ssh -N hd_jumpbox` (keep the shell open, or `ssh -fN hd_jumpbox` and `pkill -f "ssh -fN hd_jumpbox"` to close). `prd pg` then works in VM sessions. Off after a VM reboot |
 | Staging jumpbox tunnel | `ssh -N hd_jumpbox_stg`. **Fails while the outpost stack is up**: the tunnel forwards local port 26379 (staging Dragonfly) and the outpost stack's Redis publishes 26379. Same clash on the MBP; it comes from the workspace, not the VM. Stop the outpost stack first, or run the tunnel without that forward |
 | Board (`backlog browser -p 6422`) | not run on the VM yet. It binds 127.0.0.1 only: from the MBP `ssh -L 6422:127.0.0.1:6422 hookdeck-ws`, later the gateway (TASK-3). The MBP's menubar board shows the MBP's checkout |
+| Docker UIs (compose project `docker-ui`) | Dozzle (logs) `:8888`, Isaiah (manage) `:8889`. Through the gateway: `https://dozzle.hookdeck-ws.lab.alexluong.com`, `https://isaiah.hookdeck-ws.lab.alexluong.com`; cards on `https://lab.alexluong.com` (2026-10-02) |
 | Keep-awake | not needed: the VM does not sleep |
 
 ## Resources
