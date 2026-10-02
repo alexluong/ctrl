@@ -143,20 +143,20 @@ Templates use VM IDs 9000+.
 
 One record per machine or VM is added as it is created.
 
-**Gateway (built 2026-10-02, TASK-3):** `gw`, container 110 on g8 at `192.168.1.110`, Caddy. Wildcard records `*.lab`, `*.mini.lab`, `*.g8.lab`, `*.hookdeck.lab` → `.110` (`terraform/lab_gateway.tf`); Let's Encrypt wildcard certificates. Routing table and runbook: `collielab/hosts/gw/` (`Caddyfile`, `push.sh`, `README.md`). Home network only.
+**Gateway (built 2026-10-02, TASK-3):** `gw`, container 110 on g8 at `192.168.1.110`, Caddy. Wildcard records `*.lab`, `*.mini.lab`, `*.g8.lab`, `*.hookdeck.lab`, `*.calibre.lab`, `*.calibre.mini.lab` → `.110` (`terraform/lab_gateway.tf`); Let's Encrypt wildcard certificates. Routing table and runbook: `collielab/hosts/gw/` (`Caddyfile`, `push.sh`, `README.md`). Home network only.
 
 | URL | Service |
 |---|---|
 | `https://jellyfin.lab.alexluong.com` (= `jellyfin.mini.lab…`) | Jellyfin |
 | `https://plex.lab.alexluong.com` (= `plex.mini.lab…`) | Plex |
-| `https://books.lab.alexluong.com` (= `books.mini.lab…`) | Calibre-Web, Alex |
-| `https://books-hannah.lab.alexluong.com` (= `books-hannah.mini.lab…`) | Calibre-Web, Hannah |
+| `https://alex.calibre.lab.alexluong.com` (= `alex.calibre.mini.lab…`) | Calibre-Web, Alex (names chosen by Alex) |
+| `https://hannah.calibre.lab.alexluong.com` (= `hannah.calibre.mini.lab…`) | Calibre-Web, Hannah |
 | `https://audiobooks.lab.alexluong.com` (= `audiobooks.mini.lab…`) | Audiobookshelf |
 | `https://qbt.mini.lab.alexluong.com`, `https://qbt-private.mini.lab.alexluong.com` | qBittorrent |
 | `https://radarr.` / `sonarr.` / `prowlarr.` / `bazarr.mini.lab.alexluong.com` | only while started (502 otherwise) |
 | `https://pve.g8.lab.alexluong.com` | Proxmox UI (no certificate warning) |
 
-Rule: `<machine>.lab…` is the machine (SSH, still its own address); `<service>.<machine>.lab…` goes through the gateway; short aliases `<service>.lab…` for what gets typed into devices. The old `:<port>` addresses still work and are the fallback when g8 is down. Not done: Kobos and TV apps still point at `192.168.1.90` (wait for the domain decision, `fleet.md` § 6); `*.hookdeck.lab` has no routes yet.
+Rule: `<machine>.lab…` is the machine (SSH, still its own address); `<service>.<machine>.lab…` goes through the gateway; short aliases `<service>.lab…` for what gets typed into devices. The old `:<port>` addresses still work and are the fallback when g8 is down. Not done: Kobos and TV apps still point at `192.168.1.90` (domain decided: stays `alexluong.com`, so this can go ahead); `*.hookdeck.lab` has no routes yet.
 
 **If the range changes later:** update the DNS records, the gateway's backend addresses and the fixed addresses on g8, the Mini and VMs; devices that use URLs (Kobo, TV apps) keep working. So point the Kobos (today `192.168.1.90`, typed in their config; Calibre-Web on the Mini, `:8074` Alex / `:8073` Hannah) and the TV's Jellyfin/Plex apps at URLs once the gateway exists. Other costs: house offline a few minutes; router admin moves; mesh nodes might need re-pairing; a Viettel reset puts the range back. To avoid locking g8 out: give it both addresses first, switch the router, then drop the old one.
 

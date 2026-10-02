@@ -1,6 +1,6 @@
 # Fleet: how the MBP manages the other machines
 
-**Status (2026-10-02): §1 SSH, §3 repo and §4 gateway built (collielab `d8dc870`, `3e27e1f`). Still proposals: §2 a general `fleet` script (the gateway has its own `push.sh`), §5 the Mini's `media/` repo, §6 a dedicated domain.** Alex's ask: a "ctrl system" where the MBP is the control point for `g8`, `mini`, `vultr` and the VMs to come: SSH, running and deploying things on them, where config lives, clean URLs through a gateway.
+**Status (2026-10-02): §1 SSH, §3 repo and §4 gateway built (collielab `d8dc870`, `3e27e1f`). Still proposals: §2 a general `fleet` script (the gateway has its own `push.sh`), §5 the Mini's `media/` repo. §6 (dedicated domain) rejected.** Alex's ask: a "ctrl system" where the MBP is the control point for `g8`, `mini`, `vultr` and the VMs to come: SSH, running and deploying things on them, where config lives, clean URLs through a gateway.
 Map of machines and addresses: `home-systems.md`. Cloud VM: `collielab.md`. Mini: `mac-mini.md`. g8 setup: `work/task-2/plan.md`. Gateway task: TASK-3.
 
 ## Machines (2026-10-02)
@@ -144,7 +144,9 @@ Getting real spare capacity on the Mini means moving the media services to a VM 
 
 Making it dependable (Alex, at the Mini, once): full disk access for remote users; SSH keys only; ethernet if the cable can reach; decide auto-restart + FileVault (hands-off recovery needs auto-restart on and either FileVault off with auto-login, or accepting an unlock at the screen after each power cut). Then from the MBP: Colima + `up.sh core` as a launch agent, cap qBittorrent's memory, fix `gluetun` / `seedboxapi`.
 
-## 6. A dedicated domain for the lab (proposal; Alex asked 2026-10-02, open to buying one)
+## 6. A dedicated domain for the lab: rejected
+
+**Decided (Alex, 2026-10-02): stay on `alexluong.com`.** He did not like `collielab.net`. Don't raise it again unless he does. What follows is the proposal as it was made, kept for the reasoning (the token-scope point stays true: the gateway's token can edit all DNS of `alexluong.com`).
 
 Today everything hangs under `lab.alexluong.com`. Proposal: buy **`collielab.net`** (free on 2026-10-02; `.com` and `.org` are taken by others; name matches the repo) and move the lab onto it.
 
