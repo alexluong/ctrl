@@ -38,7 +38,7 @@ For files each workspace adapts (`lead`, `.agents/roles/*`, `recall`, `tidy`, `w
 1. Diff the file across workspaces (`diff ~/workspaces/{a,b}/.agents/…`). Sort each difference: substitution (vault, paths, `wt` form), workspace rule (keep where it is), or general improvement (port it).
 2. Show Alex the list of improvements and which workspaces lack each. Port only what Alex agrees to.
 3. Edit each workspace's own copy, in its own wording and paths. Never overwrite a variant with another workspace's file.
-4. A dirty tree in a workspace may be a live session: leave that workspace for later and say so.
+4. Don't write a workspace repo that has live sessions, a dirty tree, or its home on another machine (hookdeck = the `hookdeck-ws` VM): put the ask in a ctrl task and hand it to that workspace's lead (memory `shared-checkouts-parallel-sessions`).
 5. Commit + push each workspace (`skills: <what>`); run `check`.
 
 ## After any mode
