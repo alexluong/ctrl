@@ -39,7 +39,7 @@ Maintaining the workspace (where things go, memory vs notes, adding skills): `wo
 
 - `re`: real estate: deals, notes, logs, bookkeeping (`ctrl-vault/re/notes.md` for conventions & context)
 - `biz`: bookkeeping, invoices (`ctrl-vault/biz/BOOKKEEPING.md`)
-- `docs`: ideas (`ideas.md`), cross-domain notes; `machine.md` = machine/repo layout; `home-systems.md` = home network, devices, IPs, access (`home-network-handoff.md` = earlier router notes); `workflow.md` = how Claude works across repos (session modes, git, quality bar, project lifecycle); `workspace-setup.md` = the agent-workspace playbook; `projects/<name>.md` (or `projects/<name>/` with a `README.md`) = each project's living doc
+- `docs`: ideas (`ideas.md`), cross-domain notes; `machine.md` = machine/repo layout; `t3-code-remote.md` = T3 Code against a remote machine; `home-systems.md` = home network, devices, IPs, access (`home-network-handoff.md` = earlier router notes); `workflow.md` = how Claude works across repos (session modes, git, quality bar, project lifecycle); `workspace-setup.md` = the agent-workspace playbook; `projects/<name>.md` (or `projects/<name>/` with a `README.md`) = each project's living doc
 - `media` lives at the repo root (`media/`, not in the vault): Plex/Jellyfin/arr stack that runs on the Mac Mini from its own ctrl clone; work on it over `ssh mini`. Machine doc: `ctrl-vault/docs/mac-mini.md`
 - Planned: `finance`, `career`
 

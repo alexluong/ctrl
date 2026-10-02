@@ -63,7 +63,7 @@ Ryzen 7 5700G (8c/16t), 64GB DDR4, 1TB NVMe. Proxmox VE 9.2.21 (kernel **pinned 
 | Root password | Vaultwarden, item `g8 root (Proxmox)` (Alex to rename the item and its URL) |
 | BIOS | SVM on; After Power Loss = Power On (Advanced → Boot Options) |
 | Console | none remote; needs monitor (DisplayPort) + USB keyboard at the box |
-| VMs | none yet. First: hookdeck workspace |
+| VMs | template 9000 `debian13-base`; **101 `hookdeck`** (`192.168.1.101`, 8 vCPU, 32GB, 250GB). Scripts and runbook: `collielab/hosts/g8/README.md`; new VM = `bin/new-vm <id> <name> …` |
 
 ### Mac Mini (base M4)
 
@@ -92,7 +92,7 @@ Full write-up: `mac-mini.md` (specs, storage, service/port map, startup, migrati
 |---|---|---|---|
 | Router | `https://192.168.1.1` | n/a | works; login in Vaultwarden |
 | g8 host | `https://192.168.1.100:8006` | `ssh g8` | both work |
-| g8 VMs | n/a | `alex@<vm>` | none yet |
+| `hookdeck` VM | T3 app → Add environment → SSH (`docs/t3-code-remote.md`) | `ssh hookdeck` | works; logins pending (`work/task-2/hookdeck-vm.md`) |
 | Mac Mini | `http://mini.lab.alexluong.com:<port>` (ports above) | `ssh mini` | both work |
 | collielab VM | `vault.collie.studio` etc. | `ssh vultr` | works |
 
@@ -137,6 +137,7 @@ Templates use VM IDs 9000+.
 |---|---|---|
 | `g8.lab.alexluong.com` | `192.168.1.100` | `https://g8.lab.alexluong.com:8006` (Proxmox, self-signed cert warning) |
 | `mini.lab.alexluong.com` | `192.168.1.90` | `http://mini.lab.alexluong.com:8096` (Jellyfin), `:32400` (Plex), `:8080` (qBittorrent) |
+| `hookdeck.lab.alexluong.com` | `192.168.1.101` | `ssh hookdeck` |
 
 One record per machine or VM is added as it is created. Ports and the certificate warning go away with the gateway (TASK-3, not started), when these names move to it. The names are publicly resolvable (private addresses, nothing reachable from outside).
 

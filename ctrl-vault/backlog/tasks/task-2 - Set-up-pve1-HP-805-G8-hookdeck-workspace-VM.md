@@ -4,7 +4,7 @@ title: Set up pve1 (HP 805 G8) + hookdeck workspace VM
 status: In Progress
 assignee: []
 created_date: '2026-10-02 08:44'
-updated_date: '2026-10-02 10:26'
+updated_date: '2026-10-02 11:02'
 labels:
   - machine
   - infra
@@ -37,5 +37,11 @@ author: @claude
 created: 2026-10-02 10:26
 ---
 2026-10-02: Mac Mini reachable from the MBP (ssh mini); PR #1 from the Mini's clone merged (media/ domain + docs/mac-mini.md). MBP aliases now use names: g8 -> g8.lab.alexluong.com, mini -> mini.lab.alexluong.com; ssh vultr replaces sshmylab. Left on the Mini: SSH keys only (Alex, sudo), move its clone to main. g8 next: BIOS update, then VM template.
+---
+
+author: @claude
+created: 2026-10-02 11:02
+---
+2026-10-02: VM template (9000) and hookdeck VM (101, 192.168.1.101, ssh hookdeck) built from scripts in collielab (hosts/g8, bin/new-vm; new VM in ~40s). T3 server runs in the VM on loopback, reached over SSH. All tools installed; no login or secret on it. Left for Alex: first-run list in work/task-2/hookdeck-vm.md.
 ---
 <!-- COMMENTS:END -->

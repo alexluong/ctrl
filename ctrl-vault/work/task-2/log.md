@@ -38,3 +38,16 @@ Newest last. One entry per change: what, why, how to undo. Read-only checks go i
 - **vultr `authorized_keys`:** MBP `id_ed25519` public key appended (was `github_alexluong` only). Backup on the VM: `~/.ssh/authorized_keys.bak-20261002`.
 - **collielab `hosts/vultr/Caddyfile`:** copy of the VM's `/etc/caddy/Caddyfile` (read only, nothing changed on the VM).
 - **G8 kernel pinned to 6.14.11-9-pve** (Alex's call): `proxmox-boot-tool kernel pin 6.14.11-9-pve` (writes `/etc/default/grub.d/proxmox-kernel-pin.cfg`), reboot 17:38. Verified: clocksource `tsc` (clock read 71 ns per call, was 1421 ns on HPET), `rtc_cmos 00:02: registered as rtc0`, `hwclock` works, all services active, no failed units. Kernel 7.0.14 stays installed, unused. Undo: `proxmox-boot-tool kernel unpin` + reboot. Follow-up: TASK-4.
+
+### VM template and the hookdeck VM (afternoon, Alex away; scripts in collielab `51405c4`)
+
+- **Decision (Alex): scripts live in `collielab`**, not a new repo: `hosts/g8/vm-template/{build,provision,seal}.sh`, `hosts/g8/new-vm.sh`, `hosts/workspace-vm/setup.sh`, `hosts/hookdeck/setup.sh`, `bin/new-vm`, runbook `hosts/g8/README.md`.
+- **g8:** copied the fleet's public keys to `/root/fleet-authorized_keys`; downloaded the Debian 13 cloud image to `/var/lib/vz/template/cloud/` (checksum verified).
+- **Template VM 9000 `debian13-base`:** built at the temporary address `192.168.1.149`, provisioned (Docker, gh, mise, Node 22, Claude Code, T3 binary 0.0.44, limits, passwordless sudo, linger), sealed into a template. Rebuilt once at the end so it includes packages added after the survey. Undo: `qm destroy 9000 --purge`.
+- **VM 101 `hookdeck`:** `new-vm.sh 101 hookdeck 8 32768 250` → `192.168.1.101`, starts with the host. Undo: `qm stop 101 && qm destroy 101 --purge` (destroys its disk).
+- **DNS (terraform, applied):** `hookdeck.lab.alexluong.com` → `192.168.1.101`. **SSH:** `Host hookdeck` block and the VM's host keys in `collielab/ssh/`.
+- **In the VM:** base re-applied (`provision.sh`); `hosts/workspace-vm/setup.sh` (T3 Code server as a user service on `127.0.0.1:3773`); `hosts/hookdeck/setup.sh` (Doppler, the workspace's pinned mise tools, gopls, golangci-lint, Playwright libraries, IPv4-first for `*.localhost`, an SSH key for GitHub); `~/.claude/settings.json` + `CLAUDE.md` copied from the dotfiles repo; the stacks' public Docker images pre-pulled.
+- **Snapshot `clean-setup`** of VM 101: tools installed, no login or secret.
+- **Repeatability test:** `bin/new-vm 148 test-vm 2 2048 20` created a working VM (clone, keys, alias, DNS snippet, T3 service) in 39 seconds; destroyed afterwards and its repo entries reverted.
+- Snags fixed on the way (all in the scripts now): `ls | tr` under `pipefail` aborted the script when `~/go/bin` was missing (mise puts Go tools in the Go install's own `bin`); `sudo npx` went through alex's mise shims and was refused (use node's real path); `*.localhost` answered `::1` first.
+- Not done, by design: any login or secret on the VM. First-run list: `hookdeck-vm.md`.
