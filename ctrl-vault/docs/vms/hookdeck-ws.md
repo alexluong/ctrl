@@ -119,7 +119,7 @@ git -C repos/<repo>.git push hookdeck-ws:workspaces/hookdeck/repos/<repo>.git "r
 
 ## Open points
 
-1. **Not decided:** whether all hookdeck sessions move to the VM. Alex is trying the VM first (2026-10-02: "not a rule yet"); both machines work today. While both are in use: push on the machine you leave, pull on the one you go to (board, memory and digest are committed from where sessions run). Written up in the workspace repo: `hookdeck-vault/notes/machines.md`.
+1. **Decided 2026-10-03 (Alex): the VM is where hookdeck sessions run from now on;** the MBP is the client. Reason it matters: with sessions on both machines the workspace repo collided within a day (two `task-86`, one renumbered to `task-89`; the MBP checkout 3 ahead / 11 behind with `MEMORY.md` changed on both sides). Left to do, from a hookdeck session: push or carry the MBP's 3 local commits and any unpushed task branches, then stop starting sessions on the MBP; update `hookdeck-vault/notes/machines.md` (it still says "direction, not a rule yet"). The general learning (git-based workspace state assumes one writer) is noted in the Collie Studio workspace, `cs-vault/notes/studio/`.
 2. The prod-reaching files and logins (the bold rows above) are now on the VM, on Alex's say-so (2026-10-02). Kubeconfigs have no default context by design: pass `--context`.
 3. Saving the VM's identity (GitHub key, optionally the gh and Claude logins) to `ctrl/secrets/hookdeck-ws/` so a rebuilt VM needs no re-registration: offered, not decided.
 4. Template rebuild pending: the fix for the service PATH (`collielab` `6b3a54a`) is in `provision.sh` and applied on this VM, but template 9000 still carries the old file; rebuild it before the next VM (`collielab/hosts/g8/README.md`).
