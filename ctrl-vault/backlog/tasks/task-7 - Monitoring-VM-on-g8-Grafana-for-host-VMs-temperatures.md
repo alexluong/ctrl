@@ -4,6 +4,7 @@ title: 'Monitoring VM on g8: Grafana for host, VMs, temperatures'
 status: To Do
 assignee: []
 created_date: '2026-10-02 16:33'
+updated_date: '2026-10-02 16:36'
 labels:
   - infra
   - machine
@@ -30,3 +31,13 @@ Open decisions:
 - Monitoring that lives on g8 goes dark when g8 does. A check from outside (vultr or the Mini pinging g8/gw) covers that; fleet.md already lists a watchdog as a Mini candidate.
 - Host exception in step 3.
 <!-- SECTION:DESCRIPTION:END -->
+
+## Comments
+
+<!-- COMMENTS:BEGIN -->
+author: @claude
+created: 2026-10-02 16:36
+---
+Alex (2026-10-02): wants metrics synced to R2 properly; open to Thanos or VictoriaMetrics, to discuss when the task starts. Overrides Claude's 'skip R2 for metrics' view in the description. Compare then: Thanos sidecar (keeps Prometheus, uploads 2h blocks to the bucket, more moving parts for querying old data) vs VictoriaMetrics single node + vmbackup to S3-compatible storage (one binary, scheduled incremental backups, restore needed to query after loss).
+---
+<!-- COMMENTS:END -->
