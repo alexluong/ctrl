@@ -10,7 +10,7 @@ Scanned from the MBP 2026-10-02 (ping sweep, mDNS, port probes); re-scan before 
 - ISP: Viettel (fiber). LAN `192.168.1.0/24`, gateway `192.168.1.1`, DNS = Viettel's (handed out by the router).
 - Router: **ZTE F6601P** (Viettel ONT + router + Wi-Fi, internet login by PPPoE on the router), `192.168.1.1`, admin UI `https://192.168.1.1` (login in Vaultwarden). 3 of 4 LAN ports in use.
 - Mesh nodes: 2 × **ZTE H3601P**, `192.168.1.3` and `192.168.1.5` (admin UI on each).
-- DHCP pool range: **unknown, check in router**. Leases seen from `.3` to `.131`, so the pool likely starts near `.2` and `.21` sits inside it.
+- DHCP pool: `.2–.254`, lease time 1 hour (read from the router 2026-10-02). To change: end → `.99`.
 - Wi-Fi name: "Dunder Mifflin". Router sits in a closed cabinet with the G8.
 - Router menus: Local Network → LAN → DHCP; "DHCP Binding" (reservations) at the bottom; the same page lists handed-out addresses (incl. stale ones). **Never factory-reset**: it wipes the fiber login and internet stays down until Viettel reprovisions (support 18008119).
 - Viettel blocks some sites at DNS level and hijacks port 53; only encrypted DNS gets around it. Direction was hosted encrypted DNS per device, not a home DNS server (power cuts happen overnight).
@@ -100,12 +100,17 @@ Home-only today: everything on `192.168.1.x` is reachable only on home Wi-Fi. Ta
 
 | Range | Use |
 |---|---|
-| `.1–.9` | network gear |
-| `.80–.89` | boards and DIY devices (existing) |
-| `.90–.99` | Alex's own devices, reserved on the router (existing): `mini` `.90`, `mbp` `.91`, Kobos `.92–.93` |
-| `.100–.109` | physical servers, fixed: `g8` = **`.100`** |
-| `.110–.149` | VMs and containers, fixed. **Proxmox VM ID = last number**: `hookdeck` = VM 110 = `.110` |
-| `.150–.254` | DHCP pool (to set on the router; today it seems to cover everything) |
+| `.1` | router |
+| `.2–.79` | handed out automatically by the router (phones, TVs, guests, mesh nodes). Pool = `.2–.99` |
+| `.80–.89` | boards and DIY devices, reserved on the router (existing) |
+| `.90–.99` | personal devices, reserved on the router (existing): `mini` `.90`, `mbp` `.91`, Kobos `.92–.93`; room for Hannah's PC etc. |
+| `.100–.109` | machines we manage as servers, address set on the machine: `g8` = **`.100`**; next PC `.101`, … |
+| `.110–.199` | VMs and containers, address set on the VM. **Proxmox VM ID = last number**, unique across all hosts: `hookdeck` = VM 110 = `.110` |
+| `.200–.254` | spare |
+
+The pool ends at `.99` (not `.150–.254`) so the existing reservations stay inside it; whether this router honours reservations outside the pool is unknown. The Mini stays at `.90`; moving it into the server block is optional and cheap once devices use URLs.
+
+**More machines are coming** (Alex, 2026-10-02): Hannah's current PC becomes a shared one, Hannah gets a new PC, maybe more. Rule for every machine we manage: a name, a fixed address in its block, the MBP's key installed, and an alias in the MBP's `~/.ssh/config`, so everything is reachable from the MBP (`ssh <name>`). The MBP is the control point; Windows PCs can take SSH too (OpenSSH Server).
 
 Templates use VM IDs 9000+.
 
@@ -137,4 +142,4 @@ Claude can only use keys loaded in the agent (no passphrase prompt). After a res
 - [ ] Mac Mini: Remote Login + MBP key, specs, wired vs Wi-Fi → `mac-mini.md`
 - [ ] Later: Tailscale account + install on MBP/phone, `ts` names
 - [ ] Identify the unidentified devices (`.57`, `.124`, `.129/.130`)
-- [ ] Router page: read the pool range, set it to `.150–.254`
+- [ ] Router: pool was `.2–.254` (lease 1h, read 2026-10-02); set the end to `.99`

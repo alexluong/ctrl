@@ -16,14 +16,14 @@ Claude runs on the MBP (ctrl session) and manages the box over SSH. Files here: 
 
 1. ~~SSH key to the box~~ done 2026-10-02: `id_ed25519` installed with `ssh-copy-id`, loaded in the agent with `ssh-add --apple-use-keychain`.
 2. **Root password in Vaultwarden**: item named for the box (`g8 root (Proxmox)`), user `root`, URL `https://192.168.1.21:8006`.
-3. **Router** (`http://192.168.1.1`, ZTE F6601P): log in (sticker under the router; save the login to Vaultwarden), send a screenshot of the LAN/DHCP page. Then, with Claude: DHCP pool → `.150–.254`, confirm the existing reservations.
+3. **Router** (`http://192.168.1.1`, ZTE F6601P): log in (sticker under the router; save the login to Vaultwarden), send a screenshot of the LAN/DHCP page. Screenshots received 2026-10-02 (pool `.2–.254`, 5 reservations). To do: DHCP End IP Address → `192.168.1.99`, Apply.
 
 Later, inside the VM (Alex types these; Claude can't): `claude` login, `gh auth login`, hookdeck env/secrets.
 
 ## Order (agreed 2026-10-02: keep it simple, stay on `192.168.1.x`, Tailscale later)
 
 0. **Discovery (read-only)**: done 2026-10-02, see `discovery.md` (clean, no reinstall). Proxmox version, storage layout, bridge config, repos, disk health (`smartctl`), BIOS version. **Audit what the shop left**: `authorized_keys`, users, cron, extra repos/packages. Anything odd → reinstall from the official ISO.
-1. **Router**: read the DHCP page (pool range, existing reservations: `docs/home-systems.md`), then pool → `.150–.254` so `.100–.149` is never handed out. Reserved devices (`.80–.99`) keep their addresses through their bindings.
+1. **Router**: read the DHCP page (pool range, existing reservations: `docs/home-systems.md`), then pool end `.254` → `.99` (one field) so `.100` and up is never handed out. Reserved devices (`.80–.99`) stay inside the pool and keep their addresses.
 2. **Box address and name** (before any VM exists): rename `pve1` → `g8`, move `192.168.1.21` → `192.168.1.100`. Done with both addresses on the box for a moment so it is never unreachable. (`.91` was the first idea, but it is the MBP's reserved address.)
 3. **Host basics**: no-subscription repo, updates, `amd64-microcode`, SSH password login off (keys only), BIOS update if outdated.
 4. **VM template**: Debian 13 cloud image + cloud-init: user `alex`, MBP key, qemu-guest-agent, Docker, mise, git, GitHub CLI, Claude Code. VM ID 9000.
