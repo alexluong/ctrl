@@ -3,6 +3,20 @@
 Milestone (Alex, 2026-10-02): get the G8 (`g8`, was `pve1`) set up with **one VM, the hookdeck workspace**. Other workspaces (enable, solex, cs, ixchel), arrstack and backups come after.
 Claude runs on the MBP (ctrl session) and manages the box over SSH. Files here: `plan.md` (this), `discovery.md` (the box as delivered), `log.md` (every change made, with how to undo). Home map and addresses: `docs/home-systems.md`. Hardware and sizing numbers: `work/task-1/decision.md`.
 
+## Status (2026-10-02, end of day)
+
+**Done:** g8 set up (renamed, `192.168.1.100`, Proxmox 9.2.21, kernel pinned 6.14.11, SSH keys only); router pool ends at `.99`; DNS names under `lab.alexluong.com`; VM template (9000) and scripts in `collielab` (`bin/new-vm`, `hosts/g8/`); VM `hookdeck-ws` (101, `192.168.1.101`) with all tools, Claude/GitHub/Doppler/Railway logins, gcloud and secret files copied, workspace cloned, core deps installed, snapshot `ready`; MBP's unpushed hookdeck work copied to the VM.
+
+**Repeatable process:** `docs/vms/playbook.md` (workspace → VM) and `docs/vms/new-host.md` (new Proxmox box). Per-VM record: `docs/vms/hookdeck-ws.md`.
+
+**Next / open:**
+1. Alex: connect the T3 app to `hookdeck-ws` (Settings → Connections → Add environment → SSH); first session there. Untested so far.
+2. Whether all hookdeck sessions move to the VM: not decided (Alex: "not a rule yet"). Re-sync from the MBP when its running sessions finish.
+3. Opening the core dashboard from the MBP (SSH port forward for now).
+4. Doppler/Railway credentials inside the workspace folder: researched (`doppler-railway-creds.md`), not adopted. The research run exposed the tail of the MBP's Doppler token in a local transcript: roll it if wanted (`doppler login roll`).
+5. Saving a VM's identity (GitHub key, logins) to `ctrl/secrets/<vm>/` so a rebuilt VM needs no re-registration: offered, not decided.
+6. Other tasks: TASK-3 gateway, TASK-4 BIOS + kernel 7.0 retest. Later: Tailscale, backups to the Mini, more workspace VMs (`enable-ws` next?), TASK-1 can close.
+
 ## Rules
 
 - Read-only discovery first; each change proposed before it runs.

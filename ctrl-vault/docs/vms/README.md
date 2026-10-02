@@ -7,14 +7,10 @@ Map of machines and addresses: `../home-systems.md`. How the MBP manages machine
 |---|---|---|---|---|
 | `hookdeck-ws` | 101 / `192.168.1.101` | 8 vCPU, 32GB, 250GB | `hookdeck-ws.md` | built 2026-10-02; logged in, secrets copied; T3 connection from the MBP not yet tested |
 
-## Adding a workspace VM
+## Playbooks
 
-1. Survey the workspace on the MBP (tools pinned in `mise.toml`, system packages, docker stacks, Claude config, logins, secret files, Mac-only paths). The prompt used for hookdeck is in `../../work/task-2/log.md` history; its result is `../../work/task-2/hookdeck-vm-requirements.md`.
-2. `bin/new-vm <id> <name> <cores> <memory_mb> <disk_gb>` in collielab, then `terraform apply` and commit.
-3. Write `collielab/hosts/<name>/setup.sh` for what only this VM needs (no logins, no secrets), run it.
-4. Write `vms/<name>.md` from the template below.
-5. Alex: logins on the VM, T3 environment on the MBP.
-6. Snapshot once it works: `ssh g8 'qm snapshot <id> <name>'`.
+- **`playbook.md`: put a workspace on a VM** (the repeatable process: size, survey, create, setup script, logins, clone, secrets, T3, sync, record). Use it for `enable`, `solex`, `cs` and any later workspace. Includes the survey prompt and the traps met the first time.
+- **`new-host.md`: a new Proxmox box**, from the delivery box to a host `bin/new-vm` can use.
 
 ## Template for `vms/<name>.md`
 
