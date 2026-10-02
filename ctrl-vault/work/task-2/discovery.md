@@ -45,5 +45,5 @@ The hardware clock read 2010-01-01 at every boot until the box first went online
 
 - No-subscription repos, full upgrade (181 packages), reboot.
 - BIOS update.
-- Hostname → `g8`, drop `connected.com.vn`; address → `.91`; DNS → router or 1.1.1.1; root@pam email → Alex's.
+- Hostname → `g8`, drop `connected.com.vn`; address → `.100`; DNS → router or 1.1.1.1; root@pam email → Alex's.
 - SSH keys only.
