@@ -1,6 +1,15 @@
 # Workspace sync: keeping the dev loop the same across workspaces
 
-Status: **proposal (2026-10-02), nothing applied.** Alex's ask: ctrl manages the workspaces' shared skills, keeps them in sync, allows per-workspace customization, and carries an improvement made in one to the others. Related: `workspace-setup.md` (playbook), the `workspace-setup` skill (`check`, `sync`), `dev-workflow-research.md` (ideas to land once sync exists), `~/workspaces/cs/cs-vault/notes/studio/README.md` § Studio as a framework (the same idea, stated as a product).
+## Decision (Alex, 2026-10-02): keep it simple for now
+
+- Each workspace keeps setting up and adapting its own skills and roles (copy-and-adapt stays).
+- **ctrl is responsible for syncing:** a ctrl session compares the variants and ports an improvement into each workspace's own copy, by hand, keeping that workspace's specifics. Procedure: `workspace-setup` skill § port.
+- No core/overlay refactor, no new enforced hashes beyond `done`.
+- **Later:** a shared core, probably shipped as plugins or similar, once the exploration in `dev-workflow-research.md` settles. § Proposed model below is the parked design for that.
+
+---
+
+Original proposal (2026-10-02), parked. Alex's ask: ctrl manages the workspaces' shared skills, keeps them in sync, allows per-workspace customization, and carries an improvement made in one to the others. Related: `workspace-setup.md` (playbook), the `workspace-setup` skill (`check`, `sync`), `dev-workflow-research.md` (ideas to land once sync exists), `~/workspaces/cs/cs-vault/notes/studio/README.md` § Studio as a framework (the same idea, stated as a product).
 
 ## What exists (surveyed 2026-10-02)
 

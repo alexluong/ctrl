@@ -1,6 +1,6 @@
 ---
 name: workspace-setup
-description: Set up, audit, or update personal agent workspaces (~/workspaces/<name>) — new workspace from the playbook, drift check across all workspaces, or propagate a shared change (e.g. the done skill) to every workspace. Use for "set up a workspace for X", "check the workspaces", "sync done/skill across workspaces".
+description: Set up, audit, or update personal agent workspaces (~/workspaces/<name>) — new workspace from the playbook, drift check across all workspaces, propagate an identical file (the done skill), or port an improvement from one workspace's adapted skill or role into the others. Use for "set up a workspace for X", "check the workspaces", "sync done/skill across workspaces", "port this to the other workspaces".
 ---
 
 # Workspace setup
@@ -30,6 +30,16 @@ For files meant to be identical across workspaces (today: `.agents/skills/done/S
 1. Edit in one workspace, then `for w in ~/workspaces/*/; do cp <src> "$w<path>"; done`.
 2. Commit + push each workspace (`skills: <what>`); run `check`.
 3. Changing what counts as shared → update the playbook step 5 and `std_skills`/checks in `check`.
+
+## port `<improvement>`
+
+For files each workspace adapts (`lead`, `.agents/roles/*`, `recall`, `tidy`, `workspace`, `worktree`, and skills two workspaces share such as `qa`, `seed`, `investigate`, `gh-respond`). ctrl does the syncing; workspaces don't pull. Background: `ctrl-vault/docs/workspace-sync.md`.
+
+1. Diff the file across workspaces (`diff ~/workspaces/{a,b}/.agents/…`). Sort each difference: substitution (vault, paths, `wt` form), workspace rule (keep where it is), or general improvement (port it).
+2. Show Alex the list of improvements and which workspaces lack each. Port only what Alex agrees to.
+3. Edit each workspace's own copy, in its own wording and paths. Never overwrite a variant with another workspace's file.
+4. A dirty tree in a workspace may be a live session: leave that workspace for later and say so.
+5. Commit + push each workspace (`skills: <what>`); run `check`.
 
 ## After any mode
 
