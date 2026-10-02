@@ -6,6 +6,7 @@ title: >-
 status: To Do
 assignee: []
 created_date: '2026-10-02 15:44'
+updated_date: '2026-10-02 16:25'
 labels:
   - machine
   - workspace
@@ -29,3 +30,13 @@ Sessions on hookdeck-ws need the jumpbox tunnel on the VM's own localhost; the M
 - [ ] #6 Existing local services (caffeinate, boards, Mac tunnels) behave as before
 - [ ] #7 Docs: services.conf header, vms/playbook.md (what a workspace runs from the menubar), hookdeck machines note
 <!-- AC:END -->
+
+## Comments
+
+<!-- COMMENTS:BEGIN -->
+author: @claude
+created: 2026-10-02 16:25
+---
+Paused 2026-10-02 (Alex): the wider idea is a per-workspace control panel running on the VM, noted as a Collie Studio idea to evaluate (~/workspaces/cs/cs-vault/notes/studio/workspace-control.md). Finish this only if a stopgap is wanted before that.
+---
+<!-- COMMENTS:END -->
