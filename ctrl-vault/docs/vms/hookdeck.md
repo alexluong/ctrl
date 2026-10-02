@@ -20,7 +20,7 @@ Not installed (used by a few skills; add when needed): `hookdeck` CLI, clickhous
 
 ## Logins
 
-All run on the VM (`ssh hookdeck`); each prints a link and a code to finish in the MBP's browser.
+All run on the VM (`ssh hookdeck`); each prints a link and a code to finish in the MBP's browser. **Run them from `~/workspaces/hookdeck`**: railway, gcloud, kubectl, terraform and aws are pinned by the workspace `mise.toml` and only exist inside that folder (outside it: "No version is set for shim"). Doppler, gh and claude work anywhere.
 
 | What | Command on the VM | Used for | State (2026-10-02) |
 |---|---|---|---|
