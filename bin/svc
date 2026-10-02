@@ -22,13 +22,16 @@ notify() { # failures from the menubar have no terminal to print to
   [ -t 2 ] || osascript -e "display notification \"$2\" with title \"svc: $1\"" >/dev/null 2>&1 || true
 }
 
-# services.conf lines: name | dir | url | command   ('---' = menu separator, '#' = comment)
-each() { # each <fn>: calls fn name dir url cmd per service, fn --- per separator
-  local name dir url cmd
+# services.conf: '[group]' starts a group (a workspace); 'name | dir | url | command' is a service, named <group>-<name>
+each() { # each <fn>: calls fn name dir url cmd per service, fn --- group per group
+  local name dir url cmd group=''
   while IFS='|' read -r name dir url cmd; do
     name="$(trim "$name")"
-    case "$name" in ''|'#'*) continue ;; ---) "$1" ---; continue ;; esac
-    dir="$(trim "$dir")"; "$1" "$name" "${dir/#\~/$HOME}" "$(trim "$url")" "$(trim "$cmd")"
+    case "$name" in
+      ''|'#'*) continue ;;
+      '['*']') group="${name#\[}"; group="${group%\]}"; "$1" --- "$group"; continue ;;
+    esac
+    dir="$(trim "$dir")"; "$1" "${group:+$group-}$name" "${dir/#\~/$HOME}" "$(trim "$url")" "$(trim "$cmd")"
   done < "$CONF"
 }
 
@@ -87,7 +90,7 @@ stop() {
 }
 
 ls_row() {
-  [ "$1" = --- ] && { echo ---; return; }
+  [ "$1" = --- ] && { printf -- '---\t%s\n' "$2"; return; }
   local state=stopped
   running "$1" && state=running
   printf '%s\t%s\t%s\n' "$1" "$state" "${3:--}"
@@ -95,7 +98,7 @@ ls_row() {
 
 cmd="${1:-ls}"; name="${2:-}"
 case "$cmd" in
-  ls)      if [ -t 1 ]; then each ls_row | grep -v '^---$' | column -t -s $'\t'; else each ls_row; fi ;;
+  ls)      if [ -t 1 ]; then each ls_row | grep -v '^---' | column -t -s $'\t'; else each ls_row; fi ;;
   start)   start "${name:?svc start <name>}" ;;
   stop)    stop "${name:?svc stop <name>}" ;;
   restart) stop "${name:?svc restart <name>}"; start "$name" ;;

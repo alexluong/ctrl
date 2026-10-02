@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# SwiftBar plugin: menubar front end to bin/svc. Click a service to toggle it; submenu has open/log/restart.
+# SwiftBar plugin: menubar front end to bin/svc. Services are listed under their group (workspace);
+# click one to toggle it, submenu has open/log/restart.
 # The 10s in the filename is the refresh interval (catches services that died on their own).
 # <swiftbar.hideAbout>true</swiftbar.hideAbout>
 # <swiftbar.hideRunInTerminal>true</swiftbar.hideRunInTerminal>
@@ -15,10 +16,12 @@ count="$(grep -c $'\trunning\t' <<< "$rows")"
 
 if [ "$count" -gt 0 ]; then echo "$count | sfimage=bolt.fill"; else echo " | sfimage=bolt"; fi
 echo "---"
+group=''
 while IFS=$'\t' read -r name state url; do
-  [ "$name" = --- ] && { echo "---"; continue; }
+  if [ "$name" = --- ]; then group="$state"; echo "---"; echo "$group | size=11"; continue; fi
+  label="${name#"$group"-}"
   act="bash=$SVC param1=toggle param2=$name terminal=false refresh=true"
-  if [ "$state" = running ]; then echo "$name | checked=true $act"; else echo "$name | $act"; fi
+  if [ "$state" = running ]; then echo "$label | checked=true $act"; else echo "$label | $act"; fi
   [ "$url" != - ] && [ "$state" = running ] && echo "-- Open $url | href=$url"
   [ "$state" = running ] && echo "-- Restart | bash=$SVC param1=restart param2=$name terminal=false refresh=true"
   if [ -f "$LOGS/$name.log" ]; then

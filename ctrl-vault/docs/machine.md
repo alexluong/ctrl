@@ -53,12 +53,12 @@ Org semantics: alexluong = personal apps (deploy onto collielab); collielab = th
 
 Long-running local processes (keep-awake, backlog boards, SSH tunnels) are started and stopped by `bin/svc`; the menubar bolt icon is a front end to it.
 
-- **Services:** lines of `services.conf` at the ctrl root: `name | dir | url | command`. Add a line, it shows up in `svc ls` and the menubar within 10s. Commands run via `mise exec` in `dir`.
+- **Services:** `services.conf` at the ctrl root: `[group]` per workspace, then `name | dir | url | command` lines; a service is named `<group>-<name>` (`hookdeck-board`). Add a line, it shows up in `svc ls` and the menubar within 10s. Commands run via `mise exec` in `dir`.
 - **CLI:** `svc ls`, `svc start|stop|restart|toggle <name>`, `svc logs <name> [-f]`, `svc open <name>`.
-- **Menubar:** SwiftBar (`brew install --cask swiftbar`), plugin folder = `ctrl/menubar/` (`defaults write com.ameba.SwiftBar PluginDirectory ~/workspaces/ctrl/menubar`). Click a service to toggle; submenu has open/restart/log. Title shows the count running.
+- **Menubar:** SwiftBar (`brew install --cask swiftbar`), plugin folder = `ctrl/menubar/` (`defaults write com.ameba.SwiftBar PluginDirectory ~/workspaces/ctrl/menubar`). Services are listed under their workspace; click one to toggle; submenu has open/restart/log. Title shows the count running.
 - **Logs:** `~/Library/Logs/svc/<name>.log` (SwiftBar keeps no output of what it launches, so `svc` does; trimmed to the last 200KB once past 1MB). Pids: `~/.local/state/svc/`.
 - **Ports:** boards started by `svc` use 6421 (ctrl) to 6425, leaving each workspace's default 6420 free for a manual `backlog browser`.
-- **Not handled:** nothing restarts after a reboot or a crash; a service that dies shows as stopped. `awake` (`caffeinate -di`) does not survive closing the lid.
+- **Not handled:** nothing restarts after a reboot or a crash; a service that dies shows as stopped. `caffeinate` (`caffeinate -d`, Alex's usual flags) does not survive closing the lid.
 - **New machine:** install SwiftBar, set the plugin folder, `ln -s ~/workspaces/ctrl/bin/svc ~/.local/bin/svc`, turn on Launch at Login in SwiftBar's preferences.
 
 ## Disk
