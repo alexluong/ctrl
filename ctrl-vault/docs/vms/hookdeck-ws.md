@@ -123,5 +123,5 @@ git -C repos/<repo>.git push hookdeck-ws:workspaces/hookdeck/repos/<repo>.git "r
 2. The prod-reaching files and logins (the bold rows above) are now on the VM, on Alex's say-so (2026-10-02). Kubeconfigs have no default context by design: pass `--context`.
 3. Saving the VM's identity (GitHub key, optionally the gh and Claude logins) to `ctrl/secrets/hookdeck-ws/` so a rebuilt VM needs no re-registration: offered, not decided.
 4. ~~Template rebuild~~ done 2026-10-04: template 9000 carries the service PATH fix (`collielab` `6b3a54a`).
-4a. No backups yet (TASK-13). Snapshots on g8: `clean-setup` (before any login), `ready` (logged in, secrets copied, core deps installed), `idle-20261004` (after two days of use). Over the keep-2 rule in `maintenance.md`: `clean-setup` and `ready` can go, on Alex's say-so.
+4a. No backups yet (TASK-13). Snapshot on g8: `idle-20261004` (after two days of use). `clean-setup` and `ready` deleted 2026-10-04 (keep-2 rule, `maintenance.md`).
 5. Doppler and Railway logins are machine-wide today. Moving them into the workspace like gcloud: possible for Doppler (`DOPPLER_CONFIG_DIR`), not for Railway (use workspace tokens in `ops/<env>/.env`): `work/task-2/doppler-railway-creds.md`.

@@ -4,6 +4,7 @@ title: 'Backups for g8 guests: where they go, how often, how to restore'
 status: To Do
 assignee: []
 created_date: '2026-10-02 21:56'
+updated_date: '2026-10-03 19:07'
 labels:
   - infra
   - machine
@@ -34,3 +35,13 @@ Done when: a schedule runs without anyone starting it, one restore has been done
 
 First step: run one vzdump of 101 to 'local' to get the real size and duration.
 <!-- SECTION:DESCRIPTION:END -->
+
+## Comments
+
+<!-- COMMENTS:BEGIN -->
+author: @claude
+created: 2026-10-03 19:07
+---
+2026-10-04: include the schedule and retention (Proxmox backup job, e.g. keep 7 daily / 4 weekly, prune automatic). Snapshots stay manual (vms/maintenance.md); a stale-snapshot check (>30 days) fits TASK-7.
+---
+<!-- COMMENTS:END -->
