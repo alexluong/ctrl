@@ -58,3 +58,18 @@ Design: `design.md`. Newest at the bottom. Each change has its undo.
 Not tested: T3 (hookdeck-ws is not on the tailnet yet).
 
    - Undo for change 2: `ssh gw 'tailscale logout; apt purge -y tailscale; rm /etc/apt/sources.list.d/tailscale.list /usr/share/keyrings/tailscale-archive-keyring.gpg'`, then remove `gw` in the admin console. (`iptables` stays unless purged too.)
+
+## 2026-10-04
+
+**Router page read (Alex, screenshots; nothing saved).** Local Network → Routing → IPv4 → Static Routing exists. Egress choices: `LAN`, `omci_ipv4_pppoe_1`, `omci_ipv4_dhcp_3`. Help text: gateway must be reachable through the chosen connection; `0.0.0.0/0.0.0.0` = default route. No static routes saved.
+
+Router's routing table (2026-10-04):
+
+| Network | Mask | Gateway | Interface |
+|---|---|---|---|
+| `0.0.0.0` | `0.0.0.0` | `125.235.249.147` | `omci_ipv4_pppoe_1` (internet) |
+| `30.177.192.0` | `255.255.240.0` | — | `omci_ipv4_dhcp_3` (second Viettel connection, likely their management/IPTV) |
+| `125.235.249.147` | `255.255.255.255` | — | `omci_ipv4_pppoe_1` |
+| `192.168.1.0` | `255.255.255.0` | — | `LAN` |
+
+Nothing in `100.64.0.0/10`: the route does not collide with anything Viettel uses on this router (check 4, evidence for).

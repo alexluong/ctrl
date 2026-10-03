@@ -12,7 +12,7 @@ Scanned from the MBP 2026-10-02 (ping sweep, mDNS, port probes); re-scan before 
 - Mesh nodes: 2 × **ZTE H3601P**, `192.168.1.3` and `192.168.1.5` (admin UI on each).
 - DHCP pool: **`.2–.99`** (end changed from `.254` by Alex 2026-10-02), lease time 1 hour. `.100–.254` is never handed out.
 - Wi-Fi name: "Dunder Mifflin". Router sits in a closed cabinet with the G8.
-- Router menus: Local Network → LAN → DHCP; "DHCP Binding" (reservations) at the bottom; the same page lists handed-out addresses (incl. stale ones). **Never factory-reset**: it wipes the fiber login and internet stays down until Viettel reprovisions (support 18008119).
+- Router menus: Local Network → LAN → DHCP; "DHCP Binding" (reservations) at the bottom; the same page lists handed-out addresses (incl. stale ones). Local Network → Routing → IPv4: Routing Table (read), Static Routing (fields Name, Egress = `LAN` / `omci_ipv4_pppoe_1` / `omci_ipv4_dhcp_3`, Network Address, Subnet Mask, Gateway), Policy Routing. **Never factory-reset**: it wipes the fiber login and internet stays down until Viettel reprovisions (support 18008119).
 - Viettel blocks some sites at DNS level and hijacks port 53; only encrypted DNS gets around it. Direction was hosted encrypted DNS per device, not a home DNS server (power cuts happen overnight).
 - Tailscale (TASK-9, in progress): tailnet `lhtanh98@gmail.com`; Mini `100.91.137.41`, gw `100.126.136.120`, Alex's phone. How it works, explained: `tailscale.md`. Not on the MBP or g8. No port forwards known.
 
