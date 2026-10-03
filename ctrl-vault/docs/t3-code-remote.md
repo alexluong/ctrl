@@ -1,5 +1,7 @@
 # T3 Code against a remote machine
 
+App quirks and filing upstream: `t3-code.md`.
+
 How the T3 Code desktop app on the MBP drives agent sessions on another machine (workspace VMs on g8). Researched 2026-10-02 from the v0.0.44 source and docs plus the local install; set up on `hookdeck` the same day. Scripts: `collielab/hosts/g8/vm-template/provision.sh` (binary), `collielab/hosts/workspace-vm/setup.sh` (service).
 
 ## Facts
