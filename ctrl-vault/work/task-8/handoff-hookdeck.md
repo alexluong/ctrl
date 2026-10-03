@@ -8,8 +8,8 @@ For a hookdeck session **on hookdeck-ws** (the workspace's home machine). ctrl d
 
 ## What changed around you (already done by ctrl, 2026-10-04)
 
-- The machine side moved to collielab: every new workspace VM now gets git identity, its own GitHub SSH key, the global Claude config and plugins, IPv4-first for `*.localhost`, Playwright's browser **system libraries**, and the Docker UIs (Dozzle `:8888`, Isaiah `:8889`). So the workspace does not need to handle any of those.
-- **Docker UIs are environment now** (decided 2026-10-04): hookdeck-ws's running Dozzle/Isaiah are already managed by `collielab/hosts/workspace-vm/docker-ui.sh` (compose at `~/.config/docker-ui/compose.yml`, same project name `docker-ui`, same ports; the gw pages still work). → Remove `tools/docker-ui/` and `bin/docker-ui` from the workspace, and any mention of them (skills, notes, AGENTS.md). Do not run `bin/docker-ui down` (it would stop the live containers).
+- The machine side moved to collielab: every new workspace VM now gets git identity, its own GitHub SSH key, the global Claude config and plugins, IPv4-first for `*.localhost`, Playwright's browser **system libraries**. So the workspace does not need to handle any of those.
+- **Docker UIs stay in the workspace** (Alex, 2026-10-04): keep `tools/docker-ui/` and `bin/docker-ui` as they are (hookdeck-specific for now).
 - `collielab/hosts/hookdeck-ws/setup.sh` (Doppler apt repo, mise pre-install, gopls, golangci-lint, Playwright libs) gets **deleted** once this lands. Its job moves into the workspace.
 - The VM can't open connections to home machines or other tailnet nodes (firewall + Tailscale policy). Nothing in the workspace should rely on `192.168.1.x` or `*.lab.alexluong.com` from the VM.
 
@@ -46,5 +46,4 @@ For a hookdeck session **on hookdeck-ws** (the workspace's home machine). ctrl d
 
 - `mise run doctor` passes on hookdeck-ws and on the MBP; `mise run setup` twice in a row changes nothing.
 - Doppler, gopls, golangci-lint come from mise on both machines (old installs removed).
-- `tools/docker-ui`, `bin/docker-ui` gone; Dozzle/Isaiah still up.
 - Tell Alex (or leave a comment for ctrl TASK-8): ctrl then deletes `collielab/hosts/hookdeck-ws/setup.sh` and proves the whole flow on a throwaway VM (clone, setup, doctor shows only logins left).

@@ -21,7 +21,7 @@ Scripts: `collielab` (`bin/new-vm`, `hosts/g8/`, `hosts/workspace-vm/`, `hosts/<
 
 **Two paths (TASK-8).** A workspace that **sets itself up** (`mise run setup` and `mise run doctor` in its repo, access checklist, `.env.example` files: `../workspace-setup.md` § Self-setup) skips steps 2 and 4: after step 3 it is logins → clone → `mise run setup` → `mise run doctor`, and steps 8–9 shrink to what `doctor` reports missing. A workspace without it yet follows every step below, and the survey (step 2) becomes the first draft of its checklist. hookdeck: being converted (hand-off `../../work/task-8/handoff-hookdeck.md`); enable: next.
 
-The machine side is the same for both: `bin/new-vm` gives the firewall (on before first boot), T3 server, git identity, the VM's GitHub key, the global Claude config and plugins, Docker UIs, and with `--tailscale` the tailnet.
+The machine side is the same for both: `bin/new-vm` gives the firewall (on before first boot), T3 server, git identity, the VM's GitHub key, the global Claude config and plugins (the same small user-level layer as the MBP: preferences and permissions, every plugin installed but disabled; tools and MCP stay per workspace, `../claude-config.md`), and with `--tailscale` the tailnet.
 
 
 Who: **C** = Claude from the ctrl session on the MBP, **A** = Alex.
@@ -54,7 +54,7 @@ Wait a minute before the first lookup of the new name (check with `dig +short <n
 
 Write `collielab/hosts/<name>-ws/setup.sh` from the survey (start from `hosts/hookdeck-ws/setup.sh`): apt repos and CLIs outside mise, pre-install of the tools the workspace `mise.toml` pins, language servers, test browsers' system libraries, an SSH key for GitHub, anything the stacks need from the OS. No logins, no secrets, idempotent. Run it: `ssh <name>-ws 'bash -s' < hosts/<name>-ws/setup.sh`. Add `hosts/<name>-ws/README.md` (three lines, pointing at `vms/<name>-ws.md`).
 
-Done by `bin/new-vm` since TASK-8 (not here): global Claude config from dotfiles, Claude plugins, git identity, the VM's GitHub key, IPv4-first for `*.localhost` and browser system libraries (template), Docker UIs.
+Done by `bin/new-vm` since TASK-8 (not here): global Claude config from dotfiles, Claude plugins, git identity, the VM's GitHub key, IPv4-first for `*.localhost` and browser system libraries (template). Docker UIs are hookdeck's own (`bin/docker-ui` in that workspace).
 
 Also by hand until the workspace does it (`mise run setup` with a pre-pull flag):
 

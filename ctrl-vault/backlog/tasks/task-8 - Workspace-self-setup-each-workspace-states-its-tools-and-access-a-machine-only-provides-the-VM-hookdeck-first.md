@@ -6,7 +6,7 @@ title: >-
 status: In Progress
 assignee: []
 created_date: '2026-10-02 17:06'
-updated_date: '2026-10-03 21:32'
+updated_date: '2026-10-03 21:36'
 labels:
   - workspace
   - machine
@@ -39,5 +39,11 @@ author: @claude
 created: 2026-10-03 21:32
 ---
 2026-10-04 (ctrl): machine side done: template 9000 rebuilt (IPv4-first, browser libs), hosts/workspace-vm/setup.sh does git identity, GitHub key, Claude plugins; bin/new-vm copies the dotfiles Claude config, starts Docker UIs (moved out of the hookdeck repo: hosts/workspace-vm/docker-ui.sh; hookdeck-ws already on it), firewall on before first boot. Proven twice on throwaway VM 148 (--tailscale), cleaned up. Docs: workspace-setup.md § 7a (convention), vms/playbook.md two paths, per-VM doc template. Workspace side handed to the hookdeck lead: work/task-8/handoff-hookdeck.md (Alex pastes its ask into a hookdeck session on hookdeck-ws). Then: delete hosts/hookdeck-ws/setup.sh (#6), throwaway-VM proof of clone/setup/doctor (#8).
+---
+
+author: @claude
+created: 2026-10-03 21:36
+---
+2026-10-04: Docker UIs stay hookdeck-specific (Alex); the common docker-ui.sh was removed from collielab (6968e77) and hookdeck-ws's containers are back under the workspace's tools/docker-ui. Hand-off and docs updated.
 ---
 <!-- COMMENTS:END -->
