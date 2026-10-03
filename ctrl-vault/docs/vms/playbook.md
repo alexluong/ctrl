@@ -52,7 +52,7 @@ Wait a minute before the first lookup of the new name (check with `dig +short <n
 
 ### 4. Workspace-specific setup script (C, 10–20 minutes)
 
-Write `collielab/hosts/<name>-ws/setup.sh` from the survey (start from `hosts/hookdeck-ws/setup.sh`): apt repos and CLIs outside mise, pre-install of the tools the workspace `mise.toml` pins, language servers, test browsers' system libraries, an SSH key for GitHub, anything the stacks need from the OS. No logins, no secrets, idempotent. Run it: `ssh <name>-ws 'bash -s' < hosts/<name>-ws/setup.sh`. Add `hosts/<name>-ws/README.md` (three lines, pointing at `vms/<name>-ws.md`).
+Write `collielab/hosts/<name>-ws/setup.sh` from the survey (the last example is hookdeck's, in collielab git history before 2026-10-04: `git show 4425eff^:hosts/hookdeck-ws/setup.sh`); better: give the workspace self-setup first (`../workspace-setup.md` § 7a): apt repos and CLIs outside mise, pre-install of the tools the workspace `mise.toml` pins, language servers, test browsers' system libraries, an SSH key for GitHub, anything the stacks need from the OS. No logins, no secrets, idempotent. Run it: `ssh <name>-ws 'bash -s' < hosts/<name>-ws/setup.sh`. Add `hosts/<name>-ws/README.md` (three lines, pointing at `vms/<name>-ws.md`).
 
 Done by `bin/new-vm` since TASK-8 (not here): global Claude config from dotfiles, Claude plugins, git identity, the VM's GitHub key, IPv4-first for `*.localhost` and browser system libraries (template). Docker UIs are hookdeck's own (`bin/docker-ui` in that workspace).
 

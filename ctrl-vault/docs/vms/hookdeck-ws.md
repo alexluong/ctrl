@@ -2,21 +2,11 @@
 
 Named `hookdeck-ws` (renamed from `hookdeck` 2026-10-02). Hookdeck work (core, outpost, the Ampersand customer repos) for agent sessions started from T3 on the MBP. VM 101 on g8, home address `192.168.1.101`, tailnet `100.113.20.22` (`tag:vm`, since 2026-10-04); `hookdeck-ws.lab.alexluong.com` = the tailnet address, so `ssh hookdeck-ws` (user `alex`) and the T3 environment work at home (router → gw, no app) and away (Tailscale app on). See § Network. 8 vCPU, 32GB RAM, 250GB disk. Built 2026-10-02.
 Workspace: `alexluong/hookdeck-workspace`, branch `workspace`, at `~/workspaces/hookdeck` (the path is hardcoded in its `.claude/settings.json`).
-Scripts: `collielab/hosts/hookdeck-ws/setup.sh`. Full survey behind this doc: `work/task-2/hookdeck-vm-requirements.md`. Build decisions: `work/task-2/hookdeck-vm.md`.
+Setup: the workspace sets itself up since 2026-10-04 (TASK-8, hookdeck `task-105`): `mise install && mise run setup && mise run doctor`; its access checklist is `access.md` in the workspace. collielab holds nothing hookdeck-specific (`hosts/hookdeck-ws/setup.sh` deleted). Full survey behind this doc: `work/task-2/hookdeck-vm-requirements.md`. Build decisions: `work/task-2/hookdeck-vm.md`.
 
 ## Tools beyond the base
 
-**Moving into the workspace (TASK-8):** once the hookdeck lead lands `handoff-hookdeck.md` (`../../work/task-8/`), tools come from the workspace `mise.toml` + `mise run setup` and this table goes; `collielab/hosts/hookdeck-ws/setup.sh` is retired.
-
-| What | Why | Installed by |
-|---|---|---|
-| node 22.22.0, go 1.26.1, jq, gh, gcloud 572, kubectl 1.37.1, terraform 1.15.2, awscli 2.34.61, railway 5.62.1, backlog.md 1.53.0 | pinned in the workspace `mise.toml` | `setup.sh` pre-installs; `mise install` in the workspace is the source of truth |
-| Doppler CLI | core `pnpm start` refuses to run without it | `setup.sh` |
-| gopls, golangci-lint | Claude's gopls plugin, linting | `setup.sh` (`go install`) |
-| Playwright Chromium system libraries | QA skill, website tests | `setup.sh` |
-| IPv4 first for `*.localhost` | core's Caddy listens on 127.0.0.1:80 only | `setup.sh` (`/etc/gai.conf`) |
-| 26 public Docker images of the core and outpost stacks | first stack boot without a long pull | `~/prepull-images.sh` on the VM |
-| `gke-gcloud-auth-plugin` | kubectl against GKE | by hand 2026-10-02: `gcloud components install gke-gcloud-auth-plugin` in the workspace (redo after a gcloud version bump) |
+In the workspace: its `mise.toml` (incl. doppler, gopls, golangci-lint, pnpm since 2026-10-04) and `mise run setup` (gcloud plugin, Playwright browser, worktrees, deps). The VM's base gives IPv4-first for `*.localhost` and the browser system libraries; psql/redis-cli are OS packages in the base. Old apt Doppler removed 2026-10-04 (`doppler` now from mise; login kept). `mise run doctor` passed on the VM 2026-10-04.
 
 Not installed (used by a few skills; add when needed): `hookdeck` CLI, clickhouse client, ffmpeg, cloudflared, k6, goreleaser, speakeasy.
 
@@ -67,12 +57,13 @@ State: all 13 paths copied 2026-10-02 (rsync from the MBP, no Mac-only paths ins
 
 ## First run (from a fresh VM)
 
-1. `bin/new-vm 101 hookdeck-ws 8 32768 250` and `hosts/hookdeck-ws/setup.sh` (collielab).
-2. On the VM: `claude`, `gh auth login`.
-3. `git clone -b workspace git@github.com:alexluong/hookdeck-workspace.git ~/workspaces/hookdeck && cd ~/workspaces/hookdeck && mise trust && mise install && mise trust ops/*/mise.toml && bin/wt init` (done 2026-10-02: 8 repos, `repos/` 1.2GB).
-4. Secret files (above), then the logins in the table.
+1. `bin/new-vm 101 hookdeck-ws 8 32768 250 --tailscale` (collielab): firewall, tailnet, T3, git identity, GitHub key, Claude config.
+2. On the VM: `claude`, `gh auth login` (upload the VM's key).
+3. `git clone -b workspace git@github.com:alexluong/hookdeck-workspace.git ~/workspaces/hookdeck && cd ~/workspaces/hookdeck && mise trust && mise install && mise run setup && mise run doctor`.
+4. Do what `doctor` lists: logins (the workspace's `access.md` says how on a machine without a browser), config files (copy from the MBP, § Secret files).
 5. T3 app on the MBP: Settings → Connections → Add environment → SSH → `hookdeck-ws`; Providers → enable Claude; add project `~/workspaces/hookdeck`.
-6. Core, first time: in `wt/core/main`: `corepack enable && pnpm install` (done 2026-10-02: 1.5 minutes, native modules built, 2.2GB).
+
+As built on 2026-10-02 (before self-setup): `../../work/task-2/log.md`.
 
 ## Running the stack
 
