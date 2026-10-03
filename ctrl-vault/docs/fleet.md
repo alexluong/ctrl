@@ -106,6 +106,6 @@ Common jobs: add a URL → `collielab/hosts/gw/README.md`. New VM → `collielab
 4. **hookdeck-ws routes** on the gateway (`*.hookdeck-ws.lab` has DNS but no site block; its T3 server listens on `127.0.0.1` only).
 5. **vultr:** deploy its Caddyfile from git (needs one sudo step from Alex); move `services/` under `hosts/vultr/`.
 6. **A general `fleet` script** (diff/push/run per machine). Not written; the gateway has its own `push.sh`. Write it when a second machine needs pushing.
-7. **Tailscale** (TASK-9): built and working (`tailscale.md`). Left: tags on gw and the Mini, the `vm-join` key, hookdeck-ws joining, hardening list in `../work/task-9/design.md`.
+7. **Tailscale** (TASK-9): built and working (`tailscale.md`). Alex: keep Vaultwarden copies of the Tailscale `terraform` OAuth client (in `collielab/terraform/.env`); vm-join and the gw token are regenerable from `terraform output`. g8's first full reboot: TASK-14 checklist. MBP setup outside git (ssh `Include` line, `.env`, `ctrl/secrets`, PIA exception): deferred TASK-15.
 8. g8: BIOS update and kernel retest (TASK-4, Alex at the box; add-on: memory reporting for VM 101); small UPS.
 9. **Monitoring:** none beyond the Proxmox UI (no temperatures, no alerts). **TASK-7**: a `mon` VM with Grafana; Alex wants metrics synced to R2 (Thanos or VictoriaMetrics, undecided).

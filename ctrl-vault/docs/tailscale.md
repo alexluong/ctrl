@@ -131,7 +131,7 @@ Check: `https://lab.alexluong.com` and `https://jellyfin.lab.alexluong.com` open
 
 ### B. A new Mac that *manages* the lab (replacing or joining the MBP as control point)
 
-Everything the MBP holds that is not in git:
+Everything the MBP holds that is not in git (a script that checks this list: deferred, TASK-15):
 
 1. Mac basics: `~/git/hub/alexluong/dotfiles` (`machine.md`).
 2. Clones: `alexluong/ctrl` → `~/workspaces/ctrl`, `alexluong/collielab` → `~/git/hub/alexluong/collielab`.
