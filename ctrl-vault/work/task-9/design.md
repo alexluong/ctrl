@@ -52,7 +52,10 @@ From a discussion with Alex. **Nothing is built or installed.** The direction be
 
 - **Check 1: passed.** `pct set 110 --dev0 /dev/net/tun` gave the running container the device with no restart. Tailscale 1.102.4 runs in `gw` with the normal kernel interface; `gw` = `100.126.136.120`. Userspace mode would not have worked for this design (no interface to forward into).
 - **Check 2: passed for ssh and web, target = the Mini** (already on the tailnet, so no test VM was needed). MBP without Tailscale + `route add -net 100.64.0.0/10 192.168.1.110`: ping, `ssh` to the Mini's `100.x` (pinned host key accepted; the Mini sees the connection as coming from `gw`'s `100.x`), Jellyfin on the Mini's `100.x`, and `https://lab.alexluong.com` / `https://jellyfin.lab…` on `gw`'s `100.x` with a valid certificate. On `gw` it took `net.ipv4.ip_forward=1` plus one masquerade rule of our own (`ip saddr 192.168.1.0/24 oifname tailscale0 masquerade`); Tailscale's own rules already accept the forwarded packets. Both are runtime only so far.
-- **Not yet:** T3 (needs Tailscale on `hookdeck-ws`), checks 3–5, making the `gw` settings permanent, key expiry off on servers.
+- **Check 3: passed (2026-10-04).** The ZTE has Local Network → Routing → Static Routing with egress `LAN`; entry `100.64.0.0` / `255.192.0.0` → `192.168.1.110`. From g8 and the MBP (no Tailscale): router → gw → Mini; ping, ssh, Jellyfin, lab page; 100MB over ssh ~200 Mbit/s. The one-sided path (reply skips the router) is not a problem on this router; no packet-size problem seen.
+- **Check 4: the full `/10` is fine on this router** (its routing table has nothing in `100.64.0.0/10`). Narrower block not needed for now.
+- **New: devices with a full VPN** send `100.x` into the VPN. The MBP's PIA got a split-tunnel exception for `100.64.0.0/10`. Every such device needs one (or the Tailscale app).
+- **Not yet:** T3 (needs Tailscale on `hookdeck-ws`), check 5 (phone), making the `gw` settings permanent, key expiry off on servers.
 
 ## Weak points
 

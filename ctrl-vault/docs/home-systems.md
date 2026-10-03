@@ -12,7 +12,11 @@ Scanned from the MBP 2026-10-02 (ping sweep, mDNS, port probes); re-scan before 
 - Mesh nodes: 2 × **ZTE H3601P**, `192.168.1.3` and `192.168.1.5` (admin UI on each).
 - DHCP pool: **`.2–.99`** (end changed from `.254` by Alex 2026-10-02), lease time 1 hour. `.100–.254` is never handed out.
 - Wi-Fi name: "Dunder Mifflin". Router sits in a closed cabinet with the G8.
-- Router menus: Local Network → LAN → DHCP; "DHCP Binding" (reservations) at the bottom; the same page lists handed-out addresses (incl. stale ones). Local Network → Routing → IPv4: Routing Table (read), Static Routing (fields Name, Egress = `LAN` / `omci_ipv4_pppoe_1` / `omci_ipv4_dhcp_3`, Network Address, Subnet Mask, Gateway), Policy Routing. **Never factory-reset**: it wipes the fiber login and internet stays down until Viettel reprovisions (support 18008119).
+- Router menus: Local Network → LAN → DHCP; "DHCP Binding" (reservations) at the bottom; the same page lists handed-out addresses (incl. stale ones). Local Network → Routing → IPv4: Routing Table (read), Static Routing (fields Name, Egress = `LAN` / `omci_ipv4_pppoe_1` / `omci_ipv4_dhcp_3`, Network Address, Subnet Mask, Gateway), Policy Routing.
+- **Router config we added (re-add after a reset or a new router):**
+  - DHCP pool end `.99` and the DHCP Bindings (§ Reservations).
+  - **Static route `tailscale`** (2026-10-04, TASK-9): Egress `LAN`, Network `100.64.0.0`, Mask `255.192.0.0`, Gateway `192.168.1.110`. Sends every Tailscale address to gw, so home devices without the app reach the lab's `100.x` addresses. Lost → devices without the Tailscale app lose `100.x` names; check: `ssh g8 traceroute -n -m 4 100.91.137.41` must show `192.168.1.1`, `192.168.1.110`, the Mini. Details and the rest of the chain: `tailscale.md` § Every setting.
+- Router routing table (2026-10-04, before the static route): default → `125.235.249.147` on `omci_ipv4_pppoe_1` (internet); `30.177.192.0/20` on `omci_ipv4_dhcp_3` (second Viettel connection); `192.168.1.0/24` on `LAN`. **Never factory-reset**: it wipes the fiber login and internet stays down until Viettel reprovisions (support 18008119).
 - Viettel blocks some sites at DNS level and hijacks port 53; only encrypted DNS gets around it. Direction was hosted encrypted DNS per device, not a home DNS server (power cuts happen overnight).
 - Tailscale (TASK-9, in progress): tailnet `lhtanh98@gmail.com`; Mini `100.91.137.41`, gw `100.126.136.120`, Alex's phone. How it works, explained: `tailscale.md`. Not on the MBP or g8. No port forwards known.
 

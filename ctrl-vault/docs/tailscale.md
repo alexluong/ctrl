@@ -94,7 +94,7 @@ Normal dev work: no. Only traffic between your device and the VM passes gw; the 
 |---|---|---|
 | ssh, T3, editor over ssh, dev server in the browser | yes | no difference (measured +1–3 ms) |
 | git / npm / Docker / API calls on the VM | no | unchanged |
-| Copying GBs between MBP and VM | yes | might be capped by gw's single core; Wi-Fi may be the limit anyway |
+| Copying GBs between MBP and VM | yes | measured ~200 Mbit/s through gw vs ~230–270 direct (to the Mini on Wi-Fi), gw nearly idle |
 | Jellyfin to a TV or phone without the app | yes | probably fine (4K ≈ 40–80 Mbit/s), not measured |
 
 Things to know:
@@ -120,7 +120,7 @@ Each piece below lives on a different box and can be lost independently. If `100
 | Subnet Mask | `255.192.0.0` (= `/10`, every Tailscale address) |
 | Gateway | `192.168.1.110` (gw) |
 | Undo | trash icon on the entry, Apply |
-| Status | **not added yet** |
+| Status | **added by Alex 2026-10-04, verified** (from g8 and the MBP: router → gw → Mini, ssh, Jellyfin, lab page; 100MB over ssh at ~200 Mbit/s) |
 
 Lost by: a factory reset (never do it, see `home-systems.md`), possibly a Viettel firmware update or a router swap. Symptom: devices *without* the app lose `100.x`; devices with the app are fine. Check from g8 (a home machine with no Tailscale and no VPN): `ssh g8 traceroute -n -m 4 100.91.137.41` must show `192.168.1.1`, then `192.168.1.110`, then the Mini. Hops like `125.235.x` / `10.255.x` = the rule is gone and traffic goes to Viettel.
 
@@ -202,4 +202,5 @@ See `../work/task-9/log.md` for the details and undo of each change.
 
 - 2026-10-03: gw has the tun device and Tailscale (`100.126.136.120`). Forwarding and the masquerade rule are on but **runtime only** (gone if gw restarts).
 - Proven from the MBP with no Tailscale and a hand-added route: ping, ssh, Jellyfin on the Mini's `100.x`; lab pages on gw's `100.x` with a valid certificate.
-- Not yet: Tailscale on hookdeck-ws (T3 test), the router rule, names moved to `100.x`, access rules, making gw's settings permanent, key expiry off, packet-size and speed tests.
+- 2026-10-04: PIA on the MBP lets `100.64.0.0/10` bypass the VPN. Router static route added (`100.64.0.0/255.192.0.0` → `192.168.1.110`, egress LAN). From g8 and the MBP, no Tailscale on either: traceroute router → gw → Mini; ping, ssh, Jellyfin, lab page all work; 100MB over ssh ~200 Mbit/s through gw vs ~230–270 direct (the Mini is on Wi-Fi). The router does not mind the reply skipping it, and large packets get through (no packet-size problem seen).
+- Not yet: Tailscale on hookdeck-ws (T3 test), phone test, names moved to `100.x`, access rules, making gw's settings permanent, key expiry off.

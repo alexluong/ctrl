@@ -85,3 +85,16 @@ Nothing in `100.64.0.0/10`: the route does not collide with anything Viettel use
    - Router rule still not added (g8's traceroute still goes to Viettel).
 
 Every setting this depends on, in one place: `docs/tailscale.md` § Every setting this depends on.
+
+6. **Router: static route `tailscale`** (Alex added it in the router UI).
+   - Local Network → Routing → IPv4 → Static Routing: Name `tailscale`, Egress `LAN`, Network `100.64.0.0`, Mask `255.192.0.0`, Gateway `192.168.1.110`.
+   - Undo: trash icon on the entry, Apply.
+
+**Proof through the router (all passed):**
+
+| From | Path (traceroute) | ping | ssh | Jellyfin `100.x` | lab page on gw `100.x` |
+|---|---|---|---|---|---|
+| g8 (no Tailscale, no VPN) | `192.168.1.1` → `192.168.1.110` → Mini | 0% loss, ~4 ms | port open | 200 | 200 |
+| MBP (no Tailscale, PIA on with the exception) | same | 0% loss, ~6 ms | logged in, seen as gw | 200 | 200 |
+
+100MB over ssh from the Mini to the MBP, twice: through router + gw ~200 Mbit/s; direct (`192.168.1.90`) 226 / 272 Mbit/s. gw load ~0.1. Large packets fine.
