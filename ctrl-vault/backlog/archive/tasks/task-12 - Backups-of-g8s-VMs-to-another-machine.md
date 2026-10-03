@@ -4,6 +4,7 @@ title: Backups of g8's VMs to another machine
 status: To Do
 assignee: []
 created_date: '2026-10-02 18:41'
+updated_date: '2026-10-03 20:32'
 labels:
   - infra
   - machine
@@ -24,3 +25,13 @@ Nothing is backed up. Snapshots (clean-setup, ready) sit on the same disk as the
 - [ ] #3 Restore tested once to a throwaway VM ID
 - [ ] #4 Docs: fleet.md, vms/playbook.md
 <!-- AC:END -->
+
+## Comments
+
+<!-- COMMENTS:BEGIN -->
+author: @claude
+created: 2026-10-03 20:32
+---
+Duplicate of TASK-13, merged there 2026-10-04 (criteria moved).
+---
+<!-- COMMENTS:END -->

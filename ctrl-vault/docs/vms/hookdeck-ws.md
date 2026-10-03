@@ -1,6 +1,6 @@
 # hookdeck-ws VM
 
-Named `hookdeck-ws` (renamed from `hookdeck` 2026-10-02). Hookdeck work (core, outpost, the Ampersand customer repos) for agent sessions started from T3 on the MBP. VM 101 on g8, `hookdeck-ws.lab.alexluong.com` = `192.168.1.101`, `ssh hookdeck-ws` (user `alex`). 8 vCPU, 32GB RAM, 250GB disk. Built 2026-10-02.
+Named `hookdeck-ws` (renamed from `hookdeck` 2026-10-02). Hookdeck work (core, outpost, the Ampersand customer repos) for agent sessions started from T3 on the MBP. VM 101 on g8, home address `192.168.1.101`, tailnet `100.113.20.22` (`tag:vm`, since 2026-10-04); `hookdeck-ws.lab.alexluong.com` = the tailnet address, so `ssh hookdeck-ws` (user `alex`) and the T3 environment work at home (router → gw, no app) and away (Tailscale app on). See § Network. 8 vCPU, 32GB RAM, 250GB disk. Built 2026-10-02.
 Workspace: `alexluong/hookdeck-workspace`, branch `workspace`, at `~/workspaces/hookdeck` (the path is hardcoded in its `.claude/settings.json`).
 Scripts: `collielab/hosts/hookdeck-ws/setup.sh`. Full survey behind this doc: `work/task-2/hookdeck-vm-requirements.md`. Build decisions: `work/task-2/hookdeck-vm.md`.
 
@@ -77,7 +77,14 @@ State: all 13 paths copied 2026-10-02 (rsync from the MBP, no Mac-only paths ins
 - Core: `HTTP_INGESTION_PATH=<wt/http-ingestion/…> pnpm start -n hookdeck-local` in a core worktree (skill `core-local-dev`). Outpost: `make up` / `make up/test`.
 - One core and one outpost stack at a time (fixed compose project names and ports).
 - Core URLs are `http://<ns>.localhost` on the VM's own port 80. From the MBP's browser: `ssh -L 80:127.0.0.1:80 hookdeck-ws` while no stack runs on the MBP; later the gateway (TASK-3) or `pnpm start --tailscale`.
-- Outpost and the PM2 services listen on all addresses, so they are reachable from the home network at `hookdeck-ws.lab.alexluong.com:<port>`.
+- Outpost and the PM2 services listen on all addresses, so they are reachable at `hookdeck-ws.lab.alexluong.com:<port>` (at home, and away with the Tailscale app) and at `192.168.1.101:<port>` at home.
+
+## Network
+
+- On the tailnet since 2026-10-04 (`collielab/bin/vm-tailnet hookdeck-ws`; Tailscale installed in the VM, joined as `tag:vm`, `--accept-dns=false`, no restart). Tested: ssh and T3 (ssh tunnel to `:3773`) from the MBP through router → gw → VM; Dozzle through gw; Docker, container internet and DNS unchanged; the VM cannot open connections to the Mini or gw over the tailnet (it does not even see the Mini).
+- What the VM may do on the tailnet: answer only (`tag:vm`, `collielab/terraform/tailscale.tf`). On the home network it can still reach other machines by `192.168.1.x` (`../../work/task-9/design.md` hardening #8).
+- Undo: `ssh hookdeck-ws sudo tailscale down` (instant), DNS record back to `192.168.1.101`. Firewall rules before the join: `/tmp/iptables-before-tailscale.txt` on the VM (until its next reboot).
+- Explainer: `../tailscale.md`.
 
 ## Services around sessions
 

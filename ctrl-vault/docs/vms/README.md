@@ -5,7 +5,7 @@ Map of machines and addresses: `../home-systems.md`. How the MBP manages machine
 
 | VM | ID / address | Size | Doc | State |
 |---|---|---|---|---|
-| `hookdeck-ws` | 101 / `192.168.1.101` | 8 vCPU, 32GB, 250GB | `hookdeck-ws.md` | built 2026-10-02; in use from T3 on the MBP since that evening |
+| `hookdeck-ws` | 101 / `192.168.1.101`, tailnet `100.113.20.22` | 8 vCPU, 32GB, 250GB | `hookdeck-ws.md` | built 2026-10-02; in use from T3 on the MBP since that evening |
 
 ## Planned (Alex, 2026-10-03)
 

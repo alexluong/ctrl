@@ -124,3 +124,12 @@ Every setting this depends on, in one place: `docs/tailscale.md` § Every settin
 
 11. **Tags, key expiry and vm-join, by Terraform** (the `terraform` OAuth client turned out to have scope `all`). `tailscale_device_tags` gw → `tag:gw`, Mini → `tag:media`; `tailscale_device_key` expiry off for both (tagging alone left `keyExpiryDisabled=false`); `tailscale_oauth_client.vm_join` (scope `auth_keys`, tags `tag:vm`; description must be letters/digits/spaces/hyphens: the first try with `(` `/` failed with a 400). Secret saved to `ctrl/secrets/tailscale/vm-join.key` (600). The Mini is found by its full name `alexs-mac-mini.tail2b958c.ts.net` (its hostname is "alex’s Mac mini"). After: `check.sh` all good, `ssh mini` by name fine, `terraform plan` clean.
    - Undo: remove the resources from `tailscale.tf` and apply (tags come off; expiry back on; the client is deleted).
+
+12. **hookdeck-ws on the tailnet** (Alex: go ahead, nothing running). `collielab/bin/vm-tailnet hookdeck-ws`: Tailscale 1.102.x installed, joined as `tag:vm` = **`100.113.20.22`**, key file removed from `/run`, `--accept-dns=false` (DNS still `192.168.1.1`). Firewall rules 51 → 78 lines (Tailscale's chains next to Docker's); saved before: `/tmp/iptables-before-tailscale.txt` on the VM. Docker containers kept running; container internet tested with a throwaway `alpine` image (removed after). Policy check from the VM: Mini `:22`, `:8096`, gw `:443`, `:22` over the tailnet all blocked; the Mini is not even listed as a peer.
+   - DNS `hookdeck-ws.lab` → `100.113.20.22` (terraform apply). The router kept the old answer for up to 5 minutes (TTL).
+   - From the MBP (no Tailscale): traceroute router → gw → VM; ssh (seen as gw); T3 server through an ssh tunnel 200; `:8888` on the VM's `100.x` 200; `dozzle.hookdeck-ws.lab` 200. From g8: ping, ssh port. gw → VM `tailscale ping` direct.
+   - Undo: `ssh hookdeck-ws sudo tailscale down` (or `tailscale logout; apt purge tailscale`), DNS record back to `192.168.1.101`.
+
+13. **`bin/new-vm` adds the gateway wildcard and gw's backend entry** for a new VM (`terraform/lab_gateway.tf` map, `hosts/gw/machines`). Tested on scratch copies, rerun does not duplicate.
+
+**Board:** TASK-12 merged into TASK-13 (duplicate; criteria moved), TASK-12 archived.

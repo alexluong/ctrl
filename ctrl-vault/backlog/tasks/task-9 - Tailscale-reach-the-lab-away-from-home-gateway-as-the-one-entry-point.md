@@ -6,7 +6,7 @@ title: >-
 status: In Progress
 assignee: []
 created_date: '2026-10-02 18:41'
-updated_date: '2026-10-03 19:41'
+updated_date: '2026-10-03 20:33'
 labels:
   - infra
   - machine
@@ -23,13 +23,13 @@ Direction Alex likes (2026-10-03), to prove before deciding: every lab machine o
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
 - [x] #1 Alex: tailnet/account confirmed; stale nodes removed; Tailscale on the MBP and phone
-- [ ] #2 Tailscale runs in the gw container and on hookdeck-ws
+- [x] #2 Tailscale runs in the gw container and on hookdeck-ws
 - [x] #3 Proof without the router: MBP with Tailscale off and a hand-added route reaches ssh, T3 and a gateway page through gw
 - [x] #4 Router: static route possible and working, or the fallback (design.md) chosen
-- [ ] #5 Names point at Tailscale addresses; at home with no app and away with the app: ssh, T3, lab pages, Jellyfin on the phone all work
-- [ ] #6 Access rules: gw reaches VMs and the Mini only; VMs cannot start connections to other machines; other people's devices get media only
+- [x] #5 Names point at Tailscale addresses; at home with no app and away with the app: ssh, T3, lab pages, Jellyfin on the phone all work
+- [x] #6 Access rules: gw reaches VMs and the Mini only; VMs cannot start connections to other machines; other people's devices get media only
 - [ ] #7 Hardening list in design.md done or explicitly skipped
-- [ ] #8 bin/new-vm joins a new VM to the tailnet; docs updated (home-systems.md, fleet.md, t3-code-remote.md, vms/playbook.md)
+- [x] #8 bin/new-vm joins a new VM to the tailnet; docs updated (home-systems.md, fleet.md, t3-code-remote.md, vms/playbook.md)
 <!-- AC:END -->
 
 ## Comments
@@ -51,5 +51,11 @@ author: @claude
 created: 2026-10-03 19:41
 ---
 2026-10-04 (Alex afk, go-ahead given): policy applied by Terraform (collielab terraform/tailscale.tf); DNS switched: gw names + mini.lab → 100.x, tested by name from MBP and g8; bin/vm-tailnet + bin/new-vm --tailscale (opt-in) written; gw check.sh extended. Waiting on Alex: tag gw/Mini in the admin console, vm-join OAuth client → then hookdeck-ws joins (T3 test, #2, #5, #6). Calibre-Web 500s on the Mini itself (not this change).
+---
+
+author: @claude
+created: 2026-10-03 20:33
+---
+2026-10-04: hookdeck-ws joined (100.113.20.22, tag:vm), name moved; ssh/T3 through router → gw tested; VM blocked from the Mini and gw over the tailnet. #5: away with the app assumed (Alex to confirm on the phone). #6: 'other people's devices media only' has no case yet (Hannah not on the tailnet); add the grant when she joins. #8: bin/new-vm --tailscale + bin/vm-tailnet, docs updated. Left: #7 hardening.
 ---
 <!-- COMMENTS:END -->

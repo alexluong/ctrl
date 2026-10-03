@@ -68,7 +68,7 @@ Ryzen 7 5700G (8c/16t), 64GB DDR4, 1TB NVMe. Proxmox VE 9.2.21 (kernel **pinned 
 | Root password | Vaultwarden, item `g8 root (Proxmox)` (Alex to rename the item and its URL) |
 | BIOS | SVM on; After Power Loss = Power On (Advanced → Boot Options) |
 | Console | none remote; needs monitor (DisplayPort) + USB keyboard at the box |
-| VMs | template 9000 `debian13-base`; **101 `hookdeck-ws`** (`192.168.1.101`, 8 vCPU, 32GB, 250GB). Scripts and runbook: `collielab/hosts/g8/README.md`; new VM = `bin/new-vm <id> <name> …` |
+| VMs | template 9000 `debian13-base`; **101 `hookdeck-ws`** (`192.168.1.101`, tailnet `100.113.20.22`, 8 vCPU, 32GB, 250GB). Scripts and runbook: `collielab/hosts/g8/README.md`; new VM = `bin/new-vm <id> <name> …` |
 
 ### Mac Mini (base M4)
 
@@ -143,7 +143,7 @@ Templates use VM IDs 9000+.
 |---|---|---|
 | `g8.lab.alexluong.com` | `192.168.1.100` | `https://g8.lab.alexluong.com:8006` (Proxmox, self-signed cert warning) |
 | `mini.lab.alexluong.com` | `100.91.137.41` (Tailscale; home address `192.168.1.90`) | `ssh mini`; `:8096` (Jellyfin), `:32400` (Plex), `:8080` (qBittorrent) |
-| `hookdeck-ws.lab.alexluong.com` | `192.168.1.101` (moves to its Tailscale address when it joins) | `ssh hookdeck-ws` |
+| `hookdeck-ws.lab.alexluong.com` | `100.113.20.22` (Tailscale since 2026-10-04; home address `192.168.1.101`) | `ssh hookdeck-ws`, T3 |
 
 One record per machine or VM is added as it is created.
 

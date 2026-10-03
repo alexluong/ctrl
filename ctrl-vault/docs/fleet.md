@@ -21,7 +21,7 @@ Where the details are:
 | `mbp` | control point | `.91` | n/a | n/a | yes (ctrl sessions) |
 | `g8` | HP 805 G8, Proxmox host, 64GB | `.100` | `ssh g8` (root) | is root | no, stays bare |
 | `gw` | home gateway, container 110 on g8 | `.110` | `ssh gw` (root) | is root | no |
-| `hookdeck-ws` | workspace VM 101 on g8 | `.101` | `ssh hookdeck-ws` | yes (passwordless) | yes |
+| `hookdeck-ws` | workspace VM 101 on g8 | `.101`, tailnet `100.113.20.22` | `ssh hookdeck-ws` | yes (passwordless) | yes |
 | `mini` | Mac Mini M4 16GB, media + 2 × 4TB drives | `.90` (Wi-Fi) | `ssh mini` | no (password) | has Claude; see § The Mini |
 | `vultr` | Debian 12 cloud VM, 1GB, public services | `vultr.alexluong.com` | `ssh vultr` | no (password) | no |
 

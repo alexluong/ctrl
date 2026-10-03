@@ -179,7 +179,7 @@ Another VPN app (WARP, Mullvad, a work VPN, …): look for "split tunnel", "excl
 | `alexs-mac-mini` (`tag:media`) | `100.91.137.41` | Tailscale app | off (Terraform) |
 | `gw` (`tag:gw`) | `100.126.136.120` | `tailscale up --accept-dns=false --hostname=gw` | off (Terraform) |
 | `iphone-15-pro` | `100.122.122.29` | app (Alex's login) | normal |
-| `hookdeck-ws` | — | not yet: `collielab/bin/vm-tailnet hookdeck-ws` | (`tag:vm` when it joins) |
+| `hookdeck-ws` (`tag:vm`) | `100.113.20.22` | `collielab/bin/vm-tailnet hookdeck-ws` (2026-10-04) | off (tagged at join) |
 
 **New workspace VM: opt-in.** `bin/new-vm … --tailscale` in collielab (or `bin/vm-tailnet <name>` for an existing VM) installs Tailscale in the VM, joins it as `tag:vm` with the `vm-join` key (`ctrl/secrets/tailscale/vm-join.key`; that OAuth client can only add `tag:vm` machines), and points `<name>.lab.alexluong.com` at its `100.x`. Then `terraform apply` and commit (printed by the script). No restart, the VM keeps its home address. Without the flag the VM is home-only, as before.
 
@@ -209,7 +209,7 @@ A node that is removed and re-added gets a **new** `100.x`: update DNS and anyth
 |---|---|---|
 | `lab`, `gw.lab`, `*.lab`, `*.mini.lab`, `*.g8.lab`, `*.hookdeck-ws.lab`, `*.calibre.lab`, `*.calibre.mini.lab` | gw `100.126.136.120` | `terraform/lab_gateway.tf`, `local.lab_gateway_ip` (one value) |
 | `mini.lab` | Mini `100.91.137.41` | `terraform/alexluong_com.tf` |
-| `hookdeck-ws.lab` | `192.168.1.101` until it joins | same; `bin/vm-tailnet` rewrites it |
+| `hookdeck-ws.lab` | hookdeck-ws `100.113.20.22` | same; written by `bin/vm-tailnet` |
 | `g8.lab` | `192.168.1.100` (g8 not on the tailnet) | same |
 
 Public DNS records, DNS-only. Checked: the home router's DNS passes `100.x` answers through (some routers filter them; this one does not). gw's Caddy still reaches its backends by home address (`/etc/hosts` on gw), so nothing behind the gateway changed.
@@ -256,4 +256,5 @@ See `../work/task-9/log.md` for the details and undo of each change.
 - 2026-10-04: iPhone on home Wi-Fi with the app off opens Jellyfin on the Mini's `100.x`. Away with the app on: assumed to work (plain Tailscale), Alex to confirm.
 - 2026-10-04: access rules applied by Terraform (§ 4b). DNS switched: gw's names and `mini.lab` → `100.x` (§ 5); tested by name from the MBP and g8 (lab pages, Jellyfin, Plex, Audiobookshelf, Proxmox, Dozzle; `ssh gw`, `ssh mini`). `bin/vm-tailnet` and `bin/new-vm --tailscale` written (opt-in join).
 - 2026-10-04: Terraform tagged gw and the Mini, turned their key expiry off, and created the vm-join client; its secret is in `ctrl/secrets/tailscale/vm-join.key`. `check.sh` all good after tagging.
-- Next: `bin/vm-tailnet hookdeck-ws` (Alex's go-ahead; live sessions), T3 test, check it cannot reach the Mini or gw over the tailnet.
+- 2026-10-04: hookdeck-ws joined (`100.113.20.22`, `tag:vm`), name moved. From the MBP with no Tailscale: router → gw → VM, ssh, T3 through the ssh tunnel, its ports; Dozzle through gw. The VM cannot reach the Mini or gw over the tailnet. Docker unaffected.
+- `bin/new-vm` also adds a new VM's `*.<vm>.lab` gateway record and gw's backend entry, so its web pages need only Caddyfile lines.
