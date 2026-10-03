@@ -3,10 +3,10 @@ id: TASK-9
 title: >-
   Tailscale: one address set for the lab, home devices reach it through the
   gateway (explore)
-status: In Progress
+status: Done
 assignee: []
 created_date: '2026-10-02 18:41'
-updated_date: '2026-10-03 20:56'
+updated_date: '2026-10-03 21:06'
 labels:
   - infra
   - machine
@@ -63,5 +63,11 @@ author: @claude
 created: 2026-10-03 20:56
 ---
 2026-10-04: hardening done or explicitly skipped (design.md): HSTS, StrictHostKeyChecking, Proxmox firewall for VMs (v4+v6, Docker incl.) done and restart-tested; gateway logins deferred on purpose; guest Wi-Fi and two-factor skipped for now. Open: a full g8 reboot test (Alex home).
+---
+
+author: @claude
+created: 2026-10-03 21:06
+---
+Closed 2026-10-04. Summary: ctrl-vault/work/task-9/summary.md. Explainer/runbooks: docs/tailscale.md.
 ---
 <!-- COMMENTS:END -->
