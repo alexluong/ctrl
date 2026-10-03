@@ -1,6 +1,6 @@
 # TASK-9 design: Tailscale for the lab (to explore, 2026-10-03)
 
-From a discussion with Alex. **Nothing is built or installed.** The direction below is the one Alex likes ("i like that option"); it is to be proven, not decided. Background: `docs/home-systems.md` (network, names), `docs/fleet.md` (machines, rules), `collielab/hosts/gw/` (the gateway).
+From a discussion with Alex. **Nothing is built or installed.** The direction below is the one Alex likes ("i like that option"); it is to be proven, not decided. Plain explainer of how it works: `docs/tailscale.md`. Background: `docs/home-systems.md` (network, names), `docs/fleet.md` (machines, rules), `collielab/hosts/gw/` (the gateway).
 
 ## What Alex wants
 

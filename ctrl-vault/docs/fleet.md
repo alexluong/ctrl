@@ -97,6 +97,6 @@ Common jobs: add a URL → `collielab/hosts/gw/README.md`. New VM → `collielab
 4. **hookdeck-ws routes** on the gateway (`*.hookdeck-ws.lab` has DNS but no site block; its T3 server listens on `127.0.0.1` only).
 5. **vultr:** deploy its Caddyfile from git (needs one sudo step from Alex); move `services/` under `hosts/vultr/`.
 6. **A general `fleet` script** (diff/push/run per machine). Not written; the gateway has its own `push.sh`. Write it when a second machine needs pushing.
-7. **Tailscale** for access away from home (`*.ts.alexluong.com` names); on the Mini only today.
+7. **Tailscale** (TASK-9): one address set via gw, explained in `tailscale.md`; design `../work/task-9/design.md`. On the Mini and gw so far.
 8. g8: BIOS update and kernel retest (TASK-4, Alex at the box; add-on: memory reporting for VM 101); small UPS.
 9. **Monitoring:** none beyond the Proxmox UI (no temperatures, no alerts). **TASK-7**: a `mon` VM with Grafana; Alex wants metrics synced to R2 (Thanos or VictoriaMetrics, undecided).
