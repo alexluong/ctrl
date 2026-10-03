@@ -114,3 +114,5 @@ Alex's experience: he has to turn it on by hand. What the Mini shows: the root s
 
 - **Local CI** (Alex's idea): GitHub Actions self-hosted runner on the Mini for personal repos. VMs push a branch and the runner picks the job up from GitHub, so no VM holds a key to the Mini (keeps the fleet rule). Linux jobs in a small separate Colima VM (about 4 CPU / 4GB); Xcode jobs need a runner on macOS itself. Private repos only. Not for Hookdeck org repos without the company's say.
 - Jellyfin as a native app (hardware transcoding), re-encode the library to HEVC, Whisper subtitles, Mac-only builds, backup target for g8.
+- GitHub self-hosted runners are free (checked 2026-10-04: the $0.002/min charge announced for March 2026 was postponed and never applied). GitHub's own macOS runners use private-repo minutes 10x faster, so Mac jobs gain the most.
+- More candidates: Time Machine target for the MBP; a logged-in browser for automations (bank and property-manager downloads for bookkeeping); local copy of iCloud Drive/Photos (conflicts with signing the Mini out of iCloud). Local LLMs: not worth it with ~6GB free.
