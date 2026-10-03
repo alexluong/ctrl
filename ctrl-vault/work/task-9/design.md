@@ -78,6 +78,7 @@ Hardening list (none done):
 5. `StrictHostKeyChecking yes` for the fleet hosts in `collielab/ssh/config` (default "ask" today).
 6. Guest Wi-Fi separated, if the router can.
 7. Two-factor on the account that owns the tailnet.
+8. **Home-network side of "a VM reaches nothing".** The Tailscale policy only governs `100.x` traffic. On `192.168.1.x` a VM can still open connections to g8, gw, the Mini and other VMs (anything on the Wi-Fi can). Once names point at `100.x`, normal use goes through the tailnet and gets the policy; a VM that uses home addresses on purpose does not. Closing it: Proxmox firewall on each VM (allow out to the internet and the router, deny the rest of `192.168.1.0/24` except replies). Today the host is protected by the fleet rule that VMs hold no keys to other machines.
 
 ## Fallbacks (same Tailscale installs, so nothing is wasted)
 
