@@ -111,15 +111,14 @@ git -C repos/<repo>.git push hookdeck-ws:workspaces/hookdeck/repos/<repo>.git "r
 
 ## Differences from the MBP
 
-- `.agents/skills/worktree/wt:30` (`OLD=…/git/hub/alexluong/hookdeck`): no env-file source on the VM.
-- `.agents/skills/outpost-dev-image/scripts/sample_pod.sh:4`, `.claude/hooks/test-guards.sh:26,37`: hardcoded `/Users/alexluong/...`.
+- Mac-only paths in the workspace scripts (`wt`, `sample_pod.sh`, `test-guards.sh`): fixed (hookdeck-workspace `ae258a6`, 2026-10-04).
 - Outpost dev containers run as root and write into the worktree: files end up root-owned on Linux (`sudo` to clean; `bin/wt rm` may need it).
 - `open` does nothing; Bruno and Obsidian stay on the MBP.
 - Go: mise pins 1.26.1, outpost and amp-server want 1.27.1 (Go downloads the newer toolchain by itself).
 
 ## Open points
 
-1. **Decided 2026-10-03 (Alex): the VM is where hookdeck sessions run from now on;** the MBP is the client. Reason it matters: with sessions on both machines the workspace repo collided within a day (two `task-86`, one renumbered to `task-89`; the MBP checkout 3 ahead / 11 behind with `MEMORY.md` changed on both sides). The MBP's workspace commits were rebased and pushed by a Mac session (checkout level with the remote, 2026-10-03 00:15). Left to do, from a hookdeck session: carry any task branches that exist only in the MBP's bare clones (method: § Syncing work from the MBP), then stop starting sessions on the MBP; update `hookdeck-vault/notes/machines.md` (it still says "direction, not a rule yet"). The general learning (git-based workspace state assumes one writer) is noted in the Collie Studio workspace, `cs-vault/notes/studio/multi-writer.md`.
+1. **Decided 2026-10-03 (Alex): the VM is where hookdeck sessions run from now on;** the MBP is the client. Reason it matters: with sessions on both machines the workspace repo collided within a day (two `task-86`, one renumbered to `task-89`; the MBP checkout 3 ahead / 11 behind with `MEMORY.md` changed on both sides). The MBP's workspace commits were rebased and pushed by a Mac session (checkout level with the remote, 2026-10-03 00:15). Left to do, from a hookdeck session: carry any task branches that exist only in the MBP's bare clones (method: § Syncing work from the MBP), then stop starting sessions on the MBP (done, per Alex 2026-10-04); `hookdeck-vault/notes/machines.md` updated to the rule (2026-10-04). The general learning (git-based workspace state assumes one writer) is noted in the Collie Studio workspace, `cs-vault/notes/studio/multi-writer.md`.
 2. The prod-reaching files and logins (the bold rows above) are now on the VM, on Alex's say-so (2026-10-02). Kubeconfigs have no default context by design: pass `--context`.
 3. Saving the VM's identity (GitHub key, optionally the gh and Claude logins) to `ctrl/secrets/hookdeck-ws/` so a rebuilt VM needs no re-registration: offered, not decided.
 4. ~~Template rebuild~~ done 2026-10-04: template 9000 carries the service PATH fix (`collielab` `6b3a54a`).
