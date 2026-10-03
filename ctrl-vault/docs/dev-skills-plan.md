@@ -80,3 +80,27 @@ Improve the local dev loop in the working workspaces (cs, enable, hookdeck, sole
 ## Source clones (this MBP only, gitignored)
 
 `~/workspaces/ctrl/local/trials/`: `builderio-skills` (eb07be6), `cursor-plugins/pstack` (c47b128), `mattpocock-skills` (d81f3a1), `visual-explainer`, `tfph` (provider repo at PR 230). Re-clone on another machine; URLs are in `dev-workflow-research.md`. `zero-tech-debt` was read through the GitHub API (jeremylongshore/tons-of-skills-marketplace), not cloned.
+
+## Round 2 findings (2026-10-04)
+
+### Agent-Native, rest of the set (read from clone eb07be6; nothing run)
+
+- **`visual-plan`: skip the tool, keep the writing rules.** Plan = MDX folder (`plan.mdx`, optional `canvas.mdx`/`prototype.mdx`) of blocks (diagram, data-model, api-endpoint, file-tree, checklist, question form at the end). The comment loop (anchored comments, `get-plan-feedback`, patch, resolve) is hosted-only and needs an account. Local-files mode: agent writes MDX, `npx @agent-native/core plan local serve` runs a localhost bridge, and the browser loads the hosted page at plan.agent-native.com, which fetches from the bridge (Chrome; the docs claim pageviews and error monitoring are sanitized). No comments in local mode. Fully offline only with a self-hosted Plan app (BuilderIO/agent-native). The CLI isn't in the clone, so these claims weren't verified. Rules worth taking (`visual-plan/references/document-quality.md`): settle hard-to-reverse decisions first; name what each step reuses; in/out/deferred scope; open questions in one block, each with a recommended default; one end-to-end smoke test in verification; plan self-contained.
+- **Take:** `plow-ahead` (autonomy contract: routine questions become stated assumptions; stop list = secrets, destructive, prod, force-push, reserved decisions, repeated failures; recap Goal / Key decisions / Changes / Validation / Remaining risk) → dev role. `read-the-damn-docs` (triggers that force a docs check; check the registry before adding a dependency) → always-on rule.
+- **Adapt:** `agent-watchdog` → reviewer: form your own hypotheses before reading the dev's conclusions; labels Gap / Bug / Verification miss / Scope drift / No issue; say what was verified correct. `factory-babysit-pr` → evidence counts only for the current head commit; unknown ≠ clean. `factory-recover` → lead: resume only if the worktree is still the task's; never reset or stash. `quick-recap` → final status line (DONE / PENDING / BLOCKED). `plan-arbiter`: rare, optional. `factory-human-digest` → human-decision digest that states its coverage.
+- **Skip:** `stay-within-limits` (ccusage), `efficient-*` (the lead/dev split already does this), `visual-edit`, `rewind`, `webmcp`, `an`, `turn-into-app`, the rest of `factory-*` (hosted or Agent-Native-specific).
+
+### Matt Pocock, "Fixing the PR Bottleneck" (AI Engineer Paris, uploaded 2026-09-26, https://www.youtube.com/watch?v=LlgiOCmFG_w; transcript read)
+
+- Three brakes: checks → agent review → human review. Checks are cheap; add many. Checks can lie (tautological tests, tests that read structure, mocks that can't fail).
+- Coding standards live in a reviewer-only `CODING_STANDARDS.md`, not in AGENTS.md: implement = make it work, review = make it good.
+- **Reviewer commits fixes itself and comments only when unsure** (talk only, not in his skills).
+- PR body: Summary (visual) / Evidence (before/after) / Merge Danger (one-way vs two-way door + blast radius). A one-way door gets a full human review; a two-way door can be skimmed.
+- A human review checks the system that produced the code: never write the same comment twice; every human comment becomes a lint/CI check or a standards line (retro).
+- Doesn't cover: PR size, replying to review comments.
+
+### Ponytail (DietrichGebert/ponytail, MIT, 153k★ per GitHub API on 2026-10-04, v4.10.3)
+
+- An always-on "least code that works" ruleset plus 5 skills. Ladder: need it? → already in the repo? → stdlib → platform feature → already-installed dependency → one line → minimum. Never cut: validation at trust boundaries, data-loss handling, security, a11y, anything explicitly asked for. Non-trivial logic leaves one runnable check.
+- Plugin installs hooks (SessionStart, SubagentStart, UserPromptSubmit; node) and writes `~/.claude` files. Don't install it; copy the ideas.
+- **Take:** `ponytail-review` as a separate reviewer lens (one line per finding, tagged `delete:/stdlib:/native:/reuse:/yagni:/shrink:`, ends `net: -N lines`). Ladder + never-cut list → dev role. Shortcut markers that name their upgrade trigger + a ledger (`ponytail-debt` idea).
