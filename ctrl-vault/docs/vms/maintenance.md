@@ -20,6 +20,10 @@ Rules for snapshots:
 
 The thin pool is overcommitted on paper (VM disk ceilings plus snapshots exceed its 816GB; LVM warns on every snapshot). Real use is what counts: `ssh g8 lvs pve/data` (Data% column; 9.5% on 2026-10-04). Watch it before adding VMs; TASK-7 monitoring should alert on it.
 
+## Keeping VMs in step with the scripts
+
+The template and running VMs drift apart when a script changes. After changing `collielab/hosts/g8/vm-template/provision.sh` or a `hosts/<vm>/setup.sh`, rerun it on each live VM it applies to (both are idempotent): `ssh <vm> 'sudo bash -s' < hosts/g8/vm-template/provision.sh`. The template only matters for the next VM; rebuild it then (`hosts/g8/README.md`).
+
 ## What needs the VM idle
 
 Most work happens with the VM running. Save these for a quiet window (no T3 turns in flight, stacks stopped or disposable):

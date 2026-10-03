@@ -62,3 +62,11 @@ Each domain = a `skills/<domain>/SKILL.md`:
 - How much of `arr` to bring in vs keep as-is on the VM?
 - Hosting: where does OpenClaw run? Mac mini? Always-on server?
 - Data strategy: what lives in SQLite vs flat files vs external (Google Sheets)?
+
+## Lab: parked VM ideas (2026-10-04, no need yet)
+
+Discussed while hookdeck-ws was idle; Alex: no need for these yet. Revisit when a real case shows up.
+
+- **Ansible** instead of `provision.sh` / `hosts/<vm>/setup.sh`: worth it at ~5+ machines or when g8, gw and the VMs keep drifting; until then rerun the idempotent scripts on live VMs (`vms/maintenance.md`). Packer and the Terraform `bpg/proxmox` provider would only replace the thin `qm` wrapper. Also fine as a learning exploration.
+- **Run the setup per VM instead of a pre-built template** (stock Debian + `new-vm` runs `provision.sh` over SSH): no template to rebuild, ~10 min per VM instead of 40s. Fits TASK-8.
+- **Sandbox VMs**, linked clones made and destroyed by a `bin/sandbox` pair. Clean sandbox (from the template, no logins): untrusted code, setup proofs (TASK-8's fresh-VM check), OS experiments. Workspace sandbox (from a workspace VM's snapshot): inject per-sandbox scoped tokens at clone time (`claude setup-token`, fine-grained GitHub token, Doppler service token) rather than baking logins in: copied rotating tokens (Claude) log each other out, and shared keys can't be revoked per copy. g8 room: 1–2 sandboxes of 4–8GB beside the planned VMs.
