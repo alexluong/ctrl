@@ -97,6 +97,14 @@ Normal dev work: no. Only traffic between your device and the VM passes gw; the 
 | Copying GBs between MBP and VM | yes | measured ~200 Mbit/s through gw vs ~230–270 direct (to the Mini on Wi-Fi), gw nearly idle |
 | Jellyfin to a TV or phone without the app | yes | probably fine (4K ≈ 40–80 Mbit/s), not measured |
 
+**If a big transfer ever feels slow** (GBs between the MBP and a VM; not needed so far), three ways around gw, easiest first:
+
+1. **Turn the Tailscale app on** on the MBP: it goes straight to the machine (direct over the home network at home), gw is skipped. Same names, nothing else to change.
+2. **Use the home address directly**, at home only: `scp alex@192.168.1.101:file .` (hookdeck-ws), `192.168.1.90` (Mini). `192.168.1.x` never touches gw or Tailscale. Addresses: `home-systems.md`.
+3. **Give gw more CPU**: `ssh g8 pct set 110 --cores 2` (live, no restart). Only if gw is the measured bottleneck (`ssh gw top` during the copy).
+
+Measured 2026-10-04 for reference: ~200 Mbit/s through gw vs ~230–270 direct, to the Mini on Wi-Fi; gw almost idle, so Wi-Fi is the real limit today.
+
 Things to know:
 
 - **Packet size.** Tailscale's tunnel carries packets up to 1280 bytes, the home network 1500. Normally the sender is told and adjusts. If that fails it looks like: small things work, big pages or downloads hang. Fix: one rule on gw ("MSS clamping"). Not tested yet.
