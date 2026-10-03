@@ -73,3 +73,7 @@ Router's routing table (2026-10-04):
 | `192.168.1.0` | `255.255.255.0` | — | `LAN` |
 
 Nothing in `100.64.0.0/10`: the route does not collide with anything Viettel uses on this router (check 4, evidence for).
+
+**MBP test route removed (Alex).** Then tested before the router rule existed:
+- From the MBP: all `100.x` traffic went into a full-tunnel VPN, not to the router. `utun8` (`10.198.12.38`, routes `0/1` and `128.0/1` → `10.198.0.1`, server `185.150.0.180` via `en0`; Private Internet Access running, Cloudflare WARP also running). The first proof worked only because the hand-added `/10` route was more specific than the VPN's `/1` routes. **Any device with a full VPN on sends `100.x` into the VPN, so the router rule does not help it** (needs the VPN off, a split-tunnel exception for `100.64.0.0/10`, or the Tailscale app).
+- From g8 (home machine, no Tailscale, no VPN), used as the test client from here on: `100.x` → router → Viettel (`125.235.249.147`, `10.255.38.221`) → dropped. As expected with no rule: the router sends unknown addresses to the internet.

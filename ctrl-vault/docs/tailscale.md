@@ -103,6 +103,7 @@ Things to know:
 - **gw is a single door** for devices without the app: g8 or gw off → their `100.x` names stop. Fallback: `mini.lab.alexluong.com` (`192.168.1.90`) and the other `192.168.1.x` addresses.
 - **Everyone at home looks like gw** to the lab machines, so access rules cannot tell your MBP from a guest's phone. Hence: gw may reach only what home devices should reach.
 - **Your Mac with the app on skips gw** entirely, even at home. gw matters for the phone, TV, Kobo and guests.
+- **A device with a full VPN on (the MBP runs Private Internet Access) sends `100.x` into the VPN**, never to the router, so the router rule does not help it. Turn the VPN off, add a split-tunnel exception for `100.64.0.0/10` in the VPN app, or use the Tailscale app. Check with `route -n get 100.91.137.41`: `utun…` with a `10.x` gateway = the VPN.
 
 ## Checking things (commands)
 
