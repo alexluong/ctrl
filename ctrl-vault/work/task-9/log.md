@@ -77,3 +77,11 @@ Nothing in `100.64.0.0/10`: the route does not collide with anything Viettel use
 **MBP test route removed (Alex).** Then tested before the router rule existed:
 - From the MBP: all `100.x` traffic went into a full-tunnel VPN, not to the router. `utun8` (`10.198.12.38`, routes `0/1` and `128.0/1` → `10.198.0.1`, server `185.150.0.180` via `en0`; Private Internet Access; Cloudflare WARP's app is open but disconnected, checked with `warp-cli status`). The first proof worked only because the hand-added `/10` route was more specific than the VPN's `/1` routes. **Any device with a full VPN on sends `100.x` into the VPN, so the router rule does not help it** (needs the VPN off, a split-tunnel exception for `100.64.0.0/10`, or the Tailscale app).
 - From g8 (home machine, no Tailscale, no VPN), used as the test client from here on: `100.x` → router → Viettel (`125.235.249.147`, `10.255.38.221`) → dropped. As expected with no rule: the router sends unknown addresses to the internet.
+
+5. **MBP: PIA split tunnel, `100.64.0.0/10` bypasses the VPN** (Alex's OK).
+   - `"/Applications/Private Internet Access.app/Contents/MacOS/piactl" -u applysettings '{"splitTunnelEnabled":true,"bypassSubnets":[{"mode":"exclude","subnet":"100.64.0.0/10"}]}'` (PIA 3.5.7). Before: `splitTunnelEnabled false`, `bypassSubnets []`, `allowLAN true`, killswitch auto, OpenVPN.
+   - Read back: `splitTunnelEnabled true`, `bypassSubnets [{"mode":"exclude","subnet":"100.64.0.0/10"}]`, still Connected. MBP routing table now has `100.64/10 → 192.168.1.1 en0`: `100.x` goes to the router, not into the VPN.
+   - Undo: `piactl -u applysettings '{"splitTunnelEnabled":false,"bypassSubnets":[]}'`
+   - Router rule still not added (g8's traceroute still goes to Viettel).
+
+Every setting this depends on, in one place: `docs/tailscale.md` § Every setting this depends on.

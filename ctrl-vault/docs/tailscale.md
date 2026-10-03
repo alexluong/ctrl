@@ -105,6 +105,85 @@ Things to know:
 - **Your Mac with the app on skips gw** entirely, even at home. gw matters for the phone, TV, Kobo and guests.
 - **A device with a full VPN on (the MBP runs Private Internet Access) sends `100.x` into the VPN**, never to the router, so the router rule does not help it. Turn the VPN off, add a split-tunnel exception for `100.64.0.0/10` in the VPN app, or use the Tailscale app. Check with `route -n get 100.91.137.41`: `utun…` with a `10.x` gateway = the VPN.
 
+## Every setting this depends on (re-apply after a change)
+
+Each piece below lives on a different box and can be lost independently. If `100.x` names stop working for some devices, walk this list. Status as of 2026-10-04; history in `../work/task-9/log.md`.
+
+### 1. Router: static route (Viettel ZTE F6601P)
+
+| | |
+|---|---|
+| Where | `https://192.168.1.1` (login in Vaultwarden) → Local Network → Routing → IPv4 → Static Routing → Create New Item |
+| Name | `tailscale` |
+| Egress | `LAN` (not `omci_ipv4_pppoe_1` = internet, not `omci_ipv4_dhcp_3` = Viettel's second connection) |
+| Network Address | `100.64.0.0` |
+| Subnet Mask | `255.192.0.0` (= `/10`, every Tailscale address) |
+| Gateway | `192.168.1.110` (gw) |
+| Undo | trash icon on the entry, Apply |
+| Status | **not added yet** |
+
+Lost by: a factory reset (never do it, see `home-systems.md`), possibly a Viettel firmware update or a router swap. Symptom: devices *without* the app lose `100.x`; devices with the app are fine. Check from g8 (a home machine with no Tailscale and no VPN): `ssh g8 traceroute -n -m 4 100.91.137.41` must show `192.168.1.1`, then `192.168.1.110`, then the Mini. Hops like `125.235.x` / `10.255.x` = the rule is gone and traffic goes to Viettel.
+
+New router (any brand): the same four values. Look for "Static route(s)", interface/egress = LAN. If it has no such page: fallbacks in `../work/task-9/design.md`.
+
+### 2. gw: forwarding and masquerade
+
+| | |
+|---|---|
+| Forwarding | `net.ipv4.ip_forward=1` |
+| Masquerade | nftables table `ip task9`, chain `post` (nat, postrouting), rule `ip saddr 192.168.1.0/24 oifname "tailscale0" masquerade` |
+| Status | **runtime only: lost when gw or g8 restarts.** To be made permanent (a file in `collielab/hosts/gw/`) |
+| Re-apply by hand | `ssh gw 'sysctl -w net.ipv4.ip_forward=1; nft add table ip task9; nft "add chain ip task9 post { type nat hook postrouting priority 100; }"; nft add rule ip task9 post ip saddr 192.168.1.0/24 oifname tailscale0 counter masquerade'` |
+| Check | `ssh gw 'sysctl -n net.ipv4.ip_forward; nft list table ip task9'` |
+
+Also on gw: the tun device (`dev0: /dev/net/tun` in container 110's config on g8; in `collielab/hosts/gw/create.sh`) and Tailscale itself (`tailscale up --accept-dns=false --hostname=gw`). A rebuild of gw needs both again plus the two settings above. If the home range ever changes from `192.168.1.0/24`, change it in the masquerade rule too.
+
+### 3. Each device with a full VPN: exception for `100.64.0.0/10`
+
+A VPN that takes all traffic also takes `100.x`, so the router rule never sees it. Each such device needs `100.64.0.0/10` excluded from the VPN.
+
+**MBP, Private Internet Access** (done 2026-10-04, PIA 3.5.7):
+
+| | |
+|---|---|
+| In the app | Settings → Split Tunnel: on; Add IP Address `100.64.0.0/10` → Bypass VPN |
+| By command | `"/Applications/Private Internet Access.app/Contents/MacOS/piactl" -u applysettings '{"splitTunnelEnabled":true,"bypassSubnets":[{"mode":"exclude","subnet":"100.64.0.0/10"}]}'` |
+| Read settings | `piactl -u dump daemon-settings` (fields `splitTunnelEnabled`, `bypassSubnets`, `allowLAN`) |
+| Undo | `piactl -u applysettings '{"splitTunnelEnabled":false,"bypassSubnets":[]}'` |
+| Check | `route -n get 100.91.137.41` → `interface: en0`, `gateway: 192.168.1.1` (router). `utun…` = still in the VPN |
+
+`piactl` lives at `/Applications/Private Internet Access.app/Contents/MacOS/piactl`. Its normal `set` command does not cover split tunnel; `-u` (unstable) does, and PIA may change it between versions. If a PIA update or reset drops it, use the app's page.
+
+`allowLAN` (on) is what keeps `192.168.1.x` outside PIA; it does not cover `100.x`.
+
+Another VPN app (WARP, Mullvad, a work VPN, …): look for "split tunnel", "excluded routes" or "bypass" and add `100.64.0.0/10`. Cloudflare WARP on the MBP is installed but disconnected (2026-10-04); if it is turned on it needs the same exception (WARP: Settings → Split Tunnels, exclude mode). A phone with a VPN app: same idea, or just use the Tailscale app.
+
+### 4. Tailscale on each lab machine
+
+| Node | Address | Joined with | Key expiry |
+|---|---|---|---|
+| `alexs-mac-mini` | `100.91.137.41` | Tailscale app | default (to turn off) |
+| `gw` | `100.126.136.120` | `tailscale up --accept-dns=false --hostname=gw` | default (to turn off) |
+| `hookdeck-ws` | — | not yet | |
+
+A node that is removed and re-added gets a **new** `100.x`: update DNS and anything that has the address typed in.
+
+### 5. DNS (not done yet)
+
+Names will point at `100.x` (collielab `terraform/`). Until then they still give `192.168.1.x`, and everything works as before.
+
+### When something changes: checklist
+
+| Change | Do |
+|---|---|
+| New or reset router | re-add § 1; test from g8 |
+| gw or g8 restarted | § 2 (until it is permanent) |
+| gw rebuilt | § 2 plus tun device and Tailscale join; check its `100.x` is the same, else update DNS |
+| New VPN app on a device, or PIA reinstalled/reset | § 3 on that device |
+| New lab machine or VM | join Tailscale; DNS record → its `100.x` |
+| Home range changes | masquerade rule in § 2, router gateway address in § 1 |
+| A device can't reach `100.x` at home | `route -n get <100.x>` on it (Mac): `utun…` = VPN (§ 3), `192.168.1.1` = router → then test from g8 (§ 1, § 2) |
+
 ## Checking things (commands)
 
 | Question | Command |
