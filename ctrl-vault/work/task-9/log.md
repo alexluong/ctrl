@@ -100,3 +100,9 @@ Every setting this depends on, in one place: `docs/tailscale.md` § Every settin
 100MB over ssh from the Mini to the MBP, twice: through router + gw ~200 Mbit/s; direct (`192.168.1.90`) 226 / 272 Mbit/s. gw load ~0.1. Large packets fine.
 
 **Phone test (Alex), check 5 part 1:** iPhone on home Wi-Fi, Tailscale app off: `http://100.91.137.41:8096` (Jellyfin on the Mini's Tailscale address) works. Still to try: away on cellular with the app on.
+
+7. **gw: Tailscale side made permanent** (Alex's OK): `ssh gw 'bash -s' < collielab/hosts/gw/tailnet.sh`.
+   - Writes `/etc/sysctl.d/90-gw-tailnet.conf` (forwarding), `/etc/gw-tailnet.nft` (table `ip gw_tailnet`, same masquerade rule) and `gw-tailnet.service` (loads it at boot); deletes the hand-made `task9` table; **disables** Debian's `nftables` service (its start and stop both flush every rule, Tailscale's included; it only loaded an allow-all file). Disabled, not stopped: stopping would have run the flush right away (caught in review before running).
+   - Restart test: `pct reboot 110`; back in seconds with tun, forwarding, `gw_tailnet`, Tailscale (same `100.126.136.120`), Caddy; g8 and MBP paths work.
+   - New `collielab/hosts/gw/check.sh` (read-only health check of the whole chain): all good. `hosts/gw/README.md` rewritten to cover both jobs, rebuild order and traps.
+   - Undo: `ssh gw 'systemctl disable --now gw-tailnet; rm /etc/systemd/system/gw-tailnet.service /etc/gw-tailnet.nft /etc/sysctl.d/90-gw-tailnet.conf; sysctl -w net.ipv4.ip_forward=0; systemctl enable nftables'`

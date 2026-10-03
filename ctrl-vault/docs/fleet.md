@@ -63,7 +63,7 @@ Where the details are:
 | SSH config in git | done; `g8`, `gw`, `mini`, `vultr`, `hookdeck-ws` all connect using only the repo's host keys |
 | DNS | `terraform/alexluong_com.tf` (machines), `terraform/lab_gateway.tf` (wildcards → `gw`, the token) |
 | g8 | Proxmox 9.2.21, kernel pinned to 6.14.11; template VM 9000; `bin/new-vm` |
-| Gateway | container 110, Caddy + Cloudflare DNS module, Let's Encrypt wildcards; `hosts/gw/push.sh` validates then reloads; backend addresses in its `/etc/hosts` (`hosts/gw/machines`) so requests never wait on DNS |
+| Gateway | container 110, Caddy + Cloudflare DNS module, Let's Encrypt wildcards; `hosts/gw/push.sh` validates then reloads; backend addresses in its `/etc/hosts` (`hosts/gw/machines`) so requests never wait on DNS; also the door into the tailnet for home devices (`hosts/gw/tailnet.sh`, TASK-9); health check `hosts/gw/check.sh` |
 | Index page | `https://lab.alexluong.com` = `hosts/gw/site/index.html` (a new service needs a route **and** a card) |
 | Mini | SSH keys only; full disk access for SSH on (drives readable over SSH, verified); media stack unchanged |
 | vultr | DNS-only name for SSH; fleet key installed; `hosts/vultr/Caddyfile` is a **copy**, not deployed from git |

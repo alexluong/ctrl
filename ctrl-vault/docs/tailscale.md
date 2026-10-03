@@ -134,17 +134,21 @@ Lost by: a factory reset (never do it, see `home-systems.md`), possibly a Viette
 
 New router (any brand): the same four values. Look for "Static route(s)", interface/egress = LAN. If it has no such page: fallbacks in `../work/task-9/design.md`.
 
-### 2. gw: forwarding and masquerade
+### 2. gw: Tailscale, forwarding and masquerade
+
+**Permanent and automated since 2026-10-04**: `collielab/hosts/gw/tailnet.sh` (safe to re-run) sets it all up; it survives restarts (tested). gw's full map, rebuild steps and traps: `collielab/hosts/gw/README.md`. **Health check for the whole chain** (container, Tailscale, forwarding, masquerade, Caddy, router route, MBP route): `collielab/hosts/gw/check.sh` from the MBP, changes nothing.
 
 | | |
 |---|---|
-| Forwarding | `net.ipv4.ip_forward=1` |
-| Masquerade | nftables table `ip task9`, chain `post` (nat, postrouting), rule `ip saddr 192.168.1.0/24 oifname "tailscale0" masquerade` |
-| Status | **runtime only: lost when gw or g8 restarts.** To be made permanent (a file in `collielab/hosts/gw/`) |
-| Re-apply by hand | `ssh gw 'sysctl -w net.ipv4.ip_forward=1; nft add table ip task9; nft "add chain ip task9 post { type nat hook postrouting priority 100; }"; nft add rule ip task9 post ip saddr 192.168.1.0/24 oifname tailscale0 counter masquerade'` |
-| Check | `ssh gw 'sysctl -n net.ipv4.ip_forward; nft list table ip task9'` |
+| tun device | `dev0: /dev/net/tun` in container 110's config on g8 (`create.sh`) |
+| Tailscale | joined as `gw`, `100.126.136.120`, `--accept-dns=false` |
+| Forwarding | `/etc/sysctl.d/90-gw-tailnet.conf`: `net.ipv4.ip_forward = 1` |
+| Masquerade | `/etc/gw-tailnet.nft`, table `ip gw_tailnet`: `ip saddr 192.168.1.0/24 oifname "tailscale0" masquerade`; loaded at boot by `gw-tailnet.service` |
+| Debian's `nftables` service | disabled on purpose |
 
-Also on gw: the tun device (`dev0: /dev/net/tun` in container 110's config on g8; in `collielab/hosts/gw/create.sh`) and Tailscale itself (`tailscale up --accept-dns=false --hostname=gw`). A rebuild of gw needs both again plus the two settings above. If the home range ever changes from `192.168.1.0/24`, change it in the masquerade rule too.
+**Firewall rules on gw, and the one trap.** gw's firewall (nftables) holds Tailscale's own rules (`ts-input`, `ts-forward`, `ts-postrouting`: accept tailnet traffic, drop packets faking a `100.x` sender from the home network) and our masquerade, each in their own place. Debian's `nftables` service starts and stops with "flush ruleset", which erases all of them; it only ever loaded an allow-everything file, so it is disabled. Never re-enable or restart it. If rules get wiped anyway: `ssh gw systemctl restart tailscaled gw-tailnet`.
+
+If the home range changes from `192.168.1.0/24`: re-run `tailnet.sh` with `HOME_NET=<range>`, and fix the router route (§ 1).
 
 ### 3. Each device with a full VPN: exception for `100.64.0.0/10`
 
@@ -185,8 +189,8 @@ Names will point at `100.x` (collielab `terraform/`). Until then they still give
 | Change | Do |
 |---|---|
 | New or reset router | re-add § 1; test from g8 |
-| gw or g8 restarted | § 2 (until it is permanent) |
-| gw rebuilt | § 2 plus tun device and Tailscale join; check its `100.x` is the same, else update DNS |
+| gw or g8 restarted | nothing; comes back by itself. Confirm with `collielab/hosts/gw/check.sh` |
+| gw rebuilt | rebuild steps in `collielab/hosts/gw/README.md`; it gets a new `100.x`: update DNS and `check.sh` |
 | New VPN app on a device, or PIA reinstalled/reset | § 3 on that device |
 | New lab machine or VM | join Tailscale; DNS record → its `100.x` |
 | Home range changes | masquerade rule in § 2, router gateway address in § 1 |
@@ -208,7 +212,8 @@ Names will point at `100.x` (collielab `terraform/`). Until then they still give
 
 See `../work/task-9/log.md` for the details and undo of each change.
 
-- 2026-10-03: gw has the tun device and Tailscale (`100.126.136.120`). Forwarding and the masquerade rule are on but **runtime only** (gone if gw restarts).
+- 2026-10-03: gw has the tun device and Tailscale (`100.126.136.120`).
+- 2026-10-04: forwarding and masquerade made permanent (`collielab/hosts/gw/tailnet.sh`), restart-tested; `check.sh` all good.
 - Proven from the MBP with no Tailscale and a hand-added route: ping, ssh, Jellyfin on the Mini's `100.x`; lab pages on gw's `100.x` with a valid certificate.
 - 2026-10-04: PIA on the MBP lets `100.64.0.0/10` bypass the VPN. Router static route added (`100.64.0.0/255.192.0.0` → `192.168.1.110`, egress LAN). From g8 and the MBP, no Tailscale on either: traceroute router → gw → Mini; ping, ssh, Jellyfin, lab page all work; 100MB over ssh ~200 Mbit/s through gw vs ~230–270 direct (the Mini is on Wi-Fi). The router does not mind the reply skipping it, and large packets get through (no packet-size problem seen).
-- Not yet: Tailscale on hookdeck-ws (T3 test), phone test, names moved to `100.x`, access rules, making gw's settings permanent, key expiry off.
+- Not yet: Tailscale on hookdeck-ws (T3 test), phone test, names moved to `100.x`, access rules, key expiry off.
