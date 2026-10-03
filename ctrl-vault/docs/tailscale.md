@@ -136,7 +136,7 @@ Everything the MBP holds that is not in git:
 1. Mac basics: `~/git/hub/alexluong/dotfiles` (`machine.md`).
 2. Clones: `alexluong/ctrl` → `~/workspaces/ctrl`, `alexluong/collielab` → `~/git/hub/alexluong/collielab`.
 3. SSH: the fleet key `~/.ssh/id_ed25519` (from Vaultwarden / the old Mac), loaded in the agent (`ssh-add --apple-use-keychain ~/.ssh/id_ed25519`), and one line at the top of `~/.ssh/config`: `Include ~/git/hub/alexluong/collielab/ssh/config` (not in dotfiles; by hand). Host keys come from `collielab/ssh/known_hosts`; strict checking is on, so nothing to accept.
-4. Terraform: `collielab/terraform/.env` with R2, Cloudflare, Vultr and the Tailscale `terraform` OAuth client (`TF_VAR_tailscale_oauth_client_id/_secret`; scope all, keep it on this Mac only). Copies in Vaultwarden. Then `cd terraform && source scripts/export_env.sh && terraform init`.
+4. Terraform: `collielab/terraform/.env` with R2, Cloudflare, Vultr and the Tailscale `terraform` OAuth client (`TF_VAR_tailscale_oauth_client_id/_secret`; scope all, keep it on this Mac only). Keep a copy of each in Vaultwarden (Alex). Then `cd terraform && source scripts/export_env.sh && terraform init`.
 5. `ctrl/secrets/` (gitignored): `gw/caddy.env` (`terraform output -raw lab_gateway_token`, see `collielab/hosts/gw/README.md`), `tailscale/vm-join.key` (`terraform output -raw tailscale_vm_join_key > ~/workspaces/ctrl/secrets/tailscale/vm-join.key`).
 6. Its own access: case A (VPN exception if it runs one; the Tailscale app for away).
 
@@ -151,7 +151,7 @@ Check: `ssh <name>-ws`; from the VM, `timeout 4 bash -c "</dev/tcp/192.168.1.90/
 ### D. Another always-on lab machine that is not a VM (a server, a second Mini, …)
 
 1. Address and name as in `home-systems.md` (DHCP reservation for a Mac, a typed-in address for Linux), key and `Host` block (`fleet.md` rule).
-2. Tailscale: install, `tailscale up --accept-dns=false --hostname=<name>` (login link, Alex). Linux: also `tailscale set` nothing else; no subnet routes, no exit node.
+2. Tailscale: install, `tailscale up --accept-dns=false --hostname=<name>` (login link, Alex). Nothing else: no subnet routes, no exit node.
 3. In `collielab/terraform/tailscale.tf`: a tag for it (`tagOwners`), `tailscale_device_tags` + `tailscale_device_key` (expiry off) like gw and the Mini, and add the tag to rule 2's destinations if home devices should reach it. Apply.
 4. DNS: `<name>.lab.alexluong.com` → its `100.x` (`terraform/alexluong_com.tf`); web pages through gw: wildcard in `lab_gateway.tf` + Caddyfile block + `hosts/gw/machines` entry.
 5. Check from g8 (no Tailscale): `ping <its 100.x>`, and by name from the MBP.
