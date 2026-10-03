@@ -176,16 +176,16 @@ Another VPN app (WARP, Mullvad, a work VPN, …): look for "split tunnel", "excl
 
 | Node | Address | Joined with | Key expiry |
 |---|---|---|---|
-| `alexs-mac-mini` | `100.91.137.41` | Tailscale app | expires 2027-01-10 until tagged `tag:media` (then never) |
-| `gw` | `100.126.136.120` | `tailscale up --accept-dns=false --hostname=gw` | expires 2027-03-31 until tagged `tag:gw` (then never) |
+| `alexs-mac-mini` (`tag:media`) | `100.91.137.41` | Tailscale app | off (Terraform) |
+| `gw` (`tag:gw`) | `100.126.136.120` | `tailscale up --accept-dns=false --hostname=gw` | off (Terraform) |
 | `iphone-15-pro` | `100.122.122.29` | app (Alex's login) | normal |
-| `hookdeck-ws` | — | not yet: `collielab/bin/vm-tailnet hookdeck-ws` once the vm-join key exists | (tagged `tag:vm`: never) |
+| `hookdeck-ws` | — | not yet: `collielab/bin/vm-tailnet hookdeck-ws` | (`tag:vm` when it joins) |
 
 **New workspace VM: opt-in.** `bin/new-vm … --tailscale` in collielab (or `bin/vm-tailnet <name>` for an existing VM) installs Tailscale in the VM, joins it as `tag:vm` with the `vm-join` key (`ctrl/secrets/tailscale/vm-join.key`; that OAuth client can only add `tag:vm` machines), and points `<name>.lab.alexluong.com` at its `100.x`. Then `terraform apply` and commit (printed by the script). No restart, the VM keeps its home address. Without the flag the VM is home-only, as before.
 
 ### 4b. Access rules (Tailscale policy)
 
-Who may reach whom on the tailnet. **Owned by Terraform**: `collielab/terraform/tailscale.tf` (applied 2026-10-04); edits in the admin console get overwritten. Credentials: OAuth client `terraform` (scope: policy file) in `collielab/terraform/.env` (`TF_VAR_tailscale_oauth_client_id/_secret`), copy in Vaultwarden. Policy before the change: `../work/task-9/policy-before-2026-10-04.hujson`.
+Who may reach whom on the tailnet. **Owned by Terraform**: `collielab/terraform/tailscale.tf` (applied 2026-10-04); edits in the admin console get overwritten. Credentials: OAuth client `terraform` (scope: **all**, created by Alex; it can do anything on the tailnet, so it stays on the MBP only) in `collielab/terraform/.env` (`TF_VAR_tailscale_oauth_client_id/_secret`), copy in Vaultwarden. Policy before the change: `../work/task-9/policy-before-2026-10-04.hujson`.
 
 In plain words:
 
@@ -195,7 +195,9 @@ In plain words:
 
 Everything else is blocked. The policy has **tests** (Tailscale rejects a change that breaks the three rules). **Need more?** Add a narrow grant (one source, one destination, one port) in `tailscale.tf` with the reason, e.g. `{"src": ["tag:enable-ws"], "dst": ["tag:hookdeck-ws"], "ip": ["tcp:5432"]}` (each VM gets its own tag only when a rule needs it). Hannah's devices later: a media-only grant.
 
-Labels: tagged machines belong to the tag, not to your login, so their keys never expire. gw → `tag:gw`, Mini → `tag:media`: set in the admin console (Machines → … → Edit ACL tags). VMs get `tag:vm` when they join.
+Labels: tagged machines belong to the tag, not to your login. gw → `tag:gw`, Mini → `tag:media`, set by Terraform (`tailscale_device_tags`), with key expiry off (`tailscale_device_key`: tagging an already-joined machine did not switch it off by itself). VMs get `tag:vm` when they join, which is enough for a new machine.
+
+**The vm-join key** is an OAuth client Terraform created (`tailscale_oauth_client.vm_join`: scope auth keys, tag `tag:vm` only). Its secret: `terraform output -raw tailscale_vm_join_key > ~/workspaces/ctrl/secrets/tailscale/vm-join.key` (done 2026-10-04; the MBP has it). New machine: run that line again; nothing to create.
 
 The policy covers `100.x` traffic only. On the home network (`192.168.1.x`) a VM can still reach other machines by address; closing that = Proxmox firewall per VM (`design.md` hardening #8).
 
@@ -253,4 +255,5 @@ See `../work/task-9/log.md` for the details and undo of each change.
 - 2026-10-04: PIA on the MBP lets `100.64.0.0/10` bypass the VPN. Router static route added (`100.64.0.0/255.192.0.0` → `192.168.1.110`, egress LAN). From g8 and the MBP, no Tailscale on either: traceroute router → gw → Mini; ping, ssh, Jellyfin, lab page all work; 100MB over ssh ~200 Mbit/s through gw vs ~230–270 direct (the Mini is on Wi-Fi). The router does not mind the reply skipping it, and large packets get through (no packet-size problem seen).
 - 2026-10-04: iPhone on home Wi-Fi with the app off opens Jellyfin on the Mini's `100.x`. Away with the app on: assumed to work (plain Tailscale), Alex to confirm.
 - 2026-10-04: access rules applied by Terraform (§ 4b). DNS switched: gw's names and `mini.lab` → `100.x` (§ 5); tested by name from the MBP and g8 (lab pages, Jellyfin, Plex, Audiobookshelf, Proxmox, Dozzle; `ssh gw`, `ssh mini`). `bin/vm-tailnet` and `bin/new-vm --tailscale` written (opt-in join).
-- Waiting on Alex: tag gw `tag:gw` and the Mini `tag:media` (admin console); create the `vm-join` OAuth client (scope auth keys, tag `tag:vm`), save its secret to `ctrl/secrets/tailscale/vm-join.key` + Vaultwarden. Then: `bin/vm-tailnet hookdeck-ws`, T3 test, and a check that hookdeck-ws cannot reach the Mini or gw over the tailnet.
+- 2026-10-04: Terraform tagged gw and the Mini, turned their key expiry off, and created the vm-join client; its secret is in `ctrl/secrets/tailscale/vm-join.key`. `check.sh` all good after tagging.
+- Next: `bin/vm-tailnet hookdeck-ws` (Alex's go-ahead; live sessions), T3 test, check it cannot reach the Mini or gw over the tailnet.

@@ -121,3 +121,6 @@ Every setting this depends on, in one place: `docs/tailscale.md` § Every settin
    - gw `check.sh`: DNS through the router and gw's home address as fallback added; all good.
 
 **Waiting on Alex:** tag gw `tag:gw` and the Mini `tag:media`; create OAuth client `vm-join` (scope auth keys write, tag `tag:vm`) → `ctrl/secrets/tailscale/vm-join.key` + Vaultwarden. Then `bin/vm-tailnet hookdeck-ws`.
+
+11. **Tags, key expiry and vm-join, by Terraform** (the `terraform` OAuth client turned out to have scope `all`). `tailscale_device_tags` gw → `tag:gw`, Mini → `tag:media`; `tailscale_device_key` expiry off for both (tagging alone left `keyExpiryDisabled=false`); `tailscale_oauth_client.vm_join` (scope `auth_keys`, tags `tag:vm`; description must be letters/digits/spaces/hyphens: the first try with `(` `/` failed with a 400). Secret saved to `ctrl/secrets/tailscale/vm-join.key` (600). The Mini is found by its full name `alexs-mac-mini.tail2b958c.ts.net` (its hostname is "alex’s Mac mini"). After: `check.sh` all good, `ssh mini` by name fine, `terraform plan` clean.
+   - Undo: remove the resources from `tailscale.tf` and apply (tags come off; expiry back on; the client is deleted).
