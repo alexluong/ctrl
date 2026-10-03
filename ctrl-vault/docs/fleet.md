@@ -73,7 +73,7 @@ Common jobs: add a URL → `collielab/hosts/gw/README.md`. New VM → `collielab
 
 ## The Mini
 
-**Role:** the Mac in the fleet plus the storage box. New general workloads go to g8 (64GB, wired, restarts by itself), not the Mini.
+**Role:** the Mac in the fleet plus the storage box; planned to become the cs workspace and ctrl's home (Direction below).
 
 **Measured 2026-10-02:** 16GB RAM; the media VM holds 8.4GB (qBittorrent 5.6GB), so about 4-6GB spare. Internal disk 60GB free; about 80GB more comes back with TASK-5 (old `hookdeck` Colima profile 52GB, hookdeck repos 7GB, dev caches 19GB). Wi-Fi.
 
@@ -89,7 +89,15 @@ Common jobs: add a URL → `collielab/hosts/gw/README.md`. New VM → `collielab
 - Storage: backup target for g8's VMs, Time Machine for the MBP (Blue4, 817GB free).
 - Mac-only: a logged-in browser for automations (bank/property-manager downloads), local copy of iCloud.
 - Books/audiobooks to g8: 22GB, frees only ~0.4GB RAM on the Mini; gain is separation; catch is the qBittorrent hardlink flow. Later, after backups.
-- Rejected: Mini as the CS/personal workspace (memory, no isolation, Keychain/sudo over SSH; a VM on g8 instead); local LLMs.
+- Earlier rejected: Mini as the CS/personal workspace (memory, isolation). Reversed 2026-10-04, see below.
+
+**Direction (Alex, 2026-10-04; ideas, nothing set in stone, nothing acted on):**
+- **g8:** hookdeck-ws, enable-ws, and small always-on agents (one VM per access level, e.g. a persistent agent for enable). Assigned VM memory is a ceiling, not a reservation (host used 5GB with hookdeck-ws at 32GB); resize with `qm set <id> --memory` + `qm reboot`.
+- **Mini = cs workspace + ctrl**, so nothing runs on the MBP: the MBP becomes a terminal (T3/SSH/browser) and any cheaper laptop would do. Machine name stays `mini` (no `-ws`: it holds several things; workspaces are folders `~/workspaces/<name>`). One macOS user `alex` for now (same exposure as the MBP today); a separate `cs` user is optional hardening later (own Colima if so: sharing a Docker socket across users exposes `/Users/alex`).
+- **Mobile dev:** Mac-native on the Mini (Xcode, simulator; Claude can check screenshots via `xcrun simctl io booted screenshot`); Android via a real phone over `adb connect` or `scrcpy`.
+- **dots** (idea): a personal assistant on the Mini using Mail/Calendar/Messages/Reminders, able to hand work to workspaces without access to them (it files a request in a shared inbox, e.g. GitHub issues; a watcher in each workspace starts the session; approval gate for workspaces with production access). Depends on which email/calendar Alex uses (open).
+- **Media, long term:** media VM is 8GB on the Mac but apps use ~1.7GB (rest is Linux file cache); shrinking it to 4GB frees ~4GB. Options weighed: (a) arr on g8 writing to the DAS on the Mini over NFS: works but torrent I/O and seeding cross the LAN and break when the Mini is down; (b) **preferred long term: DAS on g8** (arr, qBittorrent, seeding local; library shared read-only to the Mini; Plex/Jellyfin native on the Mini; Sonarr/Radarr trigger library refresh). Catch for (b): Blue4's format (APFS can't be written from Linux: reformat + copy several TB). For now media stays on the Mini as is.
+- **Prerequisites that keep coming up:** Ethernet on the Mini (it has a port, `en0`, currently on Wi-Fi `en1`), backups (TASK-13), FileVault after a power cut.
 
 **State of its ctrl clone:** `~/git/hub/alexluong/ctrl`, still on branch `docs/mac-mini` (merged as PR #1), with a Claude session running there on 2026-10-02. `media/` in ctrl is what it runs from.
 
