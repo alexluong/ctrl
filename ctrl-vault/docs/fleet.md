@@ -69,7 +69,7 @@ Where the details are:
 | Mini | SSH keys only; full disk access for SSH on (drives readable over SSH, verified); media stack unchanged |
 | vultr | DNS-only name for SSH; fleet key installed; `hosts/vultr/Caddyfile` is a **copy**, not deployed from git |
 
-Common jobs: add a URL → `collielab/hosts/gw/README.md`. New VM → `collielab/hosts/g8/README.md`. Rebuild the gateway → same README, four commands.
+Common jobs: add a URL → `collielab/hosts/gw/README.md`. New VM → `collielab/hosts/g8/README.md`. New phone, laptop, control Mac, server or someone else's device → `tailscale.md` § Adding a device. Rebuild the gateway → same README, four commands.
 
 ## The Mini
 

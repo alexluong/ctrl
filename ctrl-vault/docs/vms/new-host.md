@@ -53,6 +53,12 @@ About 6 minutes. For a second host the scripts need two small changes first: `ne
 - Throwaway VM: `bin/new-vm <id> test-vm 2 2048 20`, check `ssh`, destroy it (`qm stop <id>; qm destroy <id> --purge`), revert the three files it touched.
 - Whole-box reboot: VMs with `onboot` come back by themselves (g8: Docker and T3 in the VM up ~30 seconds after the host).
 
+## 7. Firewall and Tailscale
+
+- Proxmox firewall so VMs can't start connections into the home network: `collielab/hosts/g8/firewall.sh` (written for g8: node name from `hostname`, VM IDs 101–149; widen the range for the new block). `bin/new-vm` applies it per VM.
+- Tailscale goes on the VMs (`bin/new-vm --tailscale`), not on the host. Away from home the host's web UI is reached through gw (`pve.<host>.lab…`: wildcard record + Caddyfile block), its SSH at home only (or add the host to the tailnet as case D in `../tailscale.md` § Adding a device).
+- Before its first full reboot with VMs on it: the checklist in TASK-14 (g8's version).
+
 ## Still open on g8 (applies to any host)
 
-Backups of VMs to another machine (plan: the Mini's Blue4 drive), Tailscale for access away from home, the gateway for clean URLs (TASK-3), a UPS.
+Backups of VMs to another machine (TASK-13), a UPS.

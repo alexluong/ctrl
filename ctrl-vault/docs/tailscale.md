@@ -115,6 +115,56 @@ Things to know:
 - **Your Mac with the app on skips gw** entirely, even at home. gw matters for the phone, TV, Kobo and guests.
 - **A device with a full VPN on (the MBP runs Private Internet Access) sends `100.x` into the VPN**, never to the router, so the router rule does not help it. Turn the VPN off, add a split-tunnel exception for `100.64.0.0/10` in the VPN app, or use the Tailscale app. Check with `route -n get 100.91.137.41`: `utun…` with a `10.x` gateway = the VPN.
 
+## Adding a device (runbook)
+
+Pick the case. Each ends with how to check it. Commands run on the MBP unless said otherwise; collielab = `~/git/hub/alexluong/collielab`.
+
+### A. Your own phone, tablet or laptop (to *use* the lab)
+
+| Where | What it needs |
+|---|---|
+| At home | Nothing: names point at `100.x`, the router sends that to gw. **Unless it runs a full VPN** (PIA, WARP, …): add `100.64.0.0/10` as a VPN exception (§ 3), or turn the VPN off. |
+| Away | The Tailscale app, logged in to the `lhtanh98@gmail.com` tailnet (Google login). It joins as one of "your devices" (rule 1: reaches everything). No tag, nothing in Terraform. Remove it in the admin console when the device goes. |
+| Phone extras | iOS runs one VPN at a time (PIA on = Tailscale off). Optional: VPN On Demand in the Tailscale app (on except on home Wi-Fi). |
+
+Check: `https://lab.alexluong.com` and `https://jellyfin.lab.alexluong.com` open; on a Mac `route -n get 100.91.137.41` shows `en0` + `192.168.1.1` at home without the app, `utun…` with it.
+
+### B. A new Mac that *manages* the lab (replacing or joining the MBP as control point)
+
+Everything the MBP holds that is not in git:
+
+1. Mac basics: `~/git/hub/alexluong/dotfiles` (`machine.md`).
+2. Clones: `alexluong/ctrl` → `~/workspaces/ctrl`, `alexluong/collielab` → `~/git/hub/alexluong/collielab`.
+3. SSH: the fleet key `~/.ssh/id_ed25519` (from Vaultwarden / the old Mac), loaded in the agent (`ssh-add --apple-use-keychain ~/.ssh/id_ed25519`), and one line at the top of `~/.ssh/config`: `Include ~/git/hub/alexluong/collielab/ssh/config` (not in dotfiles; by hand). Host keys come from `collielab/ssh/known_hosts`; strict checking is on, so nothing to accept.
+4. Terraform: `collielab/terraform/.env` with R2, Cloudflare, Vultr and the Tailscale `terraform` OAuth client (`TF_VAR_tailscale_oauth_client_id/_secret`; scope all, keep it on this Mac only). Copies in Vaultwarden. Then `cd terraform && source scripts/export_env.sh && terraform init`.
+5. `ctrl/secrets/` (gitignored): `gw/caddy.env` (`terraform output -raw lab_gateway_token`, see `collielab/hosts/gw/README.md`), `tailscale/vm-join.key` (`terraform output -raw tailscale_vm_join_key > ~/workspaces/ctrl/secrets/tailscale/vm-join.key`).
+6. Its own access: case A (VPN exception if it runs one; the Tailscale app for away).
+
+Check: `collielab/hosts/gw/check.sh` all good; `ssh g8`, `ssh gw`, `ssh mini`, `ssh hookdeck-ws`, `ssh vultr`; `terraform plan` shows no changes.
+
+### C. A new workspace VM
+
+`vms/playbook.md`. In short: `bin/new-vm <id> <name>-ws <cores> <mem_mb> <disk_gb> --tailscale` → firewall, tailnet (`tag:vm`), DNS to its `100.x`, gateway wildcard; then `terraform apply` and commit as printed. An existing VM: `bin/vm-tailnet <name>`.
+
+Check: `ssh <name>-ws`; from the VM, `timeout 4 bash -c "</dev/tcp/192.168.1.90/22"` fails (firewall) and so does `100.91.137.41` (policy).
+
+### D. Another always-on lab machine that is not a VM (a server, a second Mini, …)
+
+1. Address and name as in `home-systems.md` (DHCP reservation for a Mac, a typed-in address for Linux), key and `Host` block (`fleet.md` rule).
+2. Tailscale: install, `tailscale up --accept-dns=false --hostname=<name>` (login link, Alex). Linux: also `tailscale set` nothing else; no subnet routes, no exit node.
+3. In `collielab/terraform/tailscale.tf`: a tag for it (`tagOwners`), `tailscale_device_tags` + `tailscale_device_key` (expiry off) like gw and the Mini, and add the tag to rule 2's destinations if home devices should reach it. Apply.
+4. DNS: `<name>.lab.alexluong.com` → its `100.x` (`terraform/alexluong_com.tf`); web pages through gw: wildcard in `lab_gateway.tf` + Caddyfile block + `hosts/gw/machines` entry.
+5. Check from g8 (no Tailscale): `ping <its 100.x>`, and by name from the MBP.
+
+A second **Proxmox host**: `vms/new-host.md`, plus `hosts/g8/firewall.sh` on it (written for g8's block; generalise the ID range), Tailscale is for its VMs, not the host.
+
+### E. Someone else's device (e.g. Hannah's)
+
+At home: nothing, same as A (VPN caveat applies). Away: she needs Tailscale too. Two ways, to decide when it comes up:
+
+- **Invite her as a user** of this tailnet (admin console → Users → Invite). Her devices are then *not* "your devices": add a grant for her in `tailscale.tf`. Caution: media-only is only enforceable on the Mini's own ports (`tag:media`, `tcp:8096`, `tcp:32400`, `tcp:13378`, `tcp:8073`, used as `http://mini.lab.alexluong.com:<port>`). Granting `tag:gw:443` gives her every page behind the gateway (Proxmox, Dozzle, …), since gw serves them all on one port and gateway logins are deferred.
+- **Share a machine** to her own tailnet (admin console → machine → Share). Simpler for one service; same caution if the shared machine is gw.
+
 ## Every setting this depends on (re-apply after a change)
 
 Each piece below lives on a different box and can be lost independently. If `100.x` names stop working for some devices, walk this list. Status as of 2026-10-04; history in `../work/task-9/log.md`.
