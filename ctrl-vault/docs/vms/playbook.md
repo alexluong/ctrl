@@ -107,6 +107,8 @@ Machine-wide CLIs log in again on the VM (Doppler, Railway: their logins cannot 
 
 T3 app → Settings → Connections → Add environment → SSH → `<name>-ws`; Settings → Providers → that environment → enable Claude (binary `/home/alex/.local/bin/claude`); add project `/home/alex/workspaces/<name>`. Details and the version rule: `../t3-code-remote.md`.
 
+Phone (T3 iOS app), VMs on the tailnet only: the HTTPS route is already there (`--tailscale` set up `tailscale serve`); pair once with `bin/vm-t3-pair <name>-ws iphone` and paste the link in the app (Tailscale app on). `../t3-code-remote.md` § iPhone.
+
 ### 11. Bring over unpushed work (C)
 
 Fetch on the MBP, list branches with commits that are on no remote, copy them straight to the VM's clones (no GitHub), carry uncommitted changes as patches. Commands: `hookdeck-ws.md` § Syncing work from the MBP.

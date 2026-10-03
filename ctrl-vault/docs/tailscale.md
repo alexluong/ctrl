@@ -253,6 +253,11 @@ The policy covers `100.x` traffic. The home network (`192.168.1.x`) side is the 
 
 A node that is removed and re-added gets a **new** `100.x`: update DNS and anything that has the address typed in.
 
+### 4c. Tailnet settings and Tailscale Serve (T3 on the phone)
+
+- Tailnet settings are Terraform-owned (`tailscale_tailnet_settings` in `collielab/terraform/tailscale.tf`): **HTTPS certificates on** (since 2026-10-04), the rest as the console had it. Side effect: machine names under `tail2b958c.ts.net` show up in public certificate-transparency logs. Flow logging is not on this plan (setting it fails).
+- Each tailnet VM serves its T3 server at `https://<vm>.tail2b958c.ts.net` (`tailscale serve`, set by the join script; saved in tailscaled, survives restarts). Only for Tailscale devices (`*.ts.net` names resolve only through the app). Pairing a phone: `bin/vm-t3-pair <vm>`. Full story: `t3-code-remote.md` § iPhone.
+
 ### 5. DNS: names point at Tailscale addresses (done 2026-10-04)
 
 | Name | Address | Where in collielab |

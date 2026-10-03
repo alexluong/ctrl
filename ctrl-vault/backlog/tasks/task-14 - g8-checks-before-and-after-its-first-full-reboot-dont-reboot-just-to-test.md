@@ -4,6 +4,7 @@ title: 'g8: checks before and after its first full reboot (don''t reboot just to
 status: To Do
 assignee: []
 created_date: '2026-10-03 20:59'
+updated_date: '2026-10-03 22:09'
 labels:
   - infra
   - machine
@@ -34,3 +35,13 @@ After:
 
 Context: ctrl-vault/docs/tailscale.md, collielab hosts/g8/README.md, hosts/gw/README.md.
 <!-- SECTION:DESCRIPTION:END -->
+
+## Comments
+
+<!-- COMMENTS:BEGIN -->
+author: @claude
+created: 2026-10-03 22:09
+---
+Add to After (2026-10-04): hookdeck-ws 'tailscale serve status' shows https -> 127.0.0.1:3773, and from gw: curl --resolve hookdeck-ws.tail2b958c.ts.net:443:100.113.20.22 https://hookdeck-ws.tail2b958c.ts.net/ = 200. Serve is saved in tailscaled state (should survive); not yet restart-proven because hookdeck-ws had live sessions when it was set up.
+---
+<!-- COMMENTS:END -->

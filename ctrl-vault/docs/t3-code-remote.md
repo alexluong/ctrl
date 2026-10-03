@@ -18,7 +18,8 @@ How the T3 Code desktop app on the MBP drives agent sessions on another machine 
 
 1. **SSH (what we use):** Settings → Connections → Add environment → SSH → `user@host`. The app starts or reuses the server on the remote's loopback and forwards the port through SSH. Encrypted; nothing listens on the network. It reuses a running server only if that server is bound to loopback or `0.0.0.0`.
 2. LAN pairing: `t3 pair` on the remote prints a URL (valid 5 minutes) to paste into Add environment. Plain HTTP on the network; would need `T3CODE_HOST=0.0.0.0`.
-3. T3 Connect: cloud relay, needs an account. Not used.
+3. T3 Connect: cloud relay, needs an account. Not used (so no push notifications on the phone).
+4. **Tailscale HTTPS (what the iOS app uses):** the iOS app has no SSH option. Each tailnet VM runs `tailscale serve`: `https://<vm>.tail2b958c.ts.net` → the T3 server on `127.0.0.1:3773`. Tailnet only, real certificate, the server stays on loopback. § iPhone below.
 
 ## Our setup on a workspace VM
 
@@ -34,6 +35,21 @@ How the T3 Code desktop app on the MBP drives agent sessions on another machine 
 3. Add a project: from the app against that environment, or on the VM `t3 project add ~/workspaces/hookdeck --title hookdeck`.
 
 Revoke access: `t3 auth session list|revoke` on the VM.
+
+## iPhone (T3 Code iOS app) → a workspace VM
+
+Automatic per VM since 2026-10-04 (decided: Tailscale HTTPS route, no T3 Connect):
+
+| Piece | Where it is set | Survives restarts |
+|---|---|---|
+| HTTPS certificates on for the tailnet | `collielab/terraform/tailscale.tf` (`tailscale_tailnet_settings`, `https_enabled`) | tailnet setting |
+| `tailscale serve --bg` https:443 → `127.0.0.1:3773`; dev user as Tailscale operator | `collielab/hosts/workspace-vm/tailscale.sh`, run by `bin/vm-tailnet <vm>` and `bin/new-vm … --tailscale` | yes: saved in tailscaled's state on the VM, restored at boot; the T3 server itself starts at boot (user service, linger) |
+| The phone may reach a VM on :443 | policy grant 1 (your devices → everything) + a test (`lhtanh98@gmail.com` → `tag:vm:443`) | policy |
+| Pairing the phone (once per phone and VM) | **by hand**: `bin/vm-t3-pair <vm> [label]` in collielab prints a one-time link + QR (10 min); on the phone with the Tailscale app on: T3 → Settings → Environments → add | the pairing stays until revoked (`t3 auth session list|revoke` on the VM) |
+
+hookdeck-ws: `https://hookdeck-ws.tail2b958c.ts.net` (checked 2026-10-04: 200, valid certificate; the first request after enabling waits ~30 s while the certificate is issued). The MBP stays on SSH, unchanged. The phone needs the Tailscale app on (at home too: the name `*.ts.net` only resolves through Tailscale). Check on a VM: `tailscale serve status`. Mini: later.
+
+Versions: VM and MBP on 0.0.44; 0.0.45 is out: update (`T3_VERSION` in the template, `t3 update` on the VM) if the App Store app complains.
 
 ## Not verified
 
