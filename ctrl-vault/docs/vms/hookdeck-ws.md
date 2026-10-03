@@ -93,7 +93,7 @@ What the MBP's menubar (`ctrl/services.conf`) ran for this workspace, and its st
 
 ## Resources
 
-Allocated: 8 of g8's 16 CPU threads (shared, not reserved), 32GB of 64GB RAM (fixed, reserved while the VM runs), 250GB disk as a ceiling on g8's 816GB pool (thin: only what is written takes space).
+Allocated: 8 of g8's 16 CPU threads (shared, not reserved), 32GB of 64GB RAM (fixed, reserved while the VM runs; balloon on since 2026-10-04 so Proxmox shows real use, `maintenance.md`), 250GB disk as a ceiling on g8's 816GB pool (thin: only what is written takes space).
 
 Measured 2026-10-02 23:30 with 6 Claude sessions and both stacks up (22 containers): RAM 15GB used of 32GB (containers 7.4GB), load 1.2 on 8 threads, disk 50GB of 250GB (Docker images 26GB, build cache 7GB, volumes 5GB). On g8: the pool is 7% used; 27GB RAM and 8 threads are left for other VMs.
 
@@ -122,6 +122,6 @@ git -C repos/<repo>.git push hookdeck-ws:workspaces/hookdeck/repos/<repo>.git "r
 1. **Decided 2026-10-03 (Alex): the VM is where hookdeck sessions run from now on;** the MBP is the client. Reason it matters: with sessions on both machines the workspace repo collided within a day (two `task-86`, one renumbered to `task-89`; the MBP checkout 3 ahead / 11 behind with `MEMORY.md` changed on both sides). The MBP's workspace commits were rebased and pushed by a Mac session (checkout level with the remote, 2026-10-03 00:15). Left to do, from a hookdeck session: carry any task branches that exist only in the MBP's bare clones (method: § Syncing work from the MBP), then stop starting sessions on the MBP; update `hookdeck-vault/notes/machines.md` (it still says "direction, not a rule yet"). The general learning (git-based workspace state assumes one writer) is noted in the Collie Studio workspace, `cs-vault/notes/studio/multi-writer.md`.
 2. The prod-reaching files and logins (the bold rows above) are now on the VM, on Alex's say-so (2026-10-02). Kubeconfigs have no default context by design: pass `--context`.
 3. Saving the VM's identity (GitHub key, optionally the gh and Claude logins) to `ctrl/secrets/hookdeck-ws/` so a rebuilt VM needs no re-registration: offered, not decided.
-4. Template rebuild pending: the fix for the service PATH (`collielab` `6b3a54a`) is in `provision.sh` and applied on this VM, but template 9000 still carries the old file; rebuild it before the next VM (`collielab/hosts/g8/README.md`).
-4a. No backups yet. Snapshots on g8: `clean-setup` (before any login), `ready` (logged in, secrets copied, core deps installed).
+4. ~~Template rebuild~~ done 2026-10-04: template 9000 carries the service PATH fix (`collielab` `6b3a54a`).
+4a. No backups yet (TASK-13). Snapshots on g8: `clean-setup` (before any login), `ready` (logged in, secrets copied, core deps installed), `idle-20261004` (after two days of use). Over the keep-2 rule in `maintenance.md`: `clean-setup` and `ready` can go, on Alex's say-so.
 5. Doppler and Railway logins are machine-wide today. Moving them into the workspace like gcloud: possible for Doppler (`DOPPLER_CONFIG_DIR`), not for Railway (use workspace tokens in `ops/<env>/.env`): `work/task-2/doppler-railway-creds.md`.

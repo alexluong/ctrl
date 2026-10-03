@@ -109,7 +109,7 @@ What the MBP's menubar ran for this workspace (`ctrl/services.conf`: tunnels, bo
 - In the workspace's own repo: a short note on the two machines (hookdeck: `hookdeck-vault/notes/machines.md`). Do not add it to that workspace's always-on rules unless Alex asks.
 - `home-systems.md`: the VM's row and DNS name.
 - `ssh g8 'qm snapshot <id> ready --description "logged in, secrets copied, deps installed"'`.
-- Check it survives a restart: `ssh g8 'qm reboot <id>'`, then Docker and `systemctl --user is-active t3code` on the VM.
+- Check it survives a restart: `ssh g8 'qm reboot <id>'`, then Docker and `systemctl --user is-active t3code` on the VM. Proxmox's memory graph should show real use, not 100% (balloon; `maintenance.md`).
 
 ## Checks at the end
 

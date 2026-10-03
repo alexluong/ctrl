@@ -23,6 +23,7 @@ Memory on g8 (64GB): hookdeck 32 + enable 8–12 + cs 8 = about 50GB, leaving ro
 ## Playbooks
 
 - **`playbook.md`: put a workspace on a VM** (the repeatable process: size, survey, create, setup script, logins, clone, secrets, T3, sync, record). Use it for `enable`, `solex`, `cs` and any later workspace. Includes the survey prompt and the traps met the first time.
+- **`maintenance.md`: running VMs**: snapshots vs backups, what needs the VM idle, what a restart breaks, checks after.
 - **`new-host.md`: a new Proxmox box**, from the delivery box to a host `bin/new-vm` can use.
 
 ## Template for `vms/<name>.md`

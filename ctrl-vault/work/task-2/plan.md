@@ -12,7 +12,7 @@ Claude runs on the MBP (ctrl session) and manages the box over SSH. Files here: 
 **Next / open:**
 1. ~~Connect the T3 app to `hookdeck-ws`~~ in use since the evening of 2026-10-02: 6 Claude processes, worktrees `task-22` and `task-86`, core and outpost stacks up (22 containers, 14GB of 32GB RAM, 48GB of 250GB disk).
 1a. Jumpbox tunnels on the VM: key and host blocks copied (login tested). By hand for now: `ssh hookdeck-ws`, then `ssh -N hd_jumpbox`. The staging tunnel fails while the outpost stack runs (both want port 26379). A menubar switch is parked (TASK-6, branch `svc-remote`); the wider idea, a control panel per workspace on its VM (tunnels, board, stacks), is a Collie Studio idea to evaluate: `~/workspaces/cs/cs-vault/notes/studio/workspace-control.md`.
-1b. Template bug: `provision.sh` writes a PATH with a literal `%h` for systemd user services (details: `../task-6/handoff.md`). Not fixed yet.
+1b. ~~Template bug~~ (`%h` in the systemd user PATH): fixed in `provision.sh` (`6b3a54a`), template 9000 rebuilt 2026-10-04.
 2. ~~Whether all hookdeck sessions move to the VM~~ decided 2026-10-03: the VM, moving forward (two machines writing the workspace repo collided within a day; `docs/vms/hookdeck-ws.md` § Open points). The MBP's workspace commits are pushed (2026-10-03). Still to do: carry task branches that exist only on the MBP, from a hookdeck session.
 3. Opening the core dashboard from the MBP (SSH port forward for now).
 4. Doppler/Railway credentials inside the workspace folder: researched (`doppler-railway-creds.md`), not adopted. The research run exposed the tail of the MBP's Doppler token in a local transcript: roll it if wanted (`doppler login roll`).
