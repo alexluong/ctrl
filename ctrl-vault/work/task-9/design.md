@@ -56,6 +56,7 @@ From a discussion with Alex. **Nothing is built or installed.** The direction be
 - **Check 4: the full `/10` is fine on this router** (its routing table has nothing in `100.64.0.0/10`). Narrower block not needed for now.
 - **New: devices with a full VPN** send `100.x` into the VPN. The MBP's PIA got a split-tunnel exception for `100.64.0.0/10`. Every such device needs one (or the Tailscale app).
 - **Check 5, at home: passed.** iPhone on home Wi-Fi, app off, opens Jellyfin on the Mini's `100.x`. **Away with the app on: assumed to work** (that is plain Tailscale; Alex to try and correct this if not).
+- **2026-10-04: access rules applied (Terraform), names moved to `100.x` (except hookdeck-ws until it joins, and g8), opt-in VM join written.** Details: `log.md` 8–10; how it all fits: `docs/tailscale.md`.
 - **Not yet:** T3 (needs Tailscale on `hookdeck-ws`), making the `gw` settings permanent, key expiry off on servers.
 
 ## Weak points

@@ -137,17 +137,17 @@ Templates use VM IDs 9000+.
 - Caddy gets Let's Encrypt wildcard certificates by DNS check (no open ports); one wildcard per level (`*.lab…`, `*.hookdeck-ws.lab…`). Only the gateway holds the Cloudflare token (scoped to `alexluong.com`); VMs hold none.
 - SSH: `ssh g8`, `ssh hookdeck-ws`, `ssh mini` via `~/.ssh/config` aliases.
 
-**Records that exist** (collielab `terraform/alexluong_com.tf`, DNS-only, applied 2026-10-02):
+**Records that exist** (collielab `terraform/alexluong_com.tf`, DNS-only, applied 2026-10-02; Tailscale switch 2026-10-04, `tailscale.md` § 5):
 
 | Name | Address | Use today |
 |---|---|---|
 | `g8.lab.alexluong.com` | `192.168.1.100` | `https://g8.lab.alexluong.com:8006` (Proxmox, self-signed cert warning) |
-| `mini.lab.alexluong.com` | `192.168.1.90` | `http://mini.lab.alexluong.com:8096` (Jellyfin), `:32400` (Plex), `:8080` (qBittorrent) |
-| `hookdeck-ws.lab.alexluong.com` | `192.168.1.101` | `ssh hookdeck-ws` |
+| `mini.lab.alexluong.com` | `100.91.137.41` (Tailscale; home address `192.168.1.90`) | `ssh mini`; `:8096` (Jellyfin), `:32400` (Plex), `:8080` (qBittorrent) |
+| `hookdeck-ws.lab.alexluong.com` | `192.168.1.101` (moves to its Tailscale address when it joins) | `ssh hookdeck-ws` |
 
 One record per machine or VM is added as it is created.
 
-**Gateway (built 2026-10-02, TASK-3):** `gw`, container 110 on g8 at `192.168.1.110`, Caddy. Wildcard records `*.lab`, `*.mini.lab`, `*.g8.lab`, `*.hookdeck-ws.lab`, `*.calibre.lab`, `*.calibre.mini.lab` → `.110` (`terraform/lab_gateway.tf`); Let's Encrypt wildcard certificates. Routing table and runbook: `collielab/hosts/gw/` (`Caddyfile`, `push.sh`, `README.md`). Home network only.
+**Gateway (built 2026-10-02, TASK-3):** `gw`, container 110 on g8 at `192.168.1.110`, Caddy. Wildcard records `*.lab`, `*.mini.lab`, `*.g8.lab`, `*.hookdeck-ws.lab`, `*.calibre.lab`, `*.calibre.mini.lab` → gw (`terraform/lab_gateway.tf`; since 2026-10-04 gw's Tailscale address `100.126.136.120`, before that `.110`); Let's Encrypt wildcard certificates. Routing table and runbook: `collielab/hosts/gw/` (`Caddyfile`, `push.sh`, `README.md`). Works at home without the app and anywhere with the Tailscale app (`tailscale.md`).
 
 | URL | Service |
 |---|---|
@@ -165,7 +165,7 @@ One record per machine or VM is added as it is created.
 
 `g8.lab` vs `pve.g8.lab`: the first is the box itself (`192.168.1.100`: SSH, and Proxmox on `:8006` with its self-signed certificate); the second is the Proxmox web page through the gateway (no port, real certificate).
 
-Rule: `<machine>.lab…` is the machine (SSH, still its own address); `<service>.<machine>.lab…` goes through the gateway; short aliases `<service>.lab…` for what gets typed into devices. The old `:<port>` addresses still work and are the fallback when g8 is down. Not done: Kobos and TV apps still point at `192.168.1.90` (domain decided: stays `alexluong.com`, so this can go ahead); `*.hookdeck-ws.lab` has no routes yet.
+Rule: `<machine>.lab…` is the machine (SSH; its Tailscale address if it is on the tailnet, else its home address); `<service>.<machine>.lab…` goes through the gateway; short aliases `<service>.lab…` for what gets typed into devices. The old `:<port>` addresses still work and are the fallback when g8 is down. Not done: Kobos and TV apps still point at `192.168.1.90` (domain decided: stays `alexluong.com`, so this can go ahead); `*.hookdeck-ws.lab` has no routes yet.
 
 **If the range changes later:** update the DNS records, the gateway's backend addresses and the fixed addresses on g8, the Mini and VMs; devices that use URLs (Kobo, TV apps) keep working. So point the Kobos (today `192.168.1.90`, typed in their config; Calibre-Web on the Mini, `:8074` Alex / `:8073` Hannah) and the TV's Jellyfin/Plex apps at URLs once the gateway exists. Other costs: house offline a few minutes; router admin moves; mesh nodes might need re-pairing; a Viettel reset puts the range back. To avoid locking g8 out: give it both addresses first, switch the router, then drop the old one.
 

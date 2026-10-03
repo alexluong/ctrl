@@ -33,11 +33,11 @@ Where the details are:
 
 **SSH.** Blocks and host keys are in git: `collielab/ssh/config`, `ssh/known_hosts`, `ssh/authorized_keys`; `~/.ssh/config` on the MBP has one `Include` line. One key for the whole fleet (MBP `id_ed25519`). Keys only everywhere (g8, mini, VMs). A new machine = DNS record + `Host` block + host key, in one commit; `bin/new-vm` does all of it for VMs.
 
-**Names, not addresses** (Alex). `<machine>.lab.alexluong.com` at home, `vultr.alexluong.com` for the cloud VM. Fallback by address when DNS is down: `home-systems.md`.
+**Names, not addresses** (Alex). `<machine>.lab.alexluong.com` (Tailscale address where the machine is on the tailnet, so the name works at home and away: `tailscale.md`), `vultr.alexluong.com` for the cloud VM. Fallback by address when DNS is down: `home-systems.md`.
 
 **URLs.**
 
-- `<machine>.lab.alexluong.com` = the machine itself (SSH, its own address).
+- `<machine>.lab.alexluong.com` = the machine itself (SSH; Tailscale address if on the tailnet).
 - `<service>.<machine>.lab.alexluong.com` = a service on it, through the gateway.
 - `<service>.lab.alexluong.com` = short alias for what gets typed into devices; survives the service moving machines.
 - Calibre-Web is `alex.calibre.lab…` / `hannah.calibre.lab…` (Alex's naming).
@@ -61,7 +61,8 @@ Where the details are:
 | Piece | State |
 |---|---|
 | SSH config in git | done; `g8`, `gw`, `mini`, `vultr`, `hookdeck-ws` all connect using only the repo's host keys |
-| DNS | `terraform/alexluong_com.tf` (machines), `terraform/lab_gateway.tf` (wildcards → `gw`, the token) |
+| DNS | `terraform/alexluong_com.tf` (machines), `terraform/lab_gateway.tf` (wildcards → `gw`, the token); lab names on Tailscale addresses since 2026-10-04 |
+| Tailscale | tailnet `lhtanh98@`: Mini, gw (and opt-in VMs: `bin/vm-tailnet`, `bin/new-vm --tailscale`); access rules in `terraform/tailscale.tf`; router static route `100.64.0.0/10` → gw. All of it: `tailscale.md` |
 | g8 | Proxmox 9.2.21, kernel pinned to 6.14.11; template VM 9000; `bin/new-vm` |
 | Gateway | container 110, Caddy + Cloudflare DNS module, Let's Encrypt wildcards; `hosts/gw/push.sh` validates then reloads; backend addresses in its `/etc/hosts` (`hosts/gw/machines`) so requests never wait on DNS; also the door into the tailnet for home devices (`hosts/gw/tailnet.sh`, TASK-9); health check `hosts/gw/check.sh` |
 | Index page | `https://lab.alexluong.com` = `hosts/gw/site/index.html` (a new service needs a route **and** a card) |
@@ -97,6 +98,6 @@ Common jobs: add a URL → `collielab/hosts/gw/README.md`. New VM → `collielab
 4. **hookdeck-ws routes** on the gateway (`*.hookdeck-ws.lab` has DNS but no site block; its T3 server listens on `127.0.0.1` only).
 5. **vultr:** deploy its Caddyfile from git (needs one sudo step from Alex); move `services/` under `hosts/vultr/`.
 6. **A general `fleet` script** (diff/push/run per machine). Not written; the gateway has its own `push.sh`. Write it when a second machine needs pushing.
-7. **Tailscale** (TASK-9): one address set via gw, explained in `tailscale.md`; design `../work/task-9/design.md`. On the Mini and gw so far.
+7. **Tailscale** (TASK-9): built and working (`tailscale.md`). Left: tags on gw and the Mini, the `vm-join` key, hookdeck-ws joining, hardening list in `../work/task-9/design.md`.
 8. g8: BIOS update and kernel retest (TASK-4, Alex at the box; add-on: memory reporting for VM 101); small UPS.
 9. **Monitoring:** none beyond the Proxmox UI (no temperatures, no alerts). **TASK-7**: a `mon` VM with Grafana; Alex wants metrics synced to R2 (Thanos or VictoriaMetrics, undecided).

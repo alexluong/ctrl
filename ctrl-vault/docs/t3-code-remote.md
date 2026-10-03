@@ -25,6 +25,7 @@ How the T3 Code desktop app on the MBP drives agent sessions on another machine 
 - Binary in the template, pinned to the MBP app's version (`T3_VERSION` in `provision.sh`). **When the app updates, update the VMs** (`t3 update` in each, and bump the pin).
 - Service per VM (not in the template: its identity and signing keys in `~/.t3/userdata` must differ per VM): `t3 service install` writes `~/.config/systemd/user/t3code.service`; our drop-in `t3code.service.d/override.conf` sets `T3CODE_HOST=127.0.0.1`, `T3CODE_PORT=3773`, `T3CODE_NO_BROWSER=1`. Linger is on, so it runs without a login. Logs: `~/.t3/userdata/logs/boot-service.log`.
 - Loopback only, by choice: the SSH path needs nothing more, and plain HTTP would otherwise be readable on the home network. For a browser on another device later: the gateway (TASK-3) in front, or `t3 pair --tailscale`.
+- Away from home: the SSH environment uses the VM's name, so it works away once the VM is on the tailnet (`bin/vm-tailnet <name>`, `tailscale.md`) and the Mac's Tailscale app is on. Nothing to change in T3.
 
 ## Connect from the MBP (by hand, in the app)
 

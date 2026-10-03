@@ -108,3 +108,16 @@ Every setting this depends on, in one place: `docs/tailscale.md` § Every settin
    - Undo: `ssh gw 'systemctl disable --now gw-tailnet; rm /etc/systemd/system/gw-tailnet.service /etc/gw-tailnet.nft /etc/sysctl.d/90-gw-tailnet.conf; sysctl -w net.ipv4.ip_forward=0; systemctl enable nftables'`
 
 **Cleanup (2026-10-04):** removed `g8:/root/110.conf.before-task9` (the tun change is permanent and in `create.sh`). gw has no leftover files. Key expiry noted: Mini 2027-01-10, gw 2027-03-31 (to turn off). Phone away with the app: assumed to work, Alex to confirm.
+
+8. **Tailscale access rules, by Terraform** (Alex's OK). `collielab/terraform/tailscale.tf`, provider `tailscale/tailscale` 0.29.2, OAuth client `terraform` (scope policy file; Alex created it, credentials in `collielab/terraform/.env`). Policy: tags `gw`/`media`/`vm`; your devices → all; `tag:gw` → `tag:vm`, `tag:media`; nothing from `tag:vm`; three tests. Live policy read back: 3 tags, 2 grants, 3 tests, no `ssh` section (the old Tailscale-SSH "check" rule, unused, is gone). gw path and `check.sh` still fine (gw and the Mini are untagged until Alex tags them, so they still count as his devices).
+   - Before: `policy-before-2026-10-04.hujson` (one grant: Alex → all; ssh check rule).
+   - Undo: paste that file in the admin console, or delete `tailscale.tf` and apply (`reset_acl_on_destroy` restores Tailscale's default).
+
+9. **DNS switched to Tailscale addresses** (Alex: "switching all the dns"). First a throwaway record `ts-dnstest.lab` → `100.126.136.120` proved the home router's DNS passes `100.x` answers (from g8, gw, hookdeck-ws); removed in the same apply. Then `lab_gateway_ip` → `100.126.136.120` (lab, gw.lab, all `*.lab` wildcards: 8 records) and `mini.lab` → `100.91.137.41`. `hookdeck-ws.lab` and `g8.lab` unchanged (not on the tailnet).
+   - Tested by name from the MBP (PIA on): lab 200, jellyfin 302, plex 401, audiobooks 200, pve.g8 200, dozzle.hookdeck-ws 200, all on `100.126.136.120`; `ssh gw`, `ssh mini` (seen as gw), `ssh hookdeck-ws`, `ssh g8` fine. From g8: same pages. Calibre-Web returns 500 on every path, including directly on the Mini (`192.168.1.90:8074`/`:8073`): an existing Calibre-Web problem, not this change.
+   - Undo: `lab_gateway_ip = "192.168.1.110"`, `mini.lab` → `192.168.1.90`, `terraform apply`.
+
+10. **Opt-in VM join written** (collielab): `bin/vm-tailnet <name>` (copies the vm-join key to the VM's `/run`, runs `hosts/workspace-vm/tailscale.sh`: install, `tailscale up --auth-key=file:… --advertise-tags=tag:vm --accept-dns=false`, key deleted; then rewrites the VM's DNS record to its `100.x`), `bin/new-vm … --tailscale` calls it. Tested: syntax, the DNS-record rewrite on a scratch copy, refusal without the key. Not run yet: needs the `vm-join` OAuth client. `bin/new-vm` also stopped suggesting `git add -A`.
+   - gw `check.sh`: DNS through the router and gw's home address as fallback added; all good.
+
+**Waiting on Alex:** tag gw `tag:gw` and the Mini `tag:media`; create OAuth client `vm-join` (scope auth keys write, tag `tag:vm`) → `ctrl/secrets/tailscale/vm-join.key` + Vaultwarden. Then `bin/vm-tailnet hookdeck-ws`.

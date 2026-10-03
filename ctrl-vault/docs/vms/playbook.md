@@ -35,9 +35,11 @@ Run an agent with the prompt in § Survey prompt. Save its report as `work/task-
 
 ```sh
 cd ~/git/hub/alexluong/collielab && git pull
-bin/new-vm <id> <name>-ws <cores> <memory_mb> <disk_gb>      # clone, host keys, SSH alias, DNS snippet, T3 service
+bin/new-vm <id> <name>-ws <cores> <memory_mb> <disk_gb> [--tailscale]   # clone, host keys, SSH alias, DNS snippet, T3 service (+ tailnet)
 cd terraform && source scripts/export_env.sh && terraform apply   # <name>-ws.lab.alexluong.com
 ```
+
+`--tailscale` (opt-in): the VM joins the tailnet as `tag:vm` and its name points at its Tailscale address, so `ssh <name>-ws` and T3 work at home and away. Can be done later with `bin/vm-tailnet <name>-ws`. Needs `ctrl/secrets/tailscale/vm-join.key`. What it means and the rules a VM gets: `../tailscale.md`.
 
 Wait a minute before the first lookup of the new name (check with `dig +short <name>-ws.lab.alexluong.com @1.1.1.1` first): a lookup made too early gets a "not found" that the MBP and Viettel's DNS keep for 30 minutes. Until then use the address. Commit only the files `bin/new-vm` touched (`ssh/config`, `ssh/known_hosts`, `terraform/alexluong_com.tf`), then push.
 

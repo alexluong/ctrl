@@ -6,7 +6,7 @@ title: >-
 status: In Progress
 assignee: []
 created_date: '2026-10-02 18:41'
-updated_date: '2026-10-03 19:06'
+updated_date: '2026-10-03 19:41'
 labels:
   - infra
   - machine
@@ -22,9 +22,9 @@ Direction Alex likes (2026-10-03), to prove before deciding: every lab machine o
 
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
-- [ ] #1 Alex: tailnet/account confirmed; stale nodes removed; Tailscale on the MBP and phone
+- [x] #1 Alex: tailnet/account confirmed; stale nodes removed; Tailscale on the MBP and phone
 - [ ] #2 Tailscale runs in the gw container and on hookdeck-ws
-- [ ] #3 Proof without the router: MBP with Tailscale off and a hand-added route reaches ssh, T3 and a gateway page through gw
+- [x] #3 Proof without the router: MBP with Tailscale off and a hand-added route reaches ssh, T3 and a gateway page through gw
 - [x] #4 Router: static route possible and working, or the fallback (design.md) chosen
 - [ ] #5 Names point at Tailscale addresses; at home with no app and away with the app: ssh, T3, lab pages, Jellyfin on the phone all work
 - [ ] #6 Access rules: gw reaches VMs and the Mini only; VMs cannot start connections to other machines; other people's devices get media only
@@ -45,5 +45,11 @@ author: @claude
 created: 2026-10-03 19:06
 ---
 2026-10-04: router static route 100.64.0.0/255.192.0.0 → 192.168.1.110 (egress LAN) works: g8 and MBP without Tailscale reach the Mini and gw's 100.x (ssh, Jellyfin, lab page; ~200 Mbit/s). MBP's PIA needed a split-tunnel exception. Every setting: docs/tailscale.md.
+---
+
+author: @claude
+created: 2026-10-03 19:41
+---
+2026-10-04 (Alex afk, go-ahead given): policy applied by Terraform (collielab terraform/tailscale.tf); DNS switched: gw names + mini.lab → 100.x, tested by name from MBP and g8; bin/vm-tailnet + bin/new-vm --tailscale (opt-in) written; gw check.sh extended. Waiting on Alex: tag gw/Mini in the admin console, vm-join OAuth client → then hookdeck-ws joins (T3 test, #2, #5, #6). Calibre-Web 500s on the Mini itself (not this change).
 ---
 <!-- COMMENTS:END -->
