@@ -4,6 +4,7 @@ title: 'Mac Mini cleanup: remove hookdeck, trim apps, lean server setup'
 status: To Do
 assignee: []
 created_date: '2026-10-02 15:07'
+updated_date: '2026-10-03 20:56'
 labels:
   - machine
 dependencies: []
@@ -27,3 +28,13 @@ Make the Mini a clean server-like machine. Remove everything hookdeck (Colima pr
 - [ ] #5 Media stack still running after the cleanup
 - [ ] #6 mac-mini.md and fleet.md updated
 <!-- AC:END -->
+
+## Comments
+
+<!-- COMMENTS:BEGIN -->
+author: @claude
+created: 2026-10-03 20:56
+---
+2026-10-04: scan + decisions in work/task-5/scan.md. Hookdeck delete agreed (no save), waiting for go. Apps: not yet. Jump Desktop: no watchdog, cause = silent auto-update. Mini-use brainstorm summarized in docs/fleet.md § The Mini.
+---
+<!-- COMMENTS:END -->

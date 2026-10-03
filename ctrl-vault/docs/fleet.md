@@ -75,21 +75,29 @@ Common jobs: add a URL → `collielab/hosts/gw/README.md`. New VM → `collielab
 
 **Role:** the Mac in the fleet plus the storage box. New general workloads go to g8 (64GB, wired, restarts by itself), not the Mini.
 
-**Measured 2026-10-02:** 16GB RAM; the media VM holds 8.4GB (qBittorrent 5.6GB), so about 4-6GB spare. Internal disk 61GB free; `~/.colima` is 63GB including a stopped 50GB `hookdeck` profile from before g8 (plus 2GB of hookdeck clones). Wi-Fi.
+**Measured 2026-10-02:** 16GB RAM; the media VM holds 8.4GB (qBittorrent 5.6GB), so about 4-6GB spare. Internal disk 60GB free; about 80GB more comes back with TASK-5 (old `hookdeck` Colima profile 52GB, hookdeck repos 7GB, dev caches 19GB). Wi-Fi.
 
 **Over SSH from the MBP:** Docker/Colima, git, tmux, and (since the full-disk-access switch) the drives all work. Not available: the login Keychain, sudo, anything needing a click. Long jobs go in `tmux` on the Mini so they survive the MBP sleeping.
 
 **Power cuts: left as is** (Alex, 2026-10-02): auto-restart off, FileVault on, no auto-login. After a cut the Mini stays off; after power-on someone unlocks it at the screen and the containers need `media/scripts/vm-start.sh` + `up.sh core`.
 
-**Candidate uses beyond media** (none started): backups of g8's VMs onto Blue4 (817GB free; better wired); Mac-only jobs (Xcode builds for `fitjournal`, a logged-in browser); a watchdog outside g8 that checks g8, `gw` and `vultr` answer. Real spare capacity would need the media services moved to a VM on g8, which is blocked on a third drive (both are APFS and nearly full).
+**Cleanup: TASK-5** (scan, decisions, step list: `work/task-5/scan.md`). Alex approves each step before it runs. Hookdeck leftovers: delete, no need to save (go still pending). Apps: list kept, not acting yet. Jump Desktop: no watchdog; check/start over SSH (commands in the scan).
+
+**What the Mini is for beyond media** (brainstorm with Alex, open, nothing decided; full list in `work/task-5/scan.md` § Ideas). Its strength is CPU (M4, ~1.5x g8 overall, ~2x per core, from memory) and being a Mac; its limit is memory (~6GB spare). General workloads and workspace VMs still go to g8 (47GB free).
+- **Local CI** (Alex's idea, leading): GitHub Actions self-hosted runner, free; VMs push and the runner picks the job up, so no VM needs a key to the Mini. Linux jobs in a small separate Colima VM, Mac jobs (Xcode, `fitjournal`) natively. Private, personal repos only. Needs: pick a first repo.
+- Media compute: Jellyfin as a native app (hardware transcoding), HEVC re-encode of the library to free drive space, Whisper subtitles.
+- Storage: backup target for g8's VMs, Time Machine for the MBP (Blue4, 817GB free).
+- Mac-only: a logged-in browser for automations (bank/property-manager downloads), local copy of iCloud.
+- Books/audiobooks to g8: 22GB, frees only ~0.4GB RAM on the Mini; gain is separation; catch is the qBittorrent hardlink flow. Later, after backups.
+- Rejected: Mini as the CS/personal workspace (memory, no isolation, Keychain/sudo over SSH; a VM on g8 instead); local LLMs.
 
 **State of its ctrl clone:** `~/git/hub/alexluong/ctrl`, still on branch `docs/mac-mini` (merged as PR #1), with a Claude session running there on 2026-10-02. `media/` in ctrl is what it runs from.
 
 ## Open, in rough order
 
-1. **What the Mini should run next** (Alex wants to think it through). Pending with it:
+1. **What the Mini should run next**: brainstorm continues (§ The Mini). Cleanup is TASK-5. Pending with it:
    - `media/` as its own repo with a single clone on the Mini, edited from the MBP over SSH (proposal: its busiest files, `catalog.json` and `downloads.json`, are written on the Mini, and a second ctrl clone there is how PR #1 happened). Not decided.
-   - Delete the old `hookdeck` Colima profile and clones on the Mini (asked, no answer yet).
+   - Delete hookdeck leftovers (TASK-5; agreed, waiting for go).
    - Start Colima + the core stack at login (user launch agent, `collielab/hosts/mini/`).
    - `gluetun` unhealthy (DNS/TLS timeouts through the VPN); `seedboxapi` crash-looping (expired MAM session, needs a new session ID from Alex); qBittorrent memory.
    - Ethernet, if a cable can reach.

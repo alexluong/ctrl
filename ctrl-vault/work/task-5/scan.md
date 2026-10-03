@@ -94,7 +94,8 @@ Alex, 2026-10-02:
 
 - **Hookdeck work on the Mini: delete it, no need to save** the unpushed commits and stashes ("it's been a long time, no problem"). Still waits for his go on the actual delete.
 - **Apps: keep the list, don't act yet.** Leanings: 1Password remove (definite), Bitwarden probably remove, Parsec remove, PIA app maybe, Setapp/iStat discuss later.
-- The Mini is used at the screen only now and then, mainly to turn on Jump Desktop Connect. **Wanted: Jump Desktop Connect starts by itself at login.**
+- The Mini is used at the screen only now and then, mainly to turn on Jump Desktop Connect.
+- **Jump Desktop: no watchdog for now** (Alex, 2026-10-04): if it's down, check and start it over SSH. Cause below.
 - Apple services (Messages, Photos, iCloud Drive): maybe, not yet.
 - Claude on the Mini: keep for now.
 - Open question he raised: what the Mini is for besides media (see `docs/fleet.md` § The Mini).
@@ -106,9 +107,12 @@ Alex, 2026-10-02:
 - Jellyfin runs in a Linux container on the Mini, so it cannot use the M4's video hardware; Plex (native app) can.
 - Books and audiobooks, all on Blue4: `media/books` 20GB, `media/audiobooks` 2GB, app config under `data/` about 12MB. Fits g8 easily (800GB free). Catch: new books arrive through qBittorrent on the Mini and are hardlinked into the library on the same drive; with the library on g8 each new book needs a copy step to g8.
 
-## Jump Desktop Connect not starting at login (checked 2026-10-02, read-only)
+## Jump Desktop Connect going down (checked 2026-10-04, read-only)
 
-Alex's experience: he has to turn it on by hand. What the Mini shows: the root service (`/Library/LaunchDaemons/com.p5sys.jump.connect.service.plist`) starts at boot and is kept alive. The per-user part (`/Library/LaunchAgents/com.p5sys.jump.connect.agent.plist`) has `RunAtLoad = 0`: it only starts when the service sends it a signal, not at login. Last boot and login were 2026-09-25; the user part was started 2026-10-02 17:09, so it did not come up by itself. Candidate fix (not applied): add the app to Login Items, or its own "start at login" setting; then test with a reboot.
+Cause found in its logs (`/Library/Logs/Jump Desktop/Service_*.log`, `~/Library/Logs/Jump Desktop/Agent_*.log`): starting at login works (after the 2026-09-25 boot the per-user part came up at 02:18). On 2026-09-28 20:16 Jump installed a **silent auto-update** ("Disable relaunch because this is a silent update"): the root service restarted (launchd keeps it alive), the per-user part (`com.p5sys.jump.connect.agent`, handles screen sessions; `RunAtLoad = 0`, started by a notify signal from the service) died and stayed down until Alex started it by hand on 2026-10-02.
+
+Decision (Alex, 2026-10-04): leave it; check over SSH when needed. Check: `ssh mini 'pgrep -fl "JumpConnect --minimized"'`. Start (untested): `ssh mini 'launchctl kickstart gui/501/com.p5sys.jump.connect.agent'`. If it keeps happening: a user launch agent that re-sends `notifyutil -p com.p5sys.jump.connect.agent.launchd` every minute, or turn off Jump's auto-update.
+After a power cut nothing runs until someone unlocks FileVault at the screen; no fix for that while FileVault stays on.
 
 ## Ideas for using the Mini's CPU (2026-10-02, brainstorm, nothing decided)
 

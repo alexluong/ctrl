@@ -86,7 +86,7 @@ The Mini's ctrl clone is at `~/git/hub/alexluong/ctrl` (no `~/workspaces/` there
   `vm-start.sh` / `vm-stop.sh`.
 
 ### Other host software
-Tailscale, Jump Desktop daemon (`com.p5sys.jump.connect`), PIA VPN daemon,
+Tailscale, Jump Desktop daemon (`com.p5sys.jump.connect`; its silent auto-updates can leave the screen-sharing part stopped: check/start over SSH, `ctrl-vault/work/task-5/scan.md`), PIA VPN daemon,
 iStat Menus, Setapp, Logi G HUB.
 
 ## Startup & power
