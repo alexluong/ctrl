@@ -13,6 +13,8 @@ Same name, same address, everywhere: `ssh hookdeck-ws`, T3, `https://jellyfin.la
 | Tailscale | a private network ("tailnet") between our machines, encrypted, works across the internet | each node gets a `100.x` address |
 | Tailnet | `lhtanh98@gmail.com`, suffix `tail2b958c.ts.net` | admin: https://login.tailscale.com/admin/machines |
 | Node | a machine running Tailscale | Mini `100.91.137.41`, gw `100.126.136.120`, phone `100.122.122.29`; hookdeck-ws not yet |
+
+**Phone away from home:** the Tailscale app must be on; nothing else routes `100.x` there. iOS runs one VPN at a time (PIA on = Tailscale off). The iOS app's "VPN On Demand" can switch it on whenever you are not on home Wi-Fi (from memory; check the current app).
 | `gw` | container 110 on g8; Caddy (web pages) **and** the door into the tailnet for home devices without the app | home `192.168.1.110`, tailnet `100.126.136.120` |
 | Router rule (planned) | one static route on the Viettel router: "`100.64.0.0/10` → `192.168.1.110`" | — |
 
@@ -216,4 +218,5 @@ See `../work/task-9/log.md` for the details and undo of each change.
 - 2026-10-04: forwarding and masquerade made permanent (`collielab/hosts/gw/tailnet.sh`), restart-tested; `check.sh` all good.
 - Proven from the MBP with no Tailscale and a hand-added route: ping, ssh, Jellyfin on the Mini's `100.x`; lab pages on gw's `100.x` with a valid certificate.
 - 2026-10-04: PIA on the MBP lets `100.64.0.0/10` bypass the VPN. Router static route added (`100.64.0.0/255.192.0.0` → `192.168.1.110`, egress LAN). From g8 and the MBP, no Tailscale on either: traceroute router → gw → Mini; ping, ssh, Jellyfin, lab page all work; 100MB over ssh ~200 Mbit/s through gw vs ~230–270 direct (the Mini is on Wi-Fi). The router does not mind the reply skipping it, and large packets get through (no packet-size problem seen).
-- Not yet: Tailscale on hookdeck-ws (T3 test), phone test, names moved to `100.x`, access rules, key expiry off.
+- 2026-10-04: iPhone on home Wi-Fi with the app off opens Jellyfin on the Mini's `100.x`. Away with the app on: assumed to work (plain Tailscale), Alex to confirm.
+- Not yet: access rules, Tailscale on hookdeck-ws (T3 test), names moved to `100.x`, key expiry off (Mini expires 2027-01-10, gw 2027-03-31), `bin/new-vm` opt-in join.

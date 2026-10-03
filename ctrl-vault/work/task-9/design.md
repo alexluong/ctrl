@@ -55,8 +55,8 @@ From a discussion with Alex. **Nothing is built or installed.** The direction be
 - **Check 3: passed (2026-10-04).** The ZTE has Local Network → Routing → Static Routing with egress `LAN`; entry `100.64.0.0` / `255.192.0.0` → `192.168.1.110`. From g8 and the MBP (no Tailscale): router → gw → Mini; ping, ssh, Jellyfin, lab page; 100MB over ssh ~200 Mbit/s. The one-sided path (reply skips the router) is not a problem on this router; no packet-size problem seen.
 - **Check 4: the full `/10` is fine on this router** (its routing table has nothing in `100.64.0.0/10`). Narrower block not needed for now.
 - **New: devices with a full VPN** send `100.x` into the VPN. The MBP's PIA got a split-tunnel exception for `100.64.0.0/10`. Every such device needs one (or the Tailscale app).
-- **Check 5, at home: passed.** iPhone on home Wi-Fi, app off, opens Jellyfin on the Mini's `100.x`. Away with the app on: still to try.
-- **Not yet:** T3 (needs Tailscale on `hookdeck-ws`), phone away with the app, making the `gw` settings permanent, key expiry off on servers.
+- **Check 5, at home: passed.** iPhone on home Wi-Fi, app off, opens Jellyfin on the Mini's `100.x`. **Away with the app on: assumed to work** (that is plain Tailscale; Alex to try and correct this if not).
+- **Not yet:** T3 (needs Tailscale on `hookdeck-ws`), making the `gw` settings permanent, key expiry off on servers.
 
 ## Weak points
 
@@ -86,14 +86,14 @@ Hardening list (none done):
 - Rejected: a second name set `*.ts.alexluong.com` (the earlier proposal in `home-systems.md`): two URLs per service, and it does not cover SSH.
 - Deferred: renumbering home to `192.168.77.x`.
 
-## State today (checked 2026-10-03)
+## State today (2026-10-04)
 
-- Tailnet of account `lhtanh98@` (Alex to confirm it is the one to use): `alexs-mac-mini` `100.91.137.41` online (Tailscale 1.92.3); `iphone-15-pro` offline 70 days; `67ee56ee4fc5` (linux) and `poc-client` (macOS) offline 230+ days: candidates to remove.
-- Tailscale is not installed on the MBP, g8, `gw` or `hookdeck-ws`.
-- `bin/new-vm` would join new VMs automatically with a key kept in `ctrl/secrets/` (to design: tagged, reusable or one-off).
+- Tailnet `lhtanh98@gmail.com` (confirmed by Alex). Nodes: `alexs-mac-mini` `100.91.137.41`, `gw` `100.126.136.120`, `iphone-15-pro` (Alex's). Old nodes removed. Key expiry still on: Mini 2027-01-10, gw 2027-03-31.
+- Tailscale not on the MBP (works without it at home; PIA has the `100.64.0.0/10` exception), g8 (stays bare) or `hookdeck-ws` (next).
+- `bin/new-vm`: joining is to be **opt-in per VM** (Alex, 2026-10-04), not automatic.
 
 ## Open for Alex
 
-1. Which tailnet/account; who else is on it (Hannah's devices: media only?).
-2. OK to add a static route on the router once the Mac-only proof works?
+1. ~~Which tailnet~~ `lhtanh98@` (decided). Hannah's devices: later, media only; not part of the proof.
+2. ~~Static route on the router~~ added and working (2026-10-04).
 3. Media names: also through the gateway's Tailscale address (one address set for everything), with `mini.lab` as the fallback?

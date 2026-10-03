@@ -102,7 +102,7 @@ Full write-up: `mac-mini.md` (specs, storage, service/port map, startup, migrati
 | Gateway | `https://lab.alexluong.com` | `ssh gw` | works |
 | collielab VM | `vault.collie.studio` etc. | `ssh vultr` | works |
 
-Home-only today: everything on `192.168.1.x` is reachable only on home Wi-Fi. Tailscale (planned) makes g8, its VMs and the Mini reachable from anywhere.
+`192.168.1.x` addresses work only on home Wi-Fi. Tailscale addresses (`100.x`) work at home without the app (router → gw) and anywhere with the app: `tailscale.md` (TASK-9; names still point at `192.168.1.x` until the move).
 
 ## Naming, numbering, URLs (agreed 2026-10-02; names and addresses applied, URLs not yet)
 
@@ -188,6 +188,6 @@ Claude can only use keys loaded in the agent (no passphrase prompt). After a res
 - [x] Mac Mini: SSH keys only (2026-10-02)
 - [x] Mac Mini: full disk access for remote users (2026-10-02); auto-restart / FileVault left as is (Alex)
 - [ ] Mac Mini: move its ctrl clone to `main` once the session there is idle; wire it (new router binding for the ethernet MAC)
-- [ ] Later: Tailscale account + install on MBP/phone, `ts` names
+- [ ] Tailscale: TASK-9 (`tailscale.md`); the `ts` names idea is dropped
 - [ ] Identify the unidentified devices (`.57`, `.124`, `.129/.130`)
 - [ ] Re-scan after 2026-10-02 18:00: `.124` and `.131` (old leases) should have moved below `.100`

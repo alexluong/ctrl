@@ -106,3 +106,5 @@ Every setting this depends on, in one place: `docs/tailscale.md` § Every settin
    - Restart test: `pct reboot 110`; back in seconds with tun, forwarding, `gw_tailnet`, Tailscale (same `100.126.136.120`), Caddy; g8 and MBP paths work.
    - New `collielab/hosts/gw/check.sh` (read-only health check of the whole chain): all good. `hosts/gw/README.md` rewritten to cover both jobs, rebuild order and traps.
    - Undo: `ssh gw 'systemctl disable --now gw-tailnet; rm /etc/systemd/system/gw-tailnet.service /etc/gw-tailnet.nft /etc/sysctl.d/90-gw-tailnet.conf; sysctl -w net.ipv4.ip_forward=0; systemctl enable nftables'`
+
+**Cleanup (2026-10-04):** removed `g8:/root/110.conf.before-task9` (the tun change is permanent and in `create.sh`). gw has no leftover files. Key expiry noted: Mini 2027-01-10, gw 2027-03-31 (to turn off). Phone away with the app: assumed to work, Alex to confirm.
