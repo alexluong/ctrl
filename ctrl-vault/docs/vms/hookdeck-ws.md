@@ -85,7 +85,7 @@ State: all 13 paths copied 2026-10-02 (rsync from the MBP, no Mac-only paths ins
 - What the VM may do: answer only. On the tailnet: `tag:vm` (`collielab/terraform/tailscale.tf`). On the home network: Proxmox firewall (`collielab/hosts/g8/firewall.sh`, since 2026-10-04): no connections to `192.168.1.x` (g8, gw, the Mini, the router page, other devices), Docker containers included; internet, router DNS and Tailscale allowed. **No IPv6** on this VM (dropped at the firewall); everything uses IPv4.
 - Restart tested 2026-10-04: after `qm reboot 101` Tailscale (same address), Docker, T3 and the firewall all came back by themselves.
 - Need the VM to reach a home machine or another machine on purpose? A rule in `firewall.sh` for this VM and a grant in `tailscale.tf`; both explicit.
-- Undo: `ssh hookdeck-ws sudo tailscale down` (instant), DNS record back to `192.168.1.101`. Firewall rules before the join: `/tmp/iptables-before-tailscale.txt` on the VM (until its next reboot).
+- Undo: `ssh hookdeck-ws sudo tailscale down` (instant), DNS record back to `192.168.1.101`. (The pre-join copy of its firewall rules was in `/tmp` and went with the 2026-10-04 reboot; not needed: `tailscale down` removes Tailscale's rules.)
 - Explainer: `../tailscale.md`.
 
 ## Services around sessions
