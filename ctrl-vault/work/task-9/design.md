@@ -71,15 +71,15 @@ From a discussion with Alex. **Nothing is built or installed.** The direction be
 
 Away with the app off, a hostile network can answer for any address, `100.x` included. By accident it is very unlikely with `100.x` (common with `192.168.1.x`); on purpose it stays possible. What catches it: SSH host keys pinned in `collielab/ssh/known_hosts` (an impostor is refused; logins are by key, never a password) and HTTPS certificates only the gateway holds. Unprotected: plain `http://` by port, and clicking through a certificate warning. With the app on, nothing on the path can intercept.
 
-Hardening list (none done):
-1. Only `https` gateway URLs in apps and bookmarks, never address-and-port.
-2. HSTS on the gateway (not set in `hosts/gw/Caddyfile` today).
-3. Login at the gateway for sensitive pages.
-4. Tailscale access rules; other people's devices get media only.
-5. `StrictHostKeyChecking yes` for the fleet hosts in `collielab/ssh/config` (default "ask" today).
-6. Guest Wi-Fi separated, if the router can.
-7. Two-factor on the account that owns the tailnet.
-8. **Home-network side of "a VM reaches nothing".** The Tailscale policy only governs `100.x` traffic. On `192.168.1.x` a VM can still open connections to g8, gw, the Mini and other VMs (anything on the Wi-Fi can). Once names point at `100.x`, normal use goes through the tailnet and gets the policy; a VM that uses home addresses on purpose does not. Closing it: Proxmox firewall on each VM (allow out to the internet and the router, deny the rest of `192.168.1.0/24` except replies). Today the host is protected by the fleet rule that VMs hold no keys to other machines.
+Hardening list (state 2026-10-04):
+1. **Habit, nothing to build:** only `https` gateway URLs in apps and bookmarks, never address-and-port (except the documented fallbacks when gw is down).
+2. **Done:** HSTS on every gateway site (`collielab/hosts/gw/Caddyfile`, snippet `lab_tls`): one year, no `includeSubDomains` so machine names on plain-http ports keep working.
+3. **Deferred on purpose (Alex, 2026-10-04):** login at the gateway for sensitive pages (Dozzle, Isaiah). Not part of this setup; don't raise it while building.
+4. **Done:** Tailscale access rules (`collielab/terraform/tailscale.tf`). Media-only rule for other people's devices: added when Hannah's devices join.
+5. **Done:** `StrictHostKeyChecking yes` for the fleet (`collielab/ssh/config`); a changed key is refused.
+6. **Skipped for now:** guest Wi-Fi separation (router change, no current need).
+7. **Skipped for now (Alex):** two-factor on the `lhtanh98@` Google account.
+8. **Done:** home-network side of "a VM reaches nothing": Proxmox firewall (`collielab/hosts/g8/firewall.sh`, group `workspace-vm`): a VM may not start connections to `192.168.1.0/24` (Docker in it included); internet, router DNS and Tailscale's direct path allowed; no IPv6 for VMs (the home prefix is Viettel's and changes). Tested on hookdeck-ws over IPv4 and IPv6, and after a reboot.
 
 ## Fallbacks (same Tailscale installs, so nothing is wasted)
 

@@ -6,7 +6,7 @@ title: >-
 status: In Progress
 assignee: []
 created_date: '2026-10-02 18:41'
-updated_date: '2026-10-03 20:33'
+updated_date: '2026-10-03 20:56'
 labels:
   - infra
   - machine
@@ -28,7 +28,7 @@ Direction Alex likes (2026-10-03), to prove before deciding: every lab machine o
 - [x] #4 Router: static route possible and working, or the fallback (design.md) chosen
 - [x] #5 Names point at Tailscale addresses; at home with no app and away with the app: ssh, T3, lab pages, Jellyfin on the phone all work
 - [x] #6 Access rules: gw reaches VMs and the Mini only; VMs cannot start connections to other machines; other people's devices get media only
-- [ ] #7 Hardening list in design.md done or explicitly skipped
+- [x] #7 Hardening list in design.md done or explicitly skipped
 - [x] #8 bin/new-vm joins a new VM to the tailnet; docs updated (home-systems.md, fleet.md, t3-code-remote.md, vms/playbook.md)
 <!-- AC:END -->
 
@@ -57,5 +57,11 @@ author: @claude
 created: 2026-10-03 20:33
 ---
 2026-10-04: hookdeck-ws joined (100.113.20.22, tag:vm), name moved; ssh/T3 through router → gw tested; VM blocked from the Mini and gw over the tailnet. #5: away with the app assumed (Alex to confirm on the phone). #6: 'other people's devices media only' has no case yet (Hannah not on the tailnet); add the grant when she joins. #8: bin/new-vm --tailscale + bin/vm-tailnet, docs updated. Left: #7 hardening.
+---
+
+author: @claude
+created: 2026-10-03 20:56
+---
+2026-10-04: hardening done or explicitly skipped (design.md): HSTS, StrictHostKeyChecking, Proxmox firewall for VMs (v4+v6, Docker incl.) done and restart-tested; gateway logins deferred on purpose; guest Wi-Fi and two-factor skipped for now. Open: a full g8 reboot test (Alex home).
 ---
 <!-- COMMENTS:END -->

@@ -199,7 +199,7 @@ Labels: tagged machines belong to the tag, not to your login. gw → `tag:gw`, M
 
 **The vm-join key** is an OAuth client Terraform created (`tailscale_oauth_client.vm_join`: scope auth keys, tag `tag:vm` only). Its secret: `terraform output -raw tailscale_vm_join_key > ~/workspaces/ctrl/secrets/tailscale/vm-join.key` (done 2026-10-04; the MBP has it). New machine: run that line again; nothing to create.
 
-The policy covers `100.x` traffic only. On the home network (`192.168.1.x`) a VM can still reach other machines by address; closing that = Proxmox firewall per VM (`design.md` hardening #8).
+The policy covers `100.x` traffic. The home network (`192.168.1.x`) side is the **Proxmox firewall** on g8 (`collielab/hosts/g8/firewall.sh`, since 2026-10-04): a VM may not start connections to any home address (its Docker containers included); it keeps the internet, the router's DNS and Tailscale's direct path; VMs get no IPv6. Inbound stays open, so you still reach a VM at `192.168.1.<id>` at home. Together: a VM answers, it never knocks, on either network.
 
 A node that is removed and re-added gets a **new** `100.x`: update DNS and anything that has the address typed in.
 

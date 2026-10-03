@@ -48,7 +48,7 @@ Where the details are:
 
 **Gateway: one central one** (`gw` on g8), not one per machine: one routing file, one certificate holder, one token. Cost accepted: if g8 is down the URLs stop; services still answer on `<machine>.lab.alexluong.com:<port>`.
 
-**Agents.** None on infra machines (`g8`, `gw`, `vultr`); they are driven from the MBP over SSH. Workspace VMs exist to run agents. A VM never gets keys to the host or to other machines.
+**Agents.** None on infra machines (`g8`, `gw`, `vultr`); they are driven from the MBP over SSH. Workspace VMs exist to run agents. A VM never gets keys to the host or to other machines, and cannot open connections to them: Proxmox firewall on the home network (`hosts/g8/firewall.sh`), Tailscale policy on the tailnet (`terraform/tailscale.tf`). Exceptions are explicit rules.
 
 **sudo.** Agents cannot type a password. On `mini` and `vultr`, design around it (Docker, user-level services); the few root steps are one-time scripts Alex runs (e.g. `collielab/hosts/mini/root-setup.sh`). No blanket passwordless sudo there.
 

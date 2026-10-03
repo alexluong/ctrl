@@ -133,3 +133,11 @@ Every setting this depends on, in one place: `docs/tailscale.md` § Every settin
 13. **`bin/new-vm` adds the gateway wildcard and gw's backend entry** for a new VM (`terraform/lab_gateway.tf` map, `hosts/gw/machines`). Tested on scratch copies, rerun does not duplicate.
 
 **Board:** TASK-12 merged into TASK-13 (duplicate; criteria moved), TASK-12 archived.
+
+14. **Hardening** (Alex: do the rest, skip two-factor, gateway logins deferred on purpose).
+   - `StrictHostKeyChecking yes` in `collielab/ssh/config`: all five hosts connect; a deliberate mismatch is refused. Undo: remove the line.
+   - HSTS (`max-age=31536000`, no includeSubDomains) in the Caddyfile's `lab_tls` snippet, pushed with `push.sh`; header on every site; `mini.lab…:8096` plain http unaffected. Undo: remove the line, push.
+   - Proxmox firewall (`collielab/hosts/g8/firewall.sh`): `host.fw` enable 0 (g8 unfiltered, written first), `cluster.fw` enable 1 / policies ACCEPT / ipset `home` / group `workspace-vm`; `101.fw` (ndp 0, radv 0, group); net0 `firewall=1` set live. Before: firewall disabled, no files. From hookdeck-ws after: Mini `:22`/`:8096`, g8 `:22`/`:8006`, gw `:443`, router `:443`, ping Mini, Mini over IPv6, and a Docker container to the Mini: all blocked; internet (VM and container), DNS, Tailscale direct to gw: fine. From the MBP: ssh by name/home address/tailnet address, T3 tunnel, Dozzle/Isaiah through gw, `:8888` by home address: fine. `bin/new-vm` applies it to new VMs.
+     Undo: `qm set 101 --net0 virtio=BC:24:11:F0:9B:5C,bridge=vmbr0` (one VM) or `enable: 0` in `/etc/pve/firewall/cluster.fw` (all).
+   - Restart tests: `qm reboot 101` (back in ~10 s: Tailscale same address, Docker, T3, firewall, no IPv6 address); `pct reboot 110` (back in ~2 s, `check.sh` all good, HSTS served, ssh to hookdeck-ws through gw). **Not done: a full g8 reboot** (everything at once; g8 has no remote console, so best with Alex home).
+   - Hardening list states: `design.md`.
