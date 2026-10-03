@@ -1,5 +1,7 @@
 # TASK-8 spec: workspace self-setup (2026-10-03)
 
+**Status 2026-10-04:** machine side done (collielab `b929c22`: template rebuilt with IPv4-first + browser libraries; common VM setup does git identity, GitHub key, Claude config + plugins, Docker UIs; firewall before first boot; proven twice on a throwaway VM). Docs done (`docs/workspace-setup.md` § 7a, `docs/vms/playbook.md` two paths, per-VM doc template). Decided: Docker UIs are environment (moved to `collielab/hosts/workspace-vm/docker-ui.sh`, hookdeck-ws already on it); psql/redis-cli stay OS packages with a `doctor` check. **Waiting on the hookdeck lead**: `handoff-hookdeck.md` (paste its ask into a hookdeck session on hookdeck-ws). After that: delete `collielab/hosts/hookdeck-ws/setup.sh`, prove clone → setup → doctor on a throwaway VM, then port to enable (TASK-10).
+
 From the discussion with Alex after the first workspace VM (`hookdeck-ws`, TASK-2). Background: `docs/vms/playbook.md`, `docs/vms/hookdeck-ws.md`, `work/task-2/hookdeck-vm-requirements.md`.
 
 ## Principle (Alex)

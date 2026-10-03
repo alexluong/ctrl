@@ -57,3 +57,4 @@ Proxmox memory shows real guest use only when the VM has a balloon device (`ball
 ## Log
 
 - 2026-10-04 hookdeck-ws: balloon on (Proxmox showed 100% memory), compose 5.6, snapshot `idle-20261004`. Template 9000 rebuilt (service PATH fix). Snapshots `clean-setup` and `ready` deleted.
+- 2026-10-04 template 9000 rebuilt again (TASK-8): IPv4-first for `*.localhost` and Playwright system libraries now in the base; built as 9001, proven with throwaway VM 148 twice, full-cloned back to 9000, 9001 removed.

@@ -20,7 +20,7 @@ Pick the mode from the request; ask if unclear.
 ## audit
 
 1. Run `.agents/skills/workspace-setup/check` (all workspaces) or `check <name>`. It checks the structural invariants: CLAUDE.md→AGENTS.md symlink, `.claude/skills` symlink, standard skills + scripts, roles + agent wrappers, identical `done`, vault dirs + digest, memory settings, hooks, deny rules, gitignore essentials, prod guard when `ops/` exists, favicon tracked, dirty/unpushed.
-2. Beyond the script (judgment): `AGENTS.md` layout section matches the tree; `recall`/`tidy` adapted to this workspace (vault name, branch naming, stack commands); gotchas in the playbook newer than the workspace's setup applied (e.g. PATH line in `session-env.sh`).
+2. Beyond the script (judgment): self-setup present and current (`mise run setup` / `mise run doctor` tasks, access checklist, `.env.example` next to env files, `setup` skill, the AGENTS.md rule; playbook § 7a); a tool used by its scripts but missing from `mise.toml` is drift; `AGENTS.md` layout section matches the tree; `recall`/`tidy` adapted to this workspace (vault name, branch naming, stack commands); gotchas in the playbook newer than the workspace's setup applied (e.g. PATH line in `session-env.sh`).
 3. Report per workspace, concise. Uncommitted work in a vault may belong to a live session: report it, don't commit it. Fix setup drift only after Alex agrees.
 
 ## sync `<file>`

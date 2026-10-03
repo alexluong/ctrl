@@ -6,6 +6,8 @@ Scripts: `collielab/hosts/hookdeck-ws/setup.sh`. Full survey behind this doc: `w
 
 ## Tools beyond the base
 
+**Moving into the workspace (TASK-8):** once the hookdeck lead lands `handoff-hookdeck.md` (`../../work/task-8/`), tools come from the workspace `mise.toml` + `mise run setup` and this table goes; `collielab/hosts/hookdeck-ws/setup.sh` is retired. Docker UIs already moved to `collielab/hosts/workspace-vm/docker-ui.sh` (2026-10-04).
+
 | What | Why | Installed by |
 |---|---|---|
 | node 22.22.0, go 1.26.1, jq, gh, gcloud 572, kubectl 1.37.1, terraform 1.15.2, awscli 2.34.61, railway 5.62.1, backlog.md 1.53.0 | pinned in the workspace `mise.toml` | `setup.sh` pre-installs; `mise install` in the workspace is the source of truth |

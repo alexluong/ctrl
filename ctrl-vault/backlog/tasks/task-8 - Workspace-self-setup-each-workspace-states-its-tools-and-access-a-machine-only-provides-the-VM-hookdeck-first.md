@@ -3,9 +3,10 @@ id: TASK-8
 title: >-
   Workspace self-setup: each workspace states its tools and access; a machine
   only provides the VM (hookdeck first)
-status: To Do
+status: In Progress
 assignee: []
 created_date: '2026-10-02 17:06'
+updated_date: '2026-10-03 21:32'
 labels:
   - workspace
   - machine
@@ -27,6 +28,16 @@ Alex 2026-10-03: a workspace should care about what it does (tools, access), not
 - [ ] #4 hookdeck: a setup skill an agent follows on a fresh machine; ends with the list left for the human
 - [ ] #5 hookdeck: rule in AGENTS.md for agents adding a tool, an access item or a config variable
 - [ ] #6 collielab: hosts/hookdeck-ws/setup.sh holds nothing workspace-specific; Linux quirks any workspace hits live in the base template; template rebuilt
-- [ ] #7 ctrl: vms/playbook.md and the per-VM doc template follow the new flow; workspace-setup.md carries the convention for all workspaces
+- [x] #7 ctrl: vms/playbook.md and the per-VM doc template follow the new flow; workspace-setup.md carries the convention for all workspaces
 - [ ] #8 Proven on a fresh VM: new-vm, clone, setup, doctor shows only the logins left
 <!-- AC:END -->
+
+## Comments
+
+<!-- COMMENTS:BEGIN -->
+author: @claude
+created: 2026-10-03 21:32
+---
+2026-10-04 (ctrl): machine side done: template 9000 rebuilt (IPv4-first, browser libs), hosts/workspace-vm/setup.sh does git identity, GitHub key, Claude plugins; bin/new-vm copies the dotfiles Claude config, starts Docker UIs (moved out of the hookdeck repo: hosts/workspace-vm/docker-ui.sh; hookdeck-ws already on it), firewall on before first boot. Proven twice on throwaway VM 148 (--tailscale), cleaned up. Docs: workspace-setup.md § 7a (convention), vms/playbook.md two paths, per-VM doc template. Workspace side handed to the hookdeck lead: work/task-8/handoff-hookdeck.md (Alex pastes its ask into a hookdeck session on hookdeck-ws). Then: delete hosts/hookdeck-ws/setup.sh (#6), throwaway-VM proof of clone/setup/doctor (#8).
+---
+<!-- COMMENTS:END -->

@@ -13,6 +13,7 @@ Written for whoever runs the setup (Claude or a human). Claude: drive it with th
 - **Pristine sources:** `repos/` fetch-only, `wt/main` read-only reference; every change in `wt/task-N`.
 - **Sessions start at the workspace root.**
 - **Stop at each checkpoint** (✅) for review; commit and push there.
+- **The workspace sets itself up** (TASK-8, Alex: "the ws ideally only care about what it does, not the environment around it"): it states its tools and access, knows nothing about the machine, and a fresh machine needs only `claude` + GitHub logins, a clone, `mise run setup`, `mise run doctor`. § Self-setup.
 
 ## Hub profile (ctrl)
 
@@ -129,6 +130,22 @@ TF_VAR_project_id = "<prod project>"
 - Hooks: `session-env.sh` (SessionStart: `mise env -s bash >> "$CLAUDE_ENV_FILE"`; Claude's shell never runs mise's cd hook) and `guard-prod.sh` (PreToolUse Bash: ask on `prd-rw` and write creds; deny prod identifiers without a `prd`/`prd-rw` prefix, incl. `--account`/`--impersonate-service-account`; deny reading secrets files).
 - Rewrite skills/references to the wrappers; team scripts run as `prd bun ../../wt/main/scripts/…`.
 
+### 7a. Self-setup ✅
+
+So a fresh machine (a VM from `bin/new-vm`, a new Mac) is: log in to Claude and GitHub, clone, `mise install && mise run setup && mise run doctor`, then the human list `doctor` prints. Reference implementation: hookdeck (TASK-8; spec `../work/task-8/spec.md`).
+
+| Piece | What it is | Rules |
+|---|---|---|
+| Tools in `mise.toml` | every CLI the workspace uses, pinned | no global, apt, brew or `go install` by hand. Registry name, else a backend (`aqua:`, `github:`, `go:`, `npm:`). If something truly must be an OS package (e.g. `psql`), it goes in the checklist with the install line per OS and `doctor` checks it |
+| `mise run setup` | everything a fresh clone needs that is not a login | idempotent; trusts nested `mise.toml`s, `bin/wt init`, tool post-install steps (e.g. `gcloud components install …`), test browsers (Playwright's own version), dependency installs in `wt/*/main`, optional image pre-pull. No `sudo` unless unavoidable (OS libraries belong to the machine's template) |
+| `mise run doctor` | read-only report | tools against `mise.toml`, Docker reachable, each login valid, each config file present; never prints a value; exit non-zero when something required is missing; ends with the list for the human |
+| Access checklist | one doc: login, what for, reach (read / write / prod), how to do it without a browser on this machine, how it is checked | `doctor` and the doc share one list (doctor reads it, or the doc is generated from it) |
+| `.env.example` | next to every env file (`.env`, `ops/*/.env`): variable names + where each value comes from (Doppler, Vaultwarden item, dashboard) | names only; agents that may not read the real files derive names from the scripts that use them |
+| `setup` skill | an agent on a fresh machine runs setup, then doctor, fixes what it may, ends with the human list | |
+| Rule in `AGENTS.md` | new tool → `mise.toml`; new login → a checklist row + a `doctor` check; new config variable → the example file | short; detail in the skill |
+
+The machine knows nothing about the workspace and the workspace nothing about the machine: no VM names, addresses or Proxmox in these files (the workspace's own machines note may say where it runs).
+
 ### 8. Verify ✅
 
 From the workspace root:
@@ -136,6 +153,7 @@ From the workspace root:
 - `mise env` at root: no prod values; `gcloud projects describe <prod>` fails; Terraform at root fails (missing ADC file).
 - `prd …` reads work (DB count, logs, `terraform plan -lock=false`); `prd` has no write credentials; `stg` works.
 - Guard unit tests: pipe `{"tool_input":{"command":"…"}}` into the hook for allow/ask/deny cases.
+- `mise run doctor` passes (only logins left on a fresh machine); `mise run setup` twice in a row changes nothing.
 - Fresh session (`claude -p` and the app/T3) audit prompt: instruction files, skills, MCP/tools, memory dir, hooks, `which prd wt <cli> backlog`, a `prd` read, an unprefixed prod command (blocked), a ticket read, `bin/wt ls`.
 - Write in `wt/main` denied, in `wt/` allowed.
 

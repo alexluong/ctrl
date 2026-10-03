@@ -19,6 +19,11 @@ Scripts: `collielab` (`bin/new-vm`, `hosts/g8/`, `hosts/workspace-vm/`, `hosts/<
 
 ## Steps
 
+**Two paths (TASK-8).** A workspace that **sets itself up** (`mise run setup` and `mise run doctor` in its repo, access checklist, `.env.example` files: `../workspace-setup.md` § Self-setup) skips steps 2 and 4: after step 3 it is logins → clone → `mise run setup` → `mise run doctor`, and steps 8–9 shrink to what `doctor` reports missing. A workspace without it yet follows every step below, and the survey (step 2) becomes the first draft of its checklist. hookdeck: being converted (hand-off `../../work/task-8/handoff-hookdeck.md`); enable: next.
+
+The machine side is the same for both: `bin/new-vm` gives the firewall (on before first boot), T3 server, git identity, the VM's GitHub key, the global Claude config and plugins, Docker UIs, and with `--tailscale` the tailnet.
+
+
 Who: **C** = Claude from the ctrl session on the MBP, **A** = Alex.
 
 ### 1. Decide name, number, size (C proposes, A confirms)
@@ -49,9 +54,10 @@ Wait a minute before the first lookup of the new name (check with `dig +short <n
 
 Write `collielab/hosts/<name>-ws/setup.sh` from the survey (start from `hosts/hookdeck-ws/setup.sh`): apt repos and CLIs outside mise, pre-install of the tools the workspace `mise.toml` pins, language servers, test browsers' system libraries, an SSH key for GitHub, anything the stacks need from the OS. No logins, no secrets, idempotent. Run it: `ssh <name>-ws 'bash -s' < hosts/<name>-ws/setup.sh`. Add `hosts/<name>-ws/README.md` (three lines, pointing at `vms/<name>-ws.md`).
 
-Also by hand until it is scripted:
+Done by `bin/new-vm` since TASK-8 (not here): global Claude config from dotfiles, Claude plugins, git identity, the VM's GitHub key, IPv4-first for `*.localhost` and browser system libraries (template), Docker UIs.
 
-- Global Claude config: `scp ~/git/hub/alexluong/dotfiles/dot/.claude/{settings.json,CLAUDE.md} <name>-ws:.claude/` (no secrets in them; check before copying if they changed).
+Also by hand until the workspace does it (`mise run setup` with a pre-pull flag):
+
 - Pre-pull the stacks' public images (list from the survey) with a small script left in the VM's home, run under `nohup`.
 
 ### 5. Snapshot `clean-setup` (C)
@@ -74,10 +80,12 @@ The key is the VM's own (made by `setup.sh`), so it can be revoked alone. Orgs w
 
 ```sh
 ssh <name>-ws
-git config --global user.name "Alex Luong"; git config --global user.email "alex@alexluong.com"
 git clone [-b <branch>] git@github.com:alexluong/<name>-workspace.git ~/workspaces/<name>   # same path as on the MBP
-cd ~/workspaces/<name> && mise trust && mise install && bin/wt init                          # plus what the survey lists
+cd ~/workspaces/<name> && mise trust && mise install
+mise run setup && mise run doctor      # self-setup workspaces; otherwise: bin/wt init + what the survey lists
 ```
+
+`doctor`'s list of what is missing (logins, config files) drives steps 8 and 9.
 
 Then the project installs the survey names (hookdeck: `corepack enable && pnpm install` in the core worktree). Tools pinned by the workspace only exist inside its folder: run their commands from there.
 
