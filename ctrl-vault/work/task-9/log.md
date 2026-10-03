@@ -98,3 +98,5 @@ Every setting this depends on, in one place: `docs/tailscale.md` § Every settin
 | MBP (no Tailscale, PIA on with the exception) | same | 0% loss, ~6 ms | logged in, seen as gw | 200 | 200 |
 
 100MB over ssh from the Mini to the MBP, twice: through router + gw ~200 Mbit/s; direct (`192.168.1.90`) 226 / 272 Mbit/s. gw load ~0.1. Large packets fine.
+
+**Phone test (Alex), check 5 part 1:** iPhone on home Wi-Fi, Tailscale app off: `http://100.91.137.41:8096` (Jellyfin on the Mini's Tailscale address) works. Still to try: away on cellular with the app on.

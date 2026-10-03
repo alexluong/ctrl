@@ -55,7 +55,8 @@ From a discussion with Alex. **Nothing is built or installed.** The direction be
 - **Check 3: passed (2026-10-04).** The ZTE has Local Network → Routing → Static Routing with egress `LAN`; entry `100.64.0.0` / `255.192.0.0` → `192.168.1.110`. From g8 and the MBP (no Tailscale): router → gw → Mini; ping, ssh, Jellyfin, lab page; 100MB over ssh ~200 Mbit/s. The one-sided path (reply skips the router) is not a problem on this router; no packet-size problem seen.
 - **Check 4: the full `/10` is fine on this router** (its routing table has nothing in `100.64.0.0/10`). Narrower block not needed for now.
 - **New: devices with a full VPN** send `100.x` into the VPN. The MBP's PIA got a split-tunnel exception for `100.64.0.0/10`. Every such device needs one (or the Tailscale app).
-- **Not yet:** T3 (needs Tailscale on `hookdeck-ws`), check 5 (phone), making the `gw` settings permanent, key expiry off on servers.
+- **Check 5, at home: passed.** iPhone on home Wi-Fi, app off, opens Jellyfin on the Mini's `100.x`. Away with the app on: still to try.
+- **Not yet:** T3 (needs Tailscale on `hookdeck-ws`), phone away with the app, making the `gw` settings permanent, key expiry off on servers.
 
 ## Weak points
 
