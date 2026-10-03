@@ -21,7 +21,7 @@ Claude runs on the MBP (ctrl session) and manages the box over SSH. Files here: 
 
 ## Next, in order (2026-10-03)
 
-hookdeck-ws is in daily use and is the only home of hookdeck sessions. Other VMs wait until hookdeck is finalized (Alex).
+hookdeck-ws is in daily use and the preferred home of hookdeck sessions (MBP sessions when a case needs them, Alex 2026-10-04). Other VMs wait until hookdeck is finalized (Alex).
 
 1. **TASK-9 Tailscale** (explore; `../task-9/design.md`): away from home there is no hookdeck work until it exists.
 2. **TASK-12 backups**: the VM's disk is the single copy of unpushed work.
